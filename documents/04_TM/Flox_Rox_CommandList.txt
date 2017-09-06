@@ -1,0 +1,33 @@
+manual mode active
+Use the following commands:
+fl - list files
+ft - immediately transfer SD content
+f1 - transfers the current raw file QE
+f2 - transfers the current raw file FLAME
+A - go back to automatic mode
+O - Optimise
+M - measure without Optimisation
+m - measure with Optimisation
+U - measure only upwards
+V - measure only downwards
+D - measure only dark
+I x - set integration time to x ms(eg. I 500)
+IM x - set maximum integration time to x ms (eg. IM 1000
+i x - set the interval between measurements to x s (eg. i 60)
+iL x - sets the cycles between FLED to x cycles, 0=off
+S x - sets the resolution of sent bytes to x
+d - start SNR measurements, takes about 1h
+X - perform crosscalibration, Spectralon is needed
+R - perform reflectance calibration, Spectralon is needed
+W1 - perform QE spectral shift calibration
+W2 - perform HR spectral shift calibration
+L1 - perform QE linearity test
+L2 - perform FLAME linearity test
+G - Show GPS position
+c - ReadIn config.txt
+T - to set date+time
+ss - toggle serial stream
+st - toggle serial data transfer
+FLAME - toggle FLAME spectrometer
+awaiting commands...
+L x - set F-LED Power (0-255)
