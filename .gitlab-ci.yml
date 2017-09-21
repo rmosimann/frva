@@ -1,4 +1,4 @@
-image: java:8-jdk
+image: gradle:4.1.0-jdk8-alpine
 
 stages:
   - build
