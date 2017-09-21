@@ -68,6 +68,8 @@ fabric.properties
 .idea/modules.xml
 .idea/vcs.xml
 
+.gradle/
+
 
 ### macOS ###
 *.DS_Store
