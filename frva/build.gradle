@@ -27,13 +27,19 @@ jacoco {
 
 test {
     finalizedBy jacocoTestReport
+
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        csv.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
     }
+    doLast {
+        String fileContents = new File("$buildDir/customJacocoReportDir/test/html/index.html").text;
+        project.logger.lifecycle(fileContents)
+    }
+
 }
 
