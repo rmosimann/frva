@@ -1,6 +1,5 @@
 package model;
 
-import model.Parser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +15,6 @@ public class ParserTest {
 
   @Test
   public void csvReader() throws Exception {
-    Parser.csvReader("SDCARD/FLAMEradioVEG_2017-08-03.csv",";");
-    Parser.csvReader("SDCARD/YYMMDD/F075926.CSV",";");
   }
 
 }
