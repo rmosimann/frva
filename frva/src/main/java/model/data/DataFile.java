@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DataFile {
 
-  private final File filename;
+  private final File originalFile;
   private List<MeasureSequence> measureSequences = new LinkedList<>();
 
   /**
@@ -19,7 +19,7 @@ public class DataFile {
    * @param filename Name of the file
    */
   public DataFile(File filename) {
-    this.filename = filename;
+    this.originalFile = filename;
 
     List<String> fileContent = new ArrayList<>();
     String line = "";
