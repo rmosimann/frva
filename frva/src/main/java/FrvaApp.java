@@ -1,8 +1,9 @@
+import controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.FrvaModel;
 
 public class FrvaApp extends Application {
   public static void main(String[] args) {
@@ -11,9 +12,13 @@ public class FrvaApp extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    Parent root = FXMLLoader.load(getClass().getResource("view/mainView.fxml"));
+
+    FrvaModel model = new FrvaModel();
+
+    FXMLLoader root = new FXMLLoader(getClass().getResource("view/mainView.fxml"));
+    root.setController(new MainController(model));
     primaryStage.setTitle("ColorPicker");
-    primaryStage.setScene(new Scene(root));
+    primaryStage.setScene(new Scene(root.load()));
     primaryStage.show();
   }
 }
