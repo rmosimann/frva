@@ -19,3 +19,10 @@ checkstyle {
     toolVersion = "8.2"
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'FrvaApp'
+        )
+    }
+}
