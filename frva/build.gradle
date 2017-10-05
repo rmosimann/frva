@@ -20,6 +20,7 @@ checkstyle {
     toolVersion = "8.2"
 }
 
+<<<<<<< frva/build.gradle
 jacoco {
     toolVersion = "0.7.6.201602180812"
     reportsDir = file("$buildDir/customJacocoReportDir")
@@ -44,3 +45,11 @@ jacocoTestReport {
 
 }
 
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'FrvaApp'
+        )
+    }
+}
