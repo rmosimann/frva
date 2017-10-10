@@ -93,7 +93,7 @@
                                 </HBox>
                                 <Pane maxHeight="1.7976931348623157E308" minWidth="252.0" prefWidth="252.0" style="" VBox.vgrow="ALWAYS">
                            <children>
-                              <TreeView id="checkboxtreeview" prefHeight="570.0" prefWidth="252.0" />
+                              <TreeView fx:id="treeView" prefHeight="570.0" prefWidth="252.0" />
                            </children>
                                 </Pane>
                                 <HBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;" VBox.vgrow="NEVER">
