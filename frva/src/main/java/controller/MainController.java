@@ -25,7 +25,7 @@ public class MainController {
     CheckBoxTreeItem<String> rootItem =
             new CheckBoxTreeItem<String>("View Source Files");
     rootItem.setExpanded(true);
-    
+
     treeView.setEditable(true);
 
     treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
