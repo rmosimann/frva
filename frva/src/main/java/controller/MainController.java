@@ -8,6 +8,12 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.util.Callback;
 import model.FrvaModel;
+import model.data.DataFile;
+import model.data.MeasureSequence;
+import model.data.SdCard;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainController {
   private final FrvaModel model;
@@ -21,27 +27,34 @@ public class MainController {
   @FXML
   public void initialize(){
 
-
-    CheckBoxTreeItem<String> rootItem =
-            new CheckBoxTreeItem<String>("View Source Files");
-    rootItem.setExpanded(true);
-
-    treeView.setEditable(true);
-
-    treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
-    for (int i = 0; i < 8; i++) {
-      final CheckBoxTreeItem<String> checkBoxTreeItem =
-              new CheckBoxTreeItem<String>("Sample" + (i+1));
-      rootItem.getChildren().add(checkBoxTreeItem);
-    }
-
-    treeView.setRoot(rootItem);
-
-
-
-
+    initializeTree();
 
   }
 
 
+
+  private void initializeTree(){
+    //Add testSDCard
+    SdCard sdCard=new SdCard(getClass().getResource("/SDCARD"));
+    model.addSdCard(sdCard);
+
+    CheckBoxTreeItem<String> root = new CheckBoxTreeItem<String>("Library");
+    root.setExpanded(true);
+
+    treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
+
+    for (SdCard card : model.getLibrary()
+         ) {
+      for (DataFile dataFile : card.getDataFiles()
+              ) {
+        for (MeasureSequence measureSequence : dataFile.getMeasureSequences()) {
+          final CheckBoxTreeItem<String> checkBoxTreeItem = new CheckBoxTreeItem<String>("ID"+measureSequence.getId()+" - "+measureSequence.getTime());
+          root.getChildren().add(checkBoxTreeItem);
+        }
+
+      }
+
+    }
+    treeView.setRoot(root);
+  }
 }
