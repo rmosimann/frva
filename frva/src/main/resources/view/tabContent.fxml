@@ -16,11 +16,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0"
-            prefWidth="1041.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0">
+        <VBox alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0" AnchorPane.rightAnchor="32.0"
+              AnchorPane.topAnchor="350.0">
             <children>
                 <Label text="Vegetation Indices">
                     <font>
@@ -76,7 +76,7 @@
             </children>
         </VBox>
         <Accordion layoutX="818.0" layoutY="254.0"/>
-        <VBox layoutX="780.0" layoutY="27.0" spacing="5.0">
+        <VBox layoutX="780.0" layoutY="27.0" spacing="5.0" AnchorPane.rightAnchor="139.0" AnchorPane.topAnchor="27.0">
             <children>
                 <Label text="Display as">
                     <font>
@@ -130,7 +130,8 @@
             </children>
         </VBox>
         <Label layoutX="-36.0" layoutY="299.0" rotate="-90.0" text="Reflectance Factor" AnchorPane.leftAnchor="-36.0"/>
-        <LineChart layoutX="25.0" layoutY="14.0" prefHeight="553.0" prefWidth="732.0">
+        <LineChart layoutX="25.0" layoutY="14.0" prefHeight="553.0" prefWidth="732.0" AnchorPane.bottomAnchor="45.0"
+                   AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="14.0">
             <xAxis>
                 <CategoryAxis side="BOTTOM"/>
             </xAxis>
@@ -141,7 +142,9 @@
                 <Cursor fx:constant="CROSSHAIR"/>
             </cursor>
         </LineChart>
-        <ToggleButton layoutX="328.0" layoutY="554.0" style="-fx-background-color: lightgrey;" text="Wavelength"/>
-        <ToggleButton layoutX="424.0" layoutY="554.0" selected="true" style="-fx-background-color: none;" text="Bands"/>
+        <ToggleButton layoutX="328.0" layoutY="554.0" style="-fx-background-color: lightgrey;" text="Wavelength"
+                      AnchorPane.bottomAnchor="30.0"/>
+        <ToggleButton layoutX="424.0" layoutY="554.0" selected="true" style="-fx-background-color: none;" text="Bands"
+                      AnchorPane.bottomAnchor="30.0"/>
     </children>
 </AnchorPane>

@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -20,12 +10,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0"
             prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane minHeight="60.0" prefHeight="60.0">
                     <children>
@@ -148,162 +138,8 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                 style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS">
-                            <tabs>
-                                <Tab text=" 24.10.2017:12:15">
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="1024.0">
-                                            <children>
-                                                <VBox alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0">
-                                                    <children>
-                                                        <Label text="Vegetation Indices">
-                                                            <font>
-                                                                <Font name="System Bold" size="13.0"/>
-                                                            </font>
-                                                            <VBox.margin>
-                                                                <Insets/>
-                                                            </VBox.margin>
-                                                        </Label>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Label prefWidth="50.0" text="min."/>
-                                                                <Label prefWidth="50.0" text="max."/>
-                                                                <Label prefWidth="50.0" text="avg."/>
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="3.0" left="56.0" right="3.0" top="3.0"/>
-                                                            </padding>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Label prefWidth="48.0" text="NDVI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
-                                                            </padding>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Label prefWidth="48.0" text="TCARI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
-                                                            </padding>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                            <children>
-                                                                <Label prefWidth="48.0" text="PRI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
-                                                            </padding>
-                                                        </HBox>
-                                                    </children>
-                                                </VBox>
-                                                <Accordion layoutX="818.0" layoutY="254.0"/>
-                                                <VBox layoutX="780.0" layoutY="27.0" spacing="5.0">
-                                                    <children>
-                                                        <Label text="Display as">
-                                                            <font>
-                                                                <Font name="System Bold" size="13.0"/>
-                                                            </font>
-                                                            <VBox.margin>
-                                                                <Insets/>
-                                                            </VBox.margin>
-                                                        </Label>
-
-                                                        <RadioButton mnemonicParsing="false" text="Raw"/>
-                                                        <CheckBox disable="true" mnemonicParsing="false" text="VEG">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <CheckBox disable="true" mnemonicParsing="false" text="WR">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <CheckBox disable="true" mnemonicParsing="false" text="DC_VEG">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <CheckBox disable="true" mnemonicParsing="false" text="DC_WR">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <RadioButton mnemonicParsing="false" selected="true"
-                                                                     text="Reflectance">
-                                                            <padding>
-                                                                <Insets top="10.0"/>
-                                                            </padding>
-                                                        </RadioButton>
-                                                        <CheckBox mnemonicParsing="false" selected="true" text="VEG">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <CheckBox mnemonicParsing="false" selected="true" text="WR">
-                                                            <VBox.margin>
-                                                                <Insets left="35.0"/>
-                                                            </VBox.margin>
-                                                        </CheckBox>
-                                                        <RadioButton mnemonicParsing="false" text="Radiance">
-                                                            <padding>
-                                                                <Insets top="10.0"/>
-                                                            </padding>
-                                                        </RadioButton>
-                                                    </children>
-                                                </VBox>
-                                                <Label layoutX="-36.0" layoutY="299.0" rotate="-90.0"
-                                                       text="Reflectance Factor" AnchorPane.leftAnchor="-36.0"/>
-                                                <LineChart layoutX="25.0" layoutY="14.0" prefHeight="553.0"
-                                                           prefWidth="732.0">
-                                                    <xAxis>
-                                                        <CategoryAxis side="BOTTOM"/>
-                                                    </xAxis>
-                                                    <yAxis>
-                                                        <NumberAxis side="LEFT"/>
-                                                    </yAxis>
-                                                    <cursor>
-                                                        <Cursor fx:constant="CROSSHAIR"/>
-                                                    </cursor>
-                                                </LineChart>
-                                                <ToggleButton layoutX="328.0" layoutY="554.0"
-                                                              style="-fx-background-color: lightgrey;"
-                                                              text="Wavelength"/>
-                                                <ToggleButton layoutX="424.0" layoutY="554.0" selected="true"
-                                                              style="-fx-background-color: none;" text="Bands"/>
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </Tab>
-                                <Tab text="25.12.2017:14:07">
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                                    prefWidth="200.0"/>
-                                    </content>
-                                </Tab>
-                                <Tab text="+"/>
-                            </tabs>
-                        </TabPane>
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                 style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS"/>
                     </children>
                 </HBox>
             </children>
