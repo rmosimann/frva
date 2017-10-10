@@ -129,7 +129,7 @@
                    AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="274.0"
                    AnchorPane.topAnchor="14.0">
             <xAxis>
-                <NumberAxis fx:id="xaxis" tickUnit="1"/>
+                <NumberAxis fx:id="xaxis" autoRanging="false" lowerBound="300" upperBound="1100" tickUnit="100"/>
             </xAxis>
             <yAxis>
                 <NumberAxis fx:id="yaxis" tickUnit="1"/>
