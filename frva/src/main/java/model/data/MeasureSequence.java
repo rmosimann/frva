@@ -82,4 +82,9 @@ More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3n
     throw new IllegalArgumentException();
   }
 
+
+  public String getSerial() {
+    return metadata[18];
+  }
+
 }
