@@ -17,10 +17,8 @@ public class MainController {
     this.model = model;
   }
 
-
   @FXML
   private TabPane tabPane;
-
 
   @FXML
   private void initialize() {
@@ -54,7 +52,9 @@ public class MainController {
 
     tabPane.getTabs().add(tabPane.getTabs().size() - 1, newtab);
     try {
-      Node node = (Node) FXMLLoader.load(getClass().getResource("../view/tabContent.fxml"));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/tabContent.fxml"));
+      loader.setController(new TabController(model));
+      Node node = (Node) loader.load();
       newtab.setContent(node);
     } catch (IOException e) {
       e.printStackTrace();
