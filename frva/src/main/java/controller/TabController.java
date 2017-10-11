@@ -1,82 +1,272 @@
 package controller;
 
 import java.util.Map;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import model.FrvaModel;
+
 
 
 public class TabController {
   private final FrvaModel model;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
 
 
   public TabController(FrvaModel model) {
     this.model = model;
+    lineChartData = FXCollections.observableArrayList();
   }
+
+  @FXML
+  private ToggleButton wavelengthButton;
+
+  @FXML
+  private ToggleButton bandsButton;
 
   @FXML
   private LineChart<Double, Double> datachart;
 
+  @FXML
+  private NumberAxis xaxis;
+
+  @FXML
+  private NumberAxis yaxis;
+
+  @FXML
+  private RadioButton radioButtonRaw;
+
+  @FXML
+  private RadioButton radioButtonReflectance;
+
+  @FXML
+  private RadioButton radioButtonRadiance;
 
 
   @FXML
   private void initialize() {
-    addDataToGraph();
+    configureRadios();
+    initializeGraph();
+    addRawData();
   }
 
-  private void addDataToGraph() {
+  private void configureRadios() {
+    ToggleGroup radiogaga = new ToggleGroup();
+    radiogaga.getToggles().addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
+    radiogaga.selectToggle(radioButtonRaw);
 
-    double[] calibration = model.getLibrary()
-        .get(0).getWavelengthCalibrationFile().getCalibration();
-    Map<String, double[]> measurements = model.getLibrary()
-        .get(0).getDataFiles().get(0).getMeasureSequences().get(0).getMeasurements();
+    radiogaga.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue.equals(radioButtonRadiance)) {
+        this.showRadiance();
+      } else if (newValue.equals(radioButtonRaw)) {
+        this.showRaw();
+      } else if (newValue.equals(radioButtonReflectance)) {
+        this.showReflectance();
+      }
+    });
+  }
 
-    double[] data = measurements.get("VEG");
-    LineChart.Series<Double, Double> series1 = new LineChart.Series<Double, Double>();
-    series1.setName("VEG");
-    for (int i = 0; i < 1023; i++) {
-      series1.getData().add(new XYChart.Data<>(calibration[i], data[i]));
-    }
+  private void initializeGraph() {
+    xaxis.setLowerBound(300);
+    xaxis.setUpperBound(1100);
+    xaxis.setAutoRanging(false);
+    xaxis.setTickUnit(100);
+    xaxis.setAnimated(true);
 
-    ObservableList<XYChart.Series<Double, Double>> lineChartData
-        = FXCollections.observableArrayList();
+    yaxis.setUpperBound(30000);
+    yaxis.setAutoRanging(true);
+    yaxis.setAnimated(true);
+    yaxis.setTickUnit(1000);
 
-    lineChartData.add(series1);
-
-    data = measurements.get("WR");
-    series1 = new LineChart.Series<Double, Double>();
-    series1.setName("WR");
-    for (int i = 0; i < 1023; i++) {
-      series1.getData().add(new XYChart.Data<>(calibration[i], data[i]));
-    }
-
-    lineChartData.add(series1);
-
-
-    data = measurements.get("DC_WR");
-    series1 = new LineChart.Series<Double, Double>();
-    series1.setName("DC_WR");
-    for (int i = 0; i < 1023; i++) {
-      series1.getData().add(new XYChart.Data<>(calibration[i], data[i]));
-    }
-
-    lineChartData.add(series1);
-
-    data = measurements.get("DC_VEG");
-    series1 = new LineChart.Series<Double, Double>();
-    series1.setName("DC_VEG");
-    for (int i = 0; i < 1023; i++) {
-      series1.getData().add(new XYChart.Data<>(calibration[i], data[i]));
-    }
-
-    lineChartData.add(series1);
-
+    datachart.setAnimated(true);
+    datachart.setCreateSymbols(false);
+    datachart.setAlternativeRowFillVisible(false);
+    datachart.setLegendVisible(false);
 
     datachart.setData(lineChartData);
   }
 
+  private void addRawData() {
+    double[] calibration = model.getLibrary()
+        .get(0).getWavelengthCalibrationFile().getCalibration();
+
+    for (int j = 0; j < 1; j++) {
+      Map<String, double[]> measurements = model.getLibrary()
+          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
+
+      Set<Map.Entry<String, double[]>> entries = measurements.entrySet();
+
+      for (Map.Entry<String, double[]> entry : entries) {
+        double[] data = entry.getValue();
+        LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+        series.setName(entry.getKey());
+        for (int i = 0; i < data.length; i++) {
+          series.getData().add(new XYChart.Data<>(calibration[i], data[i]));
+        }
+        lineChartData.add(series);
+      }
+    }
+    yaxis.setLabel("DN (digital number)");
+    xaxis.setLabel("Wavelength [nanometer]");
+  }
+
+  @FXML
+  private void xunitAsWavelenght() {
+    //requires redraw, as the calibrationfiles depend on a measuresequence
+    xaxis.setLabel("Wavelength [nanometer]");
+  }
+
+  @FXML
+  private void xunitAsBands() {
+    int maxSize = 0;
+    for (XYChart.Series<Double, Double> serie : lineChartData) {
+      if (serie.getData().size() > maxSize) {
+        maxSize = serie.getData().size();
+      }
+      for (int i = 0; i < serie.getData().size(); i++) {
+        serie.getData().get(i).setXValue((double) i);
+      }
+    }
+
+    xaxis.setLowerBound(0);
+    xaxis.setUpperBound(maxSize);
+    xaxis.setLabel("Bands");
+  }
+
+
+  private void showRaw() {
+    /*
+      Data:   as they are
+      X-Axis: Wavelength[Nanometers]/Bands[dn]
+      Y-Axis: DN (digital numbers)
+     */
+    lineChartData.clear();
+    this.addRawData();
+
+  }
+
+  private void showRadiance() {
+    /*
+    Radiance L
+      Data:
+        L(VEG) = (DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03
+        L(WR) = (DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03
+      X-Axis: Wavelength[Nanometers]/Bands[dn]
+      Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
+     */
+
+    lineChartData.clear();
+
+    double[] waveCalibration = model.getLibrary()
+        .get(0).getWavelengthCalibrationFile().getCalibration();
+
+    double[] vegCalibration = model.getLibrary()
+        .get(0).getSensorCalibrationFileVeg().getCalibration();
+
+    double[] wrCalibration = model.getLibrary()
+        .get(0).getSensorCalibrationFileWr().getCalibration();
+
+    for (int j = 0; j < 1; j++) {
+      Map<String, double[]> measurements = model.getLibrary()
+          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
+
+      double[] vegs = measurements.get("VEG");
+      double[] dcVegs = measurements.get("DC_VEG");
+
+      double[] wrs = measurements.get("WR");
+      double[] dcWrs = measurements.get("DC_WR");
+
+      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+      series.setName("VEG_radiance");
+      for (int i = 0; i < waveCalibration.length; i++) {
+        double calculatedRadiance = (vegs[i] - dcVegs[i]) * vegCalibration[i];
+        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
+      }
+      lineChartData.add(series);
+
+      series = new LineChart.Series<Double, Double>();
+      series.setName("WR_radiance");
+      for (int i = 0; i < waveCalibration.length; i++) {
+        double calculatedRadiance = (wrs[i] - dcWrs[i]) * wrCalibration[i];
+        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
+      }
+      lineChartData.add(series);
+
+    }
+    yaxis.setLabel("[W/( m²sr nm)]");
+    xaxis.setLabel("Wavelength [nanometer]");
+
+  }
+
+  private void showReflectance() {
+    /*
+    Reflectance R
+      Data:
+        R(VEG) = L(VEG) / L(WR)
+      X-Axis: Wavelength[Nanometers]/Bands[dn]
+      Y-Axis: ReflectanceFactor (none)
+     */
+
+
+    lineChartData.clear();
+
+    double[] waveCalibration = model.getLibrary()
+        .get(0).getWavelengthCalibrationFile().getCalibration();
+
+    double[] vegCalibration = model.getLibrary()
+        .get(0).getSensorCalibrationFileVeg().getCalibration();
+
+    double[] wrCalibration = model.getLibrary()
+        .get(0).getSensorCalibrationFileWr().getCalibration();
+
+    for (int j = 0; j < 1; j++) {
+      Map<String, double[]> measurements = model.getLibrary()
+          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
+
+      double[] vegs = measurements.get("VEG");
+      double[] dcVegs = measurements.get("DC_VEG");
+
+      double[] wrs = measurements.get("WR");
+      double[] dcWrs = measurements.get("DC_WR");
+
+      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+      series.setName("Reflectance");
+      for (int i = 0; i < waveCalibration.length; i++) {
+        double calculatedRadiance
+            = ((vegs[i] - dcVegs[i]) * vegCalibration[i])
+            / ((wrs[i] - dcWrs[i]) * wrCalibration[i]);
+        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
+      }
+      lineChartData.add(series);
+
+    }
+    yaxis.setLabel("Reflectance Factor");
+    xaxis.setLabel("Wavelength [nanometer]");
+
+  }
+
+  private void calculateIndicies() {
+    /*
+     * NDVI:
+     *    NDVI is defined as (NIR - RED) / (NIR + RED)
+     *    where NIR = reflectance at wavelength 920nm
+     *    RED = reflectance at wavelength 696nm
+     *
+     * TCARI
+     *
+     * PRI
+     *
+     */
+
+
+  }
 }
+
