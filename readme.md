@@ -33,7 +33,7 @@ An SdCard contains * Datafiles. A Datafile contains * MeasureSequences.
 
 ## Code Structure
 
-- frva
+  frva
   |-src
     |-main
       |-java
