@@ -34,7 +34,6 @@ public class MeasureSequence {
     metadata = input.get(0).split(";");
     this.sdCard = sdCard;
 
-    System.out.println("Creating new sequence: " + metadata[0]);
     for (int i = 1; i < input.size(); i++) {
       String[] tmp = input.get(i).split(";");
       measurements.put(tmp[0], Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
