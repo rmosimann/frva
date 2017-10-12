@@ -3,6 +3,7 @@ package controller.util;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.TreeCell;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -54,6 +55,5 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   public void setExpand(boolean value){
     super.setExpanded(value);
-
   }
 }

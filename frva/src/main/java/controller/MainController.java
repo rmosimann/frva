@@ -2,9 +2,12 @@ package controller;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import controller.util.FrvaTreeViewItem;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,11 +21,16 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
@@ -67,7 +75,14 @@ public class MainController {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
     selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
-    selectNoneButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false));
+    selectNoneButton.setOnAction(event -> selectNone());
+  }
+
+  private void selectNone() {
+    ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
+    ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
+    treeView.getSelectionModel().clearSelection();
+
   }
 
 
@@ -178,7 +193,28 @@ public class MainController {
     }
     treeView.setRoot(root);
     treeView.setShowRoot(false);
+
+
+
+    treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        treeView.getSelectionModel().getSelectedItems().forEach(new Consumer<TreeItem<FrvaTreeViewItem>>() {
+          @Override
+          public void accept(TreeItem<FrvaTreeViewItem> item) {
+
+              ((FrvaTreeViewItem) item).setSelected(true);
+
+          }
+        });
+      }
+    });
+
+
+
   }
+
 
   private void expandAll(TreeItem item) {
     if (!item.isLeaf()) {
@@ -193,12 +229,15 @@ public class MainController {
 
   private void collapseAll(TreeItem item) {
     if (!item.isLeaf()) {
-        if(item == treeView.getRoot()||item.getParent()!=treeView.getRoot()){item.setExpanded(true);
+      if (item == treeView.getRoot()) {
+        item.setExpanded(true);
+      } else {
+        item.setExpanded(false);
       }
-      else{item.setExpanded(false);}
       for (Object child : item.getChildren()
           ) {
-        collapseAll((TreeItem) child);}
+        collapseAll((TreeItem) child);
+      }
     }
   }
 
