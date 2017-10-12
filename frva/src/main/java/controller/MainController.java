@@ -5,12 +5,19 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import controller.util.FrvaTreeViewItem;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import model.FrvaModel;
@@ -23,6 +30,7 @@ public class MainController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private int newTabId = 0;
+
 
   public MainController(FrvaModel model) {
     this.model = model;
@@ -91,7 +99,7 @@ public class MainController {
 
   private void initializeTree() {
 
-    CheckBoxTreeItem<FrvaTreeViewItem> root = new CheckBoxTreeItem<>(new FrvaTreeViewItem("Library", null));
+    FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
     root.setExpanded(true);
 
     treeView.setCellFactory(CheckBoxTreeCell.<FrvaTreeViewItem>forTreeView());
@@ -100,7 +108,7 @@ public class MainController {
     //Structurize Data with hours/days
     for (SdCard card : model.getLibrary()
         ) {
-      CheckBoxTreeItem<FrvaTreeViewItem> sdCardItem = new CheckBoxTreeItem<FrvaTreeViewItem>(new FrvaTreeViewItem(card.getDeviceSerialNr(), null));
+      FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem(card.getDeviceSerialNr(), null, model);
       root.getChildren().add(sdCardItem);
       for (DataFile dataFile : card.getDataFiles()
           ) {
@@ -109,8 +117,8 @@ public class MainController {
         String date = "000000";
         int hourlyCount = 0;
         int dailyCount = 0;
-        CheckBoxTreeItem<FrvaTreeViewItem> checkBoxTreeHourItem = new CheckBoxTreeItem<>();
-        CheckBoxTreeItem<FrvaTreeViewItem> checkBoxTreeDateItem = new CheckBoxTreeItem<>();
+        FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
+        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(model);
 
 
         while (it.hasNext()) {
@@ -119,37 +127,33 @@ public class MainController {
           String currentDate = measureSequence.getDate();
 
           if (!currentDate.equals(date)) {
-            checkBoxTreeDateItem.setValue(new FrvaTreeViewItem(date + " (" + dailyCount + ")", null));
+            checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")", null);
             dailyCount = 0;
             date = currentDate;
             hour = "";
-            checkBoxTreeDateItem = new CheckBoxTreeItem<>();
+            checkBoxTreeDateItem = new FrvaTreeViewItem(model);
             sdCardItem.getChildren().add(checkBoxTreeDateItem);
           }
 
           if (!currentHour.equals(hour)) {
-            checkBoxTreeHourItem.setValue(new FrvaTreeViewItem(hour + ":00-" + currentHour + ":00 " + "(" + hourlyCount + ")", null));
+            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 " + "(" + hourlyCount + ")", null);
             hourlyCount = 0;
             hour = currentHour;
-            checkBoxTreeHourItem = new CheckBoxTreeItem<>();
+            checkBoxTreeHourItem = new FrvaTreeViewItem(model);
             checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
           }
 
-          CheckBoxTreeItem<FrvaTreeViewItem> checkBoxTreeMeasurementItem = new CheckBoxTreeItem<>(new FrvaTreeViewItem("ID" + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence));
+          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID" + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence, model);
           hourlyCount++;
           dailyCount++;
           checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
         }
-        checkBoxTreeHourItem.setValue(new FrvaTreeViewItem(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00" + " (" + hourlyCount + ")", null));
-        checkBoxTreeDateItem.setValue(new FrvaTreeViewItem(date + " (" + dailyCount + ")", null));
-
+        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00" + " (" + hourlyCount + ")", null);
+        checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")", null);
       }
-
     }
     treeView.setRoot(root);
-
   }
-
 
 
 }

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -26,6 +27,7 @@ public class FrvaModel {
   public FrvaModel() {
     //TODO: loads exampledata, remove when import is implemented
     library.add(new SdCard(getClass().getResource("../SDCARD")));
+
   }
 
 
@@ -38,7 +40,7 @@ public class FrvaModel {
   }
 
   public ObservableList<MeasureSequence> getCurrentSelectionList() {
-    return selectionMap.get(currentlySelectedTab);
+    return selectionMap.get(currentlySelectedTab.get());
   }
 
   public String getApplicationName() {
