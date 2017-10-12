@@ -4,11 +4,8 @@ Readme First
 This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigger. This document contains all necessary information for working with the 
 [Link](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) to github Readme formatting.
 
-#Architcture
-
-
-
-Environnement: The applications target OS is Linux. 
+#Architecture
+Environment: The applications target OS is Linux. 
 
 ##Model
 We follow the Model-View-Controller approach. The model contains the data which are measurements of a FloX/RoX spectroanalysis device.
@@ -25,7 +22,6 @@ Each View has a seperate Controller which acts as a connection between View and 
 -mainView.fxml
 -tabContent.fxml
 
-
 ##List of Controllers
 MainController
 TabController
@@ -35,13 +31,26 @@ The model contains a List of SdCards (library). Each SdCard has its Calibration-
 An SdCard contains * Datafiles. A Datafile contains * MeasureSequences. 
 
 
-#Code Structure
+##Code Structure
 
+- frva
+  |-src
+    |-main
+      |-java
+        |-controller        > Put all conrtollers here
+        |-model             > Contain the model where al data are stored
+        |-FrvaApp.java      > Main Application
+      |-resources
+        |-css               
+        |-icons
+        |-images
+        |-view              > Put all FXML-Files here
+    |- build.gradle         > builds configuration
+    |- gradlew              > gradle-wrapper to build the project
 
 
 #Technologies
 In this project we apply the following technologies:
-
 
 | Technology                       | Version   |
 |----------------------------------|-----------|
@@ -52,7 +61,7 @@ In this project we apply the following technologies:
 | Code quality: Checkstyle         | 8.2       |
 | Testing: JUnit                   | 4.12      |
 | CI: Gitlab CI Runner             |           |
-
+| Documentation: JavaDoc           |           |
 
 
 #Coding Conventions
@@ -60,7 +69,6 @@ We follow Google Java Code Style Guidelines which can be found under [Styleguide
 [How to install](https://medium.com/@jayanga/how-to-configure-checkstyle-and-findbugs-plugins-to-intellij-idea-for-wso2-products-c5f4bbe9673a)
  Checkstyle Plugin 
 The configuration file can be found under config/checkstyle/checkstyle.xml
-
 
 
 #Getting Started
@@ -73,3 +81,23 @@ primaryStage.setTitle(model.getApplicationName());
 primaryStage.setScene(new Scene(root.load()));
 primaryStage.show();
 ```
+
+
+
+
+
+
+
+
+     ccee88oo
+  C8O8O8Q8PoOb o8oo
+ dOB69QO8PdUOpugoO9bD
+CgggbU8OU qOp qOdoUOdcb
+    6OuU  /p u gcoUodpP
+      \\\//  /douUP
+        \\\////
+         |||/\
+         |||\/
+         |||||
+   .....//||||\....
+   ASCII-Tree by David Moore
