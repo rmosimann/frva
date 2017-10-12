@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +20,8 @@ import javafx.scene.input.ScrollEvent;
 import model.FrvaModel;
 
 
-public class TabController {
+public class TabController extends Tab {
+  private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
 
