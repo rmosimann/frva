@@ -1,5 +1,6 @@
 package model;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -25,9 +25,11 @@ public class FrvaModel {
    * Constructor for a new Model.
    */
   public FrvaModel() {
-    //TODO: loads exampledata, remove when import is implemented
-    library.add(new SdCard(getClass().getResource("../SDCARD")));
-
+    //TODO: loads exampledata,, when available remove when import is implemented
+    URL sdcard = getClass().getResource("../SDCARD");
+    if (sdcard != null) {
+      library.add(new SdCard(sdcard));
+    }
   }
 
 
