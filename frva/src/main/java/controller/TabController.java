@@ -111,7 +111,7 @@ public class TabController {
     yaxis.setAutoRanging(true);
     yaxis.setAnimated(false);
 
-    datachart.setAnimated(true);
+    datachart.setAnimated(false);
     datachart.setCreateSymbols(false);
     datachart.setAlternativeRowFillVisible(false);
     datachart.setLegendVisible(false);
