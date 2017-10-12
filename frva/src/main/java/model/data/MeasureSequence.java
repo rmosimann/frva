@@ -34,7 +34,6 @@ public class MeasureSequence {
     metadata = input.get(0).split(";");
     this.sdCard = sdCard;
 
-    System.out.println("Creating new sequence: " + metadata[0]);
     for (int i = 1; i < input.size(); i++) {
       String[] tmp = input.get(i).split(";");
       measurements.put(tmp[0], Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
@@ -94,6 +93,7 @@ public class MeasureSequence {
 
   /**
    * Getter for the Hour (Timestamp) o the MeasurementSequence.
+   *
    * @return the Hour as int.
    */
   public int getHour() {
@@ -112,4 +112,70 @@ public class MeasureSequence {
     return metadata[18];
   }
 
+
+  /**
+   * Calculates the Radiance of this MeasurementSequence.
+   *
+   * @return A Map with the Keys VEG and WR.
+   */
+  public Map<String, double[]> getRadiance() {
+    /*
+    Radiance L
+      Data:
+        L(VEG) = (DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03
+        L(WR) = (DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03
+      X-Axis: Wavelength[Nanometers]/Bands[dn]
+      Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
+     */
+
+    double[] waveCalibration = sdCard.getWavelengthCalibrationFile().getCalibration();
+    double[] vegCalibration = sdCard.getSensorCalibrationFileVeg().getCalibration();
+    double[] wrCalibration = sdCard.getSensorCalibrationFileWr().getCalibration();
+
+    double[] vegs = measurements.get("VEG");
+    double[] dcVegs = measurements.get("DC_VEG");
+
+    double[] wrs = measurements.get("WR");
+    double[] dcWrs = measurements.get("DC_WR");
+
+    double[] vegRadiance = new double[waveCalibration.length];
+    double[] wrRadiance = new double[waveCalibration.length];
+
+    for (int i = 0; i < waveCalibration.length; i++) {
+      vegRadiance[i] = (vegs[i] - dcVegs[i]) * vegCalibration[i];
+      wrRadiance[i] = (wrs[i] - dcWrs[i]) * wrCalibration[i];
+    }
+
+    Map<String, double[]> radianceMap = new HashMap<>();
+    radianceMap.put("VEG", vegRadiance);
+    radianceMap.put("WR", wrRadiance);
+
+    return radianceMap;
+  }
+
+
+  /**
+   * Calculates the Reflectance of this MeasurementSequence.
+   *
+   * @return A DoubleArray.
+   */
+  public double[] getReflection() {
+    /*
+    Reflectance R
+      Data:   R(VEG) = L(VEG) / L(WR)
+      X-Axis: Wavelength[Nanometers]/Bands[dn]
+      Y-Axis: ReflectanceFactor (none)
+     */
+    Map<String, double[]> radianceMap = this.getRadiance();
+
+    double[] vegRadiance = radianceMap.get("VEG");
+    double[] wrRadiance = radianceMap.get("WR");
+
+    double[] reflection = new double[vegRadiance.length];
+
+    for (int i = 0; i < reflection.length; i++) {
+      reflection[i] = vegRadiance[i] / wrRadiance[i];
+    }
+    return reflection;
+  }
 }
