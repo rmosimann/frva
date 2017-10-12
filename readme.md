@@ -17,22 +17,12 @@ We use SceneBuilder to generate FXML files as views. Each GUI element contains a
 ## Controller
 Each View has a seperate Controller which acts as a connection between View and Model. The controller contains the logic and all functions which can be accessed over the view. While being initialised the controller gets the model. 
 
-
-## List of Views
--mainView.fxml
--tabContent.fxml
-
-## List of Controllers
-MainController
-TabController
-
 ## Model
 The model contains a List of SdCards (library). Each SdCard has its Calibration-file.
 An SdCard contains * Datafiles. A Datafile contains * MeasureSequences. 
 
 
 ## Code Structure
-
       frva
       |-src
         |-main
