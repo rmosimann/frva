@@ -68,14 +68,10 @@ public class MeasureSequence {
     return metadata[0];
   }
 
-  public Date getDate() {
-    return new Date(Long.parseLong(metadata[1]));
-  }
-
   /**
-   * Getter for the Timestamp o the MeasurementSequence.
+   * Getter for the Time of the MeasurementSequence.
    *
-   * @return the Timestamp as String.
+   * @return the Time as String of Type HH:MM.
    */
   public String getTime() {
     String timestamp = metadata[2];
@@ -107,11 +103,25 @@ public class MeasureSequence {
     }
     throw new IllegalArgumentException();
   }
+  /**
+   * Getter for the Serial of the containing SD-Card.
+   *
+   * @return Serial as String.
+   */
 
   public String getSerial() {
     return metadata[18];
   }
 
+  /**
+   * Getter for the Date of the Sequence.
+   *
+   * @return Date as String of Type YY-MM-DD.
+   */
+  public String getDate() {
+    return metadata[1].substring(0, 2) + "-" + metadata[1].substring(2, 4) + "-"
+        + metadata[1].substring(4, 6);
+  }
 
   /**
    * Calculates the Radiance of this MeasurementSequence.

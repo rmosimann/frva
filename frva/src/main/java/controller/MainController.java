@@ -1,5 +1,7 @@
 package controller;
 
+import controller.util.FrvaTreeViewItem;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -9,11 +11,11 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
@@ -34,8 +36,15 @@ public class MainController {
   }
 
   @FXML
-  TreeView<String> treeView;
-
+  private TreeView<FrvaTreeViewItem> treeView;
+  @FXML
+  private Button selectAllButton;
+  @FXML
+  private Button selectNoneButton;
+  @FXML
+  private Button collapseAllButton;
+  @FXML
+  private Button expandAllButton;
   @FXML
   private TabPane tabPane;
 
@@ -59,6 +68,15 @@ public class MainController {
   private void initialize() {
     initializeTabHandling();
     initializeTree();
+    addEventHandlers();
+  }
+
+  private void addEventHandlers() {
+    expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
+    collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
+    selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
+    selectNoneButton.setOnAction(event -> selectNone());
+    activateMultiSelect();
   }
 
   private void initializeTabHandling() {
@@ -99,7 +117,7 @@ public class MainController {
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/tabContent.fxml"));
       loader.setController(new TabController(model, newTabId));
-      newtab.setContent((Node) loader.load());
+      newtab.setContent(loader.load());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -112,41 +130,108 @@ public class MainController {
 
 
   private void initializeTree() {
-    CheckBoxTreeItem<String> root = new CheckBoxTreeItem<String>("Library");
-    root.setExpanded(true);
-
-    treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
+    FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
+    treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
 
-    //Structurize Data with hours
-    for (SdCard card : model.getLibrary()
-        ) {
-      CheckBoxTreeItem<String> sdCardItem = new CheckBoxTreeItem<>(card.getDeviceSerialNr());
+    //Structurize Data with days/hours
+    for (SdCard card : model.getLibrary()) {
+      FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem(card.getDeviceSerialNr(), null, model);
       root.getChildren().add(sdCardItem);
-      for (DataFile dataFile : card.getDataFiles()
-          ) {
+      for (DataFile dataFile : card.getDataFiles()) {
         Iterator it = dataFile.getMeasureSequences().iterator();
         String hour = "";
-        int count = 0;
-        CheckBoxTreeItem<String> checkBoxTreeHourItem = new CheckBoxTreeItem<>();
+        String date = "000000";
+        boolean continueToNextDay = false;
+        int hourlyCount = 0;
+        int dailyCount = 0;
+        FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
+        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(model);
+
+
         while (it.hasNext()) {
           MeasureSequence measureSequence = (MeasureSequence) it.next();
           String currentHour = measureSequence.getTime().substring(0, 2);
-          if (!currentHour.equals(hour)) {
-            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 " + "(" + count + ")");
-            count = 0;
-            hour = currentHour;
-            checkBoxTreeHourItem = new CheckBoxTreeItem<String>();
-            sdCardItem.getChildren().add(checkBoxTreeHourItem);
+          String currentDate = measureSequence.getDate();
+
+          if (!currentDate.equals(date)) {
+            checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
+            dailyCount = 0;
+            date = currentDate;
+            continueToNextDay = true;
+            checkBoxTreeDateItem = new FrvaTreeViewItem(model);
+            sdCardItem.getChildren().add(checkBoxTreeDateItem);
           }
-          final CheckBoxTreeItem<String> checkBoxTreeItem = new CheckBoxTreeItem<String>("ID" + measureSequence.getId() + " - " + measureSequence.getTime());
-          count++;
-          checkBoxTreeHourItem.getChildren().add(checkBoxTreeItem);
+
+          if (!currentHour.equals(hour) || continueToNextDay) {
+            continueToNextDay = false;
+            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 "
+                + "(" + hourlyCount + ")");
+            hourlyCount = 0;
+            hour = currentHour;
+            checkBoxTreeHourItem = new FrvaTreeViewItem(model);
+            checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
+          }
+
+          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
+              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
+              model);
+          hourlyCount++;
+          dailyCount++;
+          checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
         }
-        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00" + "(" + count + ")");
+        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
+            + " (" + hourlyCount + ")");
+        checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
       }
 
     }
     treeView.setRoot(root);
+    treeView.setShowRoot(false);
+  }
+
+
+  private void expandAll(TreeItem item) {
+    if (!item.isLeaf()) {
+      item.setExpanded(true);
+      for (Object child : item.getChildren()) {
+        expandAll((TreeItem) child);
+      }
+    }
+  }
+
+
+  private void collapseAll(TreeItem item) {
+    if (!item.isLeaf()) {
+      if (item == treeView.getRoot()) {
+        item.setExpanded(true);
+      } else {
+        item.setExpanded(false);
+      }
+      for (Object child : item.getChildren()) {
+        collapseAll((TreeItem) child);
+      }
+    }
+  }
+
+
+  private void selectNone() {
+    if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
+      treeView.getSelectionModel().getSelectedItems().forEach(item ->
+          ((FrvaTreeViewItem) item).setSelected(false));
+    } else {
+      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
+      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
+    }
+    treeView.getSelectionModel().clearSelection();
+  }
+
+
+  private void activateMultiSelect() {
+    treeView.setOnMouseClicked(event -> {
+      treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      treeView.getSelectionModel().getSelectedItems().forEach(item ->
+          ((FrvaTreeViewItem) item).setSelected(true));
+    });
   }
 }
