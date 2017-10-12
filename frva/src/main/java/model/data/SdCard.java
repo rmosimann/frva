@@ -38,7 +38,7 @@ public class SdCard {
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
         System.out.println("fiile:" + dataFile.getAbsolutePath());
-        dataFiles.add(new DataFile(dataFile));
+        dataFiles.add(new DataFile(dataFile, this));
       }
     }
     return dataFiles;
@@ -69,10 +69,16 @@ public class SdCard {
     return dataFiles;
   }
 
+  /**
+   * Getter for the devices Serial-Number.
+   *
+   * @return SerialNumber as String.
+   */
   public String getDeviceSerialNr() {
     if (this.dataFiles == null || this.dataFiles.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    return this.dataFiles.stream().findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+    return this.dataFiles.stream()
+        .findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
   }
 }
