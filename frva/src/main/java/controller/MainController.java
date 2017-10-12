@@ -46,7 +46,7 @@ public class MainController {
   void importSdCard(ActionEvent event) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Open Resource File");
-    File selectedFile = directoryChooser.showDialog(ImportSdCardButton.getScene().getWindow());
+    File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
     try {
       model.addSdCard(new SdCard(selectedFile.toURI().toURL()));
     } catch (MalformedURLException e) {
