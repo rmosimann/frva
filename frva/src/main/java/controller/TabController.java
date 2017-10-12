@@ -60,7 +60,6 @@ public class TabController extends Tab {
   private void initialize() {
     configureRadios();
     initializeGraph();
-    addRawData();
   }
 
   private void configureRadios() {

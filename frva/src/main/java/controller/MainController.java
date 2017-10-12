@@ -1,17 +1,22 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
@@ -33,6 +38,22 @@ public class MainController {
 
   @FXML
   private TabPane tabPane;
+
+  @FXML
+  private Button importSdCardButton;
+
+  @FXML
+  void importSdCard(ActionEvent event) {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Open Resource File");
+    File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
+    try {
+      model.addSdCard(new SdCard(selectedFile.toURI().toURL()));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    initializeTree();
+  }
 
   @FXML
   private void initialize() {
@@ -77,7 +98,8 @@ public class MainController {
 
     //load view and controller
     try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/tabContent.fxml"));
+      FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
+          .getResource("view/tabContent.fxml"));
       loader.setController(new TabController(model));
       newtab.setContent((Node) loader.load());
     } catch (IOException e) {
@@ -90,10 +112,6 @@ public class MainController {
 
 
   private void initializeTree() {
-    //Add testSDCard
-    SdCard sdCard = new SdCard(getClass().getResource("/SDCARD"));
-    model.addSdCard(sdCard);
-
     CheckBoxTreeItem<String> root = new CheckBoxTreeItem<String>("Library");
     root.setExpanded(true);
 
