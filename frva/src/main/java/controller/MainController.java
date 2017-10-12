@@ -1,37 +1,31 @@
 package controller;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
-import javafx.util.Callback;
 import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 
 public class MainController {
   private final FrvaModel model;
-
+  private int newTabId = 0;
 
   public MainController(FrvaModel model) {
     this.model = model;
   }
-  
+
+
   @FXML
   TreeView<String> treeView;
 
@@ -54,33 +48,43 @@ public class MainController {
         .addListener((observable, oldValue, newValue) -> {
           if (newValue.intValue() == tabPane.getTabs().size() - 1) {
             addTab();
+          } else {
+            model.setCurrentlySelectedTab((Integer) newValue);
           }
         });
   }
 
+
+  /**
+   * Adds a new Tab to the DataHandlingView.
+   */
   private void addTab() {
-    int numTabs = tabPane.getTabs().size();
-    Tab newtab = new Tab("Untitled " + (numTabs + 1));
+    //Create Tab and set defaults
+    Tab newtab = new Tab("Untitled " + (newTabId));
     newtab.closableProperty().setValue(true);
+    newtab.setId(String.valueOf(newTabId));
     newtab.setOnCloseRequest(event -> {
+      model.removeSelectionMapping(newTabId);
       if (tabPane.getTabs().size() == 2) {
         addTab();
       }
     });
-
-
+    model.addSelectionMapping(newTabId);
     tabPane.getTabs().add(tabPane.getTabs().size() - 1, newtab);
+    newTabId++;
+
+    //load view and controller
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/tabContent.fxml"));
       loader.setController(new TabController(model));
-      Node node = (Node) loader.load();
-      newtab.setContent(node);
+      newtab.setContent((Node) loader.load());
     } catch (IOException e) {
       e.printStackTrace();
     }
-    tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
-  }
 
+    tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
+    model.setCurrentlySelectedTab(tabPane.getTabs().size() - 2);
+  }
 
 
   private void initializeTree() {
