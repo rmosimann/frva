@@ -12,10 +12,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane minHeight="60.0" prefHeight="60.0">
                     <children>
@@ -34,7 +33,7 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;">
                                     <children>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                        <Button fx:id="expandAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
@@ -43,7 +42,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                        <Button fx:id="collapseAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
@@ -52,7 +51,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                        <Button fx:id="selectAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
@@ -61,7 +60,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                        <Button fx:id="selectNoneButton" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
@@ -125,8 +124,7 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                 style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS"/>
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </children>

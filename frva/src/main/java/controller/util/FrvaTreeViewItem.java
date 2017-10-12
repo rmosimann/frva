@@ -16,6 +16,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   public FrvaTreeViewItem(FrvaModel model) {
     this.model = model;
+
   }
 
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
@@ -23,6 +24,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.measureSequence = ms;
     this.name = name;
     this.model = model;
+
 
     super.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -45,8 +47,13 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
   }
 
   public void setValue(String name, MeasureSequence measureSequence) {
-    setValue(name);
+    super.setValue(name);
     this.name = name;
     this.measureSequence = measureSequence;
+  }
+
+  public void setExpand(boolean value){
+    super.setExpanded(value);
+
   }
 }

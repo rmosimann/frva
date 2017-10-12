@@ -10,9 +10,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.Tab;
@@ -39,15 +42,34 @@ public class MainController {
 
   @FXML
   TreeView<FrvaTreeViewItem> treeView;
-
+  @FXML
+  Button selectAllButton;
+  @FXML
+  Button selectNoneButton;
+  @FXML
+  Button collapseAllButton;
+  @FXML
+  Button expandAllButton;
   @FXML
   private TabPane tabPane;
+
 
   @FXML
   private void initialize() {
     initializeTabHandling();
     initializeTree();
+    addEventHandlers();
+
   }
+
+  private void addEventHandlers() {
+
+    expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
+    collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
+    selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
+    selectNoneButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false));
+  }
+
 
   private void initializeTabHandling() {
     Tab tab = new Tab("+");
@@ -115,6 +137,7 @@ public class MainController {
         Iterator it = dataFile.getMeasureSequences().iterator();
         String hour = "";
         String date = "000000";
+        boolean continueToNextDay = false;
         int hourlyCount = 0;
         int dailyCount = 0;
         FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
@@ -130,12 +153,13 @@ public class MainController {
             checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")", null);
             dailyCount = 0;
             date = currentDate;
-            hour = "";
+            continueToNextDay = true;
             checkBoxTreeDateItem = new FrvaTreeViewItem(model);
             sdCardItem.getChildren().add(checkBoxTreeDateItem);
           }
 
-          if (!currentHour.equals(hour)) {
+          if (!currentHour.equals(hour) || continueToNextDay) {
+            continueToNextDay = false;
             checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 " + "(" + hourlyCount + ")", null);
             hourlyCount = 0;
             hour = currentHour;
@@ -153,6 +177,29 @@ public class MainController {
       }
     }
     treeView.setRoot(root);
+    treeView.setShowRoot(false);
+  }
+
+  private void expandAll(TreeItem item) {
+    if (!item.isLeaf()) {
+      item.setExpanded(true);
+      for (Object child : item.getChildren()
+          ) {
+        expandAll((TreeItem) child);
+      }
+    }
+  }
+
+
+  private void collapseAll(TreeItem item) {
+    if (!item.isLeaf()) {
+        if(item == treeView.getRoot()||item.getParent()!=treeView.getRoot()){item.setExpanded(true);
+      }
+      else{item.setExpanded(false);}
+      for (Object child : item.getChildren()
+          ) {
+        collapseAll((TreeItem) child);}
+    }
   }
 
 
