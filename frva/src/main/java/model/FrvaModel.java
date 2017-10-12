@@ -56,4 +56,8 @@ public class FrvaModel {
   public void setCurrentlySelectedTab(int currentlySelectedTab) {
     this.currentlySelectedTab.set(currentlySelectedTab);
   }
+
+  public ObservableList<MeasureSequence> getObservableList(int mapKey) {
+    return selectionMap.get(mapKey);
+  }
 }

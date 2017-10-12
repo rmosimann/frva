@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,23 +13,28 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import model.FrvaModel;
+import model.data.MeasureSequence;
 
 
-public class TabController extends Tab {
+public class TabController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
+  private final int tabId;
+  private final ObservableList<MeasureSequence> listToWatch;
 
+  public TabController(FrvaModel model, int thisTabId) {
 
-  public TabController(FrvaModel model) {
     this.model = model;
     lineChartData = FXCollections.observableArrayList();
+    tabId = thisTabId;
+
+    listToWatch = model.getObservableList(thisTabId);
   }
 
   @FXML
@@ -59,6 +65,12 @@ public class TabController extends Tab {
   @FXML
   private void initialize() {
     configureRadios();
+    listToWatch.addListener((ListChangeListener<? super MeasureSequence>) c -> {
+      System.out.println("changed");
+    });
+
+    listToWatch.add(model.getLibrary()
+        .get(0).getDataFiles().get(0).getMeasureSequences().get(0));
     initializeGraph();
     addRawData();
   }
