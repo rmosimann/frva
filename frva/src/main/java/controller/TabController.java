@@ -13,10 +13,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -27,21 +25,22 @@ public class TabController {
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
+  private ToggleGroup togglGroupYaxis;
+  private ToggleGroup togglGroupXaxis;
+  private boolean asWavelength = true;
 
+  /**
+   * Constructor for new TabController.
+   *
+   * @param model     The one and only Model.
+   * @param thisTabId the ID of this Tab.
+   */
   public TabController(FrvaModel model, int thisTabId) {
-
     this.model = model;
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
-
     listToWatch = model.getObservableList(thisTabId);
   }
-
-  @FXML
-  private ToggleButton wavelengthButton;
-
-  @FXML
-  private ToggleButton bandsButton;
 
   @FXML
   private LineChart<Double, Double> datachart;
@@ -61,229 +60,103 @@ public class TabController {
   @FXML
   private RadioButton radioButtonRadiance;
 
+  @FXML
+  private RadioButton radioButtonWavelength;
+
+  @FXML
+  private RadioButton radioButtonBands;
+
 
   @FXML
   private void initialize() {
-    configureRadios();
-    listToWatch.addListener((ListChangeListener<? super MeasureSequence>) c -> {
-      System.out.println("changed");
-    });
-
-    listToWatch.add(model.getLibrary()
-        .get(0).getDataFiles().get(0).getMeasureSequences().get(0));
+    configureRadioButtons();
     initializeGraph();
+
+    listToWatch.addListener((ListChangeListener<? super MeasureSequence>) c -> {
+      updateData();
+    });
   }
 
-  private void configureRadios() {
-    ToggleGroup radiogaga = new ToggleGroup();
-    radiogaga.getToggles().addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
-    radiogaga.selectToggle(radioButtonRaw);
-
-    radiogaga.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.equals(radioButtonRadiance)) {
-        this.showRadiance();
-      } else if (newValue.equals(radioButtonRaw)) {
-        this.showRaw();
-      } else if (newValue.equals(radioButtonReflectance)) {
-        this.showReflectance();
-      }
+  private void configureRadioButtons() {
+    togglGroupYaxis = new ToggleGroup();
+    togglGroupYaxis.getToggles()
+        .addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
+    togglGroupYaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+      updateData();
     });
+    togglGroupYaxis.selectToggle(radioButtonRaw);
+
+
+    togglGroupXaxis = new ToggleGroup();
+    togglGroupXaxis.getToggles().addAll(radioButtonWavelength, radioButtonBands);
+    togglGroupXaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+      if (togglGroupXaxis.getSelectedToggle().equals(radioButtonWavelength)) {
+        asWavelength = true;
+        xaxis.setLabel("Wavelength [nanometer]");
+      } else {
+        asWavelength = false;
+        xaxis.setLabel("Bands");
+      }
+      updateData();
+    });
+    togglGroupXaxis.selectToggle(radioButtonWavelength);
   }
 
   private void initializeGraph() {
-    xaxis.setLowerBound(300);
-    xaxis.setUpperBound(1100);
-    xaxis.setAutoRanging(false);
-    xaxis.setTickUnit(100);
-    xaxis.setAnimated(true);
 
-    yaxis.setUpperBound(30000);
+    xaxis.setAutoRanging(true);
+    xaxis.setAnimated(false);
+    xaxis.setForceZeroInRange(false);
+
     yaxis.setAutoRanging(true);
-    yaxis.setAnimated(true);
-    yaxis.setTickUnit(1000);
+    yaxis.setAnimated(false);
 
     datachart.setAnimated(true);
     datachart.setCreateSymbols(false);
     datachart.setAlternativeRowFillVisible(false);
     datachart.setLegendVisible(false);
-
     datachart.setData(lineChartData);
 
     datachart.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
-        System.out.println(event.getX());
-        System.out.println(event.getY());
         zoomIn(event.getX(), event.getY());
       }
     });
-
-    datachart.setOnScroll(new EventHandler<ScrollEvent>() {
-      @Override
-      public void handle(ScrollEvent event) {
-        System.out.println(event.getDeltaX());
-      }
-    });
-
   }
 
-  private void addRawData() {
-    double[] calibration = model.getLibrary()
-        .get(0).getWavelengthCalibrationFile().getCalibration();
+  private void updateData() {
+    lineChartData.clear();
+    for (MeasureSequence sequence : listToWatch) {
+      Set<Map.Entry<String, double[]>> entries = null;
+      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
+        entries = sequence.getMeasurements().entrySet();
+        yaxis.setLabel("DN (digital number)");
+      }
+      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
+        entries = sequence.getRadiance().entrySet();
+        yaxis.setLabel("[W/( m²sr nm)]");
+      }
+      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
+        entries = sequence.getReflection().entrySet();
+        yaxis.setLabel("Reflectance Factor");
+      }
 
-    for (int j = 0; j < 1; j++) {
-      Map<String, double[]> measurements = model.getLibrary()
-          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
-
-      Set<Map.Entry<String, double[]>> entries = measurements.entrySet();
+      double[] calibration = sequence.getWavlengthCalibration();
 
       for (Map.Entry<String, double[]> entry : entries) {
         double[] data = entry.getValue();
         LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
         series.setName(entry.getKey());
         for (int i = 0; i < data.length; i++) {
-          series.getData().add(new XYChart.Data<>(calibration[i], data[i]));
+          double x = asWavelength ? calibration[i] : i;
+          double y = data[i];
+
+          series.getData().add(new XYChart.Data<>(x, y));
         }
         lineChartData.add(series);
       }
     }
-    yaxis.setLabel("DN (digital number)");
-    xaxis.setLabel("Wavelength [nanometer]");
-  }
-
-  @FXML
-  private void xunitAsWavelenght() {
-    //requires redraw, as the calibrationfiles depend on a measuresequence
-    xaxis.setLabel("Wavelength [nanometer]");
-  }
-
-  @FXML
-  private void xunitAsBands() {
-    int maxSize = 0;
-    for (XYChart.Series<Double, Double> serie : lineChartData) {
-      if (serie.getData().size() > maxSize) {
-        maxSize = serie.getData().size();
-      }
-      for (int i = 0; i < serie.getData().size(); i++) {
-        serie.getData().get(i).setXValue((double) i);
-      }
-    }
-
-    xaxis.setLowerBound(0);
-    xaxis.setUpperBound(maxSize);
-    xaxis.setLabel("Bands");
-  }
-
-
-  private void showRaw() {
-    /*
-      Data:   as they are
-      X-Axis: Wavelength[Nanometers]/Bands[dn]
-      Y-Axis: DN (digital numbers)
-     */
-    lineChartData.clear();
-    this.addRawData();
-
-  }
-
-  private void showRadiance() {
-    /*
-    Radiance L
-      Data:
-        L(VEG) = (DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03
-        L(WR) = (DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03
-      X-Axis: Wavelength[Nanometers]/Bands[dn]
-      Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
-     */
-
-    lineChartData.clear();
-
-    double[] waveCalibration = model.getLibrary()
-        .get(0).getWavelengthCalibrationFile().getCalibration();
-
-    double[] vegCalibration = model.getLibrary()
-        .get(0).getSensorCalibrationFileVeg().getCalibration();
-
-    double[] wrCalibration = model.getLibrary()
-        .get(0).getSensorCalibrationFileWr().getCalibration();
-
-    for (int j = 0; j < 1; j++) {
-      Map<String, double[]> measurements = model.getLibrary()
-          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
-
-      double[] vegs = measurements.get("VEG");
-      double[] dcVegs = measurements.get("DC_VEG");
-
-      double[] wrs = measurements.get("WR");
-      double[] dcWrs = measurements.get("DC_WR");
-
-      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-      series.setName("VEG_radiance");
-      for (int i = 0; i < waveCalibration.length; i++) {
-        double calculatedRadiance = (vegs[i] - dcVegs[i]) * vegCalibration[i];
-        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
-      }
-      lineChartData.add(series);
-
-      series = new LineChart.Series<Double, Double>();
-      series.setName("WR_radiance");
-      for (int i = 0; i < waveCalibration.length; i++) {
-        double calculatedRadiance = (wrs[i] - dcWrs[i]) * wrCalibration[i];
-        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
-      }
-      lineChartData.add(series);
-
-    }
-    yaxis.setLabel("[W/( m²sr nm)]");
-    xaxis.setLabel("Wavelength [nanometer]");
-
-  }
-
-  private void showReflectance() {
-    /*
-    Reflectance R
-      Data:
-        R(VEG) = L(VEG) / L(WR)
-      X-Axis: Wavelength[Nanometers]/Bands[dn]
-      Y-Axis: ReflectanceFactor (none)
-     */
-
-
-    lineChartData.clear();
-
-    double[] waveCalibration = model.getLibrary()
-        .get(0).getWavelengthCalibrationFile().getCalibration();
-
-    double[] vegCalibration = model.getLibrary()
-        .get(0).getSensorCalibrationFileVeg().getCalibration();
-
-    double[] wrCalibration = model.getLibrary()
-        .get(0).getSensorCalibrationFileWr().getCalibration();
-
-    for (int j = 0; j < 1; j++) {
-      Map<String, double[]> measurements = model.getLibrary()
-          .get(0).getDataFiles().get(0).getMeasureSequences().get(j).getMeasurements();
-
-      double[] vegs = measurements.get("VEG");
-      double[] dcVegs = measurements.get("DC_VEG");
-
-      double[] wrs = measurements.get("WR");
-      double[] dcWrs = measurements.get("DC_WR");
-
-      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-      series.setName("Reflectance");
-      for (int i = 0; i < waveCalibration.length; i++) {
-        double calculatedRadiance
-            = ((vegs[i] - dcVegs[i]) * vegCalibration[i])
-            / ((wrs[i] - dcWrs[i]) * wrCalibration[i]);
-        series.getData().add(new XYChart.Data<>(waveCalibration[i], calculatedRadiance));
-      }
-      lineChartData.add(series);
-
-    }
-    yaxis.setLabel("Reflectance Factor");
-    xaxis.setLabel("Wavelength [nanometer]");
-
   }
 
   private void calculateIndicies() {
@@ -298,8 +171,8 @@ public class TabController {
      * PRI
      *
      */
-
   }
+
 
   private void zoomIn(double xpos, double ypos) {
     double zoomFactor = 10;

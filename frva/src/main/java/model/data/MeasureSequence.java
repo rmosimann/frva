@@ -159,7 +159,7 @@ public class MeasureSequence {
    *
    * @return A DoubleArray.
    */
-  public double[] getReflection() {
+  public Map<String, double[]> getReflection() {
     /*
     Reflectance R
       Data:   R(VEG) = L(VEG) / L(WR)
@@ -176,6 +176,14 @@ public class MeasureSequence {
     for (int i = 0; i < reflection.length; i++) {
       reflection[i] = vegRadiance[i] / wrRadiance[i];
     }
-    return reflection;
+
+    Map<String, double[]> reflectionMap = new HashMap<>();
+    reflectionMap.put("Reflection", reflection);
+
+    return reflectionMap;
+  }
+
+  public double[] getWavlengthCalibration() {
+    return sdCard.getWavelengthCalibrationFile().getCalibration();
   }
 }
