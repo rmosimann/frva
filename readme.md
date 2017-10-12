@@ -1,11 +1,13 @@
 
 Readme First
 ============
-This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigger. This document contains all necessary information for working with the 
+This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigger. This document contains all necessary information for working with the repository.
 [Link](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) to github Readme formatting.
 
 # Architecture
-Environment: The applications target OS is Linux. 
+
+## Environment 
+The applications target OS is Linux. 
 
 ## Model
 We follow the Model-View-Controller (MVC) approach. The model contains the data which are measurements of a FloX/RoX spectroanalysis device.
@@ -54,6 +56,16 @@ In this project we apply the following technologies:
 | Documentation: JavaDoc           |           |
 
 
+# Build information
+Precondition: install Oracle JDK 1.8.0_144
+
+Build:
+```shell
+git clone https://gitlab.fhnw.ch/IP56/floxrox.git
+cd frva
+./gradlew assemble
+```    
+ 
 # Coding Conventions
 We follow Google Java Code Style Guidelines which can be found under [Styleguide](https://google.github.io/styleguide/javaguide.html)
 [How to install](https://medium.com/@jayanga/how-to-configure-checkstyle-and-findbugs-plugins-to-intellij-idea-for-wso2-products-c5f4bbe9673a)
