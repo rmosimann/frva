@@ -11,30 +11,31 @@ import model.data.MeasureSequence;
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
-  MeasureSequence measureSequence;
-  String name;
-  FrvaModel model;
+  private MeasureSequence measureSequence;
+  private String name;
+  private FrvaModel model;
 
   public FrvaTreeViewItem(FrvaModel model) {
     this.model = model;
 
   }
 
+  /**
+   * Constructor of FrvaTreeViewItem.
+   *
+   */
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
-    setValue(name);
+    super.setValue(name);
     this.measureSequence = ms;
     this.name = name;
     this.model = model;
 
 
-    super.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          model.getCurrentSelectionList().add(measureSequence);
-        } else {
-          model.getCurrentSelectionList().removeAll(measureSequence);
-        }
+    super.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        model.getCurrentSelectionList().add(measureSequence);
+      } else {
+        model.getCurrentSelectionList().removeAll(measureSequence);
       }
     });
   }
@@ -47,13 +48,12 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     return this.measureSequence;
   }
 
-  public void setValue(String name, MeasureSequence measureSequence) {
+  public void setValue(String name) {
     super.setValue(name);
     this.name = name;
-    this.measureSequence = measureSequence;
   }
 
-  public void setExpand(boolean value){
+  public void setExpand(boolean value) {
     super.setExpanded(value);
   }
 }

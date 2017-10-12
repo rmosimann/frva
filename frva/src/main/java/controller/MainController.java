@@ -1,36 +1,23 @@
 package controller;
 
+import controller.util.FrvaTreeViewItem;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import controller.util.FrvaTreeViewItem;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableSet;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
@@ -49,15 +36,15 @@ public class MainController {
   }
 
   @FXML
-  TreeView<FrvaTreeViewItem> treeView;
+  private TreeView<FrvaTreeViewItem> treeView;
   @FXML
-  Button selectAllButton;
+  private Button selectAllButton;
   @FXML
-  Button selectNoneButton;
+  private Button selectNoneButton;
   @FXML
-  Button collapseAllButton;
+  private Button collapseAllButton;
   @FXML
-  Button expandAllButton;
+  private Button expandAllButton;
   @FXML
   private TabPane tabPane;
 
@@ -67,24 +54,15 @@ public class MainController {
     initializeTabHandling();
     initializeTree();
     addEventHandlers();
-
   }
 
   private void addEventHandlers() {
-
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
     selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
     selectNoneButton.setOnAction(event -> selectNone());
+    activateMultiSelect();
   }
-
-  private void selectNone() {
-    ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
-    ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
-    treeView.getSelectionModel().clearSelection();
-
-  }
-
 
   private void initializeTabHandling() {
     Tab tab = new Tab("+");
@@ -125,7 +103,7 @@ public class MainController {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/tabContent.fxml"));
       loader.setController(new TabController(model));
-      newtab.setContent((Node) loader.load());
+      newtab.setContent(loader.load());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -135,20 +113,15 @@ public class MainController {
   }
 
   private void initializeTree() {
-
     FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
-    root.setExpanded(true);
-
-    treeView.setCellFactory(CheckBoxTreeCell.<FrvaTreeViewItem>forTreeView());
+    treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
 
-    //Structurize Data with hours/days
-    for (SdCard card : model.getLibrary()
-        ) {
+    //Structurize Data with days/hours
+    for (SdCard card : model.getLibrary()) {
       FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem(card.getDeviceSerialNr(), null, model);
       root.getChildren().add(sdCardItem);
-      for (DataFile dataFile : card.getDataFiles()
-          ) {
+      for (DataFile dataFile : card.getDataFiles()) {
         Iterator it = dataFile.getMeasureSequences().iterator();
         String hour = "";
         String date = "000000";
@@ -165,7 +138,7 @@ public class MainController {
           String currentDate = measureSequence.getDate();
 
           if (!currentDate.equals(date)) {
-            checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")", null);
+            checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
             dailyCount = 0;
             date = currentDate;
             continueToNextDay = true;
@@ -175,52 +148,35 @@ public class MainController {
 
           if (!currentHour.equals(hour) || continueToNextDay) {
             continueToNextDay = false;
-            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 " + "(" + hourlyCount + ")", null);
+            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 "
+                + "(" + hourlyCount + ")");
             hourlyCount = 0;
             hour = currentHour;
             checkBoxTreeHourItem = new FrvaTreeViewItem(model);
             checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
           }
 
-          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID" + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence, model);
+          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
+              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
+              model);
           hourlyCount++;
           dailyCount++;
           checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
         }
-        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00" + " (" + hourlyCount + ")", null);
-        checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")", null);
+        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
+            + " (" + hourlyCount + ")");
+        checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
       }
     }
     treeView.setRoot(root);
     treeView.setShowRoot(false);
-
-
-
-    treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        treeView.getSelectionModel().getSelectedItems().forEach(new Consumer<TreeItem<FrvaTreeViewItem>>() {
-          @Override
-          public void accept(TreeItem<FrvaTreeViewItem> item) {
-
-              ((FrvaTreeViewItem) item).setSelected(true);
-
-          }
-        });
-      }
-    });
-
-
-
   }
 
 
   private void expandAll(TreeItem item) {
     if (!item.isLeaf()) {
       item.setExpanded(true);
-      for (Object child : item.getChildren()
-          ) {
+      for (Object child : item.getChildren()) {
         expandAll((TreeItem) child);
       }
     }
@@ -234,12 +190,30 @@ public class MainController {
       } else {
         item.setExpanded(false);
       }
-      for (Object child : item.getChildren()
-          ) {
+      for (Object child : item.getChildren()) {
         collapseAll((TreeItem) child);
       }
     }
   }
 
 
+  private void selectNone() {
+    if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
+      treeView.getSelectionModel().getSelectedItems().forEach(item ->
+          ((FrvaTreeViewItem) item).setSelected(false));
+    } else {
+      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
+      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
+    }
+    treeView.getSelectionModel().clearSelection();
+  }
+
+
+  private void activateMultiSelect() {
+    treeView.setOnMouseClicked(event -> {
+      treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      treeView.getSelectionModel().getSelectedItems().forEach(item ->
+          ((FrvaTreeViewItem) item).setSelected(true));
+    });
+  }
 }
