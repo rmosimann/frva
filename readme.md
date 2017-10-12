@@ -8,8 +8,8 @@ This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigg
 Environment: The applications target OS is Linux. 
 
 ## Model
-We follow the Model-View-Controller approach. The model contains the data which are measurements of a FloX/RoX spectroanalysis device.
-Data is stored within a specified folder as copy of an SD-Card. The application loads all contained folders of the specified folder.
+We follow the Model-View-Controller (MVC) approach. The model contains the data which are measurements of a FloX/RoX spectroanalysis device.
+Data is stored within a specified folder as copy of an SD-Card. The application loads all contained folders of the specified folder into the application.
 
 ## View
 We use SceneBuilder to generate FXML files as views. Each GUI element contains a unique FX-ID and can be accessed over this ID within the code.
