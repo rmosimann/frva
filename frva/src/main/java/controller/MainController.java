@@ -79,6 +79,7 @@ public class MainController {
       e.printStackTrace();
     }
     tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
+  }
 
 
 
