@@ -42,7 +42,7 @@ public class FrvaModel {
   }
 
   public ObservableList<MeasureSequence> getCurrentSelectionList() {
-    return selectionMap.get(currentlySelectedTab);
+    return selectionMap.get(currentlySelectedTab.get());
   }
 
   public String getApplicationName() {
