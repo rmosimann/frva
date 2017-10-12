@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -12,8 +13,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import model.FrvaModel;
-
 
 
 public class TabController {
@@ -92,6 +94,23 @@ public class TabController {
     datachart.setLegendVisible(false);
 
     datachart.setData(lineChartData);
+
+    datachart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        System.out.println(event.getX());
+        System.out.println(event.getY());
+        zoomIn(event.getX(), event.getY());
+      }
+    });
+
+    datachart.setOnScroll(new EventHandler<ScrollEvent>() {
+      @Override
+      public void handle(ScrollEvent event) {
+        System.out.println(event.getDeltaX());
+      }
+    });
+
   }
 
   private void addRawData() {
@@ -266,7 +285,29 @@ public class TabController {
      *
      */
 
+  }
 
+  private void zoomIn(double xpos, double ypos) {
+    double zoomFactor = 10;
+
+    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
+    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
+
+    double partLeft = xpos;
+    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
+    xaxis.setLowerBound(xaxis.getLowerBound() + zoomLeft);
+
+    double partRight = datachart.getWidth() - xpos;
+    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
+    xaxis.setUpperBound(xaxis.getUpperBound() - zoomRight);
+
+    double partDown = datachart.getHeight() - ypos;
+    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
+    yaxis.setLowerBound(yaxis.getLowerBound() + zoomDown);
+
+    double partUp = ypos;
+    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
+    yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
   }
 }
 
