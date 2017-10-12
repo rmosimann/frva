@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0" AnchorPane.rightAnchor="32.0"
+              AnchorPane.topAnchor="350.0">
+            <children>
+                <Label text="Vegetation Indices">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </Label>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label prefWidth="50.0" text="min."/>
+                        <Label prefWidth="50.0" text="max."/>
+                        <Label prefWidth="50.0" text="avg."/>
+                    </children>
+                    <padding>
+                        <Insets bottom="3.0" left="56.0" right="3.0" top="3.0"/>
+                    </padding>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label prefWidth="48.0" text="NDVI"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                    </padding>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label prefWidth="48.0" text="TCARI"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                    </padding>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label prefWidth="48.0" text="PRI"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
+                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
+        <VBox layoutX="780.0" layoutY="27.0" spacing="5.0" AnchorPane.rightAnchor="139.0" AnchorPane.topAnchor="27.0">
+            <children>
+                <Label text="Display as">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </Label>
+                <RadioButton fx:id="radioButtonRaw" mnemonicParsing="false" text="Raw"/>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <RadioButton fx:id="radioButtonRadiance" mnemonicParsing="false" selected="true" text="Radiance">
+                    <padding>
+                        <Insets top="10.0"/>
+                    </padding>
+                </RadioButton>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <RadioButton fx:id="radioButtonReflectance" mnemonicParsing="false" text="Reflectance">
+                    <padding>
+                        <Insets top="10.0"/>
+                    </padding>
+                </RadioButton>
+            </children>
+        </VBox>
+        <LineChart fx:id="datachart" layoutX="25.0" layoutY="14.0" prefHeight="553.0" prefWidth="732.0"
+                   AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="274.0"
+                   AnchorPane.topAnchor="15.0">
+            <xAxis>
+                <NumberAxis tickUnit="100" fx:id="xaxis"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yaxis" tickUnit="1"/>
+            </yAxis>
+        </LineChart>
+        <ToggleButton fx:id="wavelengthButton" layoutX="327.0" layoutY="574.0" onAction="#xunitAsWavelenght"
+                      style="-fx-background-color: lightgrey;" text="Wavelength" AnchorPane.bottomAnchor="13.0"/>
+        <ToggleButton fx:id="bandsButton" layoutX="423.0" layoutY="574.0" onAction="#xunitAsBands" selected="true"
+                      style="-fx-background-color: none;" text="Bands" AnchorPane.bottomAnchor="13.0"/>
+    </children>
+</AnchorPane>

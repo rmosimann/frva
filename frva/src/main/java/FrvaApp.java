@@ -17,7 +17,7 @@ public class FrvaApp extends Application {
 
     FXMLLoader root = new FXMLLoader(getClass().getResource("view/mainView.fxml"));
     root.setController(new MainController(model));
-    primaryStage.setTitle("ColorPicker");
+    primaryStage.setTitle(model.getApplicationName());
     primaryStage.setScene(new Scene(root.load()));
     primaryStage.show();
   }
