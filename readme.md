@@ -4,34 +4,34 @@ Readme First
 This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigger. This document contains all necessary information for working with the 
 [Link](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) to github Readme formatting.
 
-#Architecture
+# Architecture
 Environment: The applications target OS is Linux. 
 
-##Model
+## Model
 We follow the Model-View-Controller approach. The model contains the data which are measurements of a FloX/RoX spectroanalysis device.
 Data is stored within a specified folder as copy of an SD-Card. The application loads all contained folders of the specified folder.
 
-##View
+## View
 We use SceneBuilder to generate FXML files as views. Each GUI element contains a unique FX-ID and can be accessed over this ID within the code.
 
-##Controller
+## Controller
 Each View has a seperate Controller which acts as a connection between View and Model. The controller contains the logic and all functions which can be accessed over the view. While being initialised the controller gets the model. 
 
 
-##List of Views
+## List of Views
 -mainView.fxml
 -tabContent.fxml
 
-##List of Controllers
+## List of Controllers
 MainController
 TabController
 
-##Model
+## Model
 The model contains a List of SdCards (library). Each SdCard has its Calibration-file.
 An SdCard contains * Datafiles. A Datafile contains * MeasureSequences. 
 
 
-##Code Structure
+## Code Structure
 
 - frva
   |-src
@@ -49,7 +49,7 @@ An SdCard contains * Datafiles. A Datafile contains * MeasureSequences.
     |- gradlew              > gradle-wrapper to build the project
 
 
-#Technologies
+# Technologies
 In this project we apply the following technologies:
 
 | Technology                       | Version   |
@@ -64,7 +64,7 @@ In this project we apply the following technologies:
 | Documentation: JavaDoc           |           |
 
 
-#Coding Conventions
+# Coding Conventions
 We follow Google Java Code Style Guidelines which can be found under [Styleguide](https://google.github.io/styleguide/javaguide.html)
 [How to install](https://medium.com/@jayanga/how-to-configure-checkstyle-and-findbugs-plugins-to-intellij-idea-for-wso2-products-c5f4bbe9673a)
  Checkstyle Plugin 
@@ -72,7 +72,7 @@ The configuration file can be found under config/checkstyle/checkstyle.xml
 
 
 
-#Getting Started
+# Getting Started
 
 These views are loaded the following way:
 ```java
@@ -84,7 +84,7 @@ primaryStage.show();
 ```
 
 
-#License
+# License
 
  This file is part of FloX-RoX Visualization Application (FRVA).
 
