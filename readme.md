@@ -2,6 +2,7 @@
 Readme First
 ============
 This is FHNW project-repository IP5 FloX RoX of Roland Mosimann and Patrick Wigger. This document contains all necessary information for working with the 
+[Link](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) to github Readme formatting.
 
 #Architcture
 
@@ -55,11 +56,20 @@ In this project we apply the following technologies:
 
 
 #Coding Conventions
+We follow Google Java Code Style Guidelines which can be found under [Styleguide](https://google.github.io/styleguide/javaguide.html)
+[How to install](https://medium.com/@jayanga/how-to-configure-checkstyle-and-findbugs-plugins-to-intellij-idea-for-wso2-products-c5f4bbe9673a)
+ Checkstyle Plugin 
+The configuration file can be found under config/checkstyle/checkstyle.xml
+
+
 
 #Getting Started
+
 These views are loaded the following way:
+```java
 FXMLLoader root = new FXMLLoader(getClass().getResource("view/mainView.fxml"));
 root.setController(new MainController(model));
 primaryStage.setTitle(model.getApplicationName());
 primaryStage.setScene(new Scene(root.load()));
 primaryStage.show();
+```
