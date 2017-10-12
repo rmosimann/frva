@@ -1,5 +1,7 @@
 package model.data;
 
+import com.sun.media.sound.InvalidDataException;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
@@ -65,10 +67,6 @@ More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3n
     return metadata[0];
   }
 
-  public Date getDate() {
-    return new Date(Long.parseLong(metadata[1]));
-  }
-
 
   public String getTime() {
     String timestamp = metadata[2];
@@ -96,6 +94,11 @@ More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3n
 
   public String getSerial() {
     return metadata[18];
+  }
+
+  public String getDate() {
+  //  if( metadata[1].length()!=6){throw new InvalidDataException();}
+    return metadata[1].substring(0, 2) + "-" + metadata[1].substring(2, 4) + "-" + metadata[1].substring(4, 6);
   }
 
 }
