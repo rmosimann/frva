@@ -33,20 +33,20 @@ An SdCard contains * Datafiles. A Datafile contains * MeasureSequences.
 
 ## Code Structure
 
-  frva
-  |-src
-    |-main
-      |-java
-        |-controller        > Put all conrtollers here
-        |-model             > Contain the model where al data are stored
-        |-FrvaApp.java      > Main Application
-      |-resources
-        |-css               
-        |-icons
-        |-images
-        |-view              > Put all FXML-Files here
-    |- build.gradle         > builds configuration
-    |- gradlew              > gradle-wrapper to build the project
+      frva
+      |-src
+        |-main
+          |-java
+            |-controller        > Put all conrtollers here
+            |-model             > Contain the model where al data are stored
+            |-FrvaApp.java      > Main Application
+          |-resources
+            |-css               
+            |-icons
+            |-images
+            |-view              > Put all FXML-Files here
+        |- build.gradle         > builds configuration
+        |- gradlew              > gradle-wrapper to build the project
 
 
 # Technologies
