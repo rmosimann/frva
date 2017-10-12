@@ -14,6 +14,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,20 +23,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0"
-            prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane minHeight="60.0" prefHeight="60.0">
                     <children>
-                        <ToggleButton layoutX="515.0" layoutY="19.0" mnemonicParsing="false" selected="true"
-                                      text="Visualize"/>
-                        <ToggleButton layoutX="590.0" layoutY="19.0" mnemonicParsing="false" text="Connect"/>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true"
-                                   preserveRatio="true" AnchorPane.leftAnchor="14.0">
+                        <ToggleButton layoutX="515.0" layoutY="19.0" mnemonicParsing="false" selected="true" text="Visualize" />
+                        <ToggleButton layoutX="590.0" layoutY="19.0" mnemonicParsing="false" text="Connect" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0">
                             <image>
-                                <Image url="@../icons/ic_menu_black_24dp/web/ic_menu_black_24dp_2x.png"/>
+                                <Image url="@../icons/ic_menu_black_24dp/web/ic_menu_black_24dp_2x.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -44,14 +42,13 @@
                     <children>
                         <VBox prefWidth="250.0" style="-fx-border-color: darkgrey;" HBox.hgrow="NEVER">
                             <children>
-                                <HBox alignment="CENTER_LEFT" minHeight="44.0" prefHeight="44.0" spacing="10.0"
-                                      style="-fx-background-color: gainsboro;">
+                                <HBox alignment="CENTER_LEFT" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;">
                                     <children>
                                         <Button mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_expand_more_black_24dp/web/ic_expand_more_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_expand_more_black_24dp/web/ic_expand_more_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -60,7 +57,7 @@
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_expand_less_black_24dp/web/ic_expand_less_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_expand_less_black_24dp/web/ic_expand_less_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -69,7 +66,7 @@
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_check_black_24dp/web/ic_check_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_check_black_24dp/web/ic_check_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -78,44 +75,34 @@
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_crop_square_black_24dp/web/ic_crop_square_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_crop_square_black_24dp/web/ic_crop_square_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
                                         </Button>
                                     </children>
                                     <opaqueInsets>
-                                        <Insets/>
+                                        <Insets />
                                     </opaqueInsets>
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                     <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                     </padding>
                                 </HBox>
-                                <Pane maxHeight="1.7976931348623157E308" minWidth="252.0" prefWidth="252.0" style=""
-                                      VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <ImageView fitHeight="401.0" fitWidth="252.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <image>
-                                                <Image url="@../images/TreeView.png"/>
-                                            </image>
-                                        </ImageView>
-                                    </children>
+                                <Pane maxHeight="1.7976931348623157E308" minWidth="252.0" prefWidth="252.0" style="" VBox.vgrow="ALWAYS">
+                           <children>
+                              <TreeView fx:id="treeView" prefHeight="570.0" prefWidth="252.0" />
+                           </children>
                                 </Pane>
-                                <HBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" minHeight="44.0"
-                                      prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;"
-                                      VBox.vgrow="NEVER">
+                                <HBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button accessibleHelp="Import" accessibleText="Import" mnemonicParsing="false"
-                                                style="-fx-background-color: none;">
+                                        <Button accessibleHelp="Import" accessibleText="Import" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
-                                                <ImageView accessibleHelp="Import" accessibleRole="BUTTON"
-                                                           accessibleText="Import">
+                                                <ImageView accessibleHelp="Import" accessibleRole="BUTTON" accessibleText="Import">
                                                     <image>
-                                                        <Image url="@../icons/ic_library_add_black_24dp/web/ic_library_add_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_library_add_black_24dp/web/ic_library_add_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -124,7 +111,7 @@
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_delete_black_24dp/web/ic_delete_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_delete_black_24dp/web/ic_delete_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -133,23 +120,22 @@
                                             <graphic>
                                                 <ImageView>
                                                     <image>
-                                                        <Image url="@../icons/ic_file_upload_black_24dp/web/ic_file_upload_black_24dp_1x.png"/>
+                                                        <Image url="@../icons/ic_file_upload_black_24dp/web/ic_file_upload_black_24dp_1x.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
                                         </Button>
                                     </children>
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                     <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                     </padding>
                                 </HBox>
                             </children>
                         </VBox>
-                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                 style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS">
+                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS">
                             <tabs>
                                 <Tab text=" 24.10.2017:12:15">
                                     <content>
@@ -159,149 +145,136 @@
                                                     <children>
                                                         <Label text="Vegetation Indices">
                                                             <font>
-                                                                <Font name="System Bold" size="13.0"/>
+                                                                <Font name="System Bold" size="13.0" />
                                                             </font>
                                                             <VBox.margin>
-                                                                <Insets/>
+                                                                <Insets />
                                                             </VBox.margin>
                                                         </Label>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label prefWidth="50.0" text="min."/>
-                                                                <Label prefWidth="50.0" text="max."/>
-                                                                <Label prefWidth="50.0" text="avg."/>
+                                                                <Label prefWidth="50.0" text="min." />
+                                                                <Label prefWidth="50.0" text="max." />
+                                                                <Label prefWidth="50.0" text="avg." />
                                                             </children>
                                                             <padding>
-                                                                <Insets bottom="3.0" left="56.0" right="3.0" top="3.0"/>
+                                                                <Insets bottom="3.0" left="56.0" right="3.0" top="3.0" />
                                                             </padding>
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label prefWidth="48.0" text="NDVI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
+                                                                <Label prefWidth="48.0" text="NDVI" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1111" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="123" />
                                                             </children>
                                                             <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                                             </padding>
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label prefWidth="48.0" text="TCARI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
+                                                                <Label prefWidth="48.0" text="TCARI" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1111" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="123" />
                                                             </children>
                                                             <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                                             </padding>
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label prefWidth="48.0" text="PRI"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="1111"/>
-                                                                <TextField prefHeight="26.0" prefWidth="50.0"
-                                                                           text="123"/>
+                                                                <Label prefWidth="48.0" text="PRI" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="1111" />
+                                                                <TextField prefHeight="26.0" prefWidth="50.0" text="123" />
                                                             </children>
                                                             <padding>
-                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                                             </padding>
                                                         </HBox>
                                                     </children>
                                                 </VBox>
-                                                <Accordion layoutX="818.0" layoutY="254.0"/>
+                                                <Accordion layoutX="818.0" layoutY="254.0" />
                                                 <VBox layoutX="780.0" layoutY="27.0" spacing="5.0">
                                                     <children>
                                                         <Label text="Display as">
                                                             <font>
-                                                                <Font name="System Bold" size="13.0"/>
+                                                                <Font name="System Bold" size="13.0" />
                                                             </font>
                                                             <VBox.margin>
-                                                                <Insets/>
+                                                                <Insets />
                                                             </VBox.margin>
                                                         </Label>
 
-                                                        <RadioButton mnemonicParsing="false" text="Raw"/>
+                                                        <RadioButton mnemonicParsing="false" text="Raw" />
                                                         <CheckBox disable="true" mnemonicParsing="false" text="VEG">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
                                                         <CheckBox disable="true" mnemonicParsing="false" text="WR">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
                                                         <CheckBox disable="true" mnemonicParsing="false" text="DC_VEG">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
                                                         <CheckBox disable="true" mnemonicParsing="false" text="DC_WR">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
-                                                        <RadioButton mnemonicParsing="false" selected="true"
-                                                                     text="Reflectance">
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="Reflectance">
                                                             <padding>
-                                                                <Insets top="10.0"/>
+                                                                <Insets top="10.0" />
                                                             </padding>
                                                         </RadioButton>
                                                         <CheckBox mnemonicParsing="false" selected="true" text="VEG">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
                                                         <CheckBox mnemonicParsing="false" selected="true" text="WR">
                                                             <VBox.margin>
-                                                                <Insets left="35.0"/>
+                                                                <Insets left="35.0" />
                                                             </VBox.margin>
                                                         </CheckBox>
                                                         <RadioButton mnemonicParsing="false" text="Radiance">
                                                             <padding>
-                                                                <Insets top="10.0"/>
+                                                                <Insets top="10.0" />
                                                             </padding>
                                                         </RadioButton>
                                                     </children>
                                                 </VBox>
-                                                <Label layoutX="-36.0" layoutY="299.0" rotate="-90.0"
-                                                       text="Reflectance Factor" AnchorPane.leftAnchor="-36.0"/>
-                                                <LineChart layoutX="25.0" layoutY="14.0" prefHeight="553.0"
-                                                           prefWidth="732.0">
+                                                <Label layoutX="-36.0" layoutY="299.0" rotate="-90.0" text="Reflectance Factor" AnchorPane.leftAnchor="-36.0" />
+                                                <LineChart layoutX="25.0" layoutY="14.0" prefHeight="553.0" prefWidth="732.0">
                                                     <xAxis>
-                                                        <CategoryAxis side="BOTTOM"/>
+                                                        <CategoryAxis side="BOTTOM" />
                                                     </xAxis>
                                                     <yAxis>
-                                                        <NumberAxis side="LEFT"/>
+                                                        <NumberAxis side="LEFT" />
                                                     </yAxis>
                                                     <cursor>
-                                                        <Cursor fx:constant="CROSSHAIR"/>
+                                                        <Cursor fx:constant="CROSSHAIR" />
                                                     </cursor>
                                                 </LineChart>
-                                                <ToggleButton layoutX="328.0" layoutY="554.0"
-                                                              style="-fx-background-color: lightgrey;"
-                                                              text="Wavelength"/>
-                                                <ToggleButton layoutX="424.0" layoutY="554.0" selected="true"
-                                                              style="-fx-background-color: none;" text="Bands"/>
+                                                <ToggleButton layoutX="328.0" layoutY="554.0" style="-fx-background-color: lightgrey;" text="Wavelength" />
+                                                <ToggleButton layoutX="424.0" layoutY="554.0" selected="true" style="-fx-background-color: none;" text="Bands" />
                                             </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                                 <Tab text="25.12.2017:14:07">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                                    prefWidth="200.0"/>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                     </content>
                                 </Tab>
-                                <Tab text="+"/>
+                                <Tab text="+" />
                             </tabs>
                         </TabPane>
                     </children>
