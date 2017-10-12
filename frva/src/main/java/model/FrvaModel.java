@@ -21,4 +21,9 @@ public class FrvaModel {
   public List<SdCard> getLibrary() {
     return library;
   }
+
+  public void addSdCard(SdCard sdCard) {
+    library.add(sdCard);
+  }
+
 }

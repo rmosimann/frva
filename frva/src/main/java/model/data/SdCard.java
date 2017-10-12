@@ -68,4 +68,11 @@ public class SdCard {
   public List<DataFile> getDataFiles() {
     return dataFiles;
   }
+
+  public String getDeviceSerialNr() {
+    if (this.dataFiles == null || this.dataFiles.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+    return this.dataFiles.stream().findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+  }
 }
