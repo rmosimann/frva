@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MeasureSequence {
 
-//TODO: Würde es nicht mehr Sinn machen, wenn die Measure Sequenz ihr Kalibrationsfile direkt kennt?
+  //TODO: Würde es nicht mehr Sinn machen, wenn die Measure Sequenz ihr Kalibrationsfile direkt kennt?
   //Metadata explained
   /*
   *
