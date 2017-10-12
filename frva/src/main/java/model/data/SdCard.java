@@ -34,10 +34,8 @@ public class SdCard {
     File[] listOfDirectories = folder.listFiles(File::isDirectory);
 
     for (File directory : listOfDirectories) {
-      System.out.println("dire:" + directory.getAbsolutePath());
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
-        System.out.println("fiile:" + dataFile.getAbsolutePath());
         dataFiles.add(new DataFile(dataFile, this));
       }
     }
