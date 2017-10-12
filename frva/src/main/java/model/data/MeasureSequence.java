@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MeasureSequence {
 
-
+//TODO: Würde es nicht mehr Sinn machen, wenn die Measure Sequenz ihr Kalibrationsfile direkt kennt?
   //Metadata explained
   /*
   *
@@ -82,6 +82,17 @@ More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3n
     throw new IllegalArgumentException();
   }
 
+  public int getHour() {
+    String timestamp = metadata[2];
+
+    if (timestamp.length() == 5) {
+      return Integer.parseInt(timestamp.substring(0, 1));
+    }
+    if (timestamp.length() == 6) {
+      return Integer.parseInt(timestamp.substring(0, 2));
+    }
+    throw new IllegalArgumentException();
+  }
 
   public String getSerial() {
     return metadata[18];
