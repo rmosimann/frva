@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +21,7 @@ import model.FrvaModel;
 
 
 public class TabController extends Tab {
+  private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
 

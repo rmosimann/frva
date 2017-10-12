@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,13 +19,14 @@ import model.data.SdCard;
 
 
 public class MainController {
+  private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private int newTabId = 0;
 
   public MainController(FrvaModel model) {
     this.model = model;
+    logger.info("Created MainController");
   }
-
 
   @FXML
   TreeView<String> treeView;
