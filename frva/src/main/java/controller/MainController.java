@@ -103,7 +103,6 @@ public class MainController {
     //Create Tab and set defaults
     Tab newtab = new Tab("Untitled " + (newTabId));
     newtab.closableProperty().setValue(true);
-    newtab.setId(String.valueOf(newTabId));
     newtab.setOnCloseRequest(event -> {
       model.removeSelectionMapping(newTabId);
       if (tabPane.getTabs().size() == 2) {
@@ -112,13 +111,12 @@ public class MainController {
     });
     model.addSelectionMapping(newTabId);
     tabPane.getTabs().add(tabPane.getTabs().size() - 1, newtab);
-    newTabId++;
 
     //load view and controller
     try {
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/tabContent.fxml"));
-      loader.setController(new TabController(model));
+      loader.setController(new TabController(model, newTabId));
       newtab.setContent(loader.load());
     } catch (IOException e) {
       e.printStackTrace();
@@ -126,6 +124,8 @@ public class MainController {
 
     tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
     model.setCurrentlySelectedTab(tabPane.getTabs().size() - 2);
+
+    newTabId++;
   }
 
 

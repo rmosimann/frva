@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -103,7 +102,7 @@
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <RadioButton fx:id="radioButtonRadiance" mnemonicParsing="false" selected="true" text="Radiance">
+                <RadioButton fx:id="radioButtonRadiance" mnemonicParsing="false" text="Radiance">
                     <padding>
                         <Insets top="10.0"/>
                     </padding>
@@ -135,9 +134,9 @@
                 <NumberAxis fx:id="yaxis" tickUnit="1"/>
             </yAxis>
         </LineChart>
-        <ToggleButton fx:id="wavelengthButton" layoutX="327.0" layoutY="574.0" onAction="#xunitAsWavelenght"
-                      style="-fx-background-color: lightgrey;" text="Wavelength" AnchorPane.bottomAnchor="13.0"/>
-        <ToggleButton fx:id="bandsButton" layoutX="423.0" layoutY="574.0" onAction="#xunitAsBands" selected="true"
-                      style="-fx-background-color: none;" text="Bands" AnchorPane.bottomAnchor="13.0"/>
+        <RadioButton fx:id="radioButtonWavelength" layoutX="321.0" layoutY="568.0" mnemonicParsing="false"
+                     text="Wavelength" AnchorPane.bottomAnchor="20.0"/>
+        <RadioButton fx:id="radioButtonBands" layoutX="429.0" layoutY="575.0" mnemonicParsing="false" text="Bands"
+                     AnchorPane.bottomAnchor="20.0"/>
     </children>
 </AnchorPane>
