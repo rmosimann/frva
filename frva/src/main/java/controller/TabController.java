@@ -194,13 +194,10 @@ public class TabController {
 
 
       lineChartData.add(series);
-      System.out.println(series.getNode());
 
-      Tooltip t = new Tooltip(
-          "ID: " + sequence.getId() + "\n"
-              + "Serial: " + sequence.getSerial());
+      Tooltip tooltip = new Tooltip();
 
-      Tooltip.install(series.getNode(), t);
+      Tooltip.install(series.getNode(), tooltip);
 
       series.getNode().setOnMouseEntered(event -> {
         double xlowest = xaxis.getLowerBound();
@@ -209,18 +206,13 @@ public class TabController {
         double yhighest = yaxis.getUpperBound();
         double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
         double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
-
         double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
         double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
-        System.out.println(pxWidth + " " + event.getX());
-        t.setText("x: " + String.valueOf(xvalue) + "\n"
+        tooltip.setText("x: " + String.valueOf(xvalue) + "\n"
             + "y: " + String.valueOf(yvalue));
       });
-
-
     }
-
   }
 
   private void calculateIndicies() {
