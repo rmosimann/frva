@@ -9,11 +9,13 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import model.FrvaModel;
 import model.data.MeasureSequence;
@@ -72,8 +74,21 @@ public class TabController {
     configureRadioButtons();
     initializeGraph();
 
-    listToWatch.addListener((ListChangeListener<? super MeasureSequence>) c -> {
-      updateData();
+    listToWatch.addListener(new ListChangeListener<MeasureSequence>() {
+      @Override
+      public void onChanged(Change<? extends MeasureSequence> c) {
+        while (c.next()) {
+          if (c.wasAdded()) {
+            for (MeasureSequence sequence : c.getAddedSubList()) {
+              addSingleSequence(sequence);
+            }
+          } else if (c.wasRemoved()) {
+            for (MeasureSequence sequence : c.getRemoved()) {
+              removeSingleSequence(sequence);
+            }
+          }
+        }
+      }
     });
   }
 
@@ -82,7 +97,16 @@ public class TabController {
     togglGroupYaxis.getToggles()
         .addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
     togglGroupYaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-      updateData();
+      if (newValue.equals(radioButtonRaw)) {
+        yaxis.setLabel("DN (digital number)");
+      }
+      if (newValue.equals(radioButtonRadiance)) {
+        yaxis.setLabel("[W/( m²sr nm)]");
+      }
+      if (newValue.equals(radioButtonReflectance)) {
+        yaxis.setLabel("Reflectance Factor");
+      }
+      changemode();
     });
     togglGroupYaxis.selectToggle(radioButtonRaw);
 
@@ -97,7 +121,7 @@ public class TabController {
         asWavelength = false;
         xaxis.setLabel("Bands");
       }
-      updateData();
+      changemode();
     });
     togglGroupXaxis.selectToggle(radioButtonWavelength);
   }
@@ -125,39 +149,78 @@ public class TabController {
     });
   }
 
-  private void updateData() {
-    logger.info("Redrawing Graph");
+  private void changemode() {
+    logger.info("Redrawing Graph  ");
     lineChartData.clear();
     for (MeasureSequence sequence : listToWatch) {
-      Set<Map.Entry<String, double[]>> entries = null;
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
-        entries = sequence.getMeasurements().entrySet();
-        yaxis.setLabel("DN (digital number)");
-      }
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
-        entries = sequence.getRadiance().entrySet();
-        yaxis.setLabel("[W/( m²sr nm)]");
-      }
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
-        entries = sequence.getReflection().entrySet();
-        yaxis.setLabel("Reflectance Factor");
-      }
-
-      double[] calibration = sequence.getWavlengthCalibration();
-
-      for (Map.Entry<String, double[]> entry : entries) {
-        double[] data = entry.getValue();
-        LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-        series.setName(entry.getKey());
-        for (int i = 0; i < data.length; i++) {
-          double x = asWavelength ? calibration[i] : i;
-          double y = data[i];
-
-          series.getData().add(new XYChart.Data<>(x, y));
-        }
-        lineChartData.add(series);
-      }
+      addSingleSequence(sequence);
     }
+  }
+
+  private void removeSingleSequence(MeasureSequence sequence) {
+    lineChartData.removeIf(doubleDoubleSeries -> {
+      return doubleDoubleSeries.getName().contains(sequence.getSerial())
+          && doubleDoubleSeries.getName().contains("ID" + sequence.getId());
+    });
+  }
+
+  private void addSingleSequence(MeasureSequence sequence) {
+    Set<Map.Entry<String, double[]>> entries = null;
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
+      entries = sequence.getMeasurements().entrySet();
+      yaxis.setLabel("DN (digital number)");
+    }
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
+      entries = sequence.getRadiance().entrySet();
+      yaxis.setLabel("[W/( m²sr nm)]");
+    }
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
+      entries = sequence.getReflection().entrySet();
+      yaxis.setLabel("Reflectance Factor");
+    }
+
+    double[] calibration = sequence.getWavlengthCalibration();
+
+    for (Map.Entry<String, double[]> entry : entries) {
+      double[] data = entry.getValue();
+      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+      series.setName("ID" + sequence.getId() + " - "
+          + sequence.getSerial() + " - " + entry.getKey());
+      for (int i = 0; i < data.length; i++) {
+        double x = asWavelength ? calibration[i] : i;
+        double y = data[i];
+        series.getData().add(new XYChart.Data<>(x, y));
+      }
+
+
+      lineChartData.add(series);
+      System.out.println(series.getNode());
+
+      Tooltip t = new Tooltip(
+          "ID: " + sequence.getId() + "\n"
+              + "Serial: " + sequence.getSerial());
+
+      Tooltip.install(series.getNode(), t);
+
+      series.getNode().setOnMouseEntered(event -> {
+        double xlowest = xaxis.getLowerBound();
+        double xhighest = xaxis.getUpperBound();
+        double ylowest = yaxis.getLowerBound();
+        double yhighest = yaxis.getUpperBound();
+        double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
+        double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
+
+        double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
+        double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
+
+        System.out.println(pxWidth + " " + event.getX());
+        t.setText("x: " + String.valueOf(xvalue) + "\n"
+            + "y: " + String.valueOf(yvalue));
+      });
+
+
+    }
+
   }
 
   private void calculateIndicies() {
