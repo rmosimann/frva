@@ -126,6 +126,7 @@ public class TabController {
   }
 
   private void updateData() {
+    logger.info("Redrawing Graph");
     lineChartData.clear();
     for (MeasureSequence sequence : listToWatch) {
       Set<Map.Entry<String, double[]>> entries = null;
