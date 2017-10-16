@@ -1,6 +1,8 @@
 package controller;
 
+import java.awt.Color;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -196,8 +198,16 @@ public class TabController {
       lineChartData.add(series);
 
       Tooltip tooltip = new Tooltip();
-
       Tooltip.install(series.getNode(), tooltip);
+
+      Random rand = new Random();
+      int r = rand.nextInt(200);
+      int g = rand.nextInt(200);
+      int b = rand.nextInt(200);
+      series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+          + "-fx-stroke-width: 1px");
+
+      tooltip.setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ");");
 
       series.getNode().setOnMouseEntered(event -> {
         double xlowest = xaxis.getLowerBound();
@@ -209,8 +219,19 @@ public class TabController {
         double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
         double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
-        tooltip.setText("x: " + String.valueOf(xvalue) + "\n"
+        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+            + "-fx-stroke-width: 4px");
+
+
+        tooltip.setText("ID: " + sequence.getId() + "\n"
+            + "Serial: " + sequence.getSerial() + "\n"
+            + "x: " + String.valueOf(xvalue) + "\n"
             + "y: " + String.valueOf(yvalue));
+      });
+
+      series.getNode().setOnMouseExited(event -> {
+        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+            + "-fx-stroke-width: 1px");
       });
     }
   }
