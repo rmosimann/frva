@@ -1,20 +1,20 @@
 package controller;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Tooltip;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -28,6 +28,11 @@ public class TabController {
   private ToggleGroup togglGroupYaxis;
   private ToggleGroup togglGroupXaxis;
   private boolean asWavelength = true;
+
+  private double xaxLowerBoarder;
+  private double xaxUpperBoarder;
+  private double yaxLowerBoarder;
+  private double yaxUpperBoarder;
 
   /**
    * Constructor for new TabController.
@@ -72,20 +77,42 @@ public class TabController {
     configureRadioButtons();
     initializeGraph();
 
-    listToWatch.addListener((ListChangeListener<? super MeasureSequence>) c -> {
-      updateData();
+    listToWatch.addListener(new ListChangeListener<MeasureSequence>() {
+      @Override
+      public void onChanged(Change<? extends MeasureSequence> c) {
+        while (c.next()) {
+          if (c.wasAdded()) {
+            for (MeasureSequence sequence : c.getAddedSubList()) {
+              addSingleSequence(sequence);
+            }
+          } else if (c.wasRemoved()) {
+            for (MeasureSequence sequence : c.getRemoved()) {
+              removeSingleSequence(sequence);
+            }
+          }
+        }
+      }
     });
   }
+
 
   private void configureRadioButtons() {
     togglGroupYaxis = new ToggleGroup();
     togglGroupYaxis.getToggles()
         .addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
     togglGroupYaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-      updateData();
+      if (newValue.equals(radioButtonRaw)) {
+        yaxis.setLabel("DN (digital number)");
+      }
+      if (newValue.equals(radioButtonRadiance)) {
+        yaxis.setLabel("[W/( m²sr nm)]");
+      }
+      if (newValue.equals(radioButtonReflectance)) {
+        yaxis.setLabel("Reflectance Factor");
+      }
+      changemode();
     });
     togglGroupYaxis.selectToggle(radioButtonRaw);
-
 
     togglGroupXaxis = new ToggleGroup();
     togglGroupXaxis.getToggles().addAll(radioButtonWavelength, radioButtonBands);
@@ -97,18 +124,16 @@ public class TabController {
         asWavelength = false;
         xaxis.setLabel("Bands");
       }
-      updateData();
+      changemode();
     });
     togglGroupXaxis.selectToggle(radioButtonWavelength);
   }
 
-  private void initializeGraph() {
 
-    xaxis.setAutoRanging(true);
+  private void initializeGraph() {
     xaxis.setAnimated(false);
     xaxis.setForceZeroInRange(false);
 
-    yaxis.setAutoRanging(true);
     yaxis.setAnimated(false);
 
     datachart.setAnimated(false);
@@ -117,47 +142,110 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    datachart.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
+    datachart.setOnScroll(event -> {
+      if (event.getDeltaY() < 0) {
+        zoomOut(event.getX(), event.getY());
+      } else {
         zoomIn(event.getX(), event.getY());
       }
     });
   }
 
-  private void updateData() {
+
+  private void changemode() {
+    logger.info("Redrawing Graph  ");
     lineChartData.clear();
     for (MeasureSequence sequence : listToWatch) {
-      Set<Map.Entry<String, double[]>> entries = null;
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
-        entries = sequence.getMeasurements().entrySet();
-        yaxis.setLabel("DN (digital number)");
-      }
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
-        entries = sequence.getRadiance().entrySet();
-        yaxis.setLabel("[W/( m²sr nm)]");
-      }
-      if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
-        entries = sequence.getReflection().entrySet();
-        yaxis.setLabel("Reflectance Factor");
-      }
-
-      double[] calibration = sequence.getWavlengthCalibration();
-
-      for (Map.Entry<String, double[]> entry : entries) {
-        double[] data = entry.getValue();
-        LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-        series.setName(entry.getKey());
-        for (int i = 0; i < data.length; i++) {
-          double x = asWavelength ? calibration[i] : i;
-          double y = data[i];
-
-          series.getData().add(new XYChart.Data<>(x, y));
-        }
-        lineChartData.add(series);
-      }
+      addSingleSequence(sequence);
     }
   }
+
+
+  private void removeSingleSequence(MeasureSequence sequence) {
+    lineChartData.removeIf(doubleDoubleSeries -> {
+      return doubleDoubleSeries.getName().contains(sequence.getSerial())
+          && doubleDoubleSeries.getName().contains("ID" + sequence.getId());
+    });
+  }
+
+
+  private void addSingleSequence(MeasureSequence sequence) {
+    xaxis.setAutoRanging(true);
+    yaxis.setAutoRanging(true);
+
+    Set<Map.Entry<String, double[]>> entries = null;
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
+      entries = sequence.getMeasurements().entrySet();
+      yaxis.setLabel("DN (digital number)");
+    }
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
+      entries = sequence.getRadiance().entrySet();
+      yaxis.setLabel("[W/( m²sr nm)]");
+    }
+    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
+      entries = sequence.getReflection().entrySet();
+      yaxis.setLabel("Reflectance Factor");
+    }
+
+    double[] calibration = sequence.getWavlengthCalibration();
+
+    for (Map.Entry<String, double[]> entry : entries) {
+      double[] data = entry.getValue();
+      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+      series.setName("ID" + sequence.getId() + " - "
+          + sequence.getSerial() + " - " + entry.getKey());
+      for (int i = 0; i < data.length; i++) {
+        double x = asWavelength ? calibration[i] : i;
+        double y = data[i];
+        series.getData().add(new XYChart.Data<>(x, y));
+      }
+
+      lineChartData.add(series);
+
+      Tooltip tooltip = new Tooltip();
+      Tooltip.install(series.getNode(), tooltip);
+
+      Random rand = new Random();
+      int r = rand.nextInt(200);
+      int g = rand.nextInt(200);
+      int b = rand.nextInt(200);
+      series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+          + "-fx-stroke-width: 2px");
+
+      tooltip.setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ");");
+
+      series.getNode().setOnMouseEntered(event -> {
+        double xlowest = xaxis.getLowerBound();
+        double xhighest = xaxis.getUpperBound();
+        double ylowest = yaxis.getLowerBound();
+        double yhighest = yaxis.getUpperBound();
+        double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
+        double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
+        double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
+        double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
+
+        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+            + "-fx-stroke-width: 4px");
+
+
+        tooltip.setText("ID: " + sequence.getId() + "\n"
+            + "Serial: " + sequence.getSerial() + "\n"
+            + "x: " + String.valueOf(xvalue) + "\n"
+            + "y: " + String.valueOf(yvalue));
+      });
+
+      series.getNode().setOnMouseExited(event -> {
+        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+            + "-fx-stroke-width: 2px");
+      });
+    }
+
+    xaxLowerBoarder = xaxis.getLowerBound();
+    xaxUpperBoarder = xaxis.getUpperBound();
+    yaxLowerBoarder = yaxis.getLowerBound();
+    yaxUpperBoarder = yaxis.getUpperBound();
+  }
+
 
   private void calculateIndicies() {
     /*
@@ -175,6 +263,11 @@ public class TabController {
 
 
   private void zoomIn(double xpos, double ypos) {
+    logger.info("Zooming in");
+
+    xaxis.setAutoRanging(false);
+    yaxis.setAutoRanging(false);
+
     double zoomFactor = 10;
 
     double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
@@ -195,6 +288,35 @@ public class TabController {
     double partUp = ypos;
     double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
     yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
+  }
+
+
+  private void zoomOut(double xpos, double ypos) {
+    logger.info("Zooming out");
+
+    xaxis.setAutoRanging(false);
+    yaxis.setAutoRanging(false);
+
+    double zoomFactor = 10;
+
+    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
+    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
+
+    double partLeft = xpos;
+    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
+    xaxis.setLowerBound(xaxis.getLowerBound() - zoomLeft);
+
+    double partRight = datachart.getWidth() - xpos;
+    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
+    xaxis.setUpperBound(xaxis.getUpperBound() + zoomRight);
+
+    double partDown = datachart.getHeight() - ypos;
+    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
+    yaxis.setLowerBound(yaxis.getLowerBound() - zoomDown);
+
+    double partUp = ypos;
+    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
+    yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
   }
 }
 

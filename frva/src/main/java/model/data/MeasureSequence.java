@@ -103,6 +103,7 @@ public class MeasureSequence {
     }
     throw new IllegalArgumentException();
   }
+
   /**
    * Getter for the Serial of the containing SD-Card.
    *
@@ -184,7 +185,11 @@ public class MeasureSequence {
     double[] reflection = new double[vegRadiance.length];
 
     for (int i = 0; i < reflection.length; i++) {
-      reflection[i] = vegRadiance[i] / wrRadiance[i];
+      if (wrRadiance[i] != 0) {
+        reflection[i] = vegRadiance[i] / wrRadiance[i];
+      } else {
+        reflection[0] = 0;
+      }
     }
 
     Map<String, double[]> reflectionMap = new HashMap<>();
