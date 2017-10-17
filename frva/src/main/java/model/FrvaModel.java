@@ -18,6 +18,13 @@ public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
+
+
+
+  public IntegerProperty currentlySelectedTabProperty() {
+    return currentlySelectedTab;
+  }
+
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
 
@@ -63,5 +70,9 @@ public class FrvaModel {
 
   public ObservableList<MeasureSequence> getObservableList(int mapKey) {
     return selectionMap.get(mapKey);
+  }
+
+  public IntegerProperty getCurrentlySelectedTabProperty() {
+    return currentlySelectedTab;
   }
 }

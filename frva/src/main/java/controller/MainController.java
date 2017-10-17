@@ -6,11 +6,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
@@ -69,6 +72,7 @@ public class MainController {
     initializeTabHandling();
     initializeTree();
     addEventHandlers();
+    //onChangeTab();
   }
 
   private void addEventHandlers() {
@@ -234,4 +238,6 @@ public class MainController {
           ((FrvaTreeViewItem) item).setSelected(true));
     });
   }
+
+
 }

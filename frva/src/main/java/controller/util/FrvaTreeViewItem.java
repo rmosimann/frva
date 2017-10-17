@@ -2,6 +2,7 @@ package controller.util;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeCell;
 import model.FrvaModel;
@@ -14,6 +15,17 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
   private MeasureSequence measureSequence;
   private String name;
   private FrvaModel model;
+  ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      if (newValue) {
+        model.getCurrentSelectionList().add(measureSequence);
+      } else {
+        model.getCurrentSelectionList().removeAll(measureSequence);
+      }
+    }
+  };
+
 
   public FrvaTreeViewItem(FrvaModel model) {
     this.model = model;
@@ -22,7 +34,6 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   /**
    * Constructor of FrvaTreeViewItem.
-   *
    */
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
     super.setValue(name);
@@ -30,14 +41,28 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.name = name;
     this.model = model;
 
+    super.selectedProperty().addListener(checkedlistener);
 
-    super.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        model.getCurrentSelectionList().add(measureSequence);
-      } else {
-        model.getCurrentSelectionList().removeAll(measureSequence);
+
+
+    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        selectedProperty().removeListener(checkedlistener);
+
+        if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
+          setSelected(true);
+        } else {
+          setSelected(false);
+        }
+
+        selectedProperty().addListener(checkedlistener);
+
       }
+
+
     });
+
   }
 
   public String toString() {
