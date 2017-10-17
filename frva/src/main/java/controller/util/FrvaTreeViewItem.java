@@ -43,10 +43,12 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
     super.selectedProperty().addListener(checkedlistener);
 
+
+
     model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        FrvaTreeViewItem.super.selectedProperty().removeListener(checkedlistener);
+        selectedProperty().removeListener(checkedlistener);
 
         if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
           setSelected(true);
@@ -54,7 +56,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
           setSelected(false);
         }
 
-        FrvaTreeViewItem.super.selectedProperty().addListener(checkedlistener);
+        selectedProperty().addListener(checkedlistener);
 
       }
 
