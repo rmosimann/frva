@@ -79,7 +79,7 @@ public class MainController {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
     selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
-    selectNoneButton.setOnAction(event -> selectNone());
+    selectNoneButton.setOnAction(event -> unselect());
     activateMultiSelect();
   }
 
@@ -98,7 +98,6 @@ public class MainController {
           }
         });
   }
-
 
   /**
    * Adds a new Tab to the DataHandlingView.
@@ -152,7 +151,6 @@ public class MainController {
         FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
         FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(model);
 
-
         while (it.hasNext()) {
           MeasureSequence measureSequence = (MeasureSequence) it.next();
           String currentHour = measureSequence.getTime().substring(0, 2);
@@ -188,7 +186,6 @@ public class MainController {
             + " (" + hourlyCount + ")");
         checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
       }
-
     }
     treeView.setRoot(root);
     treeView.setShowRoot(false);
@@ -219,17 +216,24 @@ public class MainController {
   }
 
 
-  private void selectNone() {
+  private void unselect() {
     if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
           ((FrvaTreeViewItem) item).setSelected(false));
     } else {
-      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
-      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
+      unselect(treeView.getRoot());
     }
     treeView.getSelectionModel().clearSelection();
   }
 
+  private void unselect(TreeItem<FrvaTreeViewItem> item) {
+    if (!item.isLeaf()) {
+      for (Object child : item.getChildren()) {
+        unselect((TreeItem) child);
+        ((FrvaTreeViewItem) child).setSelected(false);
+      }
+    }
+  }
 
   private void activateMultiSelect() {
     treeView.setOnMouseClicked(event -> {
