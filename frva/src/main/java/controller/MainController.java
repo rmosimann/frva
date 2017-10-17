@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -189,6 +191,12 @@ public class MainController {
     }
     treeView.setRoot(root);
     treeView.setShowRoot(false);
+    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        treeView.getSelectionModel().clearSelection();
+      }
+    });
   }
 
 
