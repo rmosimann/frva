@@ -1,19 +1,36 @@
 package model;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.data.CalibrationFile;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
+
+import static java.nio.file.Files.copy;
 
 public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
@@ -87,6 +104,56 @@ public class FrvaModel {
         ) {
       measureSequenceList.removeAll(list);
     }
-    //TODO:Save into data
+    //  writeData(library);
+
   }
+
+  public void writeData(List<SdCard> list) {
+    BufferedWriter writer;
+    try {
+      for (SdCard sdCard : list) {
+        String path = "lib" + File.separator + sdCard.getName();
+        File card = new File(path);
+        if (card.mkdirs() || card.exists()) {
+          Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
+          Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
+          Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
+
+
+          for (DataFile dataFile : sdCard.getDataFiles()) {
+            path += File.separator + dataFile.getFolderName();
+            File folder = new File(path);
+            if (folder.mkdirs() || folder.exists()) {
+              File file = new File(path + File.separator + dataFile.getOriginalFileName());
+              writer = Files.newBufferedWriter(Paths.get(file.toURI()));
+              for (MeasureSequence measureSequence : dataFile.getMeasureSequences()) {
+                writer.write(measureSequence.getCsv());
+              }
+              writer.flush();
+            }
+          }
+        }
+      }
+
+
+    } catch (IOException exception) {
+      System.out.println("Exception");
+      logger.log(new LogRecord(Level.INFO, exception.getMessage()));
+    }
+
+
+  }
+
+  private void fileCopy(File file, String toPath) {
+    try {
+      Files.copy(Paths.get(file.getPath()), Paths.get(toPath));
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+
 }

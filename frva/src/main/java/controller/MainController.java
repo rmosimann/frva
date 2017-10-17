@@ -61,6 +61,8 @@ public class MainController {
   private Button importSdCardButton;
   @FXML
   private Button deleteSelectedItemsButton;
+  @FXML
+  private Button exportButton;
 
 
   @FXML
@@ -91,6 +93,7 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
+    exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
   }
 
   private void deleteSelectedItems() {

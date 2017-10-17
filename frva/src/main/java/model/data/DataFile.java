@@ -12,17 +12,19 @@ public class DataFile {
 
   private final File originalFile;
   private final SdCard sdCard;
+  private final String containingFolderName;
   private List<MeasureSequence> measureSequences = new LinkedList<>();
 
   /**
    * Constructor.
    *
    * @param filename Name of the file
-   * @param sdCard The SDCARD the datafile belongs to
+   * @param sdCard   The SDCARD the datafile belongs to
    */
-  public DataFile(File filename, SdCard sdCard) {
+  public DataFile(SdCard sdCard, String containingFolderName, File filename) {
     this.originalFile = filename;
     this.sdCard = sdCard;
+    this.containingFolderName=containingFolderName;
 
     List<String> fileContent = new ArrayList<>();
     String line = "";
@@ -45,5 +47,13 @@ public class DataFile {
 
   public List<MeasureSequence> getMeasureSequences() {
     return measureSequences;
+  }
+
+  public String getOriginalFileName() {
+    return originalFile.getName();
+  }
+
+  public String getFolderName(){
+    return this.containingFolderName;
   }
 }

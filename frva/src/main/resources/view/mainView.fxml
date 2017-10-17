@@ -100,7 +100,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                        <Button fx:id="exportButton" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView>
                                                     <image>
