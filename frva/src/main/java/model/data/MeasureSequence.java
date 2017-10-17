@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class MeasureSequence {
 
@@ -24,6 +25,7 @@ public class MeasureSequence {
   private final String[] metadata;
   private final SdCard sdCard;
   private final Map<String, double[]> measurements = new HashMap<>();
+  private final String sequenceUuid;
 
   /**
    * Constructor for a MeasurementSequence.
@@ -31,6 +33,7 @@ public class MeasureSequence {
    * @param input a StringArray containing the measurements
    */
   public MeasureSequence(List<String> input, SdCard sdCard) {
+    sequenceUuid = UUID.randomUUID().toString();
     metadata = input.get(0).split(";");
     this.sdCard = sdCard;
 
@@ -200,5 +203,9 @@ public class MeasureSequence {
 
   public double[] getWavlengthCalibration() {
     return sdCard.getWavelengthCalibrationFile().getCalibration();
+  }
+
+  public String getSequenceUuid() {
+    return sequenceUuid;
   }
 }
