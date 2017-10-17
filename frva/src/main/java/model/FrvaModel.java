@@ -11,6 +11,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -18,7 +19,6 @@ public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
-
 
 
   public IntegerProperty currentlySelectedTabProperty() {
@@ -74,5 +74,19 @@ public class FrvaModel {
 
   public IntegerProperty getCurrentlySelectedTabProperty() {
     return currentlySelectedTab;
+  }
+
+  public void deleteMeasureSequences(List<MeasureSequence> list) {
+    for (SdCard sdCard : library
+        ) {
+      for (DataFile dataFile : sdCard.getDataFiles()) {
+        dataFile.getMeasureSequences().removeAll(list);
+      }
+    }
+    for (List<MeasureSequence> measureSequenceList : selectionMap.values()
+        ) {
+      measureSequenceList.removeAll(list);
+    }
+    //TODO:Save into data
   }
 }
