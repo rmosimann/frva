@@ -34,9 +34,10 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   /**
    * Constructor of FrvaTreeViewItem.
+   *
    */
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
-    super.setValue(name);
+    setValue(name);
     this.measureSequence = ms;
     this.name = name;
     this.model = model;
@@ -59,10 +60,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
         selectedProperty().addListener(checkedlistener);
 
       }
-
-
     });
-
   }
 
   public String toString() {
