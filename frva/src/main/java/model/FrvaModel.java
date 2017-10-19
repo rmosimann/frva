@@ -113,20 +113,26 @@ public class FrvaModel {
     try {
       for (SdCard sdCard : list) {
         String path = "lib" + File.separator + sdCard.getName();
-        File card = new File(path);
-        if (card.mkdirs() || card.exists()) {
-          Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
-              Paths.get(new File(path + File.separator + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
-          Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
-              Paths.get(new File(path + File.separator + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
-          Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
-              Paths.get(new File(path + File.separator + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
 
+        //Create SD Card Folder
+        File card = new File(path);
+        if (card.exists() || card.mkdirs()) {
+          //Create Calibration Files
+          Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator
+                  + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
+          Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator
+                  + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
+          Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
+              Paths.get(new File(path + File.separator
+                  + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
 
           for (DataFile dataFile : sdCard.getDataFiles()) {
             path += File.separator + dataFile.getFolderName();
             File folder = new File(path);
-            if (folder.mkdirs() || folder.exists()) {
+            //Create day-folder
+            if (folder.exists() || folder.mkdirs()) {
               File file = new File(path + File.separator + dataFile.getOriginalFileName());
               writer = Files.newBufferedWriter(Paths.get(file.toURI()));
               for (MeasureSequence measureSequence : dataFile.getMeasureSequences()) {
@@ -140,19 +146,10 @@ public class FrvaModel {
 
 
     } catch (IOException exception) {
-      System.out.println("Exception");
       logger.log(new LogRecord(Level.INFO, exception.getMessage()));
     }
 
 
-  }
-
-  private void fileCopy(File file, String toPath) {
-    try {
-      Files.copy(Paths.get(file.getPath()), Paths.get(toPath));
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
   }
 
 
