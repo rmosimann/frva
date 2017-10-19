@@ -36,7 +36,7 @@ public class SdCard {
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
-        dataFiles.add(new DataFile(dataFile, this));
+        dataFiles.add(new DataFile(this, directory.getName(), dataFile));
       }
     }
     return dataFiles;
@@ -78,5 +78,10 @@ public class SdCard {
     }
     return this.dataFiles.stream()
         .findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+  }
+
+  public String getName() {
+    //TODO: how should SDCards be named?
+    return "SDCARD";
   }
 }

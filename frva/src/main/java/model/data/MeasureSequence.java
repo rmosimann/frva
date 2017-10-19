@@ -67,6 +67,39 @@ public class MeasureSequence {
     }
   }
 
+
+  /**
+   * Prints the content of the MeasureSequence to the console.
+   */
+  public String getCsv() {
+    StringBuilder sb = new StringBuilder();
+    Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
+    for (int i = 0; i < 988; i++) {
+      sb.append(";");
+    }
+
+    sb.append("\n\n" + "WR" + ";");
+    Arrays.stream(measurements.get("WR")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+    sb.append("\n\n" + "VEG" + ";");
+    Arrays.stream(measurements.get("VEG")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+
+    sb.append("\n\n" + "DC_WR" + ";");
+    Arrays.stream(measurements.get("DC_WR")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+
+    sb.append("\n\n" + "DC_VEG" + ";");
+    Arrays.stream(measurements.get("DC_VEG")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+    sb.append("\n\n");
+    return sb.toString();
+  }
+
   public String getId() {
     return metadata[0];
   }
