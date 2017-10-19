@@ -41,4 +41,9 @@ public class CalibrationFile {
     return calibration;
   }
 
+  public File getCalibrationFile()
+  {
+    return this.originalFile;
+  }
+
 }

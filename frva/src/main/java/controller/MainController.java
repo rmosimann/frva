@@ -5,10 +5,17 @@ import controller.util.FrvaTreeViewItem;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,9 +57,13 @@ public class MainController {
   private Button expandAllButton;
   @FXML
   private TabPane tabPane;
-
   @FXML
   private Button importSdCardButton;
+  @FXML
+  private Button deleteSelectedItemsButton;
+  @FXML
+  private Button exportButton;
+
 
   @FXML
   void importSdCard(ActionEvent event) {
@@ -79,9 +90,26 @@ public class MainController {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
     selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
-    selectNoneButton.setOnAction(event -> selectNone());
+    selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
+    deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
+    exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
   }
+
+  private void deleteSelectedItems() {
+    List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
+    List<MeasureSequence> measureSequenceList = list
+        .stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
+    model.deleteMeasureSequences(measureSequenceList);
+
+    for (FrvaTreeViewItem item : list) {
+      item.getParent().getChildren().remove(item);
+
+    }
+    unselectTickedItems();
+
+  }
+
 
   private void initializeTabHandling() {
     Tab tab = new Tab("+");
@@ -98,7 +126,6 @@ public class MainController {
           }
         });
   }
-
 
   /**
    * Adds a new Tab to the DataHandlingView.
@@ -152,7 +179,6 @@ public class MainController {
         FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
         FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(model);
 
-
         while (it.hasNext()) {
           MeasureSequence measureSequence = (MeasureSequence) it.next();
           String currentHour = measureSequence.getTime().substring(0, 2);
@@ -188,10 +214,16 @@ public class MainController {
             + " (" + hourlyCount + ")");
         checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
       }
-
     }
     treeView.setRoot(root);
     treeView.setShowRoot(false);
+    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable,
+                          Number oldValue, Number newValue) {
+        treeView.getSelectionModel().clearSelection();
+      }
+    });
   }
 
 
@@ -219,17 +251,25 @@ public class MainController {
   }
 
 
-  private void selectNone() {
+  private void unselectTickedItems() {
     if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
           ((FrvaTreeViewItem) item).setSelected(false));
     } else {
-      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true);
-      ((FrvaTreeViewItem) treeView.getRoot()).setSelected(false);
+      unselectTickedItems(treeView.getRoot());
     }
     treeView.getSelectionModel().clearSelection();
   }
 
+  private void unselectTickedItems(TreeItem<FrvaTreeViewItem> item) {
+    if (!item.isLeaf()) {
+      for (Object child : item.getChildren()) {
+        unselectTickedItems((TreeItem) child);
+        ((FrvaTreeViewItem) child).setSelected(false);
+        ((FrvaTreeViewItem) child).setIndeterminate(false);
+      }
+    }
+  }
 
   private void activateMultiSelect() {
     treeView.setOnMouseClicked(event -> {
@@ -237,6 +277,21 @@ public class MainController {
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
           ((FrvaTreeViewItem) item).setSelected(true));
     });
+  }
+
+  private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item,
+                                                          List<FrvaTreeViewItem> list) {
+    if (!item.isLeaf()) {
+      Iterator it = item.getChildren().iterator();
+      while (it.hasNext()) {
+        FrvaTreeViewItem element = (FrvaTreeViewItem) it.next();
+        removeTickedMeasurements(element, list);
+        if (element.isSelected()) {
+          list.add(element);
+        }
+      }
+    }
+    return list;
   }
 
 

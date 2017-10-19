@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class MeasureSequence {
 
@@ -24,6 +25,7 @@ public class MeasureSequence {
   private final String[] metadata;
   private final SdCard sdCard;
   private final Map<String, double[]> measurements = new HashMap<>();
+  private final String sequenceUuid;
 
   /**
    * Constructor for a MeasurementSequence.
@@ -31,6 +33,7 @@ public class MeasureSequence {
    * @param input a StringArray containing the measurements
    */
   public MeasureSequence(List<String> input, SdCard sdCard) {
+    sequenceUuid = UUID.randomUUID().toString();
     metadata = input.get(0).split(";");
     this.sdCard = sdCard;
 
@@ -62,6 +65,39 @@ public class MeasureSequence {
       System.out.print(entry.getKey());
       Arrays.stream(entry.getValue()).forEach(a -> System.out.print(a + " "));
     }
+  }
+
+
+  /**
+   * Prints the content of the MeasureSequence to the console.
+   */
+  public String getCsv() {
+    StringBuilder sb = new StringBuilder();
+    Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
+    for (int i = 0; i < 988; i++) {
+      sb.append(";");
+    }
+
+    sb.append("\n\n" + "WR" + ";");
+    Arrays.stream(measurements.get("WR")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+    sb.append("\n\n" + "VEG" + ";");
+    Arrays.stream(measurements.get("VEG")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+
+    sb.append("\n\n" + "DC_WR" + ";");
+    Arrays.stream(measurements.get("DC_WR")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+
+    sb.append("\n\n" + "DC_VEG" + ";");
+    Arrays.stream(measurements.get("DC_VEG")).forEach(a -> sb.append((int) a + ";"));
+    sb.deleteCharAt(sb.length() - 1);
+
+    sb.append("\n\n");
+    return sb.toString();
   }
 
   public String getId() {
@@ -200,5 +236,9 @@ public class MeasureSequence {
 
   public double[] getWavlengthCalibration() {
     return sdCard.getWavelengthCalibrationFile().getCalibration();
+  }
+
+  public String getSequenceUuid() {
+    return sequenceUuid;
   }
 }
