@@ -163,8 +163,7 @@ public class TabController {
 
   private void removeSingleSequence(MeasureSequence sequence) {
     lineChartData.removeIf(doubleDoubleSeries -> {
-      return doubleDoubleSeries.getName().contains(sequence.getSerial())
-          && doubleDoubleSeries.getName().contains("ID" + sequence.getId());
+      return doubleDoubleSeries.getName().contains(sequence.getSequenceUuid());
     });
   }
 
@@ -192,8 +191,7 @@ public class TabController {
     for (Map.Entry<String, double[]> entry : entries) {
       double[] data = entry.getValue();
       LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-      series.setName("ID" + sequence.getId() + " - "
-          + sequence.getSerial() + " - " + entry.getKey());
+      series.setName(sequence.getSequenceUuid());
       for (int i = 0; i < data.length; i++) {
         double x = asWavelength ? calibration[i] : i;
         double y = data[i];
