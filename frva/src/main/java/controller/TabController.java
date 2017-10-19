@@ -1,10 +1,17 @@
 package controller;
 
+import java.awt.Color;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,6 +22,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -33,6 +41,8 @@ public class TabController {
   private double xaxUpperBoarder;
   private double yaxLowerBoarder;
   private double yaxUpperBoarder;
+
+  private final BooleanProperty isCalculating = new SimpleBooleanProperty(false);
 
   /**
    * Constructor for new TabController.
@@ -71,20 +81,23 @@ public class TabController {
   @FXML
   private RadioButton radioButtonBands;
 
+  @FXML
+  private VBox calculatingLabelBox;
+
 
   @FXML
   private void initialize() {
     configureRadioButtons();
     initializeGraph();
 
+    calculatingLabelBox.visibleProperty().bind(isCalculating);
+
     listToWatch.addListener(new ListChangeListener<MeasureSequence>() {
       @Override
       public void onChanged(Change<? extends MeasureSequence> c) {
         while (c.next()) {
           if (c.wasAdded()) {
-            for (MeasureSequence sequence : c.getAddedSubList()) {
-              addSingleSequence(sequence);
-            }
+            addMeasurementSequences(c.getAddedSubList());
           } else if (c.wasRemoved()) {
             for (MeasureSequence sequence : c.getRemoved()) {
               removeSingleSequence(sequence);
@@ -93,6 +106,20 @@ public class TabController {
         }
       }
     });
+  }
+
+
+  private void addMeasurementSequences(List<? extends MeasureSequence> measureSequences) {
+    isCalculating.setValue(true);
+    for (MeasureSequence sequence : measureSequences) {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          addSingleSequence(sequence);
+        }
+      }).start();
+    }
+    isCalculating.setValue(false);
   }
 
 
@@ -110,7 +137,7 @@ public class TabController {
       if (newValue.equals(radioButtonReflectance)) {
         yaxis.setLabel("Reflectance Factor");
       }
-      changemode();
+      redrawMeasurementSequences();
     });
     togglGroupYaxis.selectToggle(radioButtonRaw);
 
@@ -124,8 +151,9 @@ public class TabController {
         asWavelength = false;
         xaxis.setLabel("Bands");
       }
-      changemode();
+      redrawMeasurementSequences();
     });
+
     togglGroupXaxis.selectToggle(radioButtonWavelength);
   }
 
@@ -151,13 +179,19 @@ public class TabController {
     });
   }
 
+  final int MAX_THREADS = 4;
 
-  private void changemode() {
+  Executor exec = Executors.newFixedThreadPool(MAX_THREADS, runnable -> {
+    Thread t = new Thread(runnable);
+    t.setDaemon(true);
+    return t;
+  });
+
+
+  private void redrawMeasurementSequences() {
     logger.info("Redrawing Graph  ");
     lineChartData.clear();
-    for (MeasureSequence sequence : listToWatch) {
-      addSingleSequence(sequence);
-    }
+    addMeasurementSequences(listToWatch);
   }
 
 
@@ -190,6 +224,7 @@ public class TabController {
     double[] calibration = sequence.getWavlengthCalibration();
 
     for (Map.Entry<String, double[]> entry : entries) {
+      System.out.println(Thread.currentThread().getId());
       double[] data = entry.getValue();
       LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
       series.setName("ID" + sequence.getId() + " - "
@@ -200,50 +235,63 @@ public class TabController {
         series.getData().add(new XYChart.Data<>(x, y));
       }
 
-      lineChartData.add(series);
-
-      Tooltip tooltip = new Tooltip();
-      Tooltip.install(series.getNode(), tooltip);
-
-      Random rand = new Random();
-      int r = rand.nextInt(200);
-      int g = rand.nextInt(200);
-      int b = rand.nextInt(200);
-      series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
-          + "-fx-stroke-width: 2px");
-
-      tooltip.setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ");");
-
-      series.getNode().setOnMouseEntered(event -> {
-        double xlowest = xaxis.getLowerBound();
-        double xhighest = xaxis.getUpperBound();
-        double ylowest = yaxis.getLowerBound();
-        double yhighest = yaxis.getUpperBound();
-        double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
-        double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
-        double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
-        double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
-
-        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
-            + "-fx-stroke-width: 4px");
-
-
-        tooltip.setText("ID: " + sequence.getId() + "\n"
-            + "Serial: " + sequence.getSerial() + "\n"
-            + "x: " + String.valueOf(xvalue) + "\n"
-            + "y: " + String.valueOf(yvalue));
-      });
-
-      series.getNode().setOnMouseExited(event -> {
-        series.getNode().setStyle("-fx-stroke: rgba(" + r + "," + g + "," + b + ");"
+      Platform.runLater(() -> {
+        lineChartData.add(series);
+        //Create and set Color for the Serie
+        Random rand = new Random();
+        Color serieColor = new Color(rand.nextInt(200),
+            rand.nextInt(200), rand.nextInt(200));
+        series.getNode().setStyle("-fx-stroke: rgba(" + serieColor.getRed()
+            + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
             + "-fx-stroke-width: 2px");
+        addTootltipToSerie(sequence, series, serieColor);
       });
     }
+  }
 
-    xaxLowerBoarder = xaxis.getLowerBound();
-    xaxUpperBoarder = xaxis.getUpperBound();
-    yaxLowerBoarder = yaxis.getLowerBound();
-    yaxUpperBoarder = yaxis.getUpperBound();
+
+  /**
+   * Adds a tooltip and MouseHoovering behaviour to a Serie.
+   *
+   * @param sequence   The seuqence to get Tooltip infos from.
+   * @param series     The Serie to add the Tootlip.
+   * @param serieColor The color used for the Serie.
+   */
+  private void addTootltipToSerie(MeasureSequence sequence, XYChart.Series<Double, Double> series, Color serieColor) {
+    Tooltip tooltip = new Tooltip();
+    Tooltip.install(series.getNode(), tooltip);
+
+    String tooltipStyle = "-fx-background-color: rgba(" + serieColor.getRed()
+        + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");";
+    String serieStyleHoover = "-fx-stroke: rgba(" + serieColor.getRed() + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
+        + "-fx-stroke-width: 4px";
+    String serieStyleNormal = "-fx-stroke: rgba(" + serieColor.getRed() + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
+        + "-fx-stroke-width: 2px";
+
+
+    tooltip.setStyle(tooltipStyle);
+
+    series.getNode().setOnMouseEntered(event -> {
+      double xlowest = xaxis.getLowerBound();
+      double xhighest = xaxis.getUpperBound();
+      double ylowest = yaxis.getLowerBound();
+      double yhighest = yaxis.getUpperBound();
+      double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
+      double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
+      double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
+      double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
+
+      series.getNode().setStyle(serieStyleHoover);
+
+      tooltip.setText("ID: " + sequence.getId() + "\n"
+          + "Serial: " + sequence.getSerial() + "\n"
+          + "x: " + String.valueOf(xvalue) + "\n"
+          + "y: " + String.valueOf(yvalue));
+    });
+
+    series.getNode().setOnMouseExited(event -> {
+      series.getNode().setStyle(serieStyleNormal);
+    });
   }
 
 

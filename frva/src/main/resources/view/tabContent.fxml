@@ -138,5 +138,17 @@
                      text="Wavelength" AnchorPane.bottomAnchor="20.0"/>
         <RadioButton fx:id="radioButtonBands" layoutX="429.0" layoutY="575.0" mnemonicParsing="false" text="Bands"
                      AnchorPane.bottomAnchor="20.0"/>
+        <VBox fx:id="calculatingLabelBox" alignment="CENTER" layoutX="236.0" layoutY="273.0" prefHeight="68.0"
+              prefWidth="272.0" AnchorPane.bottomAnchor="272.0" AnchorPane.leftAnchor="236.0"
+              AnchorPane.rightAnchor="513.0" AnchorPane.topAnchor="273.0">
+            <children>
+                <Label style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
+                       text="Calculating...">
+                    <font>
+                        <Font size="20.0"/>
+                    </font>
+                </Label>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>
