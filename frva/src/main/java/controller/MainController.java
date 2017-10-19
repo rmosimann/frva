@@ -98,14 +98,15 @@ public class MainController {
 
   private void deleteSelectedItems() {
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
-    List<MeasureSequence> measureSequenceList = list.stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
+    List<MeasureSequence> measureSequenceList = list
+        .stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
     model.deleteMeasureSequences(measureSequenceList);
 
-    for (FrvaTreeViewItem item : list
-        ) {
+    for (FrvaTreeViewItem item : list) {
       item.getParent().getChildren().remove(item);
 
     }
+    unselectTickedItems();
 
   }
 
@@ -218,7 +219,8 @@ public class MainController {
     treeView.setShowRoot(false);
     model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
       @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+      public void changed(ObservableValue<? extends Number> observable,
+                          Number oldValue, Number newValue) {
         treeView.getSelectionModel().clearSelection();
       }
     });
@@ -264,6 +266,7 @@ public class MainController {
       for (Object child : item.getChildren()) {
         unselectTickedItems((TreeItem) child);
         ((FrvaTreeViewItem) child).setSelected(false);
+        ((FrvaTreeViewItem) child).setIndeterminate(false);
       }
     }
   }
@@ -276,7 +279,8 @@ public class MainController {
     });
   }
 
-  private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item, List<FrvaTreeViewItem> list) {
+  private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item,
+                                                          List<FrvaTreeViewItem> list) {
     if (!item.isLeaf()) {
       Iterator it = item.getChildren().iterator();
       while (it.hasNext()) {

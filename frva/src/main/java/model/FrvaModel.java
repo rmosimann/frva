@@ -2,18 +2,11 @@ package model;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +18,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.data.CalibrationFile;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
-import static java.nio.file.Files.copy;
 
 public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
@@ -93,26 +84,35 @@ public class FrvaModel {
     return currentlySelectedTab;
   }
 
+
+  /**
+   * Delets a MeasuremnetSequence from the library and selection.
+   *
+   * @param list List of MesurementSequences to delete.
+   */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
-    for (SdCard sdCard : library
-        ) {
+    for (SdCard sdCard : library) {
       for (DataFile dataFile : sdCard.getDataFiles()) {
         dataFile.getMeasureSequences().removeAll(list);
       }
     }
-    for (List<MeasureSequence> measureSequenceList : selectionMap.values()
-        ) {
+    for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
       measureSequenceList.removeAll(list);
     }
-    //  writeData(library);
-
   }
 
+  /**
+   * Writes Data from SDCARDs to Files, in original format.
+   *
+   * @param list List of SDCARD to save.
+   */
   public void writeData(List<SdCard> list) {
     BufferedWriter writer;
     try {
       for (SdCard sdCard : list) {
         String path = "lib" + File.separator + sdCard.getName();
+
+        logger.info("Saving File to: " + path);
 
         //Create SD Card Folder
         File card = new File(path);
