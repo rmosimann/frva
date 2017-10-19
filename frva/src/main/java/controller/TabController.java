@@ -1,17 +1,19 @@
 package controller;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -19,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -36,26 +39,10 @@ public class TabController {
   private ToggleGroup togglGroupYaxis;
   private ToggleGroup togglGroupXaxis;
   private boolean asWavelength = true;
+  private final List<MeasureSequence> actualShowingSeqeunces = new ArrayList<>();
 
-  private double xaxLowerBoarder;
-  private double xaxUpperBoarder;
-  private double yaxLowerBoarder;
-  private double yaxUpperBoarder;
-
-  private final BooleanProperty isCalculating = new SimpleBooleanProperty(false);
-
-  /**
-   * Constructor for new TabController.
-   *
-   * @param model     The one and only Model.
-   * @param thisTabId the ID of this Tab.
-   */
-  public TabController(FrvaModel model, int thisTabId) {
-    this.model = model;
-    lineChartData = FXCollections.observableArrayList();
-    tabId = thisTabId;
-    listToWatch = model.getObservableList(thisTabId);
-  }
+  private final IntegerProperty runningTasks = new SimpleIntegerProperty(0);
+  private final IntegerProperty maxSeqeuncesToDisplay = new SimpleIntegerProperty(30);
 
   @FXML
   private LineChart<Double, Double> datachart;
@@ -84,46 +71,71 @@ public class TabController {
   @FXML
   private VBox calculatingLabelBox;
 
+  @FXML
+  private VBox crossedLimitBox;
+
+  @FXML
+  private Button ignoreLimitButton;
+
+  private boolean updatedelayisrunning = false;
 
   @FXML
   private void initialize() {
     configureRadioButtons();
-    initializeGraph();
+    initializeLayout();
+    addListeners();
+  }
 
-    calculatingLabelBox.visibleProperty().bind(isCalculating);
+  /**
+   * Constructor for new TabController.
+   *
+   * @param model     The one and only Model.
+   * @param thisTabId the ID of this Tab.
+   */
+  public TabController(FrvaModel model, int thisTabId) {
+    this.model = model;
+    lineChartData = FXCollections.observableArrayList();
+    tabId = thisTabId;
+    listToWatch = model.getObservableList(thisTabId);
+  }
+
+
+  /**
+   * Adds Listeners.
+   */
+  private void addListeners() {
+    runningTasks.addListener((observable, oldValue, newValue) -> {
+      if (newValue.intValue() == 0) {
+        calculatingLabelBox.setVisible(false);
+      } else {
+        calculatingLabelBox.setVisible(true);
+      }
+    });
+
+
+
 
     listToWatch.addListener(new ListChangeListener<MeasureSequence>() {
       @Override
       public void onChanged(Change<? extends MeasureSequence> c) {
-        while (c.next()) {
-          if (c.wasAdded()) {
-            addMeasurementSequences(c.getAddedSubList());
-          } else if (c.wasRemoved()) {
-            for (MeasureSequence sequence : c.getRemoved()) {
-              removeSingleSequence(sequence);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        if (!updatedelayisrunning) {
+          updatedelayisrunning = true;
+          executorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+              addMultipleMeasurementSequences(true);
             }
-          }
+          }, 10, TimeUnit.MILLISECONDS);
+          executorService.shutdown();
         }
       }
     });
   }
 
 
-  private void addMeasurementSequences(List<? extends MeasureSequence> measureSequences) {
-    isCalculating.setValue(true);
-    for (MeasureSequence sequence : measureSequences) {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
-          addSingleSequence(sequence);
-        }
-      }).start();
-    }
-    isCalculating.setValue(false);
-  }
-
-
   private void configureRadioButtons() {
+    //Radiogroup y-axis
     togglGroupYaxis = new ToggleGroup();
     togglGroupYaxis.getToggles()
         .addAll(radioButtonRadiance, radioButtonRaw, radioButtonReflectance);
@@ -138,9 +150,11 @@ public class TabController {
         yaxis.setLabel("Reflectance Factor");
       }
       redrawMeasurementSequences();
+
     });
     togglGroupYaxis.selectToggle(radioButtonRaw);
 
+    //Radiogroup x-axis
     togglGroupXaxis = new ToggleGroup();
     togglGroupXaxis.getToggles().addAll(radioButtonWavelength, radioButtonBands);
     togglGroupXaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -153,17 +167,14 @@ public class TabController {
       }
       redrawMeasurementSequences();
     });
-
     togglGroupXaxis.selectToggle(radioButtonWavelength);
   }
 
 
-  private void initializeGraph() {
+  private void initializeLayout() {
     xaxis.setAnimated(false);
     xaxis.setForceZeroInRange(false);
-
     yaxis.setAnimated(false);
-
     datachart.setAnimated(false);
     datachart.setCreateSymbols(false);
     datachart.setAlternativeRowFillVisible(false);
@@ -179,23 +190,52 @@ public class TabController {
     });
   }
 
-  final int MAX_THREADS = 4;
 
-  Executor exec = Executors.newFixedThreadPool(MAX_THREADS, runnable -> {
-    Thread t = new Thread(runnable);
-    t.setDaemon(true);
-    return t;
-  });
-
-
+  /**
+   * Removes all MeasurementSequences and adds them again,
+   * this is needed when recalculating the LineChart.
+   */
   private void redrawMeasurementSequences() {
     logger.info("Redrawing Graph  ");
     lineChartData.clear();
-    addMeasurementSequences(listToWatch);
+    actualShowingSeqeunces.clear();
+    addMultipleMeasurementSequences(true);
+  }
+
+  private void addMultipleMeasurementSequences(boolean checkLimit) {
+    updatedelayisrunning = false;
+    int difference = listToWatch.size() - actualShowingSeqeunces.size();
+    System.out.println(difference);
+    if (checkLimit && difference > maxSeqeuncesToDisplay.getValue()) {
+      crossedLimitBox.setVisible(true);
+      ignoreLimitButton.setOnAction(event -> {
+        crossedLimitBox.setVisible(false);
+        addMultipleMeasurementSequences(false);
+      });
+    } else {
+      crossedLimitBox.setVisible(false);
+      listToWatch.forEach(sequence -> {
+        if (!actualShowingSeqeunces.contains(sequence)) {
+          addSingleSequence(sequence);
+        }
+      });
+      actualShowingSeqeunces.forEach(sequence -> {
+        if (!listToWatch.contains(sequence)) {
+          Platform.runLater(() -> removeSingleSequence(sequence));
+
+        }
+      });
+    }
   }
 
 
+  /**
+   * Removes a MeasurementSequence from the LineChart.
+   *
+   * @param sequence MeasurementSequence to remove.
+   */
   private void removeSingleSequence(MeasureSequence sequence) {
+    actualShowingSeqeunces.remove(sequence);
     lineChartData.removeIf(doubleDoubleSeries -> {
       return doubleDoubleSeries.getName().contains(sequence.getSerial())
           && doubleDoubleSeries.getName().contains("ID" + sequence.getId());
@@ -203,63 +243,76 @@ public class TabController {
   }
 
 
+  /**
+   * Adds a MeasurementSequnce to the LineChart.
+   *
+   * @param sequence MeasurementSequence to add.
+   */
   private void addSingleSequence(MeasureSequence sequence) {
-    xaxis.setAutoRanging(true);
-    yaxis.setAutoRanging(true);
+    runningTasks.setValue(runningTasks.get() + 1);
+    actualShowingSeqeunces.add(sequence);
+    model.getExecutor().execute(new Runnable() {
+      @Override
+      public void run() {
+        xaxis.setAutoRanging(true);
+        yaxis.setAutoRanging(true);
 
-    Set<Map.Entry<String, double[]>> entries = null;
-    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
-      entries = sequence.getMeasurements().entrySet();
-      yaxis.setLabel("DN (digital number)");
-    }
-    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
-      entries = sequence.getRadiance().entrySet();
-      yaxis.setLabel("[W/( m²sr nm)]");
-    }
-    if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
-      entries = sequence.getReflection().entrySet();
-      yaxis.setLabel("Reflectance Factor");
-    }
+        Set<Map.Entry<String, double[]>> entries = null;
+        if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
+          entries = sequence.getMeasurements().entrySet();
+          yaxis.setLabel("DN (digital number)");
+        }
+        if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
+          entries = sequence.getRadiance().entrySet();
+          yaxis.setLabel("[W/( m²sr nm)]");
+        }
+        if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
+          entries = sequence.getReflection().entrySet();
+          yaxis.setLabel("Reflectance Factor");
+        }
 
-    double[] calibration = sequence.getWavlengthCalibration();
+        double[] calibration = sequence.getWavlengthCalibration();
 
-    for (Map.Entry<String, double[]> entry : entries) {
-      System.out.println(Thread.currentThread().getId());
-      double[] data = entry.getValue();
-      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-      series.setName("ID" + sequence.getId() + " - "
-          + sequence.getSerial() + " - " + entry.getKey());
-      for (int i = 0; i < data.length; i++) {
-        double x = asWavelength ? calibration[i] : i;
-        double y = data[i];
-        series.getData().add(new XYChart.Data<>(x, y));
+        for (Map.Entry<String, double[]> entry : entries) {
+          double[] data = entry.getValue();
+          LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+          series.setName("ID" + sequence.getId() + " - "
+              + sequence.getSerial() + " - " + entry.getKey());
+          for (int i = 0; i < data.length; i++) {
+            double x = asWavelength ? calibration[i] : i;
+            double y = data[i];
+            series.getData().add(new XYChart.Data<>(x, y));
+          }
+
+          Platform.runLater(() -> {
+            lineChartData.add(series);
+            formatSerieLayout(sequence, series);
+          });
+        }
+        Platform.runLater(() -> runningTasks.setValue(runningTasks.get() - 1));
       }
-
-      Platform.runLater(() -> {
-        lineChartData.add(series);
-        //Create and set Color for the Serie
-        Random rand = new Random();
-        Color serieColor = new Color(rand.nextInt(200),
-            rand.nextInt(200), rand.nextInt(200));
-        series.getNode().setStyle("-fx-stroke: rgba(" + serieColor.getRed()
-            + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
-            + "-fx-stroke-width: 2px");
-        addTootltipToSerie(sequence, series, serieColor);
-      });
-    }
+    });
   }
 
 
   /**
    * Adds a tooltip and MouseHoovering behaviour to a Serie.
    *
-   * @param sequence   The seuqence to get Tooltip infos from.
-   * @param series     The Serie to add the Tootlip.
-   * @param serieColor The color used for the Serie.
+   * @param sequence The seuqence to get Tooltip infos from.
+   * @param series   The Serie to add the Tootlip.
    */
-  private void addTootltipToSerie(MeasureSequence sequence, XYChart.Series<Double, Double> series, Color serieColor) {
+  private void formatSerieLayout(MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     Tooltip.install(series.getNode(), tooltip);
+
+    Random rand = new Random();
+    Color serieColor = new Color(rand.nextInt(200),
+        rand.nextInt(200), rand.nextInt(200));
+
+    series.getNode().setStyle("-fx-stroke: rgba(" + serieColor.getRed()
+        + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
+        + "-fx-stroke-width: 2px");
+
 
     String tooltipStyle = "-fx-background-color: rgba(" + serieColor.getRed()
         + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");";

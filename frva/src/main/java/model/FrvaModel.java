@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import javafx.beans.property.IntegerProperty;
@@ -19,14 +21,19 @@ public class FrvaModel {
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
 
-
-
   public IntegerProperty currentlySelectedTabProperty() {
     return currentlySelectedTab;
   }
 
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+
+  private final int MAX_THREADS = 4;
+  private final Executor executor = Executors.newFixedThreadPool(MAX_THREADS, runnable -> {
+    Thread t = new Thread(runnable);
+    t.setDaemon(true);
+    return t;
+  });
 
   /**
    * Constructor for a new Model.
@@ -74,5 +81,9 @@ public class FrvaModel {
 
   public IntegerProperty getCurrentlySelectedTabProperty() {
     return currentlySelectedTab;
+  }
+
+  public Executor getExecutor() {
+    return executor;
   }
 }
