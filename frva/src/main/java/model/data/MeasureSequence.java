@@ -23,19 +23,19 @@ public class MeasureSequence {
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
   private final String[] metadata;
-  private final SdCard sdCard;
   private final Map<String, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
+  private final DataFile dataFile;
 
   /**
    * Constructor for a MeasurementSequence.
    *
    * @param input a StringArray containing the measurements
    */
-  public MeasureSequence(List<String> input, SdCard sdCard) {
+  public MeasureSequence(List<String> input, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
     metadata = input.get(0).split(";");
-    this.sdCard = sdCard;
+    this.dataFile=dataFile;
 
     for (int i = 1; i < input.size(); i++) {
       String[] tmp = input.get(i).split(";");
@@ -175,9 +175,9 @@ public class MeasureSequence {
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
 
-    double[] waveCalibration = sdCard.getWavelengthCalibrationFile().getCalibration();
-    double[] vegCalibration = sdCard.getSensorCalibrationFileVeg().getCalibration();
-    double[] wrCalibration = sdCard.getSensorCalibrationFileWr().getCalibration();
+    double[] waveCalibration = dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
+    double[] vegCalibration = dataFile.getSdCard().getSensorCalibrationFileVeg().getCalibration();
+    double[] wrCalibration = dataFile.getSdCard().getSensorCalibrationFileWr().getCalibration();
 
     double[] vegs = measurements.get("VEG");
     double[] dcVegs = measurements.get("DC_VEG");
@@ -235,10 +235,15 @@ public class MeasureSequence {
   }
 
   public double[] getWavlengthCalibration() {
-    return sdCard.getWavelengthCalibrationFile().getCalibration();
+    return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
   }
 
   public String getSequenceUuid() {
     return sequenceUuid;
+  }
+
+
+  public DataFile getDataFile() {
+    return dataFile;
   }
 }

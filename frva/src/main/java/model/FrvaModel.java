@@ -5,14 +5,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -107,6 +111,7 @@ public class FrvaModel {
    * @param list List of SDCARD to save.
    */
   public void writeData(List<SdCard> list) {
+    //Probably obsolete method
     BufferedWriter writer;
     try {
       for (SdCard sdCard : list) {
@@ -150,6 +155,79 @@ public class FrvaModel {
     }
 
 
+  }
+
+  /**
+   * Writes Data from SDCARDs to Files, in original format.
+   *
+   * @param list List of SDCARD to save.
+   */
+  public void writeData(List<MeasureSequence> list, Path exportPath) {
+    SdCard sdCard=null;
+    String currentFolder=null;
+    String currentFile=null;
+    String path=null;
+    BufferedWriter currentWriter=null;
+
+    try {
+      for (MeasureSequence measureSequence : list) {
+
+        if (!measureSequence.getDataFile().getSdCard().equals(sdCard)) {
+          sdCard = measureSequence.getDataFile().getSdCard();
+          path = exportPath.toString() + File.separator + sdCard.getName();
+          File card = new File(path);
+          //Create SD Card Folder
+          if (card.mkdirs()) {
+            logger.info("Created SD-Card: " + path);
+            //Create Calibration Files
+            Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
+                Paths.get(new File(path + File.separator
+                    + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
+            Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
+                Paths.get(new File(path + File.separator
+                    + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
+            Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
+                Paths.get(new File(path + File.separator
+                    + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
+            logger.info("Created Calibration Files");
+            currentFolder = null;
+            currentFile = null;
+          }
+        }
+        if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
+          path += File.separator + measureSequence.getDataFile().getFolderName();
+          File dayFolder = new File(path);
+          dayFolder.mkdirs();
+          currentFolder = measureSequence.getDataFile().getFolderName();
+          logger.info("Created day-folder: " + path);
+          currentFile = null;
+        }
+        if (!measureSequence.getDataFile().getOriginalFileName().equals(currentFile)) {
+          path += File.separator + measureSequence.getDataFile().getOriginalFileName();
+          File file = new File(path);
+          currentFile = measureSequence.getDataFile().getDataFileName();
+          if (currentWriter != null) {
+            currentWriter.close();
+          }
+          currentWriter = Files.newBufferedWriter(Paths.get(file.toURI()));
+          logger.info("Created file: " + path);
+        }
+        currentWriter.write(measureSequence.getCsv());
+        currentWriter.flush();
+      }
+    } catch (IOException exception) {
+      logger.log(new LogRecord(Level.INFO, exception.getMessage()));
+    }
+  }
+
+  public List<MeasureSequence> getLibraryAsMeasureSequences() {
+
+    List<MeasureSequence> list = new ArrayList<>();
+    for (SdCard sdCard : library
+        ) {
+      list.addAll(sdCard.getMeasureSequences());
+    }
+    return list;
   }
 
 

@@ -2,8 +2,10 @@ package model.data;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SdCard {
   private final List<DataFile> dataFiles;
@@ -36,7 +38,7 @@ public class SdCard {
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
-        dataFiles.add(new DataFile(this, directory.getName(), dataFile));
+        dataFiles.add(new DataFile(this, dataFile));
       }
     }
     return dataFiles;
@@ -83,5 +85,18 @@ public class SdCard {
   public String getName() {
     //TODO: how should SDCards be named?
     return "SDCARD";
+  }
+
+  public List<MeasureSequence> getMeasureSequences() {
+    List<MeasureSequence> list = new ArrayList<>();
+    for (DataFile dataFile : dataFiles) {
+      list.addAll(dataFile.getMeasureSequences());
+    }
+    return list;
+  }
+
+  public void refresh(){
+
+    
   }
 }

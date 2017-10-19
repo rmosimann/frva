@@ -93,8 +93,21 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
-    exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
+    //exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
+    exportButton.setOnAction(event -> exportData());
+
   }
+
+
+
+  public void exportData() {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Select export path");
+    File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
+    model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+    }
+
+
 
   private void deleteSelectedItems() {
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
