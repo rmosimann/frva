@@ -16,6 +16,7 @@ public class SdCard {
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
   private CalibrationFile sensorCalibrationFileVeg;
+  private String name;
 
   /**
    * Constructor.
@@ -30,6 +31,10 @@ public class SdCard {
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
     dataFiles = readDatafiles(sdCardPath);
+
+
+    String[] arr=sdCardPath.getFile().split(File.separator);
+    this.name=arr[arr.length-1];
   }
 
   private List<DataFile> readDatafiles(URL sdCardPath) {
@@ -86,8 +91,7 @@ public class SdCard {
   }
 
   public String getName() {
-    //TODO: how should SDCards be named?
-    return "SDCARD";
+    return this.name;
   }
 
   public List<MeasureSequence> getMeasureSequences() {
@@ -109,5 +113,9 @@ public class SdCard {
       }
     }
     return isEmpty;
+  }
+
+  public URL getPath(){
+    return this.sdCardPath;
   }
 }

@@ -246,4 +246,8 @@ public class MeasureSequence {
   public DataFile getDataFile() {
     return dataFile;
   }
+
+  public boolean hasMeasurements() {
+    return this.measurements!=null;
+  }
 }

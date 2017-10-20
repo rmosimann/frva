@@ -5,8 +5,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import model.FrvaModel;
 import model.data.MeasureSequence;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by patrick.wigger on 12.10.17.
@@ -41,6 +46,10 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.measureSequence = ms;
     this.name = name;
     this.model = model;
+
+    this.setGraphic(new ImageView(
+        new Image("file://Users/patrick.wigger/FRVA/image.jpg")));
+
 
     super.selectedProperty().addListener(checkedlistener);
 

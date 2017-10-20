@@ -169,11 +169,13 @@ public class TabController {
 
 
   private void addSingleSequence(MeasureSequence sequence) {
+
     xaxis.setAutoRanging(true);
     yaxis.setAutoRanging(true);
 
     Set<Map.Entry<String, double[]>> entries = null;
     if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
+      //TODO: once you select a whole SD Card an error occures here (Nullpointer)
       entries = sequence.getMeasurements().entrySet();
       yaxis.setLabel("DN (digital number)");
     }
