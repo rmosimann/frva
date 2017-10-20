@@ -11,11 +11,9 @@ import java.util.List;
 public class DataFile {
 
   private final File originalFile;
-
-
-
   private final SdCard sdCard;
-  private List<MeasureSequence> measureSequences = new LinkedList<>();
+  private List<MeasureSequence> measureSequences = new ArrayList<>();
+  private boolean hasBeenChanged;
 
   /**
    * Constructor.
@@ -64,5 +62,17 @@ public class DataFile {
 
   public SdCard getSdCard() {
     return sdCard;
+  }
+
+  public boolean isEmpty() {
+    return measureSequences.isEmpty();
+  }
+
+  public void setHasBeenChanged(boolean b) {
+    this.hasBeenChanged = b;
+  }
+
+  public boolean HasBeenChanged() {
+    return this.hasBeenChanged;
   }
 }

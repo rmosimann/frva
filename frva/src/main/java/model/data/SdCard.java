@@ -1,7 +1,10 @@
 package model.data;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,8 +98,16 @@ public class SdCard {
     return list;
   }
 
-  public void refresh(){
-
-    
+  public boolean isEmpty() {
+    if (dataFiles.isEmpty()) {
+      return true;
+    }
+    boolean isEmpty = true;
+    for (DataFile dfile : dataFiles) {
+      if (!dfile.isEmpty()) {
+        isEmpty = false;
+      }
+    }
+    return isEmpty;
   }
 }

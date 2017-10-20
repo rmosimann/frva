@@ -5,6 +5,7 @@ import controller.util.FrvaTreeViewItem;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -75,6 +76,7 @@ public class MainController {
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
+
     initializeTree();
   }
 
@@ -99,14 +101,12 @@ public class MainController {
   }
 
 
-
   public void exportData() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
-    }
-
+  }
 
 
   private void deleteSelectedItems() {
@@ -174,6 +174,7 @@ public class MainController {
 
 
   private void initializeTree() {
+
     FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
