@@ -24,7 +24,7 @@ public class DataFile {
   public DataFile(SdCard sdCard, String containingFolderName, File filename) {
     this.originalFile = filename;
     this.sdCard = sdCard;
-    this.containingFolderName=containingFolderName;
+    this.containingFolderName = containingFolderName;
 
     List<String> fileContent = new ArrayList<>();
     String line = "";
@@ -53,7 +53,7 @@ public class DataFile {
     return originalFile.getName();
   }
 
-  public String getFolderName(){
+  public String getFolderName() {
     return this.containingFolderName;
   }
 }
