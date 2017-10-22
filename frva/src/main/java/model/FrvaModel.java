@@ -1,14 +1,10 @@
 package model;
 
-import java.awt.Desktop;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,13 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -35,13 +25,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.PopupWindow;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
-
-import javax.security.auth.callback.ConfirmationCallback;
-import javax.xml.crypto.Data;
 
 
 public class FrvaModel {
@@ -146,8 +132,7 @@ public class FrvaModel {
       }
       for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
         measureSequenceList.removeAll(list);
-        for (MeasureSequence ms : list
-            ) {
+        for (MeasureSequence ms : list) {
           if (ms != null) {
             set.add(ms.getDataFile());
           }
@@ -160,6 +145,7 @@ public class FrvaModel {
 
   }
 
+  //TODO: JavaDocComment
   public void updateLibrary(Set<DataFile> list) {
     Writer writer = null;
 
@@ -169,8 +155,7 @@ public class FrvaModel {
             + File.separator + d.getFolderName() + File.separator + d.getOriginalFileName());
         logger.info("rewrite File " + d.getOriginalFileName());
         writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-        for (MeasureSequence ms : d.getMeasureSequences()
-            ) {
+        for (MeasureSequence ms : d.getMeasureSequences()) {
           writer.write(ms.getCsv());
           writer.flush();
         }
@@ -228,12 +213,14 @@ public class FrvaModel {
           logger.info("Created day-folder: " + path);
         }
 
-        File file = new File(path + File.separator + measureSequence.getDataFile().getOriginalFileName());
+        File file = new File(path + File.separator
+            + measureSequence.getDataFile().getOriginalFileName());
         Writer writer;
 
         if (!file.exists()) {
           writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-          logger.info("Created file: " + path + File.separator + measureSequence.getDataFile().getOriginalFileName());
+          logger.info("Created file: " + path + File.separator
+              + measureSequence.getDataFile().getOriginalFileName());
         } else {
           writer = new FileWriter(file, true);
         }
@@ -263,7 +250,8 @@ public class FrvaModel {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("Warning");
     alert.setHeaderText("Directory already exists");
-    alert.setContentText("The chosen directory " + path + " already exists. All containing data will be overridden. \nDo you want to continue?");
+    alert.setContentText("The chosen directory " + path
+        + " already exists. All containing data will be overridden. \nDo you want to continue?");
     Optional<ButtonType> result = alert.showAndWait();
     return result.get() == ButtonType.OK;
   }
@@ -297,17 +285,17 @@ public class FrvaModel {
     return false;
   }
 
+  //TODO: JavaDocComment
   public List<MeasureSequence> getLibraryAsMeasureSequences() {
 
     List<MeasureSequence> list = new ArrayList<>();
-    for (SdCard sdCard : library
-        ) {
+    for (SdCard sdCard : library) {
       list.addAll(sdCard.getMeasureSequences());
     }
     return list;
   }
 
-
+  //TODO: JavaDocComment
   public void cleanUp() {
     Iterator<SdCard> it = library.listIterator();
     while (it.hasNext()) {
@@ -320,10 +308,10 @@ public class FrvaModel {
     }
   }
 
+  //TODO: JavaDocComment
   public void delete(File file) {
     if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
-      for (File f : file.listFiles()
-          ) {
+      for (File f : file.listFiles()) {
         delete(f);
       }
     }

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DataFile {
@@ -72,7 +71,7 @@ public class DataFile {
     this.hasBeenChanged = b;
   }
 
-  public boolean HasBeenChanged() {
+  public boolean hasBeenChanged() {
     return this.hasBeenChanged;
   }
 }

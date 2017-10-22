@@ -1,14 +1,10 @@
 package model.data;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SdCard {
   private final List<DataFile> dataFiles;
@@ -33,8 +29,8 @@ public class SdCard {
     dataFiles = readDatafiles(sdCardPath);
 
 
-    String[] arr=sdCardPath.getFile().split(File.separator);
-    this.name=arr[arr.length-1];
+    String[] arr = sdCardPath.getFile().split(File.separator);
+    this.name = arr[arr.length - 1];
   }
 
   private List<DataFile> readDatafiles(URL sdCardPath) {
@@ -94,6 +90,7 @@ public class SdCard {
     return this.name;
   }
 
+  //TODO: JavaDocComment
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
     for (DataFile dataFile : dataFiles) {
@@ -102,6 +99,7 @@ public class SdCard {
     return list;
   }
 
+  //TODO: JavaDocComment
   public boolean isEmpty() {
     if (dataFiles.isEmpty()) {
       return true;
@@ -115,7 +113,7 @@ public class SdCard {
     return isEmpty;
   }
 
-  public URL getPath(){
+  public URL getPath() {
     return this.sdCardPath;
   }
 }

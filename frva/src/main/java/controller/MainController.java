@@ -1,30 +1,22 @@
 package controller;
 
-import controller.util.FrvaTreeViewItem;
-
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import controller.util.FrvaTreeViewItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -74,9 +66,9 @@ public class MainController {
     directoryChooser.setTitle("Open Resource File");
     File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
     try {
-      SdCard sdCard=new SdCard(selectedFile.toURI().toURL());
+      SdCard sdCard = new SdCard(selectedFile.toURI().toURL());
       model.addSdCard(sdCard);
-      model.writeData(sdCard.getMeasureSequences(),new File(model.getLibraryPath()).toPath());
+      model.writeData(sdCard.getMeasureSequences(), new File(model.getLibraryPath()).toPath());
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
@@ -104,17 +96,19 @@ public class MainController {
 
   }
 
-
+  //TODO: JavaDocComment
   public void exportData() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
-    if(selectedFile!=null){
-    model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());}
+    if (selectedFile != null) {
+      model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+    }
     if (Desktop.isDesktopSupported()) {
       try {
         Desktop.getDesktop().open(new File(model.getLibraryPath()));
       } catch (IOException e) {
+        logger.info(e.getMessage());
       }
     }
   }

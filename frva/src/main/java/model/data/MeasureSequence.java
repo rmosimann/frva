@@ -1,9 +1,6 @@
 package model.data;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +32,7 @@ public class MeasureSequence {
   public MeasureSequence(List<String> input, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
     metadata = input.get(0).split(";");
-    this.dataFile=dataFile;
+    this.dataFile = dataFile;
 
     for (int i = 1; i < input.size(); i++) {
       String[] tmp = input.get(i).split(";");
@@ -248,6 +245,6 @@ public class MeasureSequence {
   }
 
   public boolean hasMeasurements() {
-    return this.measurements!=null;
+    return this.measurements != null;
   }
 }

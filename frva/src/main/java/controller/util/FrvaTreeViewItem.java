@@ -3,6 +3,8 @@ package controller.util;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -15,7 +17,8 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
   private FrvaModel model;
   ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
-    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    public void changed(ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
       if (newValue) {
         if (measureSequence != null) {
           model.getCurrentSelectionList().add(measureSequence);
@@ -41,8 +44,8 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.name = name;
     this.model = model;
 
-//    this.setGraphic(new ImageView(
-//        new Image("file://Users/patrick.wigger/FRVA/image.jpg")));
+    this.setGraphic(new ImageView(
+        new Image("file://Users/patrick.wigger/FRVA/image.jpg")));
 
 
     super.selectedProperty().addListener(checkedlistener);
@@ -50,7 +53,8 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
     model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
       @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+      public void changed(ObservableValue<? extends Number> observable,
+                          Number oldValue, Number newValue) {
         selectedProperty().removeListener(checkedlistener);
 
         if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
