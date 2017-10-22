@@ -43,8 +43,8 @@ public class TabController {
   private final ObservableList<MeasureSequence> actualShowingSeqeunces =
       FXCollections.observableArrayList();
 
-  private final IntegerProperty maxSeqeuncesToDisplay = new SimpleIntegerProperty(30);
-  private final IntegerProperty maxSeqeuncesToProcess = new SimpleIntegerProperty(30);
+  private final IntegerProperty maxSeqeuncesToDisplay = new SimpleIntegerProperty(80);
+  private final IntegerProperty maxSeqeuncesToProcess = new SimpleIntegerProperty(40);
   private final IntegerProperty runningUpdates = new SimpleIntegerProperty(0);
   private final BooleanProperty isDrawing = new SimpleBooleanProperty(false);
 
@@ -100,6 +100,7 @@ public class TabController {
     listToWatch = model.getObservableList(thisTabId);
   }
 
+
   @FXML
   private void initialize() {
     addBindings();
@@ -107,6 +108,7 @@ public class TabController {
     configureRadioButtons();
     addListeners();
   }
+
 
   /**
    * Adds Bindingings to UI elements.
@@ -119,6 +121,7 @@ public class TabController {
     radioButtonRaw.disableProperty().bind(isDrawing);
     radioButtonRadiance.disableProperty().bind(isDrawing);
   }
+
 
   /**
    * Sets defaults for all UI elements.
@@ -181,7 +184,6 @@ public class TabController {
 
 
     runningUpdates.addListener((observable, oldValue, newValue) -> {
-      System.out.println(newValue);
       if (newValue.intValue() > 0) {
         isDrawing.setValue(true);
       } else {
@@ -199,13 +201,17 @@ public class TabController {
           crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
           ignoreMaxToProcess = false;
+
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
           if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
             crossedLimitBox.setVisible(false);
           }
+
         } else {
           crossedLimitBox.setVisible(true);
+          crossedLimitLabel.setText("You added " + change.getAddedSubList().size()
+              + " at once, this will take some time to compute.");
           ignoreLimitButton.setOnAction(event -> {
             crossedLimitBox.setVisible(false);
             ignoreMaxToProcess = true;
@@ -347,21 +353,19 @@ public class TabController {
     Tooltip.install(series.getNode(), tooltip);
 
     Random rand = new Random();
-    Color serieColor = Color.rgb(rand.nextInt(200),
-        rand.nextInt(200), rand.nextInt(200));
+    int r = rand.nextInt(255);
+    Color serieColor = Color.rgb(rand.nextInt(200), rand.nextInt(200), rand.nextInt(200));
 
-    series.getNode().setStyle("-fx-stroke: rgba(" + serieColor.getRed()
-        + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
-        + "-fx-stroke-width: 2px");
+    series.getNode().setStyle("-fx-stroke: #" + serieColor.toString().substring(2, 8)
+        + "; -fx-stroke-width: 2px");
 
-    String tooltipStyle = "-fx-background-color: rgba(" + serieColor.getRed()
-        + "," + serieColor.getGreen() + "," + serieColor.getBlue() + ");";
-    String serieStyleHoover = "-fx-stroke: rgba(" + serieColor.getRed() + ","
-        + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
-        + "-fx-stroke-width: 4px";
-    String serieStyleNormal = "-fx-stroke: rgba(" + serieColor.getRed() + ","
-        + serieColor.getGreen() + "," + serieColor.getBlue() + ");"
-        + "-fx-stroke-width: 2px";
+    String tooltipStyle = "-fx-background-color: #" + serieColor.toString().substring(2, 8) + ";";
+
+    String serieStyleHoover = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
+        + "; -fx-stroke-width: 4px;";
+
+    String serieStyleNormal = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
+        + "; -fx-stroke-width: 2px;";
 
     tooltip.setStyle(tooltipStyle);
 
