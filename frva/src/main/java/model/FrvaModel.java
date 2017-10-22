@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -24,26 +23,18 @@ import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
-
 public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
-
-
-  public IntegerProperty currentlySelectedTabProperty() {
-    return currentlySelectedTab;
-  }
-
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
-
-  private final int MAX_THREADS = 4;
-  private final Executor executor = Executors.newFixedThreadPool(MAX_THREADS, runnable -> {
+  private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
     t.setDaemon(true);
     return t;
   });
+
 
   /**
    * Constructor for a new Model.
@@ -163,6 +154,10 @@ public class FrvaModel {
     }
 
 
+  }
+
+  public IntegerProperty currentlySelectedTabProperty() {
+    return currentlySelectedTab;
   }
 
 

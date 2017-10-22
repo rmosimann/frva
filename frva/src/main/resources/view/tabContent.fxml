@@ -144,7 +144,7 @@
               AnchorPane.rightAnchor="513.0" AnchorPane.topAnchor="273.0">
             <children>
                 <Label style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
-                       text="drawing...">
+                       text="computing...">
                     <font>
                         <Font size="20.0"/>
                     </font>
@@ -154,8 +154,9 @@
         <VBox fx:id="crossedLimitBox" alignment="CENTER" layoutX="246.0" layoutY="283.0" prefHeight="134.0"
               prefWidth="272.0" spacing="20.0" visible="false">
             <children>
-                <Label style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
-                       text="you selected tooo much data...">
+                <Label fx:id="crossedLimitLabel"
+                       style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
+                       textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font size="20.0"/>
                     </font>
