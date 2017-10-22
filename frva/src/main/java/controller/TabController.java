@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -175,7 +174,6 @@ public class TabController {
 
     Set<Map.Entry<String, double[]>> entries = null;
     if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
-      //TODO: once you select a whole SD Card an error occures here (Nullpointer)
       entries = sequence.getMeasurements().entrySet();
       yaxis.setLabel("DN (digital number)");
     }
