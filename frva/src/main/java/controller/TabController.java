@@ -1,10 +1,11 @@
 package controller;
 
+import controller.util.LineChartZoom;
+import controller.util.ZoomByMouseScroll;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -142,13 +143,7 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    datachart.setOnScroll(event -> {
-      if (event.getDeltaY() < 0) {
-        zoomOut(event.getX(), event.getY());
-      } else {
-        zoomIn(event.getX(), event.getY());
-      }
-    });
+    LineChartZoom zoom = new ZoomByMouseScroll(datachart, xaxis, yaxis);
   }
 
 
@@ -259,62 +254,5 @@ public class TabController {
      */
   }
 
-
-  private void zoomIn(double xpos, double ypos) {
-    logger.info("Zooming in");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() + zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() - zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() + zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
-  }
-
-
-  private void zoomOut(double xpos, double ypos) {
-    logger.info("Zooming out");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() - zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() + zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() - zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
-  }
 }
 
