@@ -1,7 +1,7 @@
 package controller;
 
-import controller.util.LineChartZoom;
-import controller.util.ZoomByMouseScroll;
+import controller.util.ZoomLineChart;
+import controller.util.ZoomWithSquare;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -143,7 +143,7 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    LineChartZoom zoom = new ZoomByMouseScroll(datachart, xaxis, yaxis);
+    ZoomLineChart zoom = new ZoomWithSquare(datachart, xaxis, yaxis);
   }
 
 

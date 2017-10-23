@@ -4,11 +4,11 @@ import java.util.logging.Logger;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 
-public class ZoomByMouseScroll implements LineChartZoom {
+public class ZoomByMouseScroll implements ZoomLineChart {
 
   private final Logger logger = Logger.getLogger("FRVA");
 
-  private final LineChart<Double, Double> datachart;
+  private final LineChart<Double, Double> lineChart;
   private final NumberAxis yaxis;
   private final NumberAxis xaxis;
 
@@ -22,11 +22,11 @@ public class ZoomByMouseScroll implements LineChartZoom {
    */
   public ZoomByMouseScroll(LineChart<Double, Double> zommableNode,
                            NumberAxis xaxis, NumberAxis yaxis) {
-    this.datachart = zommableNode;
+    this.lineChart = zommableNode;
     this.xaxis = xaxis;
     this.yaxis = yaxis;
 
-    datachart.setOnScroll(event -> {
+    lineChart.setOnScroll(event -> {
       if (event.getDeltaY() < 0) {
         zoomOut(event.getX(), event.getY());
       } else {
@@ -47,19 +47,19 @@ public class ZoomByMouseScroll implements LineChartZoom {
     double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
 
     double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
+    double zoomLeft = (xzoomstep / lineChart.getWidth()) * partLeft;
     xaxis.setLowerBound(xaxis.getLowerBound() + zoomLeft);
 
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
+    double partRight = lineChart.getWidth() - xpos;
+    double zoomRight = (xzoomstep / lineChart.getWidth()) * partRight;
     xaxis.setUpperBound(xaxis.getUpperBound() - zoomRight);
 
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
+    double partDown = lineChart.getHeight() - ypos;
+    double zoomDown = (yzoomstep / lineChart.getHeight()) * partDown;
     yaxis.setLowerBound(yaxis.getLowerBound() + zoomDown);
 
     double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
+    double zoomUp = (yzoomstep / lineChart.getHeight()) * partUp;
     yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
   }
 
@@ -76,19 +76,19 @@ public class ZoomByMouseScroll implements LineChartZoom {
     double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
 
     double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
+    double zoomLeft = (xzoomstep / lineChart.getWidth()) * partLeft;
     xaxis.setLowerBound(xaxis.getLowerBound() - zoomLeft);
 
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
+    double partRight = lineChart.getWidth() - xpos;
+    double zoomRight = (xzoomstep / lineChart.getWidth()) * partRight;
     xaxis.setUpperBound(xaxis.getUpperBound() + zoomRight);
 
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
+    double partDown = lineChart.getHeight() - ypos;
+    double zoomDown = (yzoomstep / lineChart.getHeight()) * partDown;
     yaxis.setLowerBound(yaxis.getLowerBound() - zoomDown);
 
     double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
+    double zoomUp = (yzoomstep / lineChart.getHeight()) * partUp;
     yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
   }
 
