@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -27,7 +31,6 @@ import javafx.scene.control.ButtonType;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
-
 
 public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
@@ -40,6 +43,12 @@ public class FrvaModel {
 
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+  private final Executor executor = Executors.newCachedThreadPool(runnable -> {
+    Thread t = new Thread(runnable);
+    t.setDaemon(true);
+    return t;
+  });
+
 
 
   private String libraryPath;
@@ -113,6 +122,10 @@ public class FrvaModel {
 
   public IntegerProperty getCurrentlySelectedTabProperty() {
     return currentlySelectedTab;
+  }
+
+  public Executor getExecutor() {
+    return executor;
   }
 
 
