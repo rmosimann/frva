@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -120,7 +119,7 @@ public class FrvaModel {
   /**
    * Delets a MeasuremnetSequence from the library and selection.
    *
-   * @param list List of MesurementSequences to delete.
+   * @param list List of MesurementSequences to deleteFile.
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
     if (confirmDelete(list.stream().filter(measureSequence -> measureSequence != null).count())) {
@@ -145,7 +144,11 @@ public class FrvaModel {
 
   }
 
-  //TODO: JavaDocComment
+  /**
+   * Writes changes to the library.
+   *
+   * @param list a List of all manipulated Files.
+   */
   public void updateLibrary(Set<DataFile> list) {
     Writer writer = null;
 
@@ -166,7 +169,7 @@ public class FrvaModel {
       }
     }
 
-    cleanUp();
+    cleanUpLibrary();
   }
 
 
@@ -188,7 +191,7 @@ public class FrvaModel {
 
           if (card.exists()) {
             if (confirmOverriding(path, card)) {
-              delete(card);
+              deleteFile(card);
             } else {
               logger.info("Export cancelled");
               return;
@@ -285,7 +288,10 @@ public class FrvaModel {
     return false;
   }
 
-  //TODO: JavaDocComment
+  /**
+   * Getter to read all MeasurementSequences in the Library.
+   * @return List of MeasurementSequences.
+   */
   public List<MeasureSequence> getLibraryAsMeasureSequences() {
 
     List<MeasureSequence> list = new ArrayList<>();
@@ -295,27 +301,33 @@ public class FrvaModel {
     return list;
   }
 
-  //TODO: JavaDocComment
-  public void cleanUp() {
+  /**
+   * Removes empty SDCARDs from library.
+   */
+  public void cleanUpLibrary() {
     Iterator<SdCard> it = library.listIterator();
     while (it.hasNext()) {
       SdCard sdCard = it.next();
       if (sdCard.isEmpty()) {
-        delete(new File(sdCard.getPath().getFile()));
+        deleteFile(new File(sdCard.getPath().getFile()));
         it.remove();
 
       }
     }
   }
 
-  //TODO: JavaDocComment
-  public void delete(File file) {
+  /**
+   * Deletes a specific file.
+   *
+   * @param file The File to delete.
+   */
+  public void deleteFile(File file) {
     if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
       for (File f : file.listFiles()) {
-        delete(f);
+        deleteFile(f);
       }
     }
-    logger.info("delete file " + file);
+    logger.info("deleteFile file " + file);
   }
 
   public String getLibraryPath() {

@@ -90,7 +90,11 @@ public class SdCard {
     return this.name;
   }
 
-  //TODO: JavaDocComment
+  /**
+   * Getter to read all MeasurementSequences in this SDCARD.
+   *
+   * @return List of MeasurementSequences.
+   */
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
     for (DataFile dataFile : dataFiles) {
@@ -99,7 +103,10 @@ public class SdCard {
     return list;
   }
 
-  //TODO: JavaDocComment
+  /**
+   * Checks if SDCARD is empty, empty DataFiles are removed before.
+   * @return true when empty.
+   */
   public boolean isEmpty() {
     if (dataFiles.isEmpty()) {
       return true;

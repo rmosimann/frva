@@ -1,6 +1,6 @@
 package controller;
 
-import java.awt.Desktop;
+import controller.util.FrvaTreeViewItem;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import controller.util.FrvaTreeViewItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -91,12 +89,13 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
-    //exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
     exportButton.setOnAction(event -> exportData());
 
   }
 
-  //TODO: JavaDocComment
+  /**
+   * Exports Data to a specific folder.
+   */
   public void exportData() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Select export path");
@@ -104,13 +103,14 @@ public class MainController {
     if (selectedFile != null) {
       model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
     }
-    if (Desktop.isDesktopSupported()) {
-      try {
-        Desktop.getDesktop().open(new File(model.getLibraryPath()));
-      } catch (IOException e) {
-        logger.info(e.getMessage());
-      }
-    }
+    //TODO get this working on Linux
+    //    if (Desktop.isDesktopSupported()) {
+    //      try {
+    //        Desktop.getDesktop().open(new File(model.getLibraryPath()));
+    //      } catch (IOException e) {
+    //        logger.info(e.getMessage());
+    //      }
+    //    }
   }
 
 
