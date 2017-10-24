@@ -23,6 +23,7 @@ public class DataFile {
   public DataFile(SdCard sdCard, File filename) {
     this.originalFile = filename;
     this.sdCard = sdCard;
+    this.containingFolderName = containingFolderName;
 
     List<String> fileContent = new ArrayList<>();
     String line = "";

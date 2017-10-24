@@ -18,6 +18,10 @@ dependencies {
 
 checkstyle {
     toolVersion = "8.2"
+    ignoreFailures = false
+    maxErrors = 0
+    maxWarnings = 0
+    showViolations = true
 }
 
 jacoco {
@@ -27,7 +31,6 @@ jacoco {
 
 test {
     finalizedBy jacocoTestReport
-
 }
 
 jacocoTestReport {
@@ -40,8 +43,6 @@ jacocoTestReport {
         String fileContents = new File("$buildDir/customJacocoReportDir/test/html/index.html").text;
         project.logger.lifecycle(fileContents)
     }
-
-
 }
 
 
