@@ -140,13 +140,9 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    datachart.setOnScroll(event -> {
-      if (event.getDeltaY() < 0) {
-        zoomOut(event.getX(), event.getY());
-      } else {
-        zoomIn(event.getX(), event.getY());
-      }
-    });
+
+    ZoomLineChart zoom = new ZoomWithSquare(datachart, xaxis, yaxis);
+
   }
 
 
@@ -269,23 +265,6 @@ public class TabController {
    * needed when recalculating the LineChart.
    */
   private void redrawMeasurementSequences() {
-  private void initializeGraph() {
-    xaxis.setAnimated(false);
-    xaxis.setForceZeroInRange(false);
-
-    yaxis.setAnimated(false);
-
-    datachart.setAnimated(false);
-    datachart.setCreateSymbols(false);
-    datachart.setAlternativeRowFillVisible(false);
-    datachart.setLegendVisible(false);
-    datachart.setData(lineChartData);
-
-    ZoomLineChart zoom = new ZoomWithSquare(datachart, xaxis, yaxis);
-  }
-
-
-  private void changemode() {
     logger.info("Redrawing Graph  ");
     lineChartData.clear();
     actualShowingSeqeunces.clear();
