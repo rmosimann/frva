@@ -5,15 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DataFile {
 
   private final File originalFile;
   private final SdCard sdCard;
-  private final String containingFolderName;
-  private List<MeasureSequence> measureSequences = new LinkedList<>();
+  private List<MeasureSequence> measureSequences = new ArrayList<>();
+  private boolean hasBeenChanged;
 
   /**
    * Constructor.
@@ -21,10 +20,9 @@ public class DataFile {
    * @param filename Name of the file
    * @param sdCard   The SDCARD the datafile belongs to
    */
-  public DataFile(SdCard sdCard, String containingFolderName, File filename) {
+  public DataFile(SdCard sdCard, File filename) {
     this.originalFile = filename;
     this.sdCard = sdCard;
-    this.containingFolderName = containingFolderName;
 
     List<String> fileContent = new ArrayList<>();
     String line = "";
@@ -32,13 +30,13 @@ public class DataFile {
       while ((line = br.readLine()) != null) {
         if (!"".equals(line)) {
           if (Character.isDigit(line.charAt(0)) && fileContent.size() > 0) {
-            measureSequences.add(new MeasureSequence(fileContent, sdCard));
+            measureSequences.add(new MeasureSequence(fileContent, this));
             fileContent.clear();
           }
           fileContent.add(line);
         }
       }
-      measureSequences.add(new MeasureSequence(fileContent, sdCard));
+      measureSequences.add(new MeasureSequence(fileContent, this));
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -54,6 +52,26 @@ public class DataFile {
   }
 
   public String getFolderName() {
-    return this.containingFolderName;
+    return originalFile.getParentFile().getName();
+  }
+
+  public String getDataFileName() {
+    return originalFile.getName();
+  }
+
+  public SdCard getSdCard() {
+    return sdCard;
+  }
+
+  public boolean isEmpty() {
+    return measureSequences.isEmpty();
+  }
+
+  public void setHasBeenChanged(boolean b) {
+    this.hasBeenChanged = b;
+  }
+
+  public boolean hasBeenChanged() {
+    return this.hasBeenChanged;
   }
 }

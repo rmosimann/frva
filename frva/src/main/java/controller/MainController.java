@@ -1,26 +1,19 @@
 package controller;
 
 import controller.util.FrvaTreeViewItem;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
@@ -71,10 +64,13 @@ public class MainController {
     directoryChooser.setTitle("Open Resource File");
     File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
     try {
-      model.addSdCard(new SdCard(selectedFile.toURI().toURL()));
+      SdCard sdCard = new SdCard(selectedFile.toURI().toURL());
+      model.addSdCard(sdCard);
+      model.writeData(sdCard.getMeasureSequences(), new File(model.getLibraryPath()).toPath());
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
+
     initializeTree();
   }
 
@@ -93,10 +89,33 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
-    exportButton.setOnAction(event -> model.writeData(model.getLibrary()));
+    exportButton.setOnAction(event -> exportData());
+
   }
 
+  /**
+   * Exports Data to a specific folder.
+   */
+  public void exportData() {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Select export path");
+    File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
+    if (selectedFile != null) {
+      model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+    }
+    //TODO get this working on Linux
+    //    if (Desktop.isDesktopSupported()) {
+    //      try {
+    //        Desktop.getDesktop().open(new File(model.getLibraryPath()));
+    //      } catch (IOException e) {
+    //        logger.info(e.getMessage());
+    //      }
+    //    }
+  }
+
+
   private void deleteSelectedItems() {
+
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
     List<MeasureSequence> measureSequenceList = list
         .stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
@@ -161,6 +180,7 @@ public class MainController {
 
 
   private void initializeTree() {
+
     FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 

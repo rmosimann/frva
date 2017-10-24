@@ -18,7 +18,9 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
       if (newValue) {
-        model.getCurrentSelectionList().add(measureSequence);
+        if (measureSequence != null) {
+          model.getCurrentSelectionList().add(measureSequence);
+        }
       } else {
         model.getCurrentSelectionList().removeAll(measureSequence);
       }

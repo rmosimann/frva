@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -169,6 +168,7 @@ public class TabController {
 
 
   private void addSingleSequence(MeasureSequence sequence) {
+
     xaxis.setAutoRanging(true);
     yaxis.setAutoRanging(true);
 

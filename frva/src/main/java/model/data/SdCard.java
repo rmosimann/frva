@@ -2,6 +2,7 @@ package model.data;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class SdCard {
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
   private CalibrationFile sensorCalibrationFileVeg;
+  private String name;
 
   /**
    * Constructor.
@@ -25,6 +27,10 @@ public class SdCard {
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
     dataFiles = readDatafiles(sdCardPath);
+
+
+    String[] arr = sdCardPath.getFile().split(File.separator);
+    this.name = arr[arr.length - 1];
   }
 
   private List<DataFile> readDatafiles(URL sdCardPath) {
@@ -36,7 +42,7 @@ public class SdCard {
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
-        dataFiles.add(new DataFile(this, directory.getName(), dataFile));
+        dataFiles.add(new DataFile(this, dataFile));
       }
     }
     return dataFiles;
@@ -81,7 +87,40 @@ public class SdCard {
   }
 
   public String getName() {
-    //TODO: how should SDCards be named?
-    return "SDCARD";
+    return this.name;
+  }
+
+  /**
+   * Getter to read all MeasurementSequences in this SDCARD.
+   *
+   * @return List of MeasurementSequences.
+   */
+  public List<MeasureSequence> getMeasureSequences() {
+    List<MeasureSequence> list = new ArrayList<>();
+    for (DataFile dataFile : dataFiles) {
+      list.addAll(dataFile.getMeasureSequences());
+    }
+    return list;
+  }
+
+  /**
+   * Checks if SDCARD is empty, empty DataFiles are removed before.
+   * @return true when empty.
+   */
+  public boolean isEmpty() {
+    if (dataFiles.isEmpty()) {
+      return true;
+    }
+    boolean isEmpty = true;
+    for (DataFile dfile : dataFiles) {
+      if (!dfile.isEmpty()) {
+        isEmpty = false;
+      }
+    }
+    return isEmpty;
+  }
+
+  public URL getPath() {
+    return this.sdCardPath;
   }
 }
