@@ -14,9 +14,14 @@
     -fx-opacity: 0.3;
 }
 
+.zoomRectToSmall {
+    -fx-background-color: white;
+    -fx-opacity: 0.1;
+}
+
 #zoommenu:hover {
     -fx-opacity: 1;
-    -fx-background-color: lightgrey;
+    -fx-background-color: whitesmoke;
     -fx-background-radius: 19px;
 }
 

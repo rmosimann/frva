@@ -1,7 +1,7 @@
 package controller;
 
 import controller.util.ZoomLineChart;
-import controller.util.ZoomWithSquare;
+import controller.util.ZoomWithRectangle;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Random;
@@ -144,7 +144,7 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    ZoomLineChart zoom = new ZoomWithSquare(datachart, xaxis, yaxis);
+    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
 
   }
 
