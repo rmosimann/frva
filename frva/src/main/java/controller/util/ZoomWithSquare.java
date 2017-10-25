@@ -29,20 +29,20 @@ public class ZoomWithSquare implements ZoomLineChart {
 
   private AnchorPane anchorPane;
   private Rectangle zoomRect;
+  private Image imgZoomIn;
+  private Image imgZoomMove;
+  private Image imgZoomOut;
 
   private Mode currentMouseMode;
+
+  private double moveStartX;
+  private double moveStartY;
 
   private enum Mode {
     ZOOMIN,
     ZOOMOUT,
     MOVE;
-
   }
-
-
-  Image imgZoomIn = new Image(ClassLoader.getSystemClassLoader()
-      .getResource("icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png")
-      .toExternalForm());
 
   /**
    * Creates and adds Zoomfunctionality  to a LineChart and its axes.
@@ -60,12 +60,23 @@ public class ZoomWithSquare implements ZoomLineChart {
     anchorPane = (AnchorPane) lineChart.getParent();
 
 
-    addZoomButtons(anchorPane);
-
+    addZoomMenu(anchorPane);
     addMouseListeners();
+
   }
 
-  private void addZoomButtons(AnchorPane anchorPane) {
+  private void addZoomMenu(AnchorPane anchorPane) {
+
+    imgZoomIn = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png")
+        .toExternalForm());
+    imgZoomOut = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_zoom_out_black_24dp/web/ic_zoom_out_black_24dp_1x.png")
+        .toExternalForm());
+    imgZoomMove = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_pets_black_24dp/web/ic_pets_black_24dp_1x.png")
+        .toExternalForm());
+
     VBox zoomMenuBox = new VBox();
 
     Button zoomin = new Button();
@@ -89,19 +100,18 @@ public class ZoomWithSquare implements ZoomLineChart {
     AnchorPane.setRightAnchor(zoomMenuBox, 14.0);
     anchorPane.getChildren().add(zoomMenuBox);
 
-
     zoomin.setOnAction(event -> {
       currentMouseMode = Mode.ZOOMIN;
       zoomMenuBox.setCursor(new ImageCursor(imgZoomIn, imgZoomIn.getWidth() / 2,
           imgZoomIn.getHeight() / 2));
       selectedZoomButton(zoomMenuButtons, zoomin);
-      System.out.println("zoomin");
     });
 
     zoomout.setOnAction(event -> {
       currentMouseMode = Mode.ZOOMOUT;
+      zoomMenuBox.setCursor(new ImageCursor(imgZoomOut, imgZoomOut.getWidth() / 2,
+          imgZoomOut.getHeight() / 2));
       selectedZoomButton(zoomMenuButtons, zoomout);
-      System.out.println("zoomout");
     });
 
     zoomReset.setOnAction(event -> {
@@ -113,6 +123,8 @@ public class ZoomWithSquare implements ZoomLineChart {
 
     zoomMove.setOnAction(event -> {
       currentMouseMode = Mode.MOVE;
+      zoomMenuBox.setCursor(new ImageCursor(imgZoomMove, imgZoomMove.getWidth() / 2,
+          imgZoomMove.getHeight() / 2));
       selectedZoomButton(zoomMenuButtons, zoomMove);
     });
   }
@@ -141,9 +153,11 @@ public class ZoomWithSquare implements ZoomLineChart {
 
     lineChart.setOnMouseMoved(event -> {
       if (isInChartRange(event) && Mode.MOVE.equals(currentMouseMode)) {
-        System.out.println("MOVE");
+        lineChart.setCursor(new ImageCursor(imgZoomMove, imgZoomMove.getWidth() / 2,
+            imgZoomMove.getHeight() / 2));
       } else if (isInChartRange(event) && Mode.ZOOMOUT.equals(currentMouseMode)) {
-        System.out.println("ZOOMOUT");
+        lineChart.setCursor(new ImageCursor(imgZoomOut, imgZoomOut.getWidth() / 2,
+            imgZoomOut.getHeight() / 2));
       } else if (isInChartRange(event) && Mode.ZOOMIN.equals(currentMouseMode)) {
         lineChart.setCursor(new ImageCursor(imgZoomIn, imgZoomIn.getWidth() / 2,
             imgZoomIn.getHeight() / 2));
@@ -157,6 +171,8 @@ public class ZoomWithSquare implements ZoomLineChart {
       if (isInChartRange(event)) {
         if (Mode.MOVE.equals(currentMouseMode)) {
           System.out.println("MOVE");
+          moveStartX = event.getX();
+          moveStartY = event.getY();
         }
 
         if (Mode.ZOOMIN.equals(currentMouseMode)) {
@@ -173,8 +189,18 @@ public class ZoomWithSquare implements ZoomLineChart {
     lineChart.setOnMouseDragged(event -> {
       if (isInChartRange(event)) {
         if (Mode.MOVE.equals(currentMouseMode)) {
-          System.out.println("MOVE");
+          Point2D moveDelta = calculateAxisFromPoint(new Point2D(event.getX() - moveStartX,
+              event.getY() - moveStartY + yaxis.getHeight()));
+
+          xaxis.setLowerBound(xaxis.getLowerBound() - moveDelta.getX());
+          xaxis.setUpperBound(xaxis.getUpperBound() - moveDelta.getX());
+          yaxis.setLowerBound(yaxis.getLowerBound() - moveDelta.getY());
+          yaxis.setUpperBound(yaxis.getUpperBound() - moveDelta.getY());
+
+          moveStartX = event.getX();
+          moveStartY = event.getY();
         }
+
         if (Mode.ZOOMIN.equals(currentMouseMode)) {
           //Right
           if (event.getX() > zoomStartPoint.getX()) {
@@ -227,7 +253,6 @@ public class ZoomWithSquare implements ZoomLineChart {
     double onYaxis = (
         (yaxis.getUpperBound() - yaxis.getLowerBound()) / pxHeigth) * (pxHeigth - (point2D.getY()));
 
-    System.out.println(onXaxis + " " + onYaxis);
     return new Point2D(onXaxis, onYaxis);
   }
 

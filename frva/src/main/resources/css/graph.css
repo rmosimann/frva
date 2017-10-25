@@ -16,6 +16,8 @@
 
 #zoommenu:hover {
     -fx-opacity: 1;
+    -fx-background-color: lightgrey;
+    -fx-background-radius: 19px;
 }
 
 .zoomMenuButton.selected {
