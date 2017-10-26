@@ -1,5 +1,6 @@
 package controller.util;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
@@ -10,13 +11,19 @@ import model.data.MeasureSequence;
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
+  public enum Type {ROOT, DEVICE, SDCARD, FILE, DATE, HOUR, MEASRURESEQUENCE}
+
+  ;
+
   private MeasureSequence measureSequence;
-  private String name;
+  private Type type;
   private FrvaModel model;
   ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
+
+
       if (newValue) {
         if (measureSequence != null) {
           model.getCurrentSelectionList().add(measureSequence);
@@ -28,55 +35,90 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
   };
 
 
-  public FrvaTreeViewItem(FrvaModel model) {
-    this.model = model;
+  /**
+   * Default-Constructor
+   */
+  public FrvaTreeViewItem(Type t) {
+    this.type = t;
+  }
 
+
+  /**
+   * Constructor of FrvaTreeViewItem. Does add a listener to its checked State and adds its
+   * measure sequence to the list of checked measure sequcences in the model.
+   */
+  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model, Type t) {
+    setName(name);
+    this.measureSequence = ms;
+    setName(name);
+    this.model = model;
+    this.type = t;
+
+    if (model != null) {
+      super.selectedProperty().addListener(checkedlistener);
+
+
+      model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observable,
+                            Number oldValue, Number newValue) {
+          selectedProperty().removeListener(checkedlistener);
+
+          if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
+            setSelected(true);
+          } else {
+            setSelected(false);
+          }
+
+          selectedProperty().addListener(checkedlistener);
+
+        }
+      });
+    }
   }
 
   /**
-   * Constructor of FrvaTreeViewItem.
+   * Constructor for Treeview-preview Items
    */
-  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
-    setValue(name);
+
+  public FrvaTreeViewItem(String name, MeasureSequence ms, Type t) {
+    setName(name);
     this.measureSequence = ms;
-    this.name = name;
-    this.model = model;
+    this.type = t;
 
-    super.selectedProperty().addListener(checkedlistener);
-
-
-    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable,
-                          Number oldValue, Number newValue) {
-        selectedProperty().removeListener(checkedlistener);
-
-        if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
-          setSelected(true);
-        } else {
-          setSelected(false);
-        }
-
-        selectedProperty().addListener(checkedlistener);
-
-      }
-    });
   }
 
   public String toString() {
-    return name;
+    return super.getValue().toString();
   }
 
   public MeasureSequence getMeasureSequence() {
     return this.measureSequence;
   }
 
-  public void setValue(String name) {
+  public void setName(String name) {
     super.setValue(name);
-    this.name = name;
+
   }
 
   public void setExpand(boolean value) {
     super.setExpanded(value);
   }
+
+
+  public BooleanProperty getCheckedProperty() {
+    return super.selectedProperty();
+  }
+
+  public String getDeviceId() {
+    return getDeviceId(this);
+  }
+
+  private String getDeviceId(FrvaTreeViewItem item) {
+    while (!item.isLeaf()) {
+      item = (FrvaTreeViewItem) item.getChildren().stream().findAny().get();
+    }
+    return item.measureSequence.getDataFile().getSdCard().getDeviceSerialNr();
+  }
+
 }

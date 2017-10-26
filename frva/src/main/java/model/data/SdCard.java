@@ -19,7 +19,7 @@ public class SdCard {
    *
    * @param sdCardPath a Path where the data lays as expected.
    */
-  public SdCard(URL sdCardPath) {
+  public SdCard(URL sdCardPath, String name) {
     this.sdCardPath = sdCardPath;
 
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
@@ -29,8 +29,12 @@ public class SdCard {
     dataFiles = readDatafiles(sdCardPath);
 
 
-    String[] arr = sdCardPath.getFile().split(File.separator);
-    this.name = arr[arr.length - 1];
+    if (name == null) {
+      String[] arr = sdCardPath.getFile().split(File.separator);
+      this.name = arr[arr.length - 1];
+    } else {
+      this.name = name;
+    }
   }
 
   private List<DataFile> readDatafiles(URL sdCardPath) {
@@ -105,6 +109,7 @@ public class SdCard {
 
   /**
    * Checks if SDCARD is empty, empty DataFiles are removed before.
+   *
    * @return true when empty.
    */
   public boolean isEmpty() {

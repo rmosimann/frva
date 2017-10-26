@@ -82,7 +82,7 @@
                                 <TreeView fx:id="treeView" prefWidth="252.0" VBox.vgrow="ALWAYS" />
                                 <HBox alignment="BOTTOM_LEFT" fillHeight="false" layoutX="10.0" layoutY="10.0" maxHeight="44.0" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button fx:id="importSdCardButton" accessibleHelp="Import" accessibleText="Import" mnemonicParsing="false" onAction="#importSdCard" style="-fx-background-color: none;">
+                                        <Button fx:id="importSdCardButton" accessibleHelp="Import" accessibleText="Import" mnemonicParsing="false" style="-fx-background-color: none;">
                                             <graphic>
                                                 <ImageView accessibleHelp="Import" accessibleRole="BUTTON" accessibleText="Import">
                                                     <image>
