@@ -172,7 +172,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
         if (Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
           zoomStartPoint = new Point2D(event.getX(), event.getY());
-          zoomRect = new Rectangle(event.getX(), event.getY());
+          zoomRect = new Rectangle(event.getX(), event.getY(), 0, 0);
           zoomRect.getStyleClass().add("zoomRect");
           anchorPane.getChildren().add(zoomRect);
         }
