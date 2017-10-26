@@ -1,14 +1,18 @@
 package controller;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -48,6 +52,15 @@ public class TabController {
   private final IntegerProperty runningUpdates = new SimpleIntegerProperty(0);
   private final BooleanProperty isDrawing = new SimpleBooleanProperty(false);
 
+  private final DoubleProperty indexNdviAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexNdviMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexNdviMax = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriMax = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariMax = new SimpleDoubleProperty();
 
   @FXML
   private LineChart<Double, Double> datachart;
@@ -80,11 +93,40 @@ public class TabController {
   private VBox crossedLimitBox;
 
   @FXML
-  private Button ignoreLimitButton;
+  private VBox vegetationIndicesBox;
 
+  @FXML
+  private Button ignoreLimitButton;
 
   @FXML
   private Label crossedLimitLabel;
+
+  @FXML
+  private Label indexNdviMinLabel;
+
+  @FXML
+  private Label indexNdviMaxLabel;
+
+  @FXML
+  private Label indexNdviAverageLabel;
+
+  @FXML
+  private Label indexTcariMinLabel;
+
+  @FXML
+  private Label indexTcariMaxLabel;
+
+  @FXML
+  private Label indexTcariAverageLabel;
+
+  @FXML
+  private Label indexPriMinLabel;
+
+  @FXML
+  private Label indexPriMaxLabel;
+
+  @FXML
+  private Label indexPriAverageLabel;
 
 
   /**
@@ -98,6 +140,7 @@ public class TabController {
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
     listToWatch = model.getObservableList(thisTabId);
+
   }
 
 
@@ -120,6 +163,16 @@ public class TabController {
     radioButtonReflectance.disableProperty().bind(isDrawing);
     radioButtonRaw.disableProperty().bind(isDrawing);
     radioButtonRadiance.disableProperty().bind(isDrawing);
+
+    indexNdviAverageLabel.textProperty().bind(Bindings.convert(indexNdviAverage));
+    indexNdviMaxLabel.textProperty().bind(Bindings.convert(indexNdviMax));
+    indexNdviMinLabel.textProperty().bind(Bindings.convert(indexNdviMin));
+    indexPriAverageLabel.textProperty().bind(Bindings.convert(indexPriAverage));
+    indexPriMaxLabel.textProperty().bind(Bindings.convert(indexPriMax));
+    indexPriMinLabel.textProperty().bind(Bindings.convert(indexPriMin));
+    indexTcariAverageLabel.textProperty().bind(Bindings.convert(indexTcariAverage));
+    indexTcariMaxLabel.textProperty().bind(Bindings.convert(indexTcariMax));
+    indexTcariMinLabel.textProperty().bind(Bindings.convert(indexTcariMin));
   }
 
 
@@ -200,10 +253,12 @@ public class TabController {
             || ignoreMaxToProcess)) {
           crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
+          recalculateIdices();
           ignoreMaxToProcess = false;
 
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
+          recalculateIdices();
           if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
             crossedLimitBox.setVisible(false);
           }
@@ -223,6 +278,56 @@ public class TabController {
         }
       }
     });
+  }
+
+  private void recalculateIdices() {
+    if (radioButtonReflectance.isSelected() && actualShowingSeqeunces.size() > 0) {
+      vegetationIndicesBox.setVisible(true);
+
+      double[] ndvi = new double[actualShowingSeqeunces.size()];
+      double[] pri = new double[actualShowingSeqeunces.size()];
+      double[] tcari = new double[actualShowingSeqeunces.size()];
+
+      for (int i = 0; i < actualShowingSeqeunces.size(); i++) {
+        ndvi[i] = actualShowingSeqeunces.get(i).getIndices().getNdvi();
+        pri[i] = actualShowingSeqeunces.get(i).getIndices().getPri();
+        tcari[i] = actualShowingSeqeunces.get(i).getIndices().getTcari();
+      }
+
+      Arrays.parallelSort(ndvi);
+      Arrays.parallelSort(pri);
+      Arrays.parallelSort(tcari);
+
+      double ndviSum = 0;
+      for (double value : ndvi) {
+        ndviSum += value;
+      }
+
+      double priSum = 0;
+      for (double value : pri) {
+        priSum += value;
+      }
+
+      double tcariSum = 0;
+      for (double value : tcari) {
+        tcariSum += value;
+      }
+
+      indexNdviMin.setValue(ndvi[0]);
+      indexNdviMax.setValue(ndvi[ndvi.length - 1]);
+      indexNdviAverage.setValue(ndviSum / ndvi.length);
+
+      indexPriMin.setValue(pri[0]);
+      indexPriMax.setValue(pri[pri.length - 1]);
+      indexPriAverage.setValue(priSum / pri.length);
+
+      indexTcariMin.setValue(tcari[0]);
+      indexTcariMax.setValue(tcari[tcari.length - 1]);
+      indexTcariAverage.setValue(tcariSum / tcari.length);
+
+    } else {
+      vegetationIndicesBox.setVisible(false);
+    }
   }
 
 
@@ -298,7 +403,6 @@ public class TabController {
    * @param sequence MeasurementSequence to add.
    */
   private void addSingleSequence(MeasureSequence sequence) {
-
     runningUpdates.setValue(runningUpdates.get() + 1);
     model.getExecutor().execute(() -> {
       xaxis.setAutoRanging(true);
