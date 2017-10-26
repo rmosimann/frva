@@ -23,6 +23,16 @@ public class MeasureSequence {
   private final Map<String, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
+  private ReflectionIndices reflectionIndices;
+
+  public enum KeyNames {
+    VEG,
+    WR,
+    DC_VEG,
+    DC_WR,
+
+    REFLECTANCE;
+  }
 
   /**
    * Constructor for a MeasurementSequence.
@@ -203,7 +213,7 @@ public class MeasureSequence {
    *
    * @return A DoubleArray.
    */
-  public Map<String, double[]> getReflection() {
+  public Map<String, double[]> getReflectance() {
     /*
     Reflectance R
       Data:   R(VEG) = L(VEG) / L(WR)
@@ -228,8 +238,55 @@ public class MeasureSequence {
     Map<String, double[]> reflectionMap = new HashMap<>();
     reflectionMap.put("Reflection", reflection);
 
+
     return reflectionMap;
+
   }
+
+  /**
+   * Calculates the indices.
+   * PRI, NVDI, TCRI.
+   *
+   * @return ReflectionIndices.
+   */
+  public ReflectionIndices getIndices() {
+    if (reflectionIndices == null) {
+      //calculatin indices
+      Map<String, double[]> reflectance = getReflectance();
+
+
+      double at700 = getValueOnWavelength(reflectance.get("Reflection"),
+          getWavlengthCalibration(), 700.0);
+
+    }
+
+    return reflectionIndices;
+  }
+
+  private double getValueOnWavelength(
+      double[] values, double[] wavlengthCalibration, double wavelength) {
+    double upper = wavlengthCalibration[0];
+    double lower = wavlengthCalibration[wavlengthCalibration.length - 1];
+
+    int i = 0;
+
+    while (upper < wavelength && i < wavlengthCalibration.length - 1) {
+      i++;
+      upper = wavlengthCalibration[i];
+    }
+    lower = wavlengthCalibration[i - 1];
+
+    double dx = upper - lower;
+    double dy = values[i] - values[i - 1];
+
+    double valueLinear = ((dy / dx) * (wavelength - lower)) + values[i - 1];
+
+    System.out.println(dx + "/" + dy + " * " + wavelength + "-"
+        + lower + "+" + values[i - 1] + " = " + valueLinear);
+
+    return valueLinear;
+  }
+
 
   public double[] getWavlengthCalibration() {
     return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();

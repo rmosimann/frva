@@ -298,6 +298,8 @@ public class TabController {
    * @param sequence MeasurementSequence to add.
    */
   private void addSingleSequence(MeasureSequence sequence) {
+    sequence.getIndices();
+
     runningUpdates.setValue(runningUpdates.get() + 1);
     model.getExecutor().execute(() -> {
       xaxis.setAutoRanging(true);
@@ -313,7 +315,7 @@ public class TabController {
         yaxis.setLabel("[W/( m²sr nm)]");
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
-        entries = sequence.getReflection().entrySet();
+        entries = sequence.getReflectance().entrySet();
         yaxis.setLabel("Reflectance Factor");
       }
 
