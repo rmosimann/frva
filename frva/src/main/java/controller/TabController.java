@@ -298,7 +298,6 @@ public class TabController {
    * @param sequence MeasurementSequence to add.
    */
   private void addSingleSequence(MeasureSequence sequence) {
-    sequence.getIndices();
 
     runningUpdates.setValue(runningUpdates.get() + 1);
     model.getExecutor().execute(() -> {

@@ -238,6 +238,7 @@ public class MeasureSequence {
     Map<String, double[]> reflectionMap = new HashMap<>();
     reflectionMap.put("Reflection", reflection);
 
+    reflectionIndices = new ReflectionIndices(reflection, getWavlengthCalibration());
 
     return reflectionMap;
 
@@ -254,45 +255,13 @@ public class MeasureSequence {
    */
   public ReflectionIndices getIndices() {
     if (reflectionIndices == null) {
-      //calculatin indices
       Map<String, double[]> reflectance = getReflectance();
 
-
-      double r700;
-      double r760;
-      double r550;
-      double r670;
-      double r531;
-      double r570;
-      double r920;
-      double r696;
-
-      r700 = getValueOnWavelength(reflectance.get("Reflection"), getWavlengthCalibration(), 700.0);
+      reflectionIndices = new ReflectionIndices(reflectance.get("Reflection"),
+          getWavlengthCalibration());
 
     }
-
     return reflectionIndices;
-  }
-
-  private double getValueOnWavelength(
-      double[] values, double[] wavlengthCalibration, double wavelength) {
-    double upper = wavlengthCalibration[0];
-    double lower = wavlengthCalibration[wavlengthCalibration.length - 1];
-
-    int i = 0;
-
-    while (upper < wavelength && i < wavlengthCalibration.length - 1) {
-      i++;
-      upper = wavlengthCalibration[i];
-    }
-    lower = wavlengthCalibration[i - 1];
-
-    double dx = upper - lower;
-    double dy = values[i] - values[i - 1];
-
-    double valueLinear = ((dy / dx) * (wavelength - lower)) + values[i - 1];
-
-    return valueLinear;
   }
 
 
