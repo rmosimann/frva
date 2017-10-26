@@ -14,8 +14,13 @@
     -fx-opacity: 0.3;
 }
 
+.zoomRect {
+    -fx-fill: limegreen;
+    -fx-opacity: 0.5;
+}
+
 .zoomRectToSmall {
-    -fx-background-color: white;
+    -fx-fill: red;
     -fx-opacity: 0.1;
 }
 
