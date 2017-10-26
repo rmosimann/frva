@@ -145,7 +145,7 @@ public class TabController {
     datachart.setData(lineChartData);
 
     ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
-
+    zoom.activateZoomHandler();
   }
 
 

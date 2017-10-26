@@ -92,4 +92,13 @@ public class ZoomByMouseScroll implements ZoomLineChart {
     yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
   }
 
+  @Override
+  public void activateZoomHandler() {
+    //TODO: define method
+  }
+
+  @Override
+  public void deactivateZoomHandler() {
+    //TODO: define method
+  }
 }

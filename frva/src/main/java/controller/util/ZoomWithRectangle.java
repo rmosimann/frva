@@ -5,6 +5,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
@@ -25,11 +27,17 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private final NumberAxis yaxis;
   private final NumberAxis xaxis;
 
+  private EventHandler<MouseEvent> eventHandlerMousePressed;
+  private EventHandler<MouseEvent> eventHandlerMouseEntered;
+  private EventHandler<MouseEvent> eventHandlerMouseMoved;
+  private EventHandler<MouseEvent> eventHandlerMouseDragged;
+  private EventHandler<MouseEvent> eventHandlerMouseReleased;
+  private ChangeListener<Boolean> changeListenerAxisAutoranging;
+
   private double borderLeft;
   private double borderRight;
   private double borderTop;
   private double borderBottom;
-
   private double xaxisLowerBoundBegin;
   private double xaxisUpperBoundBegin;
   private double yaxisLowerBoundBegin;
@@ -46,6 +54,8 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private Button zoomMoveButton;
   private Button zoomOutButton;
   private Button zoomResetButton;
+  private VBox zoomMenuBox;
+  private Button[] zoomMenuButtons;
 
   private ObjectProperty<Mode> currentMouseMode = new SimpleObjectProperty<>(null);
   private BooleanProperty areAxisAutoranging = new SimpleBooleanProperty();
@@ -73,120 +83,51 @@ public class ZoomWithRectangle implements ZoomLineChart {
     this.yaxis = yaxis;
 
     anchorPane = (AnchorPane) lineChart.getParent();
+  }
 
+  @Override
+  public void activateZoomHandler() {
     addZoomMenu(anchorPane);
-    addListeners();
-    currentMouseMode.set(null);
+    defineListenersHandlers();
+    addListenersBindingsHandlers();
   }
 
-  private void addZoomMenu(AnchorPane anchorPane) {
+  @Override
+  public void deactivateZoomHandler() {
+    lineChart.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
+    lineChart.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged);
+    lineChart.removeEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
+    lineChart.removeEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
+    lineChart.removeEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
 
-    zoomInImg = new Image(ClassLoader.getSystemClassLoader()
-        .getResource("icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png")
-        .toExternalForm());
-    zoomOutImg = new Image(ClassLoader.getSystemClassLoader()
-        .getResource("icons/ic_zoom_out_black_24dp/web/ic_zoom_out_black_24dp_1x.png")
-        .toExternalForm());
-    zoomMoveImg = new Image(ClassLoader.getSystemClassLoader()
-        .getResource("icons/ic_pets_black_24dp/web/ic_pets_black_24dp_1x.png")
-        .toExternalForm());
+    anchorPane.getChildren().remove(zoomMenuBox);
 
+    areAxisAutoranging.unbind();
 
-    zoomInButton = new Button();
-    zoomInButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonIn");
-
-    zoomOutButton = new Button();
-    zoomOutButton.setDisable(true);
-    zoomOutButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonOut");
-
-    zoomResetButton = new Button();
-    zoomResetButton.setDisable(true);
-    zoomResetButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonReset");
-
-    zoomMoveButton = new Button();
-    zoomMoveButton.setDisable(true);
-    zoomMoveButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonMove");
-
-    Button[] zoomMenuButtons = {zoomInButton, zoomMoveButton, zoomOutButton, zoomResetButton};
-
-    VBox zoomMenuBox = new VBox();
-
-    zoomMenuBox.getChildren().addAll(zoomInButton, zoomOutButton, zoomResetButton, zoomMoveButton);
-    zoomMenuBox.setId("zoommenu");
-
-    AnchorPane.setTopAnchor(zoomMenuBox, 14.0);
-    AnchorPane.setRightAnchor(zoomMenuBox, 14.0);
-    anchorPane.getChildren().add(zoomMenuBox);
-
-
-    zoomInButton.setOnAction(event -> {
-      currentMouseMode.setValue(Mode.ZOOMIN);
-      zoomMenuBox.setCursor(new ImageCursor(zoomInImg, zoomInImg.getWidth() / 2,
-          zoomInImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomInButton);
-    });
-
-    zoomOutButton.setOnAction(event -> {
-      currentMouseMode.setValue(Mode.ZOOMOUT);
-      zoomMenuBox.setCursor(new ImageCursor(zoomOutImg, zoomOutImg.getWidth() / 2,
-          zoomOutImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomOutButton);
-    });
-
-    zoomResetButton.setOnAction(event -> {
-      currentMouseMode.setValue(null);
-      zoomMenuBox.setCursor(Cursor.DEFAULT);
-      selectedZoomButton(zoomMenuButtons, null);
-      zoomReset();
-    });
-
-    zoomMoveButton.setOnAction(event -> {
-      currentMouseMode.setValue(Mode.MOVE);
-      zoomMenuBox.setCursor(new ImageCursor(zoomMoveImg, zoomMoveImg.getWidth() / 2,
-          zoomMoveImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomMoveButton);
-    });
+    areAxisAutoranging.removeListener(changeListenerAxisAutoranging);
   }
 
-  private void selectedZoomButton(Button[] zoomMenuButtons, Button selectedButton) {
-    String styleName = "selected";
-    for (Button button :
-        zoomMenuButtons) {
-      button.getStyleClass().remove(styleName);
-    }
-    if (selectedButton != null) {
-      selectedButton.getStyleClass().add(styleName);
-    }
-  }
-
-
-  private void addListeners() {
-
-    areAxisAutoranging.bind(xaxis.autoRangingProperty().and(yaxis.autoRangingProperty()));
-
-    areAxisAutoranging.addListener((observable, oldValue, newValue) -> {
-      if (!newValue) {
+  private void defineListenersHandlers() {
+    changeListenerAxisAutoranging = (observable, oldValue, newValue) -> {
+      if (newValue) {
+        zoomReset();
+      } else {
         xaxisLowerBoundBegin = xaxis.getLowerBound();
         xaxisUpperBoundBegin = xaxis.getUpperBound();
         yaxisLowerBoundBegin = yaxis.getLowerBound();
         yaxisUpperBoundBegin = yaxis.getUpperBound();
       }
-    });
-
-    zoomOutButton.disableProperty().bind(areAxisAutoranging);
-    zoomResetButton.disableProperty().bind(areAxisAutoranging);
-    zoomMoveButton.disableProperty().bind(areAxisAutoranging);
+    };
 
 
-    lineChart.setOnMouseEntered(event -> {
+    eventHandlerMouseEntered = event -> {
       borderLeft = yaxis.getWidth();
       borderRight = lineChart.getWidth();
       borderTop = 0;
       borderBottom = lineChart.getHeight() - xaxis.getHeight();
-    });
+    };
 
-
-    lineChart.setOnMouseMoved(event -> {
+    eventHandlerMouseMoved = event -> {
       if (isInChartRange(event) && Mode.MOVE.equals(currentMouseMode.getValue())) {
         lineChart.setCursor(new ImageCursor(zoomMoveImg, zoomMoveImg.getWidth() / 2,
             zoomMoveImg.getHeight() / 2));
@@ -199,10 +140,9 @@ public class ZoomWithRectangle implements ZoomLineChart {
       } else {
         lineChart.setCursor(Cursor.DEFAULT);
       }
-    });
+    };
 
-
-    lineChart.setOnMousePressed(event -> {
+    eventHandlerMousePressed = event -> {
       if (isInChartRange(event)) {
         if (Mode.MOVE.equals(currentMouseMode.getValue())) {
           System.out.println("MOVE");
@@ -217,19 +157,24 @@ public class ZoomWithRectangle implements ZoomLineChart {
           anchorPane.getChildren().add(zoomRect);
         }
       }
-    });
+    };
 
-
-    lineChart.setOnMouseDragged(event -> {
+    eventHandlerMouseDragged = event -> {
       if (isInChartRange(event)) {
         if (Mode.MOVE.equals(currentMouseMode.getValue())) {
           Point2D moveDelta = calculateAxisFromPoint(new Point2D(event.getX() - moveStartX,
               event.getY() - moveStartY + yaxis.getHeight()));
 
-          xaxis.setLowerBound(xaxis.getLowerBound() - moveDelta.getX());
-          xaxis.setUpperBound(xaxis.getUpperBound() - moveDelta.getX());
-          yaxis.setLowerBound(yaxis.getLowerBound() - moveDelta.getY());
-          yaxis.setUpperBound(yaxis.getUpperBound() - moveDelta.getY());
+          if ((xaxis.getLowerBound() - moveDelta.getX()) > xaxisLowerBoundBegin
+              && xaxis.getUpperBound() - moveDelta.getX() < xaxisUpperBoundBegin) {
+            xaxis.setLowerBound(xaxis.getLowerBound() - moveDelta.getX());
+            xaxis.setUpperBound(xaxis.getUpperBound() - moveDelta.getX());
+          }
+          if ((yaxis.getLowerBound() - moveDelta.getY()) > yaxisLowerBoundBegin
+              && (yaxis.getUpperBound() - moveDelta.getY()) < yaxisUpperBoundBegin) {
+            yaxis.setLowerBound(yaxis.getLowerBound() - moveDelta.getY());
+            yaxis.setUpperBound(yaxis.getUpperBound() - moveDelta.getY());
+          }
 
           moveStartX = event.getX();
           moveStartY = event.getY();
@@ -259,9 +204,9 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
         }
       }
-    });
+    };
 
-    lineChart.setOnMouseReleased(event -> {
+    eventHandlerMouseReleased = event -> {
       if (isInChartRange(event) && Mode.ZOOMOUT.equals(currentMouseMode.getValue())) {
         zoomOut(new Point2D(event.getX(), event.getY()));
       }
@@ -277,9 +222,107 @@ public class ZoomWithRectangle implements ZoomLineChart {
           zoomIn(upperLeft, lowerRight);
         }
       }
+    };
+  }
 
+
+  private void addListenersBindingsHandlers() {
+
+    areAxisAutoranging.bind(xaxis.autoRangingProperty().and(yaxis.autoRangingProperty()));
+
+    areAxisAutoranging.addListener(changeListenerAxisAutoranging);
+
+    zoomOutButton.disableProperty().bind(areAxisAutoranging);
+    zoomResetButton.disableProperty().bind(areAxisAutoranging);
+    zoomMoveButton.disableProperty().bind(areAxisAutoranging);
+
+    lineChart.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
+    lineChart.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged);
+    lineChart.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
+    lineChart.addEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
+    lineChart.addEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
+  }
+
+  private void addZoomMenu(AnchorPane anchorPane) {
+    zoomInImg = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png")
+        .toExternalForm());
+    zoomOutImg = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_zoom_out_black_24dp/web/ic_zoom_out_black_24dp_1x.png")
+        .toExternalForm());
+    zoomMoveImg = new Image(ClassLoader.getSystemClassLoader()
+        .getResource("icons/ic_pets_black_24dp/web/ic_pets_black_24dp_1x.png")
+        .toExternalForm());
+
+
+    zoomInButton = new Button();
+    zoomInButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonIn");
+
+    zoomOutButton = new Button();
+    zoomOutButton.setDisable(true);
+    zoomOutButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonOut");
+
+    zoomResetButton = new Button();
+    zoomResetButton.setDisable(true);
+    zoomResetButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonReset");
+
+    zoomMoveButton = new Button();
+    zoomMoveButton.setDisable(true);
+    zoomMoveButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonMove");
+
+
+    zoomMenuButtons = new Button[] {zoomInButton, zoomMoveButton, zoomOutButton, zoomResetButton};
+
+
+    zoomMenuBox = new VBox();
+
+    zoomMenuBox.getChildren().addAll(zoomInButton, zoomOutButton, zoomResetButton, zoomMoveButton);
+    zoomMenuBox.setId("zoommenu");
+
+    AnchorPane.setTopAnchor(zoomMenuBox, 14.0);
+    AnchorPane.setRightAnchor(zoomMenuBox, 14.0);
+    anchorPane.getChildren().add(zoomMenuBox);
+
+
+    zoomInButton.setOnAction(event -> {
+      currentMouseMode.setValue(Mode.ZOOMIN);
+      zoomMenuBox.setCursor(new ImageCursor(zoomInImg, zoomInImg.getWidth() / 2,
+          zoomInImg.getHeight() / 2));
+      selectedZoomButton(zoomMenuButtons, zoomInButton);
+    });
+
+    zoomOutButton.setOnAction(event -> {
+      currentMouseMode.setValue(Mode.ZOOMOUT);
+      zoomMenuBox.setCursor(new ImageCursor(zoomOutImg, zoomOutImg.getWidth() / 2,
+          zoomOutImg.getHeight() / 2));
+      selectedZoomButton(zoomMenuButtons, zoomOutButton);
+    });
+
+    zoomResetButton.setOnAction(event -> {
+      zoomReset();
+    });
+
+    zoomMoveButton.setOnAction(event -> {
+      currentMouseMode.setValue(Mode.MOVE);
+      zoomMenuBox.setCursor(new ImageCursor(zoomMoveImg, zoomMoveImg.getWidth() / 2,
+          zoomMoveImg.getHeight() / 2));
+      selectedZoomButton(zoomMenuButtons, zoomMoveButton);
     });
   }
+
+  private void selectedZoomButton(Button[] zoomMenuButtons, Button selectedButton) {
+    String styleName = "selected";
+    for (Button button :
+        zoomMenuButtons) {
+      button.getStyleClass().remove(styleName);
+    }
+    if (selectedButton != null) {
+      selectedButton.getStyleClass().add(styleName);
+    }
+  }
+
+
+
 
   private boolean isInChartRange(MouseEvent event) {
     return event.getX() > borderLeft && event.getX() < borderRight
@@ -357,8 +400,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
   }
 
   private void zoomReset() {
+    currentMouseMode.setValue(null);
+    zoomMenuBox.setCursor(Cursor.DEFAULT);
+    selectedZoomButton(zoomMenuButtons, null);
     xaxis.setAutoRanging(true);
     yaxis.setAutoRanging(true);
+
   }
 
 }
