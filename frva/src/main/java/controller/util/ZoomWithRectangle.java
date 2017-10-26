@@ -53,7 +53,10 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private double xaxisUpperBoundBegin;
   private double yaxisLowerBoundBegin;
   private double yaxisUpperBoundBegin;
-  private int minZoomRectangelSize = 50;
+  private double moveStartX;
+  private double moveStartY;
+  private final int minZoomRectangelSize = 50;
+  private boolean isActive = false;
 
   private Point2D zoomStartPoint;
 
@@ -72,8 +75,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private ObjectProperty<Mode> currentMouseMode = new SimpleObjectProperty<>(null);
   private BooleanProperty areAxisAutoranging = new SimpleBooleanProperty();
 
-  private double moveStartX;
-  private double moveStartY;
 
   private enum Mode {
     ZOOMIN,
@@ -103,9 +104,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
    */
   @Override
   public void activateZoomHandler() {
-    addZoomMenu(anchorPane);
-    defineListenersHandlers();
-    addListenersBindingsHandlers();
+    if (!isActive) {
+      addZoomMenu(anchorPane);
+      defineListenersHandlers();
+      addListenersBindingsHandlers();
+      isActive = true;
+    }
   }
 
 
@@ -114,17 +118,21 @@ public class ZoomWithRectangle implements ZoomLineChart {
    */
   @Override
   public void deactivateZoomHandler() {
-    lineChart.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
-    lineChart.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged);
-    lineChart.removeEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
-    lineChart.removeEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
-    lineChart.removeEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
+    if (isActive) {
+      lineChart.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
+      lineChart.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandlerMouseDragged);
+      lineChart.removeEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
+      lineChart.removeEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
+      lineChart.removeEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
 
-    anchorPane.getChildren().remove(zoomMenuBox);
+      anchorPane.getChildren().remove(zoomMenuBox);
 
-    areAxisAutoranging.unbind();
+      areAxisAutoranging.unbind();
 
-    areAxisAutoranging.removeListener(changeListenerAxisAutoranging);
+      areAxisAutoranging.removeListener(changeListenerAxisAutoranging);
+
+      isActive = false;
+    }
   }
 
 
@@ -347,6 +355,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
   /**
    * Checks if the given MouseEvent is locatet on the Chart element, and not only on the LineChart.
+   *
    * @param event Mousevent containing the mouse-position.
    * @return True when mouse is in Chart, otherwise false.
    */
@@ -359,6 +368,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
   /**
    * Calculates the axis values of a Point on the chart.
    * Used to input mouse-coordinates and output axes-values.
+   *
    * @param point2D in px (0,0) is top-right (chart.width,chart.height) is bottom-right.
    * @return a point containing the x-, y-axis values.
    */
