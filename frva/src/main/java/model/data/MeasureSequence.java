@@ -245,7 +245,10 @@ public class MeasureSequence {
 
   /**
    * Calculates the indices.
-   * PRI, NVDI, TCRI.
+   * Based on the reflectance factors R:
+   * TCARI : 3 × ((R700 – R760) – 0.2 × (R700 – R550) × (R700/R670))
+   * PRI: (R531 -R570 )/(R531 +R570 )
+   * NDVI: (R920 - R696) / (R920 + R696)
    *
    * @return ReflectionIndices.
    */
@@ -255,8 +258,16 @@ public class MeasureSequence {
       Map<String, double[]> reflectance = getReflectance();
 
 
-      double at700 = getValueOnWavelength(reflectance.get("Reflection"),
-          getWavlengthCalibration(), 700.0);
+      double r700;
+      double r760;
+      double r550;
+      double r670;
+      double r531;
+      double r570;
+      double r920;
+      double r696;
+
+      r700 = getValueOnWavelength(reflectance.get("Reflection"), getWavlengthCalibration(), 700.0);
 
     }
 
@@ -280,9 +291,6 @@ public class MeasureSequence {
     double dy = values[i] - values[i - 1];
 
     double valueLinear = ((dy / dx) * (wavelength - lower)) + values[i - 1];
-
-    System.out.println(dx + "/" + dy + " * " + wavelength + "-"
-        + lower + "+" + values[i - 1] + " = " + valueLinear);
 
     return valueLinear;
   }
