@@ -253,12 +253,12 @@ public class TabController {
             || ignoreMaxToProcess)) {
           crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
-          recalculateIdices();
+          calculateIndices();
           ignoreMaxToProcess = false;
 
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
-          recalculateIdices();
+          calculateIndices();
           if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
             crossedLimitBox.setVisible(false);
           }
@@ -280,7 +280,11 @@ public class TabController {
     });
   }
 
-  private void recalculateIdices() {
+  /**
+   * Calculates the VegetationIndices and updates the GUI.
+   * Indices are only shown when reflectance is selected.
+   */
+  private void calculateIndices() {
     if (radioButtonReflectance.isSelected() && actualShowingSeqeunces.size() > 0) {
       vegetationIndicesBox.setVisible(true);
 
@@ -313,17 +317,19 @@ public class TabController {
         tcariSum += value;
       }
 
-      indexNdviMin.setValue(ndvi[0]);
-      indexNdviMax.setValue(ndvi[ndvi.length - 1]);
-      indexNdviAverage.setValue(ndviSum / ndvi.length);
+      double roundOnStel = 100000;
 
-      indexPriMin.setValue(pri[0]);
-      indexPriMax.setValue(pri[pri.length - 1]);
-      indexPriAverage.setValue(priSum / pri.length);
+      indexNdviMin.setValue(Math.round(ndvi[0] * roundOnStel) / roundOnStel);
+      indexNdviMax.setValue(Math.round(ndvi[ndvi.length - 1] * roundOnStel) / roundOnStel);
+      indexNdviAverage.setValue(Math.round((ndviSum / ndvi.length) * roundOnStel) / roundOnStel);
 
-      indexTcariMin.setValue(tcari[0]);
-      indexTcariMax.setValue(tcari[tcari.length - 1]);
-      indexTcariAverage.setValue(tcariSum / tcari.length);
+      indexPriMin.setValue(Math.round(pri[0] * roundOnStel) / roundOnStel);
+      indexPriMax.setValue(Math.round(pri[pri.length - 1] * roundOnStel) / roundOnStel);
+      indexPriAverage.setValue(Math.round((priSum / pri.length) * roundOnStel) / roundOnStel);
+
+      indexTcariMin.setValue(Math.round(tcari[0] * roundOnStel) / roundOnStel);
+      indexTcariMax.setValue(Math.round(tcari[tcari.length - 1] * roundOnStel) / roundOnStel);
+      indexTcariAverage.setValue(Math.round((tcariSum / tcari.length) * roundOnStel) / roundOnStel);
 
     } else {
       vegetationIndicesBox.setVisible(false);
@@ -495,21 +501,6 @@ public class TabController {
     series.getNode().setOnMouseExited(event -> {
       series.getNode().setStyle(serieStyleNormal);
     });
-  }
-
-
-  private void calculateIndicies() {
-    /*
-     * NDVI:
-     *    NDVI is defined as (NIR - RED) / (NIR + RED)
-     *    where NIR = reflectance at wavelength 920nm
-     *    RED = reflectance at wavelength 696nm
-     *
-     * TCARI
-     *
-     * PRI
-     *
-     */
   }
 
 
