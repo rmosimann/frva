@@ -19,6 +19,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
+
+/**
+ * Adds a advanced zoom-functionality to a JavaFX LineChart.
+ * A Menu is added, where the Zoom and the Move functionality can be controlled.
+ * The mouse cursor is changed accordingly.
+ * To zoom you draw a rectangle on the part you like to zoomin.
+ * Requirements:
+ * - Linechart is wrapped in a AnchorBox (ZoomMenu and rectangle are attached there)
+ * - chart has Padding 0 (in CSS)
+ * - chart-content has Padding 0 (in CSS)
+ */
 public class ZoomWithRectangle implements ZoomLineChart {
 
   private final Logger logger = Logger.getLogger("FRVA");
@@ -42,6 +53,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private double xaxisUpperBoundBegin;
   private double yaxisLowerBoundBegin;
   private double yaxisUpperBoundBegin;
+  private int minZoomRectangelSize = 50;
 
   private Point2D zoomStartPoint;
 
@@ -70,11 +82,11 @@ public class ZoomWithRectangle implements ZoomLineChart {
   }
 
   /**
-   * Creates and adds Zoomfunctionality  to a LineChart and its axes.
+   * Registers a LineChart and its axes to add Zoom-Functionality to.
    *
-   * @param zommableNode Linechart to ZOOMIN.
-   * @param xaxis        xAxis to ZOOMIN.
-   * @param yaxis        xAxis to ZOOMIN.
+   * @param zommableNode Linechart to add zoom handler.
+   * @param xaxis        xAxis contained in the linechart.
+   * @param yaxis        yAxis ontained in the linechart.
    */
   public ZoomWithRectangle(LineChart<Double, Double> zommableNode,
                            NumberAxis xaxis, NumberAxis yaxis) {
@@ -85,6 +97,10 @@ public class ZoomWithRectangle implements ZoomLineChart {
     anchorPane = (AnchorPane) lineChart.getParent();
   }
 
+
+  /**
+   * Enables Zoom-Functionlity on the registered LineChart.
+   */
   @Override
   public void activateZoomHandler() {
     addZoomMenu(anchorPane);
@@ -92,6 +108,10 @@ public class ZoomWithRectangle implements ZoomLineChart {
     addListenersBindingsHandlers();
   }
 
+
+  /**
+   * Disables Zoom-Functionlity on the registered LineChart.
+   */
   @Override
   public void deactivateZoomHandler() {
     lineChart.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
@@ -107,6 +127,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
     areAxisAutoranging.removeListener(changeListenerAxisAutoranging);
   }
 
+
   private void defineListenersHandlers() {
     changeListenerAxisAutoranging = (observable, oldValue, newValue) -> {
       if (newValue) {
@@ -118,7 +139,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
         yaxisUpperBoundBegin = yaxis.getUpperBound();
       }
     };
-
 
     eventHandlerMouseEntered = event -> {
       borderLeft = yaxis.getWidth();
@@ -152,7 +172,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
         if (Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
           zoomStartPoint = new Point2D(event.getX(), event.getY());
-          zoomRect = new Rectangle(event.getX(), event.getY(), 0, 0);
+          zoomRect = new Rectangle(event.getX(), event.getY());
           zoomRect.getStyleClass().add("zoomRect");
           anchorPane.getChildren().add(zoomRect);
         }
@@ -196,7 +216,8 @@ public class ZoomWithRectangle implements ZoomLineChart {
             zoomRect.setY(event.getY());
           }
 
-          if (zoomRect.getWidth() < 50 && zoomRect.getHeight() < 50) {
+          if (zoomRect.getWidth() < minZoomRectangelSize
+              && zoomRect.getHeight() < minZoomRectangelSize) {
             zoomRect.getStyleClass().add("zoomRectToSmall");
           } else {
             zoomRect.getStyleClass().remove("zoomRectToSmall");
@@ -217,8 +238,8 @@ public class ZoomWithRectangle implements ZoomLineChart {
         Point2D lowerRight = new Point2D(zoomRect.getX() - borderLeft + zoomRect.getWidth(),
             zoomRect.getY() - borderTop + zoomRect.getHeight());
         if (anchorPane.getChildren().remove(zoomRect)
-            && (lowerRight.getX() - upperLeft.getX()) > 50
-            && (lowerRight.getY() - upperLeft.getY()) > 50) {
+            && (lowerRight.getX() - upperLeft.getX()) > minZoomRectangelSize
+            && (lowerRight.getY() - upperLeft.getY()) > minZoomRectangelSize) {
           zoomIn(upperLeft, lowerRight);
         }
       }
@@ -227,11 +248,9 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
 
   private void addListenersBindingsHandlers() {
-
-    areAxisAutoranging.bind(xaxis.autoRangingProperty().and(yaxis.autoRangingProperty()));
-
     areAxisAutoranging.addListener(changeListenerAxisAutoranging);
 
+    areAxisAutoranging.bind(xaxis.autoRangingProperty().and(yaxis.autoRangingProperty()));
     zoomOutButton.disableProperty().bind(areAxisAutoranging);
     zoomResetButton.disableProperty().bind(areAxisAutoranging);
     zoomMoveButton.disableProperty().bind(areAxisAutoranging);
@@ -243,6 +262,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
     lineChart.addEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
   }
 
+
+  /**
+   * Adds a Vbox with all buttons on top of the Anchorpane that contains the LineChart.
+   *
+   * @param anchorPane The pane containing the LineChart.
+   */
   private void addZoomMenu(AnchorPane anchorPane) {
     zoomInImg = new Image(ClassLoader.getSystemClassLoader()
         .getResource("icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png")
@@ -253,7 +278,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
     zoomMoveImg = new Image(ClassLoader.getSystemClassLoader()
         .getResource("icons/ic_pets_black_24dp/web/ic_pets_black_24dp_1x.png")
         .toExternalForm());
-
 
     zoomInButton = new Button();
     zoomInButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonIn");
@@ -270,9 +294,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
     zoomMoveButton.setDisable(true);
     zoomMoveButton.getStyleClass().addAll("zoomMenuButton", "zoomButtonMove");
 
-
     zoomMenuButtons = new Button[] {zoomInButton, zoomMoveButton, zoomOutButton, zoomResetButton};
-
 
     zoomMenuBox = new VBox();
 
@@ -288,14 +310,14 @@ public class ZoomWithRectangle implements ZoomLineChart {
       currentMouseMode.setValue(Mode.ZOOMIN);
       zoomMenuBox.setCursor(new ImageCursor(zoomInImg, zoomInImg.getWidth() / 2,
           zoomInImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomInButton);
+      setSelectedZoomButton(zoomMenuButtons, zoomInButton);
     });
 
     zoomOutButton.setOnAction(event -> {
       currentMouseMode.setValue(Mode.ZOOMOUT);
       zoomMenuBox.setCursor(new ImageCursor(zoomOutImg, zoomOutImg.getWidth() / 2,
           zoomOutImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomOutButton);
+      setSelectedZoomButton(zoomMenuButtons, zoomOutButton);
     });
 
     zoomResetButton.setOnAction(event -> {
@@ -306,11 +328,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
       currentMouseMode.setValue(Mode.MOVE);
       zoomMenuBox.setCursor(new ImageCursor(zoomMoveImg, zoomMoveImg.getWidth() / 2,
           zoomMoveImg.getHeight() / 2));
-      selectedZoomButton(zoomMenuButtons, zoomMoveButton);
+      setSelectedZoomButton(zoomMenuButtons, zoomMoveButton);
     });
   }
 
-  private void selectedZoomButton(Button[] zoomMenuButtons, Button selectedButton) {
+
+  private void setSelectedZoomButton(Button[] zoomMenuButtons, Button selectedButton) {
     String styleName = "selected";
     for (Button button :
         zoomMenuButtons) {
@@ -322,14 +345,23 @@ public class ZoomWithRectangle implements ZoomLineChart {
   }
 
 
-
-
+  /**
+   * Checks if the given MouseEvent is locatet on the Chart element, and not only on the LineChart.
+   * @param event Mousevent containing the mouse-position.
+   * @return True when mouse is in Chart, otherwise false.
+   */
   private boolean isInChartRange(MouseEvent event) {
     return event.getX() > borderLeft && event.getX() < borderRight
         && event.getY() > borderTop && event.getY() < borderBottom;
   }
 
 
+  /**
+   * Calculates the axis values of a Point on the chart.
+   * Used to input mouse-coordinates and output axes-values.
+   * @param point2D in px (0,0) is top-right (chart.width,chart.height) is bottom-right.
+   * @return a point containing the x-, y-axis values.
+   */
   private Point2D calculateAxisFromPoint(Point2D point2D) {
     double pxWidth = xaxis.getWidth();
     double pxHeigth = yaxis.getHeight();
@@ -396,16 +428,14 @@ public class ZoomWithRectangle implements ZoomLineChart {
         && yaxis.getLowerBound() == yaxisLowerBoundBegin) {
       zoomReset();
     }
-
   }
+
 
   private void zoomReset() {
     currentMouseMode.setValue(null);
     zoomMenuBox.setCursor(Cursor.DEFAULT);
-    selectedZoomButton(zoomMenuButtons, null);
+    setSelectedZoomButton(zoomMenuButtons, null);
     xaxis.setAutoRanging(true);
     yaxis.setAutoRanging(true);
-
   }
-
 }
