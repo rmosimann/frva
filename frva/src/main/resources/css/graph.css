@@ -1,0 +1,9 @@
+@import "graphDefaultColors.css";
+
+.chart-series-line {
+    -fx-stroke-width: 2px;
+}
+
+.chart-series-line:hover {
+    -fx-stroke-width: 4px;
+}

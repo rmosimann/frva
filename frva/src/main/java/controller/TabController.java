@@ -1,7 +1,6 @@
 package controller;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -24,7 +23,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -47,6 +45,8 @@ public class TabController {
   private final IntegerProperty maxSeqeuncesToProcess = new SimpleIntegerProperty(40);
   private final IntegerProperty runningUpdates = new SimpleIntegerProperty(0);
   private final BooleanProperty isDrawing = new SimpleBooleanProperty(false);
+
+  private final String wavlelength = "s, knds v";
 
 
   @FXML
@@ -352,22 +352,7 @@ public class TabController {
     Tooltip tooltip = new Tooltip();
     Tooltip.install(series.getNode(), tooltip);
 
-    Random rand = new Random();
-    int r = rand.nextInt(255);
-    Color serieColor = Color.rgb(rand.nextInt(200), rand.nextInt(200), rand.nextInt(200));
-
-    series.getNode().setStyle("-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 2px");
-
-    String tooltipStyle = "-fx-background-color: #" + serieColor.toString().substring(2, 8) + ";";
-
-    String serieStyleHoover = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 4px;";
-
-    String serieStyleNormal = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 2px;";
-
-    tooltip.setStyle(tooltipStyle);
+    tooltip.getStyleClass().addAll("chart-series-line", "series" + (lineChartData.size() - 1 % 63));
 
     series.getNode().setOnMouseEntered(event -> {
       double xlowest = xaxis.getLowerBound();
@@ -379,16 +364,10 @@ public class TabController {
       double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
       double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
-      series.getNode().setStyle(serieStyleHoover);
-
       tooltip.setText("ID: " + sequence.getId() + "\n"
           + "Serial: " + sequence.getSerial() + "\n"
           + "x: " + String.valueOf(xvalue) + "\n"
           + "y: " + String.valueOf(yvalue));
-    });
-
-    series.getNode().setOnMouseExited(event -> {
-      series.getNode().setStyle(serieStyleNormal);
     });
   }
 

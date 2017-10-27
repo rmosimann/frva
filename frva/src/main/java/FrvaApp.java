@@ -19,6 +19,8 @@ public class FrvaApp extends Application {
     root.setController(new MainController(model));
     primaryStage.setTitle(model.getApplicationName());
     primaryStage.setScene(new Scene(root.load()));
+    primaryStage.getScene().getStylesheets().add(getClass()
+        .getResource("css/master.css").toExternalForm());
     primaryStage.show();
   }
 }
