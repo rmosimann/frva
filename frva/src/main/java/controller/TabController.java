@@ -303,7 +303,7 @@ public class TabController {
       xaxis.setAutoRanging(true);
       yaxis.setAutoRanging(true);
 
-      Set<Map.Entry<String, double[]>> entries = null;
+      Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
         entries = sequence.getMeasurements().entrySet();
         yaxis.setLabel("DN (digital number)");
@@ -319,7 +319,7 @@ public class TabController {
 
       double[] calibration = sequence.getWavlengthCalibration();
 
-      for (Map.Entry<String, double[]> entry : entries) {
+      for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
         double[] data = entry.getValue();
         LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
         series.setName(sequence.getSequenceUuid());
