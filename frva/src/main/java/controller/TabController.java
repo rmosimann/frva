@@ -346,11 +346,12 @@ public class TabController {
   /**
    * Adds a tooltip and MouseHoovering behaviour to a Serie.
    *
-   * @param key
+   * @param key      The key that is used to get the name from.
    * @param sequence The seuqence to get Tooltip infos from.
    * @param series   The Serie to add the Tootlip.
    */
-  private void formatSerieLayout(MeasureSequence.SequenceKeyName key, MeasureSequence sequence, XYChart.Series<Double, Double> series) {
+  private void formatSerieLayout(MeasureSequence.SequenceKeyName key,
+                                 MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     Tooltip.install(series.getNode(), tooltip);
 
