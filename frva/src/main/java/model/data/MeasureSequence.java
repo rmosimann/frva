@@ -29,6 +29,10 @@ public class MeasureSequence {
     WR,
     DC_VEG,
     DC_WR,
+
+    RADIANCE_VEG,
+    RADIANCE_WR,
+
     REFLECTANCE;
   }
 
@@ -203,8 +207,8 @@ public class MeasureSequence {
     }
 
     Map<SequenceKeyName, double[]> radianceMap = new HashMap<>();
-    radianceMap.put(SequenceKeyName.VEG, vegRadiance);
-    radianceMap.put(SequenceKeyName.WR, wrRadiance);
+    radianceMap.put(SequenceKeyName.RADIANCE_VEG, vegRadiance);
+    radianceMap.put(SequenceKeyName.RADIANCE_WR, wrRadiance);
 
     return radianceMap;
   }
@@ -224,8 +228,8 @@ public class MeasureSequence {
      */
     Map<SequenceKeyName, double[]> radianceMap = this.getRadiance();
 
-    double[] vegRadiance = radianceMap.get(SequenceKeyName.VEG);
-    double[] wrRadiance = radianceMap.get(SequenceKeyName.WR);
+    double[] vegRadiance = radianceMap.get(SequenceKeyName.RADIANCE_VEG);
+    double[] wrRadiance = radianceMap.get(SequenceKeyName.RADIANCE_WR);
 
     double[] reflection = new double[vegRadiance.length];
 

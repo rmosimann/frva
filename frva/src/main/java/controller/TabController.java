@@ -46,7 +46,11 @@ public class TabController {
   private final IntegerProperty runningUpdates = new SimpleIntegerProperty(0);
   private final BooleanProperty isDrawing = new SimpleBooleanProperty(false);
 
-  private final String wavlelength = "s, knds v";
+  private final String axisLabelWaveLength = "Wavelength [nanometer]";
+  private final String axisLabelDigitalNumber = "DN (digital number)";
+  private final String axisLabelRadiance = "[W/( m²sr nm)]";
+  private final String axisLabelReflectance = "Reflectance Factor";
+  private final String axisLabelBands = "Bands";
 
 
   @FXML
@@ -130,8 +134,8 @@ public class TabController {
     xaxis.setAnimated(false);
     xaxis.setForceZeroInRange(false);
     yaxis.setAnimated(false);
-    yaxis.setLabel("DN (digital number)");
-    xaxis.setLabel("Wavelength [nanometer]");
+    yaxis.setLabel(axisLabelDigitalNumber);
+    xaxis.setLabel(axisLabelWaveLength);
     datachart.setAnimated(false);
     datachart.setCreateSymbols(false);
     datachart.setAlternativeRowFillVisible(false);
@@ -234,13 +238,13 @@ public class TabController {
     togglGroupYaxis.selectToggle(radioButtonRaw);
     togglGroupYaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.equals(radioButtonRaw)) {
-        yaxis.setLabel("DN (digital number)");
+        yaxis.setLabel(axisLabelDigitalNumber);
       }
       if (newValue.equals(radioButtonRadiance)) {
-        yaxis.setLabel("[W/( m²sr nm)]");
+        yaxis.setLabel(axisLabelRadiance);
       }
       if (newValue.equals(radioButtonReflectance)) {
-        yaxis.setLabel("Reflectance Factor");
+        yaxis.setLabel(axisLabelReflectance);
       }
       redrawMeasurementSequences();
     });
@@ -252,10 +256,10 @@ public class TabController {
     togglGroupXaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (togglGroupXaxis.getSelectedToggle().equals(radioButtonWavelength)) {
         asWavelength = true;
-        xaxis.setLabel("Wavelength [nanometer]");
+        xaxis.setLabel(axisLabelWaveLength);
       } else {
         asWavelength = false;
-        xaxis.setLabel("Bands");
+        xaxis.setLabel(axisLabelBands);
       }
       redrawMeasurementSequences();
     });
@@ -306,15 +310,12 @@ public class TabController {
       Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
         entries = sequence.getMeasurements().entrySet();
-        yaxis.setLabel("DN (digital number)");
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
         entries = sequence.getRadiance().entrySet();
-        yaxis.setLabel("[W/( m²sr nm)]");
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
         entries = sequence.getReflection().entrySet();
-        yaxis.setLabel("Reflectance Factor");
       }
 
       double[] calibration = sequence.getWavlengthCalibration();
@@ -331,7 +332,7 @@ public class TabController {
 
         Platform.runLater(() -> {
           lineChartData.add(series);
-          formatSerieLayout(sequence, series);
+          formatSerieLayout(entry.getKey(), sequence, series);
         });
       }
       Platform.runLater(() -> {
@@ -345,10 +346,11 @@ public class TabController {
   /**
    * Adds a tooltip and MouseHoovering behaviour to a Serie.
    *
+   * @param key
    * @param sequence The seuqence to get Tooltip infos from.
    * @param series   The Serie to add the Tootlip.
    */
-  private void formatSerieLayout(MeasureSequence sequence, XYChart.Series<Double, Double> series) {
+  private void formatSerieLayout(MeasureSequence.SequenceKeyName key, MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     Tooltip.install(series.getNode(), tooltip);
 
@@ -366,6 +368,7 @@ public class TabController {
 
       tooltip.setText("ID: " + sequence.getId() + "\n"
           + "Serial: " + sequence.getSerial() + "\n"
+          + "Type: " + key.name() + "\n"
           + "x: " + String.valueOf(xvalue) + "\n"
           + "y: " + String.valueOf(yvalue));
     });
