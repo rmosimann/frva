@@ -1,10 +1,15 @@
 package controller;
 
+import controller.util.ZoomLineChart;
+import controller.util.ZoomWithRectangle;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -25,6 +30,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -138,13 +144,8 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    datachart.setOnScroll(event -> {
-      if (event.getDeltaY() < 0) {
-        zoomOut(event.getX(), event.getY());
-      } else {
-        zoomIn(event.getX(), event.getY());
-      }
-    });
+    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
+    zoom.activateZoomHandler();
   }
 
 
@@ -350,6 +351,9 @@ public class TabController {
    */
   private void formatSerieLayout(MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
+    tooltip.setOpacity(0.9);
+    hackTooltipStartTiming(tooltip);
+
     Tooltip.install(series.getNode(), tooltip);
 
     Random rand = new Random();
@@ -374,8 +378,8 @@ public class TabController {
       double xhighest = xaxis.getUpperBound();
       double ylowest = yaxis.getLowerBound();
       double yhighest = yaxis.getUpperBound();
-      double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
-      double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
+      double pxWidth = xaxis.getWidth();
+      double pxHeigth = yaxis.getHeight();
       double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
       double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
@@ -390,6 +394,30 @@ public class TabController {
     series.getNode().setOnMouseExited(event -> {
       series.getNode().setStyle(serieStyleNormal);
     });
+  }
+
+  /**
+   * Set the TooltipDelay with reflection (missing feature).
+   * Found on: https://stackoverflow.com/questions/26854301/
+   * how-to-control-the-javafx-tooltips-delay#27739605
+   *
+   * @param tooltip The Tooltip to set the delay on.
+   */
+  private void hackTooltipStartTiming(Tooltip tooltip) {
+    try {
+      Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+      fieldBehavior.setAccessible(true);
+      Object objBehavior = fieldBehavior.get(tooltip);
+
+      Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+      fieldTimer.setAccessible(true);
+      Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50)));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -407,61 +435,4 @@ public class TabController {
      */
   }
 
-
-  private void zoomIn(double xpos, double ypos) {
-    logger.info("Zooming in");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() + zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() - zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() + zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
-  }
-
-
-  private void zoomOut(double xpos, double ypos) {
-    logger.info("Zooming out");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() - zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() + zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() - zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
-  }
 }
