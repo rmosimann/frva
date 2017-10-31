@@ -57,24 +57,6 @@ public class MainController {
     logger.info("Created MainController");
   }
 
-/*
-  @FXML
-  void importSdCard(ActionEvent event) {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setTitle("Open Resource File");
-    File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
-    try {
-      SdCard sdCard = new SdCard(selectedFile.toURI().toURL());
-      model.addSdCard(sdCard);
-      model.writeData(sdCard.getMeasureSequences(), new File(model.getLibraryPath()).toPath());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
-
-    initializeTree();
-  }
-
-  */
 
   @FXML
   private void initialize() {
@@ -98,7 +80,7 @@ public class MainController {
 
   private void importWizard() {
 
-    ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow());
+    ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
     List<SdCard> importedSdCards = model.writeData(list, new File(model.getLibraryPath()).toPath());
     addElementsToTreeView(importedSdCards);
@@ -130,7 +112,7 @@ public class MainController {
 
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
     List<MeasureSequence> measureSequenceList = list
-        .stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
+        .stream().map(FrvaTreeViewItem::getMeasureSequence).collect(Collectors.toList());
     model.deleteMeasureSequences(measureSequenceList);
 
     for (FrvaTreeViewItem item : list) {
@@ -193,15 +175,17 @@ public class MainController {
 
   private void initializeTreeView(List<SdCard> list) {
 
-    treeView.setRoot(new FrvaTreeViewItem("Library", null, model, FrvaTreeViewItem.Type.ROOT));
+    treeView.setRoot(new FrvaTreeViewItem("Library", null, model,
+        FrvaTreeViewItem.Type.ROOT, false));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
     addElementsToTreeView(list);
-    model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
+    model.getCurrentlySelectedTabProperty().addListener(
+        (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
   }
 
   private void addElementsToTreeView(List<SdCard> list) {
-    TreeViewFactory.extendTreeView(list, treeView, model);
+    TreeViewFactory.extendTreeView(list, treeView, model, false);
   }
 
 
@@ -260,9 +244,8 @@ public class MainController {
   private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item,
                                                           List<FrvaTreeViewItem> list) {
     if (!item.isLeaf()) {
-      Iterator it = item.getChildren().iterator();
-      while (it.hasNext()) {
-        FrvaTreeViewItem element = (FrvaTreeViewItem) it.next();
+      for (Object o : item.getChildren()) {
+        FrvaTreeViewItem element = (FrvaTreeViewItem) o;
         removeTickedMeasurements(element, list);
         if (element.isSelected()) {
           list.add(element);

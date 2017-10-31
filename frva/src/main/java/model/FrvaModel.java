@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -70,9 +71,9 @@ public class FrvaModel {
       if (sdfolder.isDirectory()) {
         try {
           URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
-          if (sdcard != null) {
-            library.add(new SdCard(sdcard, null));
-          }
+
+          library.add(new SdCard(sdcard, null));
+
         } catch (Exception e) {
           logger.info(e.getMessage());
         }
@@ -133,7 +134,7 @@ public class FrvaModel {
    * @param list List of MesurementSequences to deleteFile.
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
-    if (confirmDelete(list.stream().filter(measureSequence -> measureSequence != null).count())) {
+    if (confirmDelete(list.stream().filter(Objects::nonNull).count())) {
       Set<DataFile> set = new HashSet<>();
       for (SdCard sdCard : library) {
         for (DataFile dataFile : sdCard.getDataFiles()) {
@@ -251,11 +252,12 @@ public class FrvaModel {
       }
 
     }
-    for (File f : sdCardFolderList
-        ) {
+    for (File f : sdCardFolderList) {
       try {
-        returnList.add(new SdCard(f.toURI().toURL(),null));
-      } catch (MalformedURLException e){logger.info(e.getMessage());}
+        returnList.add(new SdCard(f.toURI().toURL(), null));
+      } catch (MalformedURLException e) {
+        logger.info(e.getMessage());
+      }
 
     }
     return returnList;
@@ -359,5 +361,20 @@ public class FrvaModel {
 
   public String getLibraryPath() {
     return libraryPath;
+  }
+
+
+  /**
+   * Returns the number of measuresequences in the library.
+   */
+  public int getLibrarySize() {
+    int sum = 0;
+    for (SdCard sdcard : library) {
+      for (DataFile d : sdcard.getDataFiles()) {
+        sum += d.getMeasureSequences().size();
+      }
+
+    }
+    return sum;
   }
 }

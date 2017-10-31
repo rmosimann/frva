@@ -11,14 +11,12 @@ import model.data.MeasureSequence;
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
-  public enum Type {ROOT, DEVICE, SDCARD, FILE, DATE, HOUR, MEASRURESEQUENCE}
-
-  ;
+  public enum Type { ROOT, DEVICE, SDCARD, FILE, DATE, HOUR, MEASRURESEQUENCE }
 
   private MeasureSequence measureSequence;
   private Type type;
   private FrvaModel model;
-  ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
+  private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
@@ -36,7 +34,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
 
   /**
-   * Default-Constructor
+   * Default-Constructor.
    */
   public FrvaTreeViewItem(Type t) {
     this.type = t;
@@ -47,46 +45,33 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
    * Constructor of FrvaTreeViewItem. Does add a listener to its checked State and adds its
    * measure sequence to the list of checked measure sequcences in the model.
    */
-  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model, Type t) {
+  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model, Type t,
+                          boolean isPreview) {
     setName(name);
     this.measureSequence = ms;
     setName(name);
     this.model = model;
     this.type = t;
 
-    if (model != null) {
+    if (!isPreview) {
       super.selectedProperty().addListener(checkedlistener);
 
 
-      model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable,
-                            Number oldValue, Number newValue) {
-          selectedProperty().removeListener(checkedlistener);
+      model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
+        selectedProperty().removeListener(checkedlistener);
 
-          if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
-            setSelected(true);
-          } else {
-            setSelected(false);
-          }
-
-          selectedProperty().addListener(checkedlistener);
-
+        if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
+          setSelected(true);
+        } else {
+          setSelected(false);
         }
+
+        selectedProperty().addListener(checkedlistener);
+
       });
     }
   }
 
-  /**
-   * Constructor for Treeview-preview Items
-   */
-
-  public FrvaTreeViewItem(String name, MeasureSequence ms, Type t) {
-    setName(name);
-    this.measureSequence = ms;
-    this.type = t;
-
-  }
 
   public String toString() {
     return super.getValue().toString();

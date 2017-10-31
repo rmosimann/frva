@@ -14,13 +14,21 @@ import model.data.SdCard;
 public class TreeViewFactory {
 
 
-  public static void extendTreeView(List<SdCard> list, TreeView<FrvaTreeViewItem> treeView, FrvaModel model) {
+  /**
+   * Creates a treeview.
+   *
+   * @param list      list of SdCards containing the data.
+   * @param treeView  view on which the data should be attached to
+   * @param model     the model of the application
+   * @param isPreview registers MeasureSequences in the model if false
+   */
+  public static void extendTreeView(List<SdCard> list, TreeView<FrvaTreeViewItem> treeView,
+                                    FrvaModel model, boolean isPreview) {
 
 
     FrvaTreeViewItem root = (FrvaTreeViewItem) treeView.getRoot();
 
     int sdCardCount = 0;
-    int deviceCount = 0;
     FrvaTreeViewItem deviceItem = null;
 
 
@@ -28,11 +36,11 @@ public class TreeViewFactory {
     String currentDevice = "";
     for (SdCard card : list) {
 
-      for(Object item:root.getChildren()){
+      for (Object item : root.getChildren()) {
 
-        if(((FrvaTreeViewItem)item).getDeviceId().equals(card.getDeviceSerialNr())){
-          deviceItem=(FrvaTreeViewItem)item;
-          currentDevice=card.getDeviceSerialNr();
+        if (((FrvaTreeViewItem) item).getDeviceId().equals(card.getDeviceSerialNr())) {
+          deviceItem = (FrvaTreeViewItem) item;
+          currentDevice = card.getDeviceSerialNr();
         }
       }
       if (!card.getDeviceSerialNr().equals(currentDevice)) {
@@ -79,16 +87,15 @@ public class TreeViewFactory {
             checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
             checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
           }
-
-          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
-              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
-              model, FrvaTreeViewItem.Type.MEASRURESEQUENCE);
           hourlyCount++;
           dailyCount++;
-          deviceCount++;
           sdCardCount++;
+          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
+              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
+              model, FrvaTreeViewItem.Type.MEASRURESEQUENCE, isPreview);
+
           checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
-          System.out.println("new TreeViewitem " + checkBoxTreeMeasurementItem.getMeasureSequence().getSequenceUuid());
+
         }
         checkBoxTreeHourItem.setName(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
             + " (" + hourlyCount + ")");
@@ -97,8 +104,8 @@ public class TreeViewFactory {
       sdCardItem.setName(card.getName() + " (" + sdCardCount + ")");
       sdCardCount = 0;
 
-      deviceItem.setName(card.getDeviceSerialNr() + " (" + deviceCount + ")");
-      deviceCount = 0;
+      deviceItem.setName(card.getDeviceSerialNr() + " (" + model.getLibrarySize() + ")");
+
     }
     treeView.setShowRoot(false);
   }

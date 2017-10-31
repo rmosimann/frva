@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
@@ -21,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -38,15 +40,25 @@ public class ImportWizard {
   private List<SdCard> sdCardList;
   private TreeView<FrvaTreeViewItem> previewTreeView;
   private List<MeasureSequence> importList;
+  private FrvaModel model;
+  private final Logger logger = Logger.getLogger("FRVA");
 
-  public ImportWizard(Window owner) {
+
+  /**
+   * Constructor of import wizard, creates a new wizard.
+   *
+   * @param owner the Window from within the wizard is called
+   * @param model the model of the project
+   */
+  public ImportWizard(Window owner, FrvaModel model) {
     this.owner = owner;
     this.chosenDirectoryPath = new SimpleStringProperty("no directory chosen");
     this.chosenSdCardName = new SimpleStringProperty("unknown SDCARD");
-    chosenSdCardName.addListener(l -> System.out.println("SD Card name has changed to: " + chosenSdCardName.getName()));
+    this.model = model;
     initalizeTreeView();
     importList = new ArrayList<>();
     sdCardList = new ArrayList<>();
+
 
   }
 
@@ -56,7 +68,11 @@ public class ImportWizard {
     previewTreeView.setRoot(new FrvaTreeViewItem(FrvaTreeViewItem.Type.ROOT));
   }
 
-
+  /**
+   * starts the importprocess.
+   *
+   * @return a list of the imported MeasureSequences.
+   */
   public List<MeasureSequence> startImport() {
 
 
@@ -65,7 +81,8 @@ public class ImportWizard {
     WizardPane choseSdCardPane = createFirstPage();
     WizardPane choseSdCardNamePane = createSecondPage();
     WizardPane selectMeasurementsPane = createThirdPage();
-    wizard.setFlow(new Wizard.LinearFlow(choseSdCardPane, choseSdCardNamePane, selectMeasurementsPane));
+    wizard.setFlow(new Wizard.LinearFlow(choseSdCardPane, choseSdCardNamePane,
+        selectMeasurementsPane));
 
 
     // show wizard and wait for response
@@ -74,7 +91,6 @@ public class ImportWizard {
         updateImportList((FrvaTreeViewItem) previewTreeView.getRoot());
       }
     });
-    System.out.println("**************"+importList.size());
     return importList;
   }
 
@@ -137,15 +153,19 @@ public class ImportWizard {
       public void onEnteringPage(Wizard wizard) {
         try {
           File file = new File(chosenDirectoryPath.get());
-          System.out.println(chosenSdCardName.get());
           SdCard sdCard = new SdCard(file.toURI().toURL(), chosenSdCardName.get());
           sdCardList.add(sdCard);
-          System.out.println("set SD-Cardname " + chosenSdCardName.get() + " at location" + sdCard.getPath().getFile());
+
+          logger.info("set SD-Cardname " + chosenSdCardName.get()
+              + " at location" + sdCard.getPath().getFile());
 
         } catch (MalformedURLException e) {
           e.getMessage();
         }
-        loadTree(sdCardList, previewTreeView);
+
+        TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
+        previewTreeView.getRoot().setExpanded(true);
+        ((FrvaTreeViewItem) previewTreeView.getRoot()).setSelected(true);
       }
     };
 
@@ -172,72 +192,5 @@ public class ImportWizard {
     chosenDirectoryPath.set(chosenFile.getAbsolutePath());
   }
 
-  private void loadTree(List<SdCard> list, TreeView treeView) {
 
-    TreeViewFactory.extendTreeView(list, treeView, null);
-    //Structurize Data with days/hours
-/*
-    FrvaTreeViewItem deviceName = new FrvaTreeViewItem();
-    FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem();
-    deviceName.getChildren().add(sdCardItem);
-
-    treeView.setRoot(deviceName);
-
-    int sdCardCount = 0;
-
-    for(SdCard sdCard: list) {
-      for (DataFile dataFile : sdCard.getDataFiles()) {
-        Iterator it = dataFile.getMeasureSequences().iterator();
-        String hour = "";
-        String date = "000000";
-        boolean continueToNextDay = false;
-        int hourlyCount = 0;
-        int dailyCount = 0;
-        FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem();
-        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem();
-
-        while (it.hasNext()) {
-          MeasureSequence measureSequence = (MeasureSequence) it.next();
-          String currentHour = measureSequence.getTime().substring(0, 2);
-          String currentDate = measureSequence.getDate();
-
-          if (!currentDate.equals(date)) {
-            checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
-            dailyCount = 0;
-            date = currentDate;
-            continueToNextDay = true;
-            checkBoxTreeDateItem = new FrvaTreeViewItem();
-            sdCardItem.getChildren().add(checkBoxTreeDateItem);
-          }
-
-          if (!currentHour.equals(hour) || continueToNextDay) {
-            continueToNextDay = false;
-            checkBoxTreeHourItem.setName(hour + ":00-" + currentHour + ":00 "
-                + "(" + hourlyCount + ")");
-            hourlyCount = 0;
-            hour = currentHour;
-            checkBoxTreeHourItem = new FrvaTreeViewItem();
-            checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
-          }
-
-
-          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
-              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence);
-          hourlyCount++;
-          dailyCount++;
-          sdCardCount++;
-          checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
-        }
-        checkBoxTreeHourItem.setName(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
-            + " (" + hourlyCount + ")");
-        checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
-      }
-
-      deviceName.setSelected(true);
-      deviceName.setName(sdCard.getDeviceSerialNr());
-    }
-    sdCardItem.setName(chosenSdCardName.get() + " (" + sdCardCount + ")");
-*/
-
-  }
 }
