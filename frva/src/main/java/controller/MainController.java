@@ -1,9 +1,10 @@
 package controller;
 
 import controller.util.FrvaTreeViewItem;
+import controller.util.ImportWizard;
+import controller.util.TreeViewFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -33,11 +33,6 @@ public class MainController {
   private final FrvaModel model;
   private int newTabId = 0;
 
-  public MainController(FrvaModel model) {
-    this.model = model;
-    logger.info("Created MainController");
-  }
-
   @FXML
   private TreeView<FrvaTreeViewItem> treeView;
   @FXML
@@ -57,27 +52,16 @@ public class MainController {
   @FXML
   private Button exportButton;
 
-
-  @FXML
-  void importSdCard(ActionEvent event) {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setTitle("Open Resource File");
-    File selectedFile = directoryChooser.showDialog(importSdCardButton.getScene().getWindow());
-    try {
-      SdCard sdCard = new SdCard(selectedFile.toURI().toURL());
-      model.addSdCard(sdCard);
-      model.writeData(sdCard.getMeasureSequences(), new File(model.getLibraryPath()).toPath());
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
-
-    initializeTree();
+  public MainController(FrvaModel model) {
+    this.model = model;
+    logger.info("Created MainController");
   }
+
 
   @FXML
   private void initialize() {
     initializeTabHandling();
-    initializeTree();
+    initializeTreeView(model.getLibrary());
     addEventHandlers();
     //onChangeTab();
   }
@@ -90,8 +74,18 @@ public class MainController {
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     exportButton.setOnAction(event -> exportData());
+    importSdCardButton.setOnAction(event -> importWizard());
 
   }
+
+  private void importWizard() {
+
+    ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
+    List<MeasureSequence> list = importWizard.startImport();
+    List<SdCard> importedSdCards = model.writeData(list, new File(model.getLibraryPath()).toPath());
+    addElementsToTreeView(importedSdCards);
+  }
+
 
   /**
    * Exports Data to a specific folder.
@@ -118,7 +112,7 @@ public class MainController {
 
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
     List<MeasureSequence> measureSequenceList = list
-        .stream().map(a -> a.getMeasureSequence()).collect(Collectors.toList());
+        .stream().map(FrvaTreeViewItem::getMeasureSequence).collect(Collectors.toList());
     model.deleteMeasureSequences(measureSequenceList);
 
     for (FrvaTreeViewItem item : list) {
@@ -179,71 +173,19 @@ public class MainController {
   }
 
 
-  private void initializeTree() {
+  private void initializeTreeView(List<SdCard> list) {
 
-    FrvaTreeViewItem root = new FrvaTreeViewItem("Library", null, model);
+    treeView.setRoot(new FrvaTreeViewItem("Library", null, model,
+        FrvaTreeViewItem.Type.ROOT, false));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
+    addElementsToTreeView(list);
+    model.getCurrentlySelectedTabProperty().addListener(
+        (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
+  }
 
-    //Structurize Data with days/hours
-    for (SdCard card : model.getLibrary()) {
-      FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem(card.getDeviceSerialNr(), null, model);
-      root.getChildren().add(sdCardItem);
-      for (DataFile dataFile : card.getDataFiles()) {
-        Iterator it = dataFile.getMeasureSequences().iterator();
-        String hour = "";
-        String date = "000000";
-        boolean continueToNextDay = false;
-        int hourlyCount = 0;
-        int dailyCount = 0;
-        FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(model);
-        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(model);
-
-        while (it.hasNext()) {
-          MeasureSequence measureSequence = (MeasureSequence) it.next();
-          String currentHour = measureSequence.getTime().substring(0, 2);
-          String currentDate = measureSequence.getDate();
-
-          if (!currentDate.equals(date)) {
-            checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
-            dailyCount = 0;
-            date = currentDate;
-            continueToNextDay = true;
-            checkBoxTreeDateItem = new FrvaTreeViewItem(model);
-            sdCardItem.getChildren().add(checkBoxTreeDateItem);
-          }
-
-          if (!currentHour.equals(hour) || continueToNextDay) {
-            continueToNextDay = false;
-            checkBoxTreeHourItem.setValue(hour + ":00-" + currentHour + ":00 "
-                + "(" + hourlyCount + ")");
-            hourlyCount = 0;
-            hour = currentHour;
-            checkBoxTreeHourItem = new FrvaTreeViewItem(model);
-            checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
-          }
-
-          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
-              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
-              model);
-          hourlyCount++;
-          dailyCount++;
-          checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
-        }
-        checkBoxTreeHourItem.setValue(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
-            + " (" + hourlyCount + ")");
-        checkBoxTreeDateItem.setValue(date + " (" + dailyCount + ")");
-      }
-    }
-    treeView.setRoot(root);
-    treeView.setShowRoot(false);
-    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable,
-                          Number oldValue, Number newValue) {
-        treeView.getSelectionModel().clearSelection();
-      }
-    });
+  private void addElementsToTreeView(List<SdCard> list) {
+    TreeViewFactory.extendTreeView(list, treeView, model, false);
   }
 
 
@@ -302,9 +244,8 @@ public class MainController {
   private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item,
                                                           List<FrvaTreeViewItem> list) {
     if (!item.isLeaf()) {
-      Iterator it = item.getChildren().iterator();
-      while (it.hasNext()) {
-        FrvaTreeViewItem element = (FrvaTreeViewItem) it.next();
+      for (Object o : item.getChildren()) {
+        FrvaTreeViewItem element = (FrvaTreeViewItem) o;
         removeTickedMeasurements(element, list);
         if (element.isSelected()) {
           list.add(element);

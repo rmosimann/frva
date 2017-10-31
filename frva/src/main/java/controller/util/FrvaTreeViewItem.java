@@ -1,5 +1,6 @@
 package controller.util;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
@@ -10,10 +11,12 @@ import model.data.MeasureSequence;
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
+  public enum Type { ROOT, DEVICE, SDCARD, FILE, DATE, HOUR, MEASRURESEQUENCE }
+
   private MeasureSequence measureSequence;
-  private String name;
+  private Type type;
   private FrvaModel model;
-  ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
+  private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
@@ -28,9 +31,11 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
   };
 
 
-  public FrvaTreeViewItem(FrvaModel model) {
-    this.model = model;
-
+  /**
+   * Default-Constructor.
+   */
+  public FrvaTreeViewItem(Type t) {
+    this.type = t;
   }
 
   /**
@@ -39,19 +44,19 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
    * @param ms    measurementsequence, if null it is a category item.
    * @param model the one and only model.
    */
-  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
-    setValue(name);
+  public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model, Type t,
+                          boolean isPreview) {
+    setName(name);
     this.measureSequence = ms;
-    this.name = name;
+    setName(name);
     this.model = model;
+    this.type = t;
 
-    super.selectedProperty().addListener(checkedlistener);
+    if (!isPreview) {
+      super.selectedProperty().addListener(checkedlistener);
 
 
-    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable,
-                          Number oldValue, Number newValue) {
+      model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
         selectedProperty().removeListener(checkedlistener);
 
         if (model.getCurrentSelectionList().contains((MeasureSequence) measureSequence)) {
@@ -62,24 +67,41 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
         selectedProperty().addListener(checkedlistener);
 
-      }
-    });
+      });
+    }
   }
 
   public String toString() {
-    return name;
+    return super.getValue().toString();
   }
 
   public MeasureSequence getMeasureSequence() {
     return this.measureSequence;
   }
 
-  public void setValue(String name) {
+  public void setName(String name) {
     super.setValue(name);
-    this.name = name;
+
   }
 
   public void setExpand(boolean value) {
     super.setExpanded(value);
   }
+
+
+  public BooleanProperty getCheckedProperty() {
+    return super.selectedProperty();
+  }
+
+  public String getDeviceId() {
+    return getDeviceId(this);
+  }
+
+  private String getDeviceId(FrvaTreeViewItem item) {
+    while (!item.isLeaf()) {
+      item = (FrvaTreeViewItem) item.getChildren().stream().findAny().get();
+    }
+    return item.measureSequence.getDataFile().getSdCard().getDeviceSerialNr();
+  }
+
 }

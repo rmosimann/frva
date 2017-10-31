@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -34,11 +36,6 @@ public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
-
-  public IntegerProperty currentlySelectedTabProperty() {
-    return currentlySelectedTab;
-  }
-
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
@@ -46,8 +43,6 @@ public class FrvaModel {
     t.setDaemon(true);
     return t;
   });
-
-
 
   private String libraryPath;
 
@@ -74,9 +69,9 @@ public class FrvaModel {
       if (sdfolder.isDirectory()) {
         try {
           URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
-          if (sdcard != null) {
-            library.add(new SdCard(sdcard));
-          }
+
+          library.add(new SdCard(sdcard, null));
+
         } catch (Exception e) {
           logger.info(e.getMessage());
         }
@@ -110,6 +105,10 @@ public class FrvaModel {
     library.add(sdCard);
   }
 
+  public void addMeasurementsToLibrary(List<MeasureSequence> listToAdd) {
+
+  }
+
   public void setCurrentlySelectedTab(int currentlySelectedTab) {
     this.currentlySelectedTab.set(currentlySelectedTab);
   }
@@ -133,7 +132,7 @@ public class FrvaModel {
    * @param list List of MesurementSequences to deleteFile.
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
-    if (confirmDelete(list.stream().filter(measureSequence -> measureSequence != null).count())) {
+    if (confirmDelete(list.stream().filter(Objects::nonNull).count())) {
       Set<DataFile> set = new HashSet<>();
       for (SdCard sdCard : library) {
         for (DataFile dataFile : sdCard.getDataFiles()) {
@@ -190,23 +189,26 @@ public class FrvaModel {
    * @param list List of SDCARD to save.
    * @param exportPath the path where the SDCARD is exported to.
    */
-  public void writeData(List<MeasureSequence> list, Path exportPath) {
+  public List<SdCard> writeData(List<MeasureSequence> list, Path exportPath) {
+    List<SdCard> returnList = new ArrayList<>();
     SdCard sdCard = null;
     String currentFolder = null;
     String path = null;
+    List<File> sdCardFolderList = new ArrayList<>();
     for (MeasureSequence measureSequence : list) {
       try {
         if (!measureSequence.getDataFile().getSdCard().equals(sdCard)) {
           sdCard = measureSequence.getDataFile().getSdCard();
           path = exportPath.toString() + File.separator + sdCard.getName();
           File card = new File(path);
+          sdCardFolderList.add(card);
 
           if (card.exists()) {
             if (confirmOverriding(path, card)) {
               deleteFile(card);
             } else {
               logger.info("Export cancelled");
-              return;
+              return returnList;
             }
           }
           //Create SD Card Folder
@@ -216,7 +218,9 @@ public class FrvaModel {
             writeCalibrationFiles(sdCard, path);
             currentFolder = null;
           }
+
         }
+
 
         if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
           path += File.separator + measureSequence.getDataFile().getFolderName();
@@ -245,8 +249,19 @@ public class FrvaModel {
       } catch (IOException e) {
         logger.info(e.getStackTrace().toString());
       }
+
     }
+    for (File f : sdCardFolderList) {
+      try {
+        returnList.add(new SdCard(f.toURI().toURL(), null));
+      } catch (MalformedURLException e) {
+        logger.info(e.getMessage());
+      }
+
+    }
+    return returnList;
   }
+
 
   private void writeCalibrationFiles(SdCard sdCard, String path) throws IOException {
     Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
@@ -302,6 +317,7 @@ public class FrvaModel {
 
   /**
    * Getter to read all MeasurementSequences in the Library.
+   *
    * @return List of MeasurementSequences.
    */
   public List<MeasureSequence> getLibraryAsMeasureSequences() {
@@ -344,5 +360,20 @@ public class FrvaModel {
 
   public String getLibraryPath() {
     return libraryPath;
+  }
+
+
+  /**
+   * Returns the number of measuresequences in the library.
+   */
+  public int getLibrarySize() {
+    int sum = 0;
+    for (SdCard sdcard : library) {
+      for (DataFile d : sdcard.getDataFiles()) {
+        sum += d.getMeasureSequences().size();
+      }
+
+    }
+    return sum;
   }
 }
