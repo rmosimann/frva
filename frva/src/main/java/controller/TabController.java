@@ -5,7 +5,6 @@ import controller.util.ZoomWithRectangle;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -33,7 +32,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import model.FrvaModel;
 import model.data.MeasureSequence;
@@ -57,6 +55,12 @@ public class TabController {
   private final IntegerProperty maxSeqeuncesToProcess = new SimpleIntegerProperty(40);
   private final IntegerProperty runningUpdates = new SimpleIntegerProperty(0);
   private final BooleanProperty isDrawing = new SimpleBooleanProperty(false);
+
+  private final String axisLabelWaveLength = "Wavelength [nanometer]";
+  private final String axisLabelDigitalNumber = "DN (digital number)";
+  private final String axisLabelRadiance = "[W/( m²sr nm)]";
+  private final String axisLabelReflectance = "Reflectance Factor";
+  private final String axisLabelBands = "Bands";
 
   private final DoubleProperty indexNdviAverage = new SimpleDoubleProperty();
   private final DoubleProperty indexNdviMin = new SimpleDoubleProperty();
@@ -189,8 +193,8 @@ public class TabController {
     xaxis.setAnimated(false);
     xaxis.setForceZeroInRange(false);
     yaxis.setAnimated(false);
-    yaxis.setLabel("DN (digital number)");
-    xaxis.setLabel("Wavelength [nanometer]");
+    yaxis.setLabel(axisLabelDigitalNumber);
+    xaxis.setLabel(axisLabelWaveLength);
     datachart.setAnimated(false);
     datachart.setCreateSymbols(false);
     datachart.setAlternativeRowFillVisible(false);
@@ -346,13 +350,13 @@ public class TabController {
     togglGroupYaxis.selectToggle(radioButtonRaw);
     togglGroupYaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.equals(radioButtonRaw)) {
-        yaxis.setLabel("DN (digital number)");
+        yaxis.setLabel(axisLabelDigitalNumber);
       }
       if (newValue.equals(radioButtonRadiance)) {
-        yaxis.setLabel("[W/( m²sr nm)]");
+        yaxis.setLabel(axisLabelRadiance);
       }
       if (newValue.equals(radioButtonReflectance)) {
-        yaxis.setLabel("Reflectance Factor");
+        yaxis.setLabel(axisLabelReflectance);
       }
       redrawMeasurementSequences();
     });
@@ -364,10 +368,10 @@ public class TabController {
     togglGroupXaxis.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (togglGroupXaxis.getSelectedToggle().equals(radioButtonWavelength)) {
         asWavelength = true;
-        xaxis.setLabel("Wavelength [nanometer]");
+        xaxis.setLabel(axisLabelWaveLength);
       } else {
         asWavelength = false;
-        xaxis.setLabel("Bands");
+        xaxis.setLabel(axisLabelBands);
       }
       redrawMeasurementSequences();
     });
@@ -415,23 +419,20 @@ public class TabController {
       xaxis.setAutoRanging(true);
       yaxis.setAutoRanging(true);
 
-      Set<Map.Entry<String, double[]>> entries = null;
+      Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
         entries = sequence.getMeasurements().entrySet();
-        yaxis.setLabel("DN (digital number)");
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
         entries = sequence.getRadiance().entrySet();
-        yaxis.setLabel("[W/( m²sr nm)]");
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
         entries = sequence.getReflectance().entrySet();
-        yaxis.setLabel("Reflectance Factor");
       }
 
       double[] calibration = sequence.getWavlengthCalibration();
 
-      for (Map.Entry<String, double[]> entry : entries) {
+      for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
         double[] data = entry.getValue();
         LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
         series.setName(sequence.getSequenceUuid());
@@ -443,7 +444,7 @@ public class TabController {
 
         Platform.runLater(() -> {
           lineChartData.add(series);
-          formatSerieLayout(sequence, series);
+          formatSerieLayout(entry.getKey(), sequence, series);
         });
       }
       Platform.runLater(() -> {
@@ -457,32 +458,19 @@ public class TabController {
   /**
    * Adds a tooltip and MouseHoovering behaviour to a Serie.
    *
+   * @param key      The key that is used to get the name from.
    * @param sequence The seuqence to get Tooltip infos from.
    * @param series   The Serie to add the Tootlip.
    */
-  private void formatSerieLayout(MeasureSequence sequence, XYChart.Series<Double, Double> series) {
+  private void formatSerieLayout(MeasureSequence.SequenceKeyName key,
+                                 MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     tooltip.setOpacity(0.9);
     hackTooltipStartTiming(tooltip);
 
     Tooltip.install(series.getNode(), tooltip);
 
-    Random rand = new Random();
-    int r = rand.nextInt(255);
-    Color serieColor = Color.rgb(rand.nextInt(200), rand.nextInt(200), rand.nextInt(200));
-
-    series.getNode().setStyle("-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 2px");
-
-    String tooltipStyle = "-fx-background-color: #" + serieColor.toString().substring(2, 8) + ";";
-
-    String serieStyleHoover = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 4px;";
-
-    String serieStyleNormal = "-fx-stroke: #" + serieColor.toString().substring(2, 8)
-        + "; -fx-stroke-width: 2px;";
-
-    tooltip.setStyle(tooltipStyle);
+    tooltip.getStyleClass().addAll("chart-series-line", "series" + (lineChartData.size() - 1 % 63));
 
     series.getNode().setOnMouseEntered(event -> {
       double xlowest = xaxis.getLowerBound();
@@ -494,16 +482,11 @@ public class TabController {
       double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
       double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
-      series.getNode().setStyle(serieStyleHoover);
-
       tooltip.setText("ID: " + sequence.getId() + "\n"
           + "Serial: " + sequence.getSerial() + "\n"
+          + "Type: " + key.name() + "\n"
           + "x: " + String.valueOf(xvalue) + "\n"
           + "y: " + String.valueOf(yvalue));
-    });
-
-    series.getNode().setOnMouseExited(event -> {
-      series.getNode().setStyle(serieStyleNormal);
     });
   }
 
