@@ -77,6 +77,8 @@ public class MeasureSequence {
 
   /**
    * Prints the content of the MeasureSequence to the console.
+   *
+   * @return
    */
   public String getCsv() {
     StringBuilder sb = new StringBuilder();
