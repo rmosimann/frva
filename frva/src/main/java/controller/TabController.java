@@ -1,13 +1,23 @@
 package controller;
 
+import controller.util.ZoomLineChart;
+import controller.util.ZoomWithRectangle;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -23,6 +33,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
@@ -52,6 +64,15 @@ public class TabController {
   private final String axisLabelReflectance = "Reflectance Factor";
   private final String axisLabelBands = "Bands";
 
+  private final DoubleProperty indexNdviAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexNdviMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexNdviMax = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexPriMax = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariAverage = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariMin = new SimpleDoubleProperty();
+  private final DoubleProperty indexTcariMax = new SimpleDoubleProperty();
 
   @FXML
   private LineChart<Double, Double> datachart;
@@ -84,11 +105,40 @@ public class TabController {
   private VBox crossedLimitBox;
 
   @FXML
-  private Button ignoreLimitButton;
+  private VBox vegetationIndicesBox;
 
+  @FXML
+  private Button ignoreLimitButton;
 
   @FXML
   private Label crossedLimitLabel;
+
+  @FXML
+  private Label indexNdviMinLabel;
+
+  @FXML
+  private Label indexNdviMaxLabel;
+
+  @FXML
+  private Label indexNdviAverageLabel;
+
+  @FXML
+  private Label indexTcariMinLabel;
+
+  @FXML
+  private Label indexTcariMaxLabel;
+
+  @FXML
+  private Label indexTcariAverageLabel;
+
+  @FXML
+  private Label indexPriMinLabel;
+
+  @FXML
+  private Label indexPriMaxLabel;
+
+  @FXML
+  private Label indexPriAverageLabel;
 
 
   /**
@@ -102,6 +152,7 @@ public class TabController {
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
     listToWatch = model.getObservableList(thisTabId);
+
   }
 
 
@@ -124,6 +175,16 @@ public class TabController {
     radioButtonReflectance.disableProperty().bind(isDrawing);
     radioButtonRaw.disableProperty().bind(isDrawing);
     radioButtonRadiance.disableProperty().bind(isDrawing);
+
+    indexNdviAverageLabel.textProperty().bind(Bindings.convert(indexNdviAverage));
+    indexNdviMaxLabel.textProperty().bind(Bindings.convert(indexNdviMax));
+    indexNdviMinLabel.textProperty().bind(Bindings.convert(indexNdviMin));
+    indexPriAverageLabel.textProperty().bind(Bindings.convert(indexPriAverage));
+    indexPriMaxLabel.textProperty().bind(Bindings.convert(indexPriMax));
+    indexPriMinLabel.textProperty().bind(Bindings.convert(indexPriMin));
+    indexTcariAverageLabel.textProperty().bind(Bindings.convert(indexTcariAverage));
+    indexTcariMaxLabel.textProperty().bind(Bindings.convert(indexTcariMax));
+    indexTcariMinLabel.textProperty().bind(Bindings.convert(indexTcariMin));
   }
 
 
@@ -142,13 +203,8 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    datachart.setOnScroll(event -> {
-      if (event.getDeltaY() < 0) {
-        zoomOut(event.getX(), event.getY());
-      } else {
-        zoomIn(event.getX(), event.getY());
-      }
-    });
+    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
+    zoom.activateZoomHandler();
   }
 
 
@@ -204,10 +260,12 @@ public class TabController {
             || ignoreMaxToProcess)) {
           crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
+          calculateIndices();
           ignoreMaxToProcess = false;
 
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
+          calculateIndices();
           if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
             crossedLimitBox.setVisible(false);
           }
@@ -227,6 +285,62 @@ public class TabController {
         }
       }
     });
+  }
+
+  /**
+   * Calculates the VegetationIndices and updates the GUI.
+   * Indices are only shown when reflectance is selected.
+   */
+  private void calculateIndices() {
+    if (radioButtonReflectance.isSelected() && actualShowingSeqeunces.size() > 0) {
+      vegetationIndicesBox.setVisible(true);
+
+      double[] ndvi = new double[actualShowingSeqeunces.size()];
+      double[] pri = new double[actualShowingSeqeunces.size()];
+      double[] tcari = new double[actualShowingSeqeunces.size()];
+
+      for (int i = 0; i < actualShowingSeqeunces.size(); i++) {
+        ndvi[i] = actualShowingSeqeunces.get(i).getIndices().getNdvi();
+        pri[i] = actualShowingSeqeunces.get(i).getIndices().getPri();
+        tcari[i] = actualShowingSeqeunces.get(i).getIndices().getTcari();
+      }
+
+      Arrays.parallelSort(ndvi);
+      Arrays.parallelSort(pri);
+      Arrays.parallelSort(tcari);
+
+      double ndviSum = 0;
+      for (double value : ndvi) {
+        ndviSum += value;
+      }
+
+      double priSum = 0;
+      for (double value : pri) {
+        priSum += value;
+      }
+
+      double tcariSum = 0;
+      for (double value : tcari) {
+        tcariSum += value;
+      }
+
+      double roundOnStel = 100000;
+
+      indexNdviMin.setValue(Math.round(ndvi[0] * roundOnStel) / roundOnStel);
+      indexNdviMax.setValue(Math.round(ndvi[ndvi.length - 1] * roundOnStel) / roundOnStel);
+      indexNdviAverage.setValue(Math.round((ndviSum / ndvi.length) * roundOnStel) / roundOnStel);
+
+      indexPriMin.setValue(Math.round(pri[0] * roundOnStel) / roundOnStel);
+      indexPriMax.setValue(Math.round(pri[pri.length - 1] * roundOnStel) / roundOnStel);
+      indexPriAverage.setValue(Math.round((priSum / pri.length) * roundOnStel) / roundOnStel);
+
+      indexTcariMin.setValue(Math.round(tcari[0] * roundOnStel) / roundOnStel);
+      indexTcariMax.setValue(Math.round(tcari[tcari.length - 1] * roundOnStel) / roundOnStel);
+      indexTcariAverage.setValue(Math.round((tcariSum / tcari.length) * roundOnStel) / roundOnStel);
+
+    } else {
+      vegetationIndicesBox.setVisible(false);
+    }
   }
 
 
@@ -353,6 +467,9 @@ public class TabController {
   private void formatSerieLayout(MeasureSequence.SequenceKeyName key,
                                  MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
+    tooltip.setOpacity(0.9);
+    hackTooltipStartTiming(tooltip);
+
     Tooltip.install(series.getNode(), tooltip);
 
     tooltip.getStyleClass().addAll("chart-series-line", "series" + (lineChartData.size() - 1 % 63));
@@ -362,8 +479,8 @@ public class TabController {
       double xhighest = xaxis.getUpperBound();
       double ylowest = yaxis.getLowerBound();
       double yhighest = yaxis.getUpperBound();
-      double pxWidth = series.getNode().getParent().getParent().getBoundsInLocal().getWidth();
-      double pxHeigth = series.getNode().getParent().getParent().getBoundsInLocal().getHeight();
+      double pxWidth = xaxis.getWidth();
+      double pxHeigth = yaxis.getHeight();
       double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
       double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
@@ -373,6 +490,30 @@ public class TabController {
           + "x: " + String.valueOf(xvalue) + "\n"
           + "y: " + String.valueOf(yvalue));
     });
+  }
+
+  /**
+   * Set the TooltipDelay with reflection (missing feature).
+   * Found on: https://stackoverflow.com/questions/26854301/
+   * how-to-control-the-javafx-tooltips-delay#27739605
+   *
+   * @param tooltip The Tooltip to set the delay on.
+   */
+  private void hackTooltipStartTiming(Tooltip tooltip) {
+    try {
+      Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+      fieldBehavior.setAccessible(true);
+      Object objBehavior = fieldBehavior.get(tooltip);
+
+      Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+      fieldTimer.setAccessible(true);
+      Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50)));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -390,61 +531,4 @@ public class TabController {
      */
   }
 
-
-  private void zoomIn(double xpos, double ypos) {
-    logger.info("Zooming in");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() + zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() - zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() + zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() - zoomUp);
-  }
-
-
-  private void zoomOut(double xpos, double ypos) {
-    logger.info("Zooming out");
-
-    xaxis.setAutoRanging(false);
-    yaxis.setAutoRanging(false);
-
-    double zoomFactor = 10;
-
-    double xzoomstep = (xaxis.getUpperBound() - xaxis.getLowerBound()) / zoomFactor;
-    double yzoomstep = (yaxis.getUpperBound() - yaxis.getLowerBound()) / zoomFactor;
-
-    double partLeft = xpos;
-    double zoomLeft = (xzoomstep / datachart.getWidth()) * partLeft;
-    xaxis.setLowerBound(xaxis.getLowerBound() - zoomLeft);
-
-    double partRight = datachart.getWidth() - xpos;
-    double zoomRight = (xzoomstep / datachart.getWidth()) * partRight;
-    xaxis.setUpperBound(xaxis.getUpperBound() + zoomRight);
-
-    double partDown = datachart.getHeight() - ypos;
-    double zoomDown = (yzoomstep / datachart.getHeight()) * partDown;
-    yaxis.setLowerBound(yaxis.getLowerBound() - zoomDown);
-
-    double partUp = ypos;
-    double zoomUp = (yzoomstep / datachart.getHeight()) * partUp;
-    yaxis.setUpperBound(yaxis.getUpperBound() + zoomUp);
-  }
 }

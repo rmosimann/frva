@@ -1,4 +1,66 @@
 @import "graphDefaultColors.css";
+.chart-content {
+    -fx-padding: 0px;
+}
+
+.chart {
+    -fx-padding: 0px;
+}
+
+#zoommenu {
+    -fx-spacing: 7px;
+    -fx-padding: 5px;
+    -fx-border-color: slategrey;
+    -fx-border-radius: 19px;
+    -fx-opacity: 0.3;
+}
+
+.zoomRect {
+    -fx-fill: limegreen;
+    -fx-opacity: 0.5;
+}
+
+.zoomRectToSmall {
+    -fx-fill: red;
+    -fx-opacity: 0.1;
+}
+
+#zoommenu:hover {
+    -fx-opacity: 1;
+    -fx-background-color: whitesmoke;
+    -fx-background-radius: 19px;
+}
+
+.zoomMenuButton.selected {
+    -fx-background-color: deepskyblue;
+}
+
+.zoomMenuButton:pressed {
+    -fx-background-color: dodgerblue;
+}
+
+.zoomMenuButton {
+    -fx-min-width: 24px;
+    -fx-min-height: 24px;
+    -fx-background-color: none;
+    -fx-background-radius: 15px;
+}
+
+.zoomButtonReset {
+    -fx-background-image: url('../icons/ic_youtube_searched_for_black_24dp/web/ic_youtube_searched_for_black_24dp_1x.png');
+}
+
+.zoomButtonIn {
+    -fx-background-image: url('../icons/ic_zoom_in_black_24dp/web/ic_zoom_in_black_24dp_1x.png');
+}
+
+.zoomButtonOut {
+    -fx-background-image: url('../icons/ic_zoom_out_black_24dp/web/ic_zoom_out_black_24dp_1x.png');
+}
+
+.zoomButtonMove {
+    -fx-background-image: url('../icons/ic_pets_black_24dp/web/ic_pets_black_24dp_1x.png');
+}
 
 .chart-series-line {
     -fx-stroke-width: 2px;

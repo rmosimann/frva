@@ -244,8 +244,32 @@ public class MeasureSequence {
     Map<SequenceKeyName, double[]> reflectionMap = new HashMap<>();
     reflectionMap.put(SequenceKeyName.REFLECTANCE, reflection);
 
+    reflectionIndices = new ReflectionIndices(reflection, getWavlengthCalibration());
+
     return reflectionMap;
+
   }
+
+  /**
+   * Calculates the indices.
+   * Based on the reflectance factors R:
+   * TCARI : 3 × ((R700 – R760) – 0.2 × (R700 – R550) × (R700/R670))
+   * PRI: (R531 -R570 )/(R531 +R570 )
+   * NDVI: (R920 - R696) / (R920 + R696)
+   *
+   * @return ReflectionIndices.
+   */
+  public ReflectionIndices getIndices() {
+    if (reflectionIndices == null) {
+      Map<String, double[]> reflectance = getReflectance();
+
+      reflectionIndices = new ReflectionIndices(reflectance.get("Reflection"),
+          getWavlengthCalibration());
+
+    }
+    return reflectionIndices;
+  }
+
 
   public double[] getWavlengthCalibration() {
     return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
