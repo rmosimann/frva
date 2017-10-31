@@ -23,6 +23,16 @@ public class MeasureSequence {
   private final Map<String, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
+  private ReflectionIndices reflectionIndices;
+
+  public enum KeyNames {
+    VEG,
+    WR,
+    DC_VEG,
+    DC_WR,
+
+    REFLECTANCE;
+  }
 
   /**
    * Constructor for a MeasurementSequence.
@@ -203,7 +213,7 @@ public class MeasureSequence {
    *
    * @return A DoubleArray.
    */
-  public Map<String, double[]> getReflection() {
+  public Map<String, double[]> getReflectance() {
     /*
     Reflectance R
       Data:   R(VEG) = L(VEG) / L(WR)
@@ -228,8 +238,32 @@ public class MeasureSequence {
     Map<String, double[]> reflectionMap = new HashMap<>();
     reflectionMap.put("Reflection", reflection);
 
+    reflectionIndices = new ReflectionIndices(reflection, getWavlengthCalibration());
+
     return reflectionMap;
+
   }
+
+  /**
+   * Calculates the indices.
+   * Based on the reflectance factors R:
+   * TCARI : 3 × ((R700 – R760) – 0.2 × (R700 – R550) × (R700/R670))
+   * PRI: (R531 -R570 )/(R531 +R570 )
+   * NDVI: (R920 - R696) / (R920 + R696)
+   *
+   * @return ReflectionIndices.
+   */
+  public ReflectionIndices getIndices() {
+    if (reflectionIndices == null) {
+      Map<String, double[]> reflectance = getReflectance();
+
+      reflectionIndices = new ReflectionIndices(reflectance.get("Reflection"),
+          getWavlengthCalibration());
+
+    }
+    return reflectionIndices;
+  }
+
 
   public double[] getWavlengthCalibration() {
     return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();

@@ -7,7 +7,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -15,8 +14,8 @@
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
             xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0" AnchorPane.rightAnchor="32.0"
-              AnchorPane.topAnchor="350.0">
+        <VBox fx:id="vegetationIndicesBox" alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0" prefWidth="215.0"
+              visible="false" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="300.0">
             <children>
                 <Label text="Vegetation Indices">
                     <font>
@@ -26,52 +25,106 @@
                         <Insets/>
                     </VBox.margin>
                 </Label>
-                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="NDVI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
                     <children>
-                        <Label prefWidth="50.0" text="min."/>
-                        <Label prefWidth="50.0" text="max."/>
-                        <Label prefWidth="50.0" text="avg."/>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexNdviMinLabel" prefWidth="150.0" text="Label"/>
                     </children>
                     <padding>
-                        <Insets bottom="3.0" left="56.0" right="3.0" top="3.0"/>
+                        <Insets left="15.0"/>
                     </padding>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <HBox fillHeight="false">
                     <children>
-                        <Label prefWidth="48.0" text="NDVI"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexNdviMaxLabel" prefWidth="150.0" text="Label"/>
                     </children>
                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                        <Insets left="15.0"/>
                     </padding>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <HBox fillHeight="false">
                     <children>
-                        <Label prefWidth="48.0" text="TCARI"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexNdviAverageLabel" prefWidth="150.0" text="Label"/>
                     </children>
                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                        <Insets left="15.0"/>
                     </padding>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="TCARI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
                     <children>
-                        <Label prefWidth="48.0" text="PRI"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="1111"/>
-                        <TextField prefHeight="26.0" prefWidth="50.0" text="123"/>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexTcariMinLabel" prefWidth="150.0" text="Label"/>
                     </children>
                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexTcariMaxLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexTcariAverageLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <Label text="PRI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexPriMinLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexPriMaxLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexPriAverageLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
                     </padding>
                 </HBox>
             </children>
         </VBox>
-        <VBox layoutX="780.0" layoutY="27.0" spacing="5.0" AnchorPane.rightAnchor="139.0" AnchorPane.topAnchor="27.0">
+        <VBox layoutX="780.0" layoutY="27.0" prefWidth="215.0" spacing="5.0" AnchorPane.rightAnchor="15.0"
+              AnchorPane.topAnchor="15.0">
             <children>
                 <Label text="Display as">
                     <font>
