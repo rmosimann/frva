@@ -42,6 +42,7 @@ public class MeasureSequence {
    * Constructor for a MeasurementSequence.
    *
    * @param input a StringArray containing the measurements
+   * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(List<String> input, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
@@ -83,9 +84,9 @@ public class MeasureSequence {
 
 
   /**
-   * Prints the content of the MeasureSequence to the console.
+   * Creates csv-format from a measurementSequenz.
    *
-   * @return
+   * @return a string containing the data.
    */
   public String getCsv() {
     StringBuilder sb = new StringBuilder();
