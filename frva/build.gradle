@@ -1,10 +1,9 @@
 group 'ch.fhnw.frva'
-version '1.0-SNAPSHOT'
+version '0.3-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
-
 
 sourceCompatibility = 1.8
 
@@ -17,6 +16,7 @@ dependencies {
     compile 'org.controlsfx:controlsfx:8.40.11'
 }
 
+// Configure Plugins
 checkstyle {
     toolVersion = "8.2"
     ignoreFailures = false
@@ -27,11 +27,15 @@ checkstyle {
 
 jacoco {
     toolVersion = "0.7.6.201602180812"
-    reportsDir = file("$buildDir/customJacocoReportDir")
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
-test {
-    finalizedBy jacocoTestReport
+// Configure Jobs
+checkstyleMain {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
 }
 
 jacocoTestReport {
@@ -41,11 +45,14 @@ jacocoTestReport {
         html.enabled true
     }
     doLast {
-        String fileContents = new File("$buildDir/customJacocoReportDir/test/html/index.html").text;
+        String fileContents = new File("$buildDir/reports/jacoco/test/html/index.html").text;
         project.logger.lifecycle(fileContents)
     }
 }
 
+test {
+    finalizedBy jacocoTestReport, javadoc
+}
 
 jar {
     manifest {

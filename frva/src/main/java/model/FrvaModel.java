@@ -21,8 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -189,6 +187,7 @@ public class FrvaModel {
    * Writes Data from SDCARDs to Files, in original format.
    *
    * @param list List of SDCARD to save.
+   * @param exportPath the path where the SDCARD is exported to.
    */
   public List<SdCard> writeData(List<MeasureSequence> list, Path exportPath) {
     List<SdCard> returnList = new ArrayList<>();

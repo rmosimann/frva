@@ -20,8 +20,6 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
-
-
       if (newValue) {
         if (measureSequence != null) {
           model.getCurrentSelectionList().add(measureSequence);
@@ -40,10 +38,11 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.type = t;
   }
 
-
   /**
-   * Constructor of FrvaTreeViewItem. Does add a listener to its checked State and adds its
-   * measure sequence to the list of checked measure sequcences in the model.
+   * Constructor of FrvaTreeViewItem.
+   * @param name  name of the item.
+   * @param ms    measurementsequence, if null it is a category item.
+   * @param model the one and only model.
    */
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model, Type t,
                           boolean isPreview) {
@@ -71,7 +70,6 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
       });
     }
   }
-
 
   public String toString() {
     return super.getValue().toString();

@@ -20,14 +20,29 @@ public class MeasureSequence {
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
   private final String[] metadata;
-  private final Map<String, double[]> measurements = new HashMap<>();
+  private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
+  private ReflectionIndices reflectionIndices;
+
+  public enum SequenceKeyName {
+    VEG,
+    WR,
+    DC_VEG,
+    DC_WR,
+
+    RADIANCE_VEG,
+    RADIANCE_WR,
+
+    REFLECTANCE;
+  }
+
 
   /**
    * Constructor for a MeasurementSequence.
    *
    * @param input a StringArray containing the measurements
+   * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(List<String> input, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
@@ -36,7 +51,10 @@ public class MeasureSequence {
 
     for (int i = 1; i < input.size(); i++) {
       String[] tmp = input.get(i).split(";");
-      measurements.put(tmp[0], Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
+
+      SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
+
+      measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
           .mapToDouble(Double::parseDouble)
           .toArray());
     }
@@ -47,7 +65,7 @@ public class MeasureSequence {
   }
 
 
-  public Map<String, double[]> getMeasurements() {
+  public Map<SequenceKeyName, double[]> getMeasurements() {
     return measurements;
   }
 
@@ -57,7 +75,7 @@ public class MeasureSequence {
   public void print() {
     Arrays.stream(metadata).forEach(a -> System.out.print(a + " "));
 
-    for (Map.Entry<String, double[]> entry : measurements.entrySet()) {
+    for (Map.Entry<SequenceKeyName, double[]> entry : measurements.entrySet()) {
       System.out.println();
       System.out.print(entry.getKey());
       Arrays.stream(entry.getValue()).forEach(a -> System.out.print(a + " "));
@@ -66,7 +84,9 @@ public class MeasureSequence {
 
 
   /**
-   * Prints the content of the MeasureSequence to the console.
+   * Creates csv-format from a measurementSequenz.
+   *
+   * @return a string containing the data.
    */
   public String getCsv() {
     StringBuilder sb = new StringBuilder();
@@ -76,21 +96,21 @@ public class MeasureSequence {
     }
 
     sb.append("\n\n" + "WR" + ";");
-    Arrays.stream(measurements.get("WR")).forEach(a -> sb.append((int) a + ";"));
+    Arrays.stream(measurements.get(SequenceKeyName.WR)).forEach(a -> sb.append((int) a + ";"));
     sb.deleteCharAt(sb.length() - 1);
 
     sb.append("\n\n" + "VEG" + ";");
-    Arrays.stream(measurements.get("VEG")).forEach(a -> sb.append((int) a + ";"));
+    Arrays.stream(measurements.get(SequenceKeyName.VEG)).forEach(a -> sb.append((int) a + ";"));
     sb.deleteCharAt(sb.length() - 1);
 
 
     sb.append("\n\n" + "DC_WR" + ";");
-    Arrays.stream(measurements.get("DC_WR")).forEach(a -> sb.append((int) a + ";"));
+    Arrays.stream(measurements.get(SequenceKeyName.DC_WR)).forEach(a -> sb.append((int) a + ";"));
     sb.deleteCharAt(sb.length() - 1);
 
 
     sb.append("\n\n" + "DC_VEG" + ";");
-    Arrays.stream(measurements.get("DC_VEG")).forEach(a -> sb.append((int) a + ";"));
+    Arrays.stream(measurements.get(SequenceKeyName.DC_VEG)).forEach(a -> sb.append((int) a + ";"));
     sb.deleteCharAt(sb.length() - 1);
 
     sb.append("\n\n");
@@ -162,7 +182,7 @@ public class MeasureSequence {
    *
    * @return A Map with the Keys VEG and WR.
    */
-  public Map<String, double[]> getRadiance() {
+  public Map<SequenceKeyName, double[]> getRadiance() {
     /*
     Radiance L
       Data:
@@ -176,11 +196,11 @@ public class MeasureSequence {
     double[] vegCalibration = dataFile.getSdCard().getSensorCalibrationFileVeg().getCalibration();
     double[] wrCalibration = dataFile.getSdCard().getSensorCalibrationFileWr().getCalibration();
 
-    double[] vegs = measurements.get("VEG");
-    double[] dcVegs = measurements.get("DC_VEG");
+    double[] vegs = measurements.get(SequenceKeyName.VEG);
+    double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
 
-    double[] wrs = measurements.get("WR");
-    double[] dcWrs = measurements.get("DC_WR");
+    double[] wrs = measurements.get(SequenceKeyName.WR);
+    double[] dcWrs = measurements.get(SequenceKeyName.DC_WR);
 
     double[] vegRadiance = new double[waveCalibration.length];
     double[] wrRadiance = new double[waveCalibration.length];
@@ -190,9 +210,9 @@ public class MeasureSequence {
       wrRadiance[i] = (wrs[i] - dcWrs[i]) * wrCalibration[i];
     }
 
-    Map<String, double[]> radianceMap = new HashMap<>();
-    radianceMap.put("VEG", vegRadiance);
-    radianceMap.put("WR", wrRadiance);
+    Map<SequenceKeyName, double[]> radianceMap = new HashMap<>();
+    radianceMap.put(SequenceKeyName.RADIANCE_VEG, vegRadiance);
+    radianceMap.put(SequenceKeyName.RADIANCE_WR, wrRadiance);
 
     return radianceMap;
   }
@@ -203,17 +223,17 @@ public class MeasureSequence {
    *
    * @return A DoubleArray.
    */
-  public Map<String, double[]> getReflection() {
+  public Map<SequenceKeyName, double[]> getReflectance() {
     /*
     Reflectance R
       Data:   R(VEG) = L(VEG) / L(WR)
       X-Axis: Wavelength[Nanometers]/Bands[dn]
       Y-Axis: ReflectanceFactor (none)
      */
-    Map<String, double[]> radianceMap = this.getRadiance();
+    Map<SequenceKeyName, double[]> radianceMap = this.getRadiance();
 
-    double[] vegRadiance = radianceMap.get("VEG");
-    double[] wrRadiance = radianceMap.get("WR");
+    double[] vegRadiance = radianceMap.get(SequenceKeyName.RADIANCE_VEG);
+    double[] wrRadiance = radianceMap.get(SequenceKeyName.RADIANCE_WR);
 
     double[] reflection = new double[vegRadiance.length];
 
@@ -225,11 +245,35 @@ public class MeasureSequence {
       }
     }
 
-    Map<String, double[]> reflectionMap = new HashMap<>();
-    reflectionMap.put("Reflection", reflection);
+    Map<SequenceKeyName, double[]> reflectionMap = new HashMap<>();
+    reflectionMap.put(SequenceKeyName.REFLECTANCE, reflection);
+
+    reflectionIndices = new ReflectionIndices(reflection, getWavlengthCalibration());
 
     return reflectionMap;
+
   }
+
+  /**
+   * Calculates the indices.
+   * Based on the reflectance factors R:
+   * TCARI : 3 × ((R700 – R760) – 0.2 × (R700 – R550) × (R700/R670))
+   * PRI: (R531 -R570 )/(R531 +R570 )
+   * NDVI: (R920 - R696) / (R920 + R696)
+   *
+   * @return ReflectionIndices.
+   */
+  public ReflectionIndices getIndices() {
+    if (reflectionIndices == null) {
+      Map<SequenceKeyName, double[]> reflectance = getReflectance();
+
+      reflectionIndices = new ReflectionIndices(reflectance.get(SequenceKeyName.REFLECTANCE),
+          getWavlengthCalibration());
+
+    }
+    return reflectionIndices;
+  }
+
 
   public double[] getWavlengthCalibration() {
     return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
