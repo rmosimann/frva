@@ -173,7 +173,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
     eventHandlerMousePressed = event -> {
       if (isInChartRange(event)) {
         if (Mode.MOVE.equals(currentMouseMode.getValue())) {
-          System.out.println("MOVE");
           moveStartX = event.getX();
           moveStartY = event.getY();
         }

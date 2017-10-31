@@ -35,6 +35,9 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   /**
    * Constructor of FrvaTreeViewItem.
+   * @param name  name of the item.
+   * @param ms    measurementsequence, if null it is a category item.
+   * @param model the one and only model.
    */
   public FrvaTreeViewItem(String name, MeasureSequence ms, FrvaModel model) {
     setValue(name);

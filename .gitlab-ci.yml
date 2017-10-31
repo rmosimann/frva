@@ -14,13 +14,29 @@ build:
   stage: build
   script:
     - cd frva
-    - ./gradlew assemble
+    - ./gradlew build
   artifacts:
+    name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}(${CI_PIPELINE_ID})"
     paths:
       - frva/build/libs/*.jar
-    expire_in: 1 week
+      - frva/build/reports/
+      - frva/build/docs/
   only:
     - develop
+
+
+release:
+  stage: build
+  script:
+    - cd frva
+    - ./gradlew build
+  artifacts:
+    name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}(${CI_PIPELINE_ID})"
+    paths:
+      - frva/build/libs/*.jar
+  only:
+    - master
+
 
 test:
   stage: test
