@@ -177,16 +177,24 @@
                 </RadioButton>
             </children>
         </VBox>
-        <LineChart fx:id="datachart" layoutX="25.0" layoutY="14.0" prefHeight="553.0" prefWidth="732.0"
-                   AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="275.0"
-                   AnchorPane.topAnchor="15.0">
-            <xAxis>
-                <NumberAxis tickUnit="100" fx:id="xaxis"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="yaxis" tickUnit="1"/>
-            </yAxis>
-        </LineChart>
+        <AnchorPane layoutX="15.0" layoutY="15.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="15.0"
+                    AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="15.0">
+            <children>
+                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
+                           prefHeight="553.0" prefWidth="732.0" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                        <NumberAxis tickUnit="100" fx:id="xaxis"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="yaxis" tickUnit="1"/>
+                    </yAxis>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                </LineChart>
+            </children>
+        </AnchorPane>
         <RadioButton fx:id="radioButtonWavelength" layoutX="321.0" layoutY="568.0" mnemonicParsing="false"
                      text="Wavelength" AnchorPane.bottomAnchor="20.0"/>
         <RadioButton fx:id="radioButtonBands" layoutX="429.0" layoutY="575.0" mnemonicParsing="false" text="Bands"
