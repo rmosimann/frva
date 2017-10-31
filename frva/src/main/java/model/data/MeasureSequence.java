@@ -23,6 +23,7 @@ public class MeasureSequence {
   private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
+  private ReflectionIndices reflectionIndices;
 
   public enum SequenceKeyName {
     VEG,
@@ -219,7 +220,7 @@ public class MeasureSequence {
    *
    * @return A DoubleArray.
    */
-  public Map<SequenceKeyName, double[]> getReflection() {
+  public Map<SequenceKeyName, double[]> getReflectance() {
     /*
     Reflectance R
       Data:   R(VEG) = L(VEG) / L(WR)
@@ -261,9 +262,9 @@ public class MeasureSequence {
    */
   public ReflectionIndices getIndices() {
     if (reflectionIndices == null) {
-      Map<String, double[]> reflectance = getReflectance();
+      Map<SequenceKeyName, double[]> reflectance = getReflectance();
 
-      reflectionIndices = new ReflectionIndices(reflectance.get("Reflection"),
+      reflectionIndices = new ReflectionIndices(reflectance.get(SequenceKeyName.REFLECTANCE),
           getWavlengthCalibration());
 
     }

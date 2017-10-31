@@ -5,7 +5,6 @@ import controller.util.ZoomWithRectangle;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -33,7 +32,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import model.FrvaModel;
 import model.data.MeasureSequence;
@@ -429,7 +427,7 @@ public class TabController {
         entries = sequence.getRadiance().entrySet();
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonReflectance)) {
-        entries = sequence.getReflection().entrySet();
+        entries = sequence.getReflectance().entrySet();
       }
 
       double[] calibration = sequence.getWavlengthCalibration();
