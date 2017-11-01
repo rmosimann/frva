@@ -58,7 +58,7 @@ public class TabController {
 
   private final String axisLabelWaveLength = "Wavelength [nanometer]";
   private final String axisLabelDigitalNumber = "DN (digital number)";
-  private final String axisLabelRadiance = "[W/( m²sr nm)]";
+  private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
   private final String axisLabelReflectance = "Reflectance Factor";
   private final String axisLabelBands = "Bands";
 
