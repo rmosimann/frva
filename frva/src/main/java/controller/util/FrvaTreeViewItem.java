@@ -1,6 +1,5 @@
 package controller.util;
 
-import java.io.File;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,7 +11,7 @@ import model.data.MeasureSequence;
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
-  public enum Type {ROOT, DEVICE, SDCARD, YEAR, MONTH, DAY, HOUR, MEASURESEQUENCE}
+  public enum Type { ROOT, DEVICE, SDCARD, YEAR, MONTH, DAY, HOUR, MEASURESEQUENCE }
 
   private MeasureSequence measureSequence;
   private Type type;
@@ -32,6 +31,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
       }
     }
   };
+
 
   /**
    * Default-Constructor.
@@ -66,7 +66,6 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
   /**
    * Constructor of FrvaTreeViewItem.
-   *
    * @param name  name of the item.
    * @param ms    measurementsequence, if null it is a category item.
    * @param model the one and only model.
