@@ -231,6 +231,8 @@ public class ZoomWithRectangle implements ZoomLineChart {
           }
 
         }
+      } else if (Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
+        anchorPane.getChildren().remove(zoomRect);
       }
     };
 
@@ -251,6 +253,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
         }
       }
     };
+
   }
 
 
@@ -267,6 +270,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
     lineChart.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
     lineChart.addEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
     lineChart.addEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
+
   }
 
 
