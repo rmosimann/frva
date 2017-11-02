@@ -466,6 +466,7 @@ public class TabController {
                                  MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     tooltip.setOpacity(0.9);
+
     hackTooltipStartTiming(tooltip);
 
     Tooltip.install(series.getNode(), tooltip);
@@ -503,12 +504,28 @@ public class TabController {
       fieldBehavior.setAccessible(true);
       Object objBehavior = fieldBehavior.get(tooltip);
 
-      Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-      fieldTimer.setAccessible(true);
-      Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+      Field activationTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+      activationTimer.setAccessible(true);
+      Timeline objTimer = (Timeline) activationTimer.get(objBehavior);
 
       objTimer.getKeyFrames().clear();
-      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50)));
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
+
+      Field hideTimer = objBehavior.getClass().getDeclaredField("hideTimer");
+      hideTimer.setAccessible(true);
+      objTimer = (Timeline) hideTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50000)));
+
+      Field leftTimer = objBehavior.getClass().getDeclaredField("leftTimer");
+      leftTimer.setAccessible(true);
+      objTimer = (Timeline) leftTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
+
+
     } catch (Exception e) {
       e.printStackTrace();
     }
