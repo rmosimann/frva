@@ -195,8 +195,10 @@ public class FrvaModel {
     String currentFolder = null;
     String path = null;
     List<File> sdCardFolderList = new ArrayList<>();
+    System.out.println(list.size());
     for (MeasureSequence measureSequence : list) {
       try {
+        System.out.println(measureSequence);
         if (!measureSequence.getDataFile().getSdCard().equals(sdCard)) {
           sdCard = measureSequence.getDataFile().getSdCard();
           path = exportPath.toString() + File.separator + sdCard.getName();
@@ -376,4 +378,8 @@ public class FrvaModel {
     }
     return sum;
   }
+
+
+
+
 }

@@ -55,8 +55,8 @@ public class DataFile {
     return originalFile.getParentFile().getName();
   }
 
-  public String getDataFileName() {
-    return originalFile.getName();
+  public File getDataFile() {
+    return originalFile;
   }
 
   public SdCard getSdCard() {

@@ -91,6 +91,7 @@ public class ImportWizard {
         updateImportList((FrvaTreeViewItem) previewTreeView.getRoot());
       }
     });
+    System.out.println("import list size "+ importList.size());
     return importList;
   }
 

@@ -58,24 +58,56 @@ public class TreeViewFactory {
         Iterator it = dataFile.getMeasureSequences().iterator();
         String hour = "";
         String date = "000000";
+        String year = "0000";
+        String month = "";
         boolean continueToNextDay = false;
         int dailyCount = 0;
-        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DATE);
+        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
         int hourlyCount = 0;
         FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
+        int monthlyCount = 0;
+        FrvaTreeViewItem checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+        int yearlyCount = 0;
+        FrvaTreeViewItem checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+
+
 
         while (it.hasNext()) {
           MeasureSequence measureSequence = (MeasureSequence) it.next();
           String currentHour = measureSequence.getTime().substring(0, 2);
-          String currentDate = measureSequence.getDate();
+          String currentDay = measureSequence.getDate();
+          String currentYear = measureSequence.getYear();
+          String currentMonth = measureSequence.getMonth();
 
-          if (!currentDate.equals(date)) {
+
+          if (!currentYear.equals(year)) {
+            checkBoxTreeYearItem.setName(year + " (" + yearlyCount + ")");
+            yearlyCount = 0;
+            year = currentYear;
+            continueToNextDay = true;
+            checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+            sdCardItem.getChildren().add(checkBoxTreeDateItem);
+          }
+
+          if (!currentMonth.equals(month)) {
+            checkBoxTreeMonthItem.setName(month + " (" + monthlyCount + ")");
+            monthlyCount = 0;
+            month = currentMonth;
+            continueToNextDay = true;
+            checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+            checkBoxTreeYearItem.getChildren().add(checkBoxTreeDateItem);
+          }
+
+
+
+
+          if (!currentDay.equals(date)) {
             checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
             dailyCount = 0;
-            date = currentDate;
+            date = currentDay;
             continueToNextDay = true;
-            checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DATE);
-            sdCardItem.getChildren().add(checkBoxTreeDateItem);
+            checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
+            checkBoxTreeMonthItem.getChildren().add(checkBoxTreeDateItem);
           }
 
           if (!currentHour.equals(hour) || continueToNextDay) {
@@ -87,12 +119,14 @@ public class TreeViewFactory {
             checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
             checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
           }
+          monthlyCount++;
+          yearlyCount++;
           hourlyCount++;
           dailyCount++;
           sdCardCount++;
           FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
               + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
-              model, FrvaTreeViewItem.Type.MEASRURESEQUENCE, isPreview);
+              model, FrvaTreeViewItem.Type.MEASURESEQUENCE, measureSequence.getDataFile().getDataFile(), isPreview);
 
           checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
 
@@ -100,6 +134,8 @@ public class TreeViewFactory {
         checkBoxTreeHourItem.setName(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
             + " (" + hourlyCount + ")");
         checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
+        checkBoxTreeMonthItem.setName(month+" ("+monthlyCount+")");
+        checkBoxTreeYearItem.setName(year+" ("+yearlyCount+")");
       }
       sdCardItem.setName(card.getName() + " (" + sdCardCount + ")");
       sdCardCount = 0;

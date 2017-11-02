@@ -41,7 +41,7 @@ public class MeasureSequence {
   /**
    * Constructor for a MeasurementSequence.
    *
-   * @param input a StringArray containing the measurements
+   * @param input    a StringArray containing the measurements
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(List<String> input, DataFile dataFile) {
@@ -291,4 +291,13 @@ public class MeasureSequence {
   public boolean hasMeasurements() {
     return this.measurements != null;
   }
+
+  public String getYear() {
+    return metadata[1].substring(0, 2);
+  }
+
+  public String getMonth() {
+    return metadata[1].substring(2, 4);
+  }
+
 }

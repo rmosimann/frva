@@ -3,8 +3,12 @@ package controller;
 import controller.util.FrvaTreeViewItem;
 import controller.util.ImportWizard;
 import controller.util.TreeViewFactory;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +77,8 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
-    exportButton.setOnAction(event -> exportData());
+    //exportButton.setOnAction(event -> exportData());
+    exportButton.setOnAction(event -> serializeDB());
     importSdCardButton.setOnAction(event -> importWizard());
 
   }
@@ -176,7 +181,7 @@ public class MainController {
   private void initializeTreeView(List<SdCard> list) {
 
     treeView.setRoot(new FrvaTreeViewItem("Library", null, model,
-        FrvaTreeViewItem.Type.ROOT, false));
+        FrvaTreeViewItem.Type.ROOT, null, false));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
     addElementsToTreeView(list);
@@ -255,5 +260,34 @@ public class MainController {
     return list;
   }
 
+  private void serializeDB() {
+    System.out.println("DB serialize");
+
+    File file = new File(model.getLibraryPath() + File.separator + "treeStructure.csv");
+    try {
+      Writer writer = Files.newBufferedWriter(Paths.get(file.toURI()));
+      for (TreeItem item : treeView.getRoot().getChildren()
+          ) {
+        serializeDB(item, writer);
+      }
+      writer.close();
+    } catch (IOException ex) {
+
+    }
+  }
+
+  private void serializeDB(TreeItem item, Writer writer) throws IOException {
+    writer.write(((FrvaTreeViewItem) item).serialize()+"\n");
+    writer.flush();
+    if (!item.isLeaf()) {
+      for (Object child : item.getChildren()
+          ) {
+        serializeDB((TreeItem) child, writer);
+
+      }
+    }
+
+
+  }
 
 }
