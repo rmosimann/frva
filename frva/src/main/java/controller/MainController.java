@@ -3,19 +3,14 @@ package controller;
 import controller.util.FrvaTreeViewItem;
 import controller.util.ImportWizard;
 import controller.util.TreeViewFactory;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -23,11 +18,9 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
-import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 import org.controlsfx.control.CheckTreeView;
@@ -66,7 +59,7 @@ public class MainController {
   @FXML
   private void initialize() {
     initializeTabHandling();
-    initializeTreeView(model.getLibrary());
+    loadTreeStructure(model.getLibraryPath() + File.separator + FrvaModel.TREESTRUCTURE);
     addEventHandlers();
     //onChangeTab();
   }
@@ -89,7 +82,7 @@ public class MainController {
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
     List<SdCard> importedSdCards = model.writeData(list, new File(model.getLibraryPath()).toPath());
-    addElementsToTreeView(importedSdCards);
+   // addElementsToTreeView(importedSdCards);
   }
 
 
@@ -101,7 +94,7 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-     // model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+      // model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -116,6 +109,8 @@ public class MainController {
 
   private void deleteSelectedItems() {
 
+    /*
+
     List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
     List<MeasureSequence> measureSequenceList = list
         .stream().map(FrvaTreeViewItem::getMeasureSequence).collect(Collectors.toList());
@@ -126,6 +121,7 @@ public class MainController {
 
     }
     unselectTickedItems();
+    */
 
   }
 
@@ -179,21 +175,16 @@ public class MainController {
   }
 
 
-  private void initializeTreeView(List<SdCard> list) {
+  private void loadTreeStructure(String filepath) {
 
     treeView.setRoot(new FrvaTreeViewItem("Library", null, model,
         FrvaTreeViewItem.Type.ROOT, null, false));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-
-    addElementsToTreeView(list);
+    TreeViewFactory.createDummyTreeView(treeView, model, filepath);
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
 
-  }
-
-  private void addElementsToTreeView(List<SdCard> list) {
-    TreeViewFactory.createDummyTreeView(list, treeView, model,  false);
   }
 
 
@@ -271,7 +262,7 @@ public class MainController {
       Writer writer = Files.newBufferedWriter(Paths.get(file.toURI()));
       for (Object item : treeView.getRoot().getChildren()
           ) {
-        serializeDB((FrvaTreeViewItem)item, writer);
+        serializeDB((FrvaTreeViewItem) item, writer);
       }
       writer.close();
     } catch (IOException ex) {
@@ -280,7 +271,7 @@ public class MainController {
   }
 
   private void serializeDB(TreeItem item, Writer writer) throws IOException {
-    writer.write(((FrvaTreeViewItem) item).serialize()+"\n");
+    writer.write(((FrvaTreeViewItem) item).serialize() + "\n");
     writer.flush();
     if (!item.isLeaf()) {
       for (Object child : item.getChildren()

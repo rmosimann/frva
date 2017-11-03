@@ -7,41 +7,36 @@ import static controller.util.FrvaTreeViewItem.Type.NONE;
 import static controller.util.FrvaTreeViewItem.Type.ROOT;
 import static controller.util.FrvaTreeViewItem.Type.YEAR;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
 import model.FrvaModel;
-import model.data.DataFile;
 import model.data.MeasureSequence;
-import model.data.SdCard;
 
 /**
  * Created by patrick.wigger on 12.10.17.
  */
 public class FrvaTreeViewItem extends CheckBoxTreeItem {
   public enum Type {ROOT, DEVICE, SDCARD, YEAR, MONTH, DAY, HOUR, MEASURESEQUENCE, NONE}
-
+  private final Logger logger = Logger.getLogger("FRVA");
   private MeasureSequence measureSequence;
   private String id;
   private Type type;
   private File file;
   private int depth;
   private FrvaModel model;
+  private int containingMeasureSequences;
+
   private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
       if (newValue) {
-        if (type==MEASURESEQUENCE) {
+        if (type == MEASURESEQUENCE) {
           model.getCurrentSelectionList().add(getMeasureSequence());
-          System.out.println("jee");
         }
       } else {
         model.getCurrentSelectionList().remove(getMeasureSequence());
@@ -58,8 +53,12 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     this.depth = evaluateDepth(t);
   }
 
+  /**
+   * Constructor for TreeView lazyLoaded.
+   */
+  public FrvaTreeViewItem(String[] arr, FrvaModel model, boolean isPreview) {
 
-  public FrvaTreeViewItem(String[] arr, boolean isPreview) {
+    this.model = model;
     this.id = arr[0];
     this.depth = Integer.parseInt(arr[1]);
     this.type = getType(depth);
@@ -73,18 +72,20 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
 
 
   private void addListener() {
+
+
     super.selectedProperty().addListener(checkedlistener);
-/*
+
     model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
       selectedProperty().removeListener(checkedlistener);
 
-      if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
+      if (model.getCurrentSelectionList().stream().anyMatch(p -> p.getId().equals(id))) {
         setSelected(true);
       } else {
         setSelected(false);
       }
       selectedProperty().addListener(checkedlistener);
-    });*/
+    });
   }
 
 
@@ -116,38 +117,18 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     return super.getValue().toString();
   }
 
+  /**
+   * @returns the measurementsequence lazyloaded: read in from the file system if it has not already been read in.
+   */
   public MeasureSequence getMeasureSequence() {
+
+    if (this.type != MEASURESEQUENCE) {
+      return null;
+    }
     if (this.measureSequence != null) {
       return measureSequence;
     }
-    ArrayList<String> fileContent = new ArrayList<>();
-    String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(file));) {
-      while ((line = br.readLine()) != null) {
-        if (!"".equals(line)) {
-
-          if (Character.isDigit(line.charAt(0))) {
-            String currentId = line.split(";")[0];
-            if (currentId.equals(id)) {
-              fileContent.add(line);
-              fileContent.add(br.readLine());
-              fileContent.add(br.readLine());
-              fileContent.add(br.readLine());
-              fileContent.add(br.readLine());
-              SdCard sdCard = new SdCard(file.getParentFile().getParentFile(), "SDCard");
-              DataFile dataFile = new DataFile(sdCard, file);
-              MeasureSequence ms = new MeasureSequence(fileContent, dataFile);
-              return ms;
-            }
-            fileContent.clear();
-          }
-          fileContent.add(line);
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
+    return new MeasureSequence(file, id);
   }
 
   public void setName(String name) {
@@ -172,7 +153,7 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
     while (!item.isLeaf()) {
       item = (FrvaTreeViewItem) item.getChildren().stream().findAny().get();
     }
-    return item.measureSequence.getDataFile().getSdCard().getDeviceSerialNr();
+    return item.measureSequence.getContainingSdCard().getDeviceSerialNr();
   }
 
   public String serialize() {
@@ -238,7 +219,11 @@ public class FrvaTreeViewItem extends CheckBoxTreeItem {
       default:
         return NONE;
     }
+  }
 
+  @Override
+  public int hashCode() {
+    return this.file.hashCode() * 31 + this.id.hashCode();
 
   }
 }

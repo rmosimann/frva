@@ -1,10 +1,17 @@
 package model.data;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class MeasureSequence {
 
@@ -19,38 +26,78 @@ public class MeasureSequence {
     6 Time for one measurement miliseconds
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
-  private final String[] metadata;
+
+  private final Logger logger = Logger.getLogger("FRVA");
+  private String[] metadata;
   private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
-  private final String sequenceUuid;
-  private final DataFile dataFile;
+  private String sequenceUuid;
+  private final File containingFile;
   private ReflectionIndices reflectionIndices;
+  private SdCard containingSdCard;
+  private String id;
 
   public enum SequenceKeyName {
     VEG,
     WR,
     DC_VEG,
     DC_WR,
-
     RADIANCE_VEG,
     RADIANCE_WR,
-
     REFLECTANCE;
   }
 
-
   /**
-   * Constructor for a MeasurementSequence.
    *
-   * @param input    a StringArray containing the measurements
-   * @param dataFile contains the path to the datafiles.
+   * @param containingFile the file the measure sequence is contained
+   * @param id the id of the Measuresequence within the file
    */
-  public MeasureSequence(List<String> input, DataFile dataFile) {
-    sequenceUuid = UUID.randomUUID().toString();
-    metadata = input.get(0).split(";");
-    this.dataFile = dataFile;
+  public MeasureSequence(File containingFile, String id) {
 
-    for (int i = 1; i < input.size(); i++) {
-      String[] tmp = input.get(i).split(";");
+    this.containingFile = containingFile;
+    this.id = id;
+    //TODO: how do SD Cards avoid multiplication
+    this.containingSdCard = new SdCard(containingFile.getParentFile().getParentFile(), "SDCard");
+    readData();
+  }
+
+  private void readData() {
+    boolean found = false;
+    ArrayList<String> fileContent = new ArrayList<>();
+    String line = "";
+    try (BufferedReader br = new BufferedReader(new FileReader(containingFile))) {
+      while ((line = br.readLine()) != null || !found) {
+
+        if (!"".equals(line) && Character.isDigit(line.charAt(0))) {
+          if (line.split(";")[0].equals(id)) {
+            found = true;
+            fileContent.add(line);
+            br.readLine();
+            //Read Measurement Sequence
+            for(int i=0;i<3; i++){
+            fileContent.add(br.readLine());
+            br.readLine();}
+            importData(fileContent);
+          }
+          //skip 9 lines
+          for (int i = 0; i < 9; i++) {
+            br.readLine();
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    if (!found) {
+      throw new NoSuchElementException("Element with ID " + id + " has not been found in file " + containingFile);
+    }
+  }
+
+  private void importData(List<String> fileContent) {
+
+    sequenceUuid = UUID.randomUUID().toString();
+    metadata = fileContent.get(0).split(";");
+    for (int i = 1; i < fileContent.size(); i++) {
+      String[] tmp = fileContent.get(i).split(";");
 
       SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
 
@@ -59,6 +106,7 @@ public class MeasureSequence {
           .toArray());
     }
   }
+
 
   public String[] getMetadata() {
     return metadata;
@@ -192,9 +240,9 @@ public class MeasureSequence {
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
 
-    double[] waveCalibration = dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
-    double[] vegCalibration = dataFile.getSdCard().getSensorCalibrationFileVeg().getCalibration();
-    double[] wrCalibration = dataFile.getSdCard().getSensorCalibrationFileWr().getCalibration();
+    double[] waveCalibration = containingSdCard.getWavelengthCalibrationFile().getCalibration();
+    double[] vegCalibration = containingSdCard.getSensorCalibrationFileVeg().getCalibration();
+    double[] wrCalibration = containingSdCard.getSensorCalibrationFileWr().getCalibration();
 
     double[] vegs = measurements.get(SequenceKeyName.VEG);
     double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
@@ -276,17 +324,13 @@ public class MeasureSequence {
 
 
   public double[] getWavlengthCalibration() {
-    return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
+    return containingSdCard.getWavelengthCalibrationFile().getCalibration();
   }
 
   public String getSequenceUuid() {
     return sequenceUuid;
   }
 
-
-  public DataFile getDataFile() {
-    return dataFile;
-  }
 
   public boolean hasMeasurements() {
     return this.measurements != null;
@@ -329,5 +373,12 @@ public class MeasureSequence {
     }
 
 
+  }
+  public File getContainingFile() {
+    return containingFile;
+  }
+
+  public SdCard getContainingSdCard() {
+    return containingSdCard;
   }
 }

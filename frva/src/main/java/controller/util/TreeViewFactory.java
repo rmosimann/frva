@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import model.FrvaModel;
-import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -60,86 +57,85 @@ public class TreeViewFactory {
       deviceItem.getChildren().add(sdCardItem);
 
 
-      for (DataFile dataFile : card.getDataFiles()) {
-        Iterator it = dataFile.getMeasureSequences().iterator();
-        String year = "";
-        String hour = "";
-        String date = "";
-        String month = "";
-        boolean continueToNextDay = false;
-        int dailyCount = 0;
-        FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
-        int hourlyCount = 0;
-        FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
-        int yearlyCount = 0;
-        FrvaTreeViewItem checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
-        int monthlyCount = 0;
-        FrvaTreeViewItem checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+      Iterator it = card.getMeasureSequences().iterator();
+      String year = "";
+      String hour = "";
+      String date = "";
+      String month = "";
+      boolean continueToNextDay = false;
+      int dailyCount = 0;
+      FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
+      int hourlyCount = 0;
+      FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
+      int yearlyCount = 0;
+      FrvaTreeViewItem checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+      int monthlyCount = 0;
+      FrvaTreeViewItem checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
 
 
-        while (it.hasNext()) {
-          MeasureSequence measureSequence = (MeasureSequence) it.next();
-          String currentHour = measureSequence.getTime().substring(0, 2);
-          String currentDate = measureSequence.getDate();
-          String currentYear = measureSequence.getYear();
-          String currentMonth = measureSequence.getMonth();
+      while (it.hasNext()) {
+        MeasureSequence measureSequence = (MeasureSequence) it.next();
+        String currentHour = measureSequence.getTime().substring(0, 2);
+        String currentDate = measureSequence.getDate();
+        String currentYear = measureSequence.getYear();
+        String currentMonth = measureSequence.getMonth();
 
-          if (!currentYear.equals(year)) {
-            checkBoxTreeYearItem.setName(year + " (" + yearlyCount + ")");
-            yearlyCount = 0;
-            year = currentYear;
-            continueToNextDay = true;
-            checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
-            sdCardItem.getChildren().add(checkBoxTreeYearItem);
-          }
-
-
-          if (!currentMonth.equals(month)) {
-            checkBoxTreeMonthItem.setName(month + " (" + monthlyCount + ")");
-            monthlyCount = 0;
-            month = currentMonth;
-            continueToNextDay = true;
-            checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
-            checkBoxTreeYearItem.getChildren().add(checkBoxTreeMonthItem);
-          }
-
-          if (!currentDate.equals(date)) {
-            checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
-            dailyCount = 0;
-            date = currentDate;
-            continueToNextDay = true;
-            checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
-            checkBoxTreeMonthItem.getChildren().add(checkBoxTreeDateItem);
-          }
-
-          if (!currentHour.equals(hour) || continueToNextDay) {
-            continueToNextDay = false;
-            checkBoxTreeHourItem.setName(hour + ":00-" + currentHour + ":00 "
-                + "(" + hourlyCount + ")");
-            hourlyCount = 0;
-            hour = currentHour;
-            checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
-            checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
-          }
-          hourlyCount++;
-          dailyCount++;
-          sdCardCount++;
-          yearlyCount++;
-          monthlyCount++;
-          FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
-              + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
-              model, FrvaTreeViewItem.Type.MEASURESEQUENCE, measureSequence.getDataFile().getFile(), isPreview);
-
-          checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
-
+        if (!currentYear.equals(year)) {
+          checkBoxTreeYearItem.setName(year + " (" + yearlyCount + ")");
+          yearlyCount = 0;
+          year = currentYear;
+          continueToNextDay = true;
+          checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+          sdCardItem.getChildren().add(checkBoxTreeYearItem);
         }
-        checkBoxTreeHourItem.setName(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
-            + " (" + hourlyCount + ")");
-        checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
-        checkBoxTreeYearItem.setName(year + " (" + yearlyCount + ")");
-        checkBoxTreeMonthItem.setName(month + " (" + monthlyCount + ")");
+
+
+        if (!currentMonth.equals(month)) {
+          checkBoxTreeMonthItem.setName(month + " (" + monthlyCount + ")");
+          monthlyCount = 0;
+          month = currentMonth;
+          continueToNextDay = true;
+          checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+          checkBoxTreeYearItem.getChildren().add(checkBoxTreeMonthItem);
+        }
+
+        if (!currentDate.equals(date)) {
+          checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
+          dailyCount = 0;
+          date = currentDate;
+          continueToNextDay = true;
+          checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
+          checkBoxTreeMonthItem.getChildren().add(checkBoxTreeDateItem);
+        }
+
+        if (!currentHour.equals(hour) || continueToNextDay) {
+          continueToNextDay = false;
+          checkBoxTreeHourItem.setName(hour + ":00-" + currentHour + ":00 "
+              + "(" + hourlyCount + ")");
+          hourlyCount = 0;
+          hour = currentHour;
+          checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
+          checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
+        }
+        hourlyCount++;
+        dailyCount++;
+        sdCardCount++;
+        yearlyCount++;
+        monthlyCount++;
+        FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
+            + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
+            model, FrvaTreeViewItem.Type.MEASURESEQUENCE, measureSequence.getContainingFile(), isPreview);
+
+        checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
 
       }
+      checkBoxTreeHourItem.setName(hour + ":00-" + (Integer.parseInt(hour) + 1) + ":00"
+          + " (" + hourlyCount + ")");
+      checkBoxTreeDateItem.setName(date + " (" + dailyCount + ")");
+      checkBoxTreeYearItem.setName(year + " (" + yearlyCount + ")");
+      checkBoxTreeMonthItem.setName(month + " (" + monthlyCount + ")");
+
+
       sdCardItem.setName(card.getName() + " (" + sdCardCount + ")");
       sdCardCount = 0;
 
@@ -150,22 +146,25 @@ public class TreeViewFactory {
   }
 
 
-  public static void createDummyTreeView(List<SdCard> list, TreeView<FrvaTreeViewItem> treeView,
-                                         FrvaModel model, boolean isPreview) {
+  /**
+   *
+   * @param treeView the treeview the Elements are attached to
+   * @param model the model
+   */
+  public static void createDummyTreeView(TreeView<FrvaTreeViewItem> treeView,
+                                         FrvaModel model, String filepath) {
 
     FrvaTreeViewItem currentItem = (FrvaTreeViewItem) treeView.getRoot();
-    String path = model.getLibraryPath() + File.separator + "treeStructure.csv";
+    String path = filepath;
     File structure = new File(path);
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(structure));) {
       while ((line = br.readLine()) != null) {
 
         String[] arr = line.split(";");
-        FrvaTreeViewItem temp = new FrvaTreeViewItem(arr,false);
+        FrvaTreeViewItem temp = new FrvaTreeViewItem(arr, model, false);
         FrvaTreeViewItem prev;
         int depthDifference = temp.getDepth() - currentItem.getDepth();
-
-        System.out.println(depthDifference + " between " + temp.getValue() + " and " + currentItem.getValue());
 
         if (depthDifference == 0) {
           currentItem.getParent().getChildren().add(temp);

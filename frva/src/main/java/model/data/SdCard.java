@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SdCard {
-  private final List<DataFile> dataFiles;
+  private final List<MeasureSequence> measureSequences;
   private File sdCardPath;
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
@@ -21,12 +21,10 @@ public class SdCard {
    */
   public SdCard(File sdCardPath, String name) {
     this.sdCardPath = sdCardPath;
-
+    this.measureSequences=new ArrayList<>();
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
-
-    dataFiles = readDatafiles(sdCardPath);
 
 
     if (name == null) {
@@ -36,20 +34,6 @@ public class SdCard {
     }
   }
 
-  private List<DataFile> readDatafiles(File sdCardPath) {
-    List<DataFile> dataFiles = new LinkedList<>();
-    File folder = sdCardPath;
-
-    File[] listOfDirectories = folder.listFiles(File::isDirectory);
-
-    for (File directory : listOfDirectories) {
-      File[] listOfDataFiles = directory.listFiles();
-      for (File dataFile : listOfDataFiles) {
-        dataFiles.add(new DataFile(this, dataFile));
-      }
-    }
-    return dataFiles;
-  }
 
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
@@ -72,9 +56,6 @@ public class SdCard {
     return sensorCalibrationFileVeg;
   }
 
-  public List<DataFile> getDataFiles() {
-    return dataFiles;
-  }
 
   /**
    * Getter for the devices Serial-Number.
@@ -82,11 +63,10 @@ public class SdCard {
    * @return SerialNumber as String.
    */
   public String getDeviceSerialNr() {
-    if (this.dataFiles == null || this.dataFiles.isEmpty()) {
+    if (this.measureSequences == null || this.measureSequences.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    return this.dataFiles.stream()
-        .findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+    return this.measureSequences.stream().findAny().get().getSerial();
   }
 
   public String getName() {
@@ -99,11 +79,8 @@ public class SdCard {
    * @return List of MeasurementSequences.
    */
   public List<MeasureSequence> getMeasureSequences() {
-    List<MeasureSequence> list = new ArrayList<>();
-    for (DataFile dataFile : dataFiles) {
-      list.addAll(dataFile.getMeasureSequences());
-    }
-    return list;
+
+    return measureSequences;
   }
 
   /**
@@ -112,16 +89,9 @@ public class SdCard {
    * @return true when empty.
    */
   public boolean isEmpty() {
-    if (dataFiles.isEmpty()) {
-      return true;
-    }
-    boolean isEmpty = true;
-    for (DataFile dfile : dataFiles) {
-      if (!dfile.isEmpty()) {
-        isEmpty = false;
-      }
-    }
-    return isEmpty;
+    return this.measureSequences.isEmpty();
+
+
   }
 
   public File getPath() {
