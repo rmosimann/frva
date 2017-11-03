@@ -28,20 +28,28 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
     String depth = array[1];
     switch (depth) {
       case "0":
+        System.out.println("created new Root item");
         return new FrvaTreeRootItem(array[2]);
       case "1":
+        System.out.println("created new Device item");
         return new FrvaTreeDeviceItem(array[2], array[3]);
       case "2":
+        System.out.println("created new Sd item");
         return new FrvaTreeSdCardItem(array[2], new File(array[3]));
       case "3":
+        System.out.println("created new Year item");
         return new FrvaTreeYearItem(array[2], array[3]);
       case "4":
+        System.out.println("created new Month item");
         return new FrvaTreeMonthItem(array[2], array[3]);
       case "5":
+        System.out.println("created new Day item");
         return new FrvaTreeDayItem(array[2], array[3]);
       case "6":
+        System.out.println("created new Hour item");
         return new FrvaTreeHourItem(array[2], array[3]);
       case "7":
+        System.out.println("created new Measurement item");
         return new FrvaTreeMeasurementItem(array[2], new File(array[3]));
       default: throw new NoSuchElementException("depth "+ depth + "is unknown");
     }

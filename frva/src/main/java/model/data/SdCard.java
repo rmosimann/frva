@@ -96,15 +96,32 @@ public class SdCard {
     return this.sdCardPath;
   }
 
+
+  public void readInFiles() {
+
+    for (File f : sdCardPath.listFiles()) {
+      if (f.isDirectory() && f.listFiles().length != 0) {
+        for (File data:f.listFiles()) {
+
+         //TODO new MeasureSequence(f);
+
+        }
+
+      }
+    }
+
+
+  }
+
   @Override
   public boolean equals(Object object) {
-   return (object instanceof SdCard
-       && ((SdCard) object).getWavelengthCalibrationFile().equals(wavelengthCalibrationFile));
+    return (object instanceof SdCard
+        && ((SdCard) object).getWavelengthCalibrationFile().equals(wavelengthCalibrationFile));
 
   }
 
   @Override
   public int hashCode() {
-   return wavelengthCalibrationFile.hashCode();
+    return wavelengthCalibrationFile.hashCode();
   }
 }

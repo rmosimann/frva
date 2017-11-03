@@ -35,7 +35,7 @@ public class FrvaSerializer {
   }
 
   private static void serializeDB(TreeItem item, Writer writer) throws IOException {
-    writer.write(((FrvaTreeRootItem) item).serialize() + "\n");
+    writer.write(((FrvaTreeItem) item).serialize() + "\n");
     writer.flush();
     if (!item.isLeaf()) {
       for (Object child : item.getChildren()

@@ -1,5 +1,7 @@
 package model;
 
+import controller.util.TreeviewItems.FrvaTreeItem;
+import controller.util.TreeviewItems.FrvaTreeRootItem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +26,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -68,6 +72,16 @@ public class FrvaModel {
     }
   }
 
+
+  public TreeView readInSdCard(File sdCardLocation, TreeView<FrvaTreeRootItem> treeView, String name){
+
+
+    TreeItem root=treeView.getRoot();
+    SdCard sdCard = new SdCard(sdCardLocation, name);
+return null;
+
+
+  }
 
   public void addSelectionMapping(int tabId) {
     selectionMap.put(tabId, FXCollections.observableArrayList());

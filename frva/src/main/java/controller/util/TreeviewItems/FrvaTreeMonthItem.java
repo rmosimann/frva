@@ -15,6 +15,8 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
 
   @Override
   public String serialize() {
+    System.out.println("serialized myself");
+    System.out.println(this.month);
     return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + month + ";";
 
   }

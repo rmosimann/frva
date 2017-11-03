@@ -39,6 +39,8 @@ public class MeasureSequence {
   private String id;
   private FrvaModel model;
 
+
+
   public enum SequenceKeyName {
     VEG,
     WR,
@@ -49,7 +51,10 @@ public class MeasureSequence {
     REFLECTANCE;
   }
 
+
+
   /**
+   * Constructor for single Measurment sequence
    * @param containingFile the file the measure sequence is contained
    * @param id             the id of the Measuresequence within the file
    */
@@ -66,13 +71,13 @@ public class MeasureSequence {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        readData();
+        readSingleMeasurementSequence();
 
       }
     });
   }
 
-  private void readData() {
+  private void readSingleMeasurementSequence() {
     boolean found = false;
     ArrayList<String> fileContent = new ArrayList<>();
     String line = "";
