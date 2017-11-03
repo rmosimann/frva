@@ -240,11 +240,7 @@ public class MeasureSequence {
     double[] reflection = new double[vegRadiance.length];
 
     for (int i = 0; i < reflection.length; i++) {
-      if (wrRadiance[i] != 0) {
-        reflection[i] = vegRadiance[i] / wrRadiance[i];
-      } else {
-        reflection[0] = 0;
-      }
+      reflection[i] = vegRadiance[i] / wrRadiance[i];
     }
 
     Map<SequenceKeyName, double[]> reflectionMap = new HashMap<>();

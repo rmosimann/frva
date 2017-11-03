@@ -557,9 +557,11 @@ public class TabController {
         series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
 
         for (int i = 0; i < data.length; i++) {
-          double x = asWavelength ? calibration[i] : i;
-          double y = data[i];
-          series.getData().add(new XYChart.Data<>(x, y));
+          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
+            double x = asWavelength ? calibration[i] : i;
+            double y = data[i];
+            series.getData().add(new XYChart.Data<>(x, y));
+          }
         }
 
         Platform.runLater(() -> {
