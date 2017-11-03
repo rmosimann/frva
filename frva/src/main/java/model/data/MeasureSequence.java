@@ -41,7 +41,7 @@ public class MeasureSequence {
   /**
    * Constructor for a MeasurementSequence.
    *
-   * @param input a StringArray containing the measurements
+   * @param input    a StringArray containing the measurements
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(List<String> input, DataFile dataFile) {
@@ -186,8 +186,8 @@ public class MeasureSequence {
     /*
     Radiance L
       Data:
-        L(VEG) = (DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03
-        L(WR) = (DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03
+        L(VEG) = ((DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03) IntegrationTimeVEG
+        L(WR) = ((DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03) IntegrationTimeWR
       X-Axis: Wavelength[Nanometers]/Bands[dn]
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
@@ -206,8 +206,10 @@ public class MeasureSequence {
     double[] wrRadiance = new double[waveCalibration.length];
 
     for (int i = 0; i < waveCalibration.length; i++) {
-      vegRadiance[i] = (vegs[i] - dcVegs[i]) * vegCalibration[i];
-      wrRadiance[i] = (wrs[i] - dcWrs[i]) * wrCalibration[i];
+      wrRadiance[i] = (
+          (wrs[i] - dcWrs[i]) * wrCalibration[i]) / Double.parseDouble(metadata[5]);
+      vegRadiance[i] = (
+          (vegs[i] - dcVegs[i]) * vegCalibration[i]) / Double.parseDouble(metadata[7]);
     }
 
     Map<SequenceKeyName, double[]> radianceMap = new HashMap<>();
