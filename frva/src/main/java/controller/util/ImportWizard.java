@@ -1,5 +1,6 @@
 package controller.util;
 
+import controller.util.TreeviewItems.FrvaTreeRootItem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
-  private TreeView<FrvaTreeViewItem> previewTreeView;
+  private TreeView<FrvaTreeRootItem> previewTreeView;
   private List<MeasureSequence> importList;
   private FrvaModel model;
   private final Logger logger = Logger.getLogger("FRVA");
@@ -61,7 +62,7 @@ public class ImportWizard {
   private void initalizeTreeView() {
     this.previewTreeView = new TreeView<>();
     previewTreeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    previewTreeView.setRoot(new FrvaTreeViewItem(FrvaTreeViewItem.Type.ROOT));
+    previewTreeView.setRoot(new FrvaTreeRootItem("Library"));
   }
 
   /**
@@ -71,12 +72,12 @@ public class ImportWizard {
    */
   public List<MeasureSequence> startImport() {
 
-
     Wizard wizard = new Wizard(owner);
     //First Page
     WizardPane choseSdCardPane = createFirstPage();
     WizardPane choseSdCardNamePane = createSecondPage();
     WizardPane selectMeasurementsPane = createThirdPage();
+
     wizard.setFlow(new Wizard.LinearFlow(choseSdCardPane, choseSdCardNamePane,
         selectMeasurementsPane));
 
@@ -84,24 +85,24 @@ public class ImportWizard {
     // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
-        updateImportList((FrvaTreeViewItem) previewTreeView.getRoot());
+       // updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
       }
     });
     System.out.println("import list size "+ importList.size());
     return importList;
   }
-
-  private void updateImportList(FrvaTreeViewItem item) {
+/*
+  private void updateImportList(FrvaTreeRootItem item) {
     if (item.isLeaf()) {
       if (item.getCheckedProperty().get()) {
         importList.add(item.getMeasureSequence());
       }
     } else {
       for (Object child : item.getChildren()) {
-        updateImportList((FrvaTreeViewItem) child);
+        updateImportList((FrvaTreeRootItem) child);
       }
     }
-  }
+  }*/
 
   private WizardPane createFirstPage() {
 
@@ -158,9 +159,9 @@ public class ImportWizard {
 
 
 
-        TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
+        //TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
         previewTreeView.getRoot().setExpanded(true);
-        ((FrvaTreeViewItem) previewTreeView.getRoot()).setSelected(true);
+        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
       }
     };
 

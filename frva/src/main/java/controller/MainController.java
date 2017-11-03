@@ -1,16 +1,12 @@
 package controller;
 
-import controller.util.FrvaTreeViewItem;
+import controller.util.FrvaSerializer;
+import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.ImportWizard;
-import controller.util.TreeViewFactory;
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -59,7 +55,7 @@ public class MainController {
   @FXML
   private void initialize() {
     initializeTabHandling();
-    loadTreeStructure(model.getLibraryPath() + File.separator + FrvaModel.TREESTRUCTURE);
+    loadTreeStructure(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
     addEventHandlers();
     //onChangeTab();
   }
@@ -67,12 +63,12 @@ public class MainController {
   private void addEventHandlers() {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
-    selectAllButton.setOnAction(event -> ((FrvaTreeViewItem) treeView.getRoot()).setSelected(true));
+    selectAllButton.setOnAction(event -> ((FrvaTreeRootItem) treeView.getRoot()).setSelected(true));
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     //exportButton.setOnAction(event -> exportData());
-    exportButton.setOnAction(event -> serializeDB());
+    exportButton.setOnAction(event -> FrvaSerializer.serializeDB(treeView));
     importSdCardButton.setOnAction(event -> importWizard());
 
   }
@@ -81,7 +77,7 @@ public class MainController {
 
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
-    List<SdCard> importedSdCards = model.writeData(list, new File(model.getLibraryPath()).toPath());
+    List<SdCard> importedSdCards = model.writeData(list, new File(FrvaModel.LIBRARYPATH).toPath());
    // addElementsToTreeView(importedSdCards);
   }
 
@@ -174,13 +170,10 @@ public class MainController {
     newTabId++;
   }
 
-
   private void loadTreeStructure(String filepath) {
-
-    treeView.setRoot(new FrvaTreeViewItem("Library", null, model,
-        FrvaTreeViewItem.Type.ROOT, null, false));
+    treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    TreeViewFactory.createDummyTreeView(treeView, model, filepath);
+    FrvaSerializer.deserializeDB(treeView, filepath, model);
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
@@ -215,19 +208,19 @@ public class MainController {
   private void unselectTickedItems() {
     if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
-          ((FrvaTreeViewItem) item).setSelected(false));
+          ((FrvaTreeRootItem) item).setSelected(false));
     } else {
       unselectTickedItems(treeView.getRoot());
     }
     treeView.getSelectionModel().clearSelection();
   }
 
-  private void unselectTickedItems(TreeItem<FrvaTreeViewItem> item) {
+  private void unselectTickedItems(TreeItem<FrvaTreeRootItem> item) {
     if (!item.isLeaf()) {
       for (Object child : item.getChildren()) {
         unselectTickedItems((TreeItem) child);
-        ((FrvaTreeViewItem) child).setSelected(false);
-        ((FrvaTreeViewItem) child).setIndeterminate(false);
+        ((FrvaTreeRootItem) child).setSelected(false);
+        ((FrvaTreeRootItem) child).setIndeterminate(false);
       }
     }
   }
@@ -236,15 +229,15 @@ public class MainController {
     treeView.setOnMouseClicked(event -> {
       treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
-          ((FrvaTreeViewItem) item).setSelected(true));
+          ((FrvaTreeRootItem) item).setSelected(true));
     });
   }
 
-  private List<FrvaTreeViewItem> removeTickedMeasurements(TreeItem item,
-                                                          List<FrvaTreeViewItem> list) {
+  private List<FrvaTreeRootItem> removeTickedMeasurements(TreeItem item,
+                                                          List<FrvaTreeRootItem> list) {
     if (!item.isLeaf()) {
       for (Object o : item.getChildren()) {
-        FrvaTreeViewItem element = (FrvaTreeViewItem) o;
+        FrvaTreeRootItem element = (FrvaTreeRootItem) o;
         removeTickedMeasurements(element, list);
         if (element.isSelected()) {
           list.add(element);
@@ -254,34 +247,6 @@ public class MainController {
     return list;
   }
 
-  private void serializeDB() {
-    System.out.println("DB serialize");
 
-    File file = new File(model.getLibraryPath() + File.separator + "treeStructure.csv");
-    try {
-      Writer writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-      for (Object item : treeView.getRoot().getChildren()
-          ) {
-        serializeDB((FrvaTreeViewItem) item, writer);
-      }
-      writer.close();
-    } catch (IOException ex) {
-
-    }
-  }
-
-  private void serializeDB(TreeItem item, Writer writer) throws IOException {
-    writer.write(((FrvaTreeViewItem) item).serialize() + "\n");
-    writer.flush();
-    if (!item.isLeaf()) {
-      for (Object child : item.getChildren()
-          ) {
-        serializeDB((TreeItem) child, writer);
-
-      }
-    }
-
-
-  }
 
 }

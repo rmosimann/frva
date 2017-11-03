@@ -21,12 +21,10 @@ public class SdCard {
    */
   public SdCard(File sdCardPath, String name) {
     this.sdCardPath = sdCardPath;
-    this.measureSequences=new ArrayList<>();
+    this.measureSequences = new ArrayList<>();
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
-
-
     if (name == null) {
       this.name = sdCardPath.getName();
     } else {
@@ -96,5 +94,17 @@ public class SdCard {
 
   public File getPath() {
     return this.sdCardPath;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+   return (object instanceof SdCard
+       && ((SdCard) object).getWavelengthCalibrationFile().equals(wavelengthCalibrationFile));
+
+  }
+
+  @Override
+  public int hashCode() {
+   return wavelengthCalibrationFile.hashCode();
   }
 }

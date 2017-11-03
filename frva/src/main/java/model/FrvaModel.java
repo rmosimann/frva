@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -30,12 +29,16 @@ import model.data.SdCard;
 
 public class FrvaModel {
   public static final String TREESTRUCTURE = "treeStructure.csv";
+  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
+  public static final String LIBRARYPATH_ABSOLUTE = "file:" + File.separator + File.separator + LIBRARYPATH;
+
   private final Logger logger = Logger.getLogger("FRVA");
+  private final Set<SdCard> cache = new HashSet<>();
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
-  private boolean loadLibraryOnStart=false;
+  private boolean loadLibraryOnStart = false;
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
     t.setDaemon(true);
@@ -52,30 +55,16 @@ public class FrvaModel {
   }
 
   private void loadLibrary() {
-    libraryPath = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
 
-    String libraryPathAbsolute = "file:" + File.separator + File.separator + libraryPath;
+
 
     logger.info("Library path is set to " + libraryPath);
-    if(loadLibraryOnStart){
-    File folder = new File(libraryPath);
-    if (!folder.exists()) {
-      setUpLibrary(folder);
-    }
-
-    for (File sdfolder : folder.listFiles()) {
-      if (sdfolder.isDirectory()) {
-        try {
-          // URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
-
-          library.add(new SdCard(sdfolder, null));
-
-        } catch (Exception e) {
-          logger.info(e.getMessage());
-        }
+    if (loadLibraryOnStart) {
+      File folder = new File(libraryPath);
+      if (!folder.exists()) {
+        setUpLibrary(folder);
       }
 
-    }
     }
   }
 
@@ -86,6 +75,10 @@ public class FrvaModel {
 
   public void removeSelectionMapping(int tabId) {
     selectionMap.remove(tabId);
+  }
+
+  public Set<SdCard> getCache() {
+    return cache;
   }
 
   public ObservableList<MeasureSequence> getCurrentSelectionList() {
@@ -357,9 +350,7 @@ public class FrvaModel {
     logger.info("deleteFile file " + file);
   }
 
-  public String getLibraryPath() {
-    return libraryPath;
-  }
+
 
 
   /**
@@ -368,6 +359,7 @@ public class FrvaModel {
   public int getLibrarySize() {
     return 4;
   }
+
 
 
 }

@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import model.FrvaModel;
 
 public class MeasureSequence {
 
@@ -35,6 +37,7 @@ public class MeasureSequence {
   private ReflectionIndices reflectionIndices;
   private SdCard containingSdCard;
   private String id;
+  private FrvaModel model;
 
   public enum SequenceKeyName {
     VEG,
@@ -47,17 +50,26 @@ public class MeasureSequence {
   }
 
   /**
-   *
    * @param containingFile the file the measure sequence is contained
-   * @param id the id of the Measuresequence within the file
+   * @param id             the id of the Measuresequence within the file
    */
-  public MeasureSequence(File containingFile, String id) {
-
+  public MeasureSequence(File containingFile, String id, FrvaModel model) {
+    this.model = model;
     this.containingFile = containingFile;
     this.id = id;
-    //TODO: how do SD Cards avoid multiplication
+
     this.containingSdCard = new SdCard(containingFile.getParentFile().getParentFile(), "SDCard");
-    readData();
+
+    if (!model.getCache().contains(containingSdCard)) {
+      model.getCache().add(containingSdCard);
+    }
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        readData();
+
+      }
+    });
   }
 
   private void readData() {
@@ -73,9 +85,10 @@ public class MeasureSequence {
             fileContent.add(line);
             br.readLine();
             //Read Measurement Sequence
-            for(int i=0;i<3; i++){
-            fileContent.add(br.readLine());
-            br.readLine();}
+            for (int i = 0; i < 3; i++) {
+              fileContent.add(br.readLine());
+              br.readLine();
+            }
             importData(fileContent);
           }
           //skip 9 lines
@@ -368,12 +381,11 @@ public class MeasureSequence {
         return "DEC";
       default:
         return "ERROR";
-
-
     }
 
 
   }
+
   public File getContainingFile() {
     return containingFile;
   }

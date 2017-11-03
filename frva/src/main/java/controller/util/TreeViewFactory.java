@@ -1,9 +1,6 @@
 package controller.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import controller.util.TreeviewItems.FrvaTreeRootItem;
 import java.util.Iterator;
 import java.util.List;
 import javafx.scene.control.TreeView;
@@ -25,14 +22,14 @@ public class TreeViewFactory {
    * @param model     the model of the application
    * @param isPreview registers MeasureSequences in the model if false
    */
-  public static void extendTreeView(List<SdCard> list, TreeView<FrvaTreeViewItem> treeView,
+  public static void extendTreeView(List<SdCard> list, TreeView<FrvaTreeRootItem> treeView,
                                     FrvaModel model, boolean isPreview) {
+/*
 
-
-    FrvaTreeViewItem root = (FrvaTreeViewItem) treeView.getRoot();
+    FrvaTreeRootItem root = (FrvaTreeRootItem) treeView.getRoot();
 
     int sdCardCount = 0;
-    FrvaTreeViewItem deviceItem = null;
+    FrvaTreeRootItem deviceItem = null;
 
 
     //Structurize Data with days/hours
@@ -41,19 +38,19 @@ public class TreeViewFactory {
 
       for (Object item : root.getChildren()) {
 
-        if (((FrvaTreeViewItem) item).getDeviceId().equals(card.getDeviceSerialNr())) {
-          deviceItem = (FrvaTreeViewItem) item;
+        if (((FrvaTreeRootItem) item).getDeviceId().equals(card.getDeviceSerialNr())) {
+          deviceItem = (FrvaTreeRootItem) item;
           currentDevice = card.getDeviceSerialNr();
         }
       }
       if (!card.getDeviceSerialNr().equals(currentDevice)) {
         currentDevice = card.getDeviceSerialNr();
-        deviceItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DEVICE);
+        deviceItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.DEVICE);
         root.getChildren().add(deviceItem);
       }
 
 
-      FrvaTreeViewItem sdCardItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.SDCARD);
+      FrvaTreeRootItem sdCardItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.SDCARD);
       deviceItem.getChildren().add(sdCardItem);
 
 
@@ -64,13 +61,13 @@ public class TreeViewFactory {
       String month = "";
       boolean continueToNextDay = false;
       int dailyCount = 0;
-      FrvaTreeViewItem checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
+      FrvaTreeRootItem checkBoxTreeDateItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.DAY);
       int hourlyCount = 0;
-      FrvaTreeViewItem checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
+      FrvaTreeRootItem checkBoxTreeHourItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.HOUR);
       int yearlyCount = 0;
-      FrvaTreeViewItem checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+      FrvaTreeRootItem checkBoxTreeYearItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.YEAR);
       int monthlyCount = 0;
-      FrvaTreeViewItem checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+      FrvaTreeRootItem checkBoxTreeMonthItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.MONTH);
 
 
       while (it.hasNext()) {
@@ -85,7 +82,7 @@ public class TreeViewFactory {
           yearlyCount = 0;
           year = currentYear;
           continueToNextDay = true;
-          checkBoxTreeYearItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.YEAR);
+          checkBoxTreeYearItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.YEAR);
           sdCardItem.getChildren().add(checkBoxTreeYearItem);
         }
 
@@ -95,7 +92,7 @@ public class TreeViewFactory {
           monthlyCount = 0;
           month = currentMonth;
           continueToNextDay = true;
-          checkBoxTreeMonthItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.MONTH);
+          checkBoxTreeMonthItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.MONTH);
           checkBoxTreeYearItem.getChildren().add(checkBoxTreeMonthItem);
         }
 
@@ -104,7 +101,7 @@ public class TreeViewFactory {
           dailyCount = 0;
           date = currentDate;
           continueToNextDay = true;
-          checkBoxTreeDateItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.DAY);
+          checkBoxTreeDateItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.DAY);
           checkBoxTreeMonthItem.getChildren().add(checkBoxTreeDateItem);
         }
 
@@ -114,7 +111,7 @@ public class TreeViewFactory {
               + "(" + hourlyCount + ")");
           hourlyCount = 0;
           hour = currentHour;
-          checkBoxTreeHourItem = new FrvaTreeViewItem(FrvaTreeViewItem.Type.HOUR);
+          checkBoxTreeHourItem = new FrvaTreeRootItem(FrvaTreeRootItem.Type.HOUR);
           checkBoxTreeDateItem.getChildren().add(checkBoxTreeHourItem);
         }
         hourlyCount++;
@@ -122,9 +119,9 @@ public class TreeViewFactory {
         sdCardCount++;
         yearlyCount++;
         monthlyCount++;
-        FrvaTreeViewItem checkBoxTreeMeasurementItem = new FrvaTreeViewItem("ID"
+        FrvaTreeRootItem checkBoxTreeMeasurementItem = new FrvaTreeRootItem("ID"
             + measureSequence.getId() + " - " + measureSequence.getTime(), measureSequence,
-            model, FrvaTreeViewItem.Type.MEASURESEQUENCE, measureSequence.getContainingFile(), isPreview);
+            model, FrvaTreeRootItem.Type.MEASURESEQUENCE, measureSequence.getContainingFile(), isPreview);
 
         checkBoxTreeHourItem.getChildren().add(checkBoxTreeMeasurementItem);
 
@@ -143,53 +140,11 @@ public class TreeViewFactory {
 
     }
     treeView.setShowRoot(false);
+*/
   }
 
 
-  /**
-   *
-   * @param treeView the treeview the Elements are attached to
-   * @param model the model
-   */
-  public static void createDummyTreeView(TreeView<FrvaTreeViewItem> treeView,
-                                         FrvaModel model, String filepath) {
 
-    FrvaTreeViewItem currentItem = (FrvaTreeViewItem) treeView.getRoot();
-    String path = filepath;
-    File structure = new File(path);
-    String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(structure));) {
-      while ((line = br.readLine()) != null) {
-
-        String[] arr = line.split(";");
-        FrvaTreeViewItem temp = new FrvaTreeViewItem(arr, model, false);
-        FrvaTreeViewItem prev;
-        int depthDifference = temp.getDepth() - currentItem.getDepth();
-
-        if (depthDifference == 0) {
-          currentItem.getParent().getChildren().add(temp);
-        }
-
-        if (depthDifference == 1) {
-          currentItem.getChildren().add(temp);
-          currentItem = temp;
-        }
-        if (depthDifference < 0) {
-          while (depthDifference < 1) {
-            currentItem = (FrvaTreeViewItem) currentItem.getParent();
-            depthDifference++;
-          }
-          currentItem.getChildren().add(temp);
-          currentItem = temp;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    treeView.setShowRoot(false);
-
-  }
 
 
 }
