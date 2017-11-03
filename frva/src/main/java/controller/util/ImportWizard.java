@@ -152,17 +152,15 @@ public class ImportWizard {
     WizardPane choseMeasurementsPane = new WizardPane() {
       @Override
       public void onEnteringPage(Wizard wizard) {
-        try {
+
           File file = new File(chosenDirectoryPath.get());
-          SdCard sdCard = new SdCard(file.toURI().toURL(), chosenSdCardName.get());
+          SdCard sdCard = new SdCard(file, chosenSdCardName.get());
           sdCardList.add(sdCard);
 
           logger.info("set SD-Cardname " + chosenSdCardName.get()
-              + " at location" + sdCard.getPath().getFile());
+              + " at location" + sdCard.getPath());
 
-        } catch (MalformedURLException e) {
-          e.getMessage();
-        }
+
 
         TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
         previewTreeView.getRoot().setExpanded(true);

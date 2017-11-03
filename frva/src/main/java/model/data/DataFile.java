@@ -55,7 +55,7 @@ public class DataFile {
     return originalFile.getParentFile().getName();
   }
 
-  public File getDataFile() {
+  public File getFile() {
     return originalFile;
   }
 

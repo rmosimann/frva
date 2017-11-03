@@ -30,6 +30,7 @@ import model.FrvaModel;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
+import org.controlsfx.control.CheckTreeView;
 
 
 public class MainController {
@@ -38,7 +39,7 @@ public class MainController {
   private int newTabId = 0;
 
   @FXML
-  private TreeView<FrvaTreeViewItem> treeView;
+  private CheckTreeView treeView;
   @FXML
   private Button selectAllButton;
   @FXML
@@ -100,7 +101,7 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+     // model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -187,10 +188,12 @@ public class MainController {
     addElementsToTreeView(list);
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
+
+
   }
 
   private void addElementsToTreeView(List<SdCard> list) {
-    TreeViewFactory.extendTreeView(list, treeView, model, false);
+    TreeViewFactory.createDummyTreeView(list, treeView, model,  false);
   }
 
 
@@ -266,9 +269,9 @@ public class MainController {
     File file = new File(model.getLibraryPath() + File.separator + "treeStructure.csv");
     try {
       Writer writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-      for (TreeItem item : treeView.getRoot().getChildren()
+      for (Object item : treeView.getRoot().getChildren()
           ) {
-        serializeDB(item, writer);
+        serializeDB((FrvaTreeViewItem)item, writer);
       }
       writer.close();
     } catch (IOException ex) {

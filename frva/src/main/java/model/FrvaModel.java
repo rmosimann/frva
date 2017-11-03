@@ -1,5 +1,6 @@
 package model;
 
+import controller.util.FrvaTreeViewItem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -68,9 +69,9 @@ public class FrvaModel {
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
         try {
-          URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
+          // URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
 
-          library.add(new SdCard(sdcard, null));
+          library.add(new SdCard(sdfolder, null));
 
         } catch (Exception e) {
           logger.info(e.getMessage());
@@ -186,7 +187,7 @@ public class FrvaModel {
   /**
    * Writes Data from SDCARDs to Files, in original format.
    *
-   * @param list List of SDCARD to save.
+   * @param list       List of SDCARD to save.
    * @param exportPath the path where the SDCARD is exported to.
    */
   public List<SdCard> writeData(List<MeasureSequence> list, Path exportPath) {
@@ -254,11 +255,8 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      try {
-        returnList.add(new SdCard(f.toURI().toURL(), null));
-      } catch (MalformedURLException e) {
-        logger.info(e.getMessage());
-      }
+
+      returnList.add(new SdCard(f, null));
 
     }
     return returnList;
@@ -339,7 +337,7 @@ public class FrvaModel {
     while (it.hasNext()) {
       SdCard sdCard = it.next();
       if (sdCard.isEmpty()) {
-        deleteFile(new File(sdCard.getPath().getFile()));
+        deleteFile(sdCard.getPath());
         it.remove();
 
       }
@@ -378,8 +376,6 @@ public class FrvaModel {
     }
     return sum;
   }
-
-
 
 
 }

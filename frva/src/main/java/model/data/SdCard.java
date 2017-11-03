@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SdCard {
   private final List<DataFile> dataFiles;
-  private URL sdCardPath;
+  private File sdCardPath;
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
   private CalibrationFile sensorCalibrationFileVeg;
@@ -19,7 +19,7 @@ public class SdCard {
    *
    * @param sdCardPath a Path where the data lays as expected.
    */
-  public SdCard(URL sdCardPath, String name) {
+  public SdCard(File sdCardPath, String name) {
     this.sdCardPath = sdCardPath;
 
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
@@ -30,16 +30,15 @@ public class SdCard {
 
 
     if (name == null) {
-      String[] arr = sdCardPath.getFile().split(File.separator);
-      this.name = arr[arr.length - 1];
+      this.name = sdCardPath.getName();
     } else {
       this.name = name;
     }
   }
 
-  private List<DataFile> readDatafiles(URL sdCardPath) {
+  private List<DataFile> readDatafiles(File sdCardPath) {
     List<DataFile> dataFiles = new LinkedList<>();
-    File folder = new File(sdCardPath.getFile());
+    File folder = sdCardPath;
 
     File[] listOfDirectories = folder.listFiles(File::isDirectory);
 
@@ -52,8 +51,8 @@ public class SdCard {
     return dataFiles;
   }
 
-  private CalibrationFile readCalibrationFile(URL sdCardPath, String filter, int skipLines) {
-    File folder = new File(sdCardPath.getFile());
+  private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
+    File folder = sdCardPath;
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv"));
 
@@ -125,7 +124,7 @@ public class SdCard {
     return isEmpty;
   }
 
-  public URL getPath() {
+  public File getPath() {
     return this.sdCardPath;
   }
 }
