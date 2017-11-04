@@ -10,8 +10,8 @@ public class FrvaTreeDayItem extends FrvaTreeItem{
 
   private String day;
 
-  public FrvaTreeDayItem(String name, String day) {
-    super(name);
+  public FrvaTreeDayItem(String day) {
+    super(day);
     this.day = day;
   }
 
@@ -24,5 +24,9 @@ public class FrvaTreeDayItem extends FrvaTreeItem{
   @Override
   public int getDepth() {
     return 5;
+  }
+
+  public String getDay() {
+    return day;
   }
 }

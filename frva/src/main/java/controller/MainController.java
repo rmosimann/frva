@@ -1,6 +1,8 @@
 package controller;
 
 import controller.util.FrvaSerializer;
+import controller.util.TreeviewItems.FrvaTreeItem;
+import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.ImportWizard;
 import java.io.File;
@@ -229,7 +231,7 @@ public class MainController {
     treeView.setOnMouseClicked(event -> {
       treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
-          ((FrvaTreeRootItem) item).setSelected(true));
+          ((FrvaTreeItem) item).setSelected(true));
     });
   }
 

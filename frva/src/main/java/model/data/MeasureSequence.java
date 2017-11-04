@@ -56,67 +56,25 @@ public class MeasureSequence {
   /**
    * Constructor for single Measurment sequence
    * @param containingFile the file the measure sequence is contained
-   * @param id             the id of the Measuresequence within the file
    */
-  public MeasureSequence(File containingFile, String id, FrvaModel model) {
+  
+  public MeasureSequence(SdCard sdCard, File containingFile,FrvaModel model, List<String>data) {
+    System.out.println("created new MS");
     this.model = model;
     this.containingFile = containingFile;
-    this.id = id;
-
-    this.containingSdCard = new SdCard(containingFile.getParentFile().getParentFile(), "SDCard");
-
-    if (!model.getCache().contains(containingSdCard)) {
-      model.getCache().add(containingSdCard);
-    }
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        readSingleMeasurementSequence();
-
-      }
-    });
+    this.containingSdCard = sdCard;
+    importData(data);
   }
 
-  private void readSingleMeasurementSequence() {
-    boolean found = false;
-    ArrayList<String> fileContent = new ArrayList<>();
-    String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(containingFile))) {
-      while ((line = br.readLine()) != null || !found) {
 
-        if (!"".equals(line) && Character.isDigit(line.charAt(0))) {
-          if (line.split(";")[0].equals(id)) {
-            found = true;
-            fileContent.add(line);
-            br.readLine();
-            //Read Measurement Sequence
-            for (int i = 0; i < 3; i++) {
-              fileContent.add(br.readLine());
-              br.readLine();
-            }
-            importData(fileContent);
-          }
-          //skip 9 lines
-          for (int i = 0; i < 9; i++) {
-            br.readLine();
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    if (!found) {
-      throw new NoSuchElementException("Element with ID " + id + " has not been found in file " + containingFile);
-    }
-  }
 
   private void importData(List<String> fileContent) {
 
     sequenceUuid = UUID.randomUUID().toString();
+
     metadata = fileContent.get(0).split(";");
     for (int i = 1; i < fileContent.size(); i++) {
       String[] tmp = fileContent.get(i).split(";");
-
       SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
 
       measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))

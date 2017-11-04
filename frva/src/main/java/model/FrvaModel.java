@@ -61,7 +61,6 @@ public class FrvaModel {
   private void loadLibrary() {
 
 
-
     logger.info("Library path is set to " + libraryPath);
     if (loadLibraryOnStart) {
       File folder = new File(libraryPath);
@@ -73,12 +72,12 @@ public class FrvaModel {
   }
 
 
-  public TreeView readInSdCard(File sdCardLocation, TreeView<FrvaTreeRootItem> treeView, String name){
+  public TreeView readInSdCard(File sdCardLocation, TreeView<FrvaTreeRootItem> treeView, String name) {
 
 
-    TreeItem root=treeView.getRoot();
-    SdCard sdCard = new SdCard(sdCardLocation, name);
-return null;
+    TreeItem root = treeView.getRoot();
+    SdCard sdCard = new SdCard(sdCardLocation, name, this);
+    return null;
 
 
   }
@@ -261,8 +260,9 @@ return null;
 
     }
     for (File f : sdCardFolderList) {
+      System.out.println("in model"+ f.getAbsolutePath());
 
-      returnList.add(new SdCard(f, null));
+      returnList.add(new SdCard(f, null, this));
 
     }
     return returnList;
@@ -365,15 +365,12 @@ return null;
   }
 
 
-
-
   /**
    * Returns the number of measuresequences in the library.
    */
   public int getLibrarySize() {
     return 4;
   }
-
 
 
 }

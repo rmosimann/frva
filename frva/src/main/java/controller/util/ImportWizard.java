@@ -85,10 +85,10 @@ public class ImportWizard {
     // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
-       // updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
+        // updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
       }
     });
-    System.out.println("import list size "+ importList.size());
+    System.out.println("import list size " + importList.size());
     return importList;
   }
 /*
@@ -150,16 +150,16 @@ public class ImportWizard {
       @Override
       public void onEnteringPage(Wizard wizard) {
 
-          File file = new File(chosenDirectoryPath.get());
-          SdCard sdCard = new SdCard(file, chosenSdCardName.get());
-          sdCardList.add(sdCard);
+        File file = new File(chosenDirectoryPath.get());
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get(),model);
+        sdCard.readInFiles();
+        sdCardList.add(sdCard);
 
-          logger.info("set SD-Cardname " + chosenSdCardName.get()
-              + " at location" + sdCard.getPath());
+        logger.info("set SD-Cardname " + chosenSdCardName.get()
+            + " at location" + sdCard.getPath());
 
 
-
-        //TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
+        TreeViewFactory.extendTreeView2(sdCard, previewTreeView, model);
         previewTreeView.getRoot().setExpanded(true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
       }

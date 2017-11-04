@@ -18,16 +18,30 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private File file;
   private FrvaModel model;
 
-  public FrvaTreeMeasurementItem(String name, File file) {
+  public FrvaTreeMeasurementItem(String name, File file, String id, FrvaModel model) {
     super(name);
     this.file = file;
+    addListener();
+    this.model=model;
+    this.id=id;
+
+  }
+
+  public FrvaTreeMeasurementItem(String name,MeasureSequence ms, String id, FrvaModel model){
+    super(name);
+    this.measureSequence=ms;
+    addListener();
+    this.id=id;
+    this.model=model;
   }
 
   private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
+
       if (newValue) {
+        System.out.println("added one measuremnt to model");
         model.getCurrentSelectionList().add(getMeasureSequence());
       } else {
         model.getCurrentSelectionList().removeAll(getMeasureSequence());
@@ -48,7 +62,10 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-    return new MeasureSequence(file, id, model);
+
+    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(),file.getParentFile().getParent(),model);
+   return containingSdCard.readSingleMeasurementSequence(file, id, model);
+
   }
 
 
@@ -56,21 +73,20 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
 
     super.selectedProperty().addListener(checkedlistener);
-
+/*
     model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
       selectedProperty().removeListener(checkedlistener);
-
-      if (model.getCurrentSelectionList().stream().anyMatch(p -> p.getId().equals(id))) {
+      if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
         setSelected(true);
       } else {
         setSelected(false);
       }
       selectedProperty().addListener(checkedlistener);
-    });
+    });*/
   }
 
   public String getId() {
-    return measureSequence == null ? "-1" : measureSequence.getId();
+    return this.id;
 
   }
 

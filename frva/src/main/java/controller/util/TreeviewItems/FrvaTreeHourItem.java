@@ -9,8 +9,8 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
 
   private String hour;
 
-  public FrvaTreeHourItem(String name, String hour) {
-    super(name);
+  public FrvaTreeHourItem(String hour) {
+    super(hour);
     this.hour = hour;
   }
 
@@ -22,5 +22,9 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
   @Override
   public int getDepth() {
     return 6;
+  }
+
+  public String getHour() {
+    return hour;
   }
 }
