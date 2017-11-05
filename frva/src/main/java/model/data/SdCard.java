@@ -32,13 +32,14 @@ public class SdCard {
     this.sdCardPath = sdCardPath;
     this.model = model;
     this.measureSequences = new ArrayList<>();
-    System.out.println("hello1 " + sdCardPath.getAbsolutePath());
+  //  System.out.println("hello1 " + sdCardPath.getAbsolutePath());
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
     if (name == null) {
       this.name = sdCardPath.getName();
     } else {
+     // System.out.println("set SD Card name to "+ name);
       this.name = name;
     }
   }
@@ -48,10 +49,10 @@ public class SdCard {
     File folder = sdCardPath;
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv"));
-    System.out.println("try to read in calib-file");
+    //System.out.println("try to read in calib-file");
     for (File f : listOfFiles
         ) {
-      System.out.println(f.getAbsolutePath());
+    //  System.out.println(f.getAbsolutePath());
 
     }
     return new CalibrationFile(listOfFiles[0], skipLines);
@@ -134,7 +135,7 @@ public class SdCard {
     try (BufferedReader br = new BufferedReader(new FileReader(containingFile))) {
       while ((line = br.readLine()) != null) {
 
-        System.out.println(line);
+     //   System.out.println(line);
         if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
           if (line.split(";")[0].equals(id)) {
             found = true;
@@ -147,8 +148,8 @@ public class SdCard {
             }
             for (String str : fileContent
                 ) {
-              System.out.println("in SDCARD readSinlgemeasureSeq");
-              System.out.println(str != null ? str.substring(0, 10) : "null");
+            //  System.out.println("in SDCARD readSinlgemeasureSeq");
+              //System.out.println(str != null ? str.substring(0, 10) : "null");
             }
             MeasureSequence ms = new MeasureSequence(this, containingFile, model, fileContent);
             this.measureSequences.add(ms);
@@ -170,7 +171,7 @@ public class SdCard {
 
 
   public List<MeasureSequence> readInFiles() {
-    System.out.println("started");
+   // System.out.println("started");
     for (File f : sdCardPath.listFiles()) {
       // System.out.println("started1");
 
@@ -191,7 +192,7 @@ public class SdCard {
                 fileContent.add(0, line);
                 br.readLine();
                 //Read Measurement Sequence
-                for (int i = 1; i < 4; i++) {
+                for (int i = 1; i < 5; i++) {
                   fileContent.add(i, br.readLine());
                   br.readLine();
                 }
@@ -202,7 +203,7 @@ public class SdCard {
                 System.out.println(str.substring(0, 20));
               }
 
-              if (fileContent.size() == 4) {
+              if (fileContent.size() == 5) {
                 measureSequences.add(new MeasureSequence(this, datafile, model, fileContent));
               }
               fileContent.clear();
@@ -213,7 +214,7 @@ public class SdCard {
         }
       }
     }
-    System.out.println("added now " + measureSequences.size() + " Measuresequences");
+  //  System.out.println("added now " + measureSequences.size() + " Measuresequences");
     return measureSequences;
   }
 
@@ -227,5 +228,13 @@ public class SdCard {
   @Override
   public int hashCode() {
     return wavelengthCalibrationFile.hashCode();
+  }
+
+  public void setPathToLibrary() {
+    this.sdCardPath = new File(FrvaModel.LIBRARYPATH + File.separator + this.name);
+    for (MeasureSequence ms: measureSequences
+         ) {ms.setPathToLibrary();
+
+    }
   }
 }

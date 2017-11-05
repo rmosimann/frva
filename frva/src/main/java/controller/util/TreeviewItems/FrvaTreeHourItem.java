@@ -7,10 +7,16 @@ import model.data.SdCard;
  */
 public class FrvaTreeHourItem extends FrvaTreeItem {
 
-  private String hour;
+  private int hour;
 
-  public FrvaTreeHourItem(String hour) {
-    super(hour);
+  public FrvaTreeHourItem(String name, String hour) {
+    super(name);
+    System.out.println(name);
+    System.out.println(hour);
+    this.hour = Integer.parseInt(hour);
+  }
+  public FrvaTreeHourItem(int hour) {
+    super(hour + ":00-" + ((hour+1)%24) + ":00 ");
     this.hour = hour;
   }
 
@@ -24,7 +30,8 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
     return 6;
   }
 
-  public String getHour() {
+  public int getHour() {
+    System.out.println(hour);
     return hour;
   }
 }

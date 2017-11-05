@@ -1,5 +1,7 @@
 package controller.util;
 
+import controller.util.TreeviewItems.FrvaTreeItem;
+import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +37,11 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
+
+  public TreeView<FrvaTreeRootItem> getPreviewTreeView() {
+    return previewTreeView;
+  }
+
   private TreeView<FrvaTreeRootItem> previewTreeView;
   private List<MeasureSequence> importList;
   private FrvaModel model;
@@ -85,24 +92,24 @@ public class ImportWizard {
     // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
-        // updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
+        updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
       }
     });
-    System.out.println("import list size " + importList.size());
+   // System.out.println("import list size " + importList.size());
     return importList;
   }
-/*
-  private void updateImportList(FrvaTreeRootItem item) {
-    if (item.isLeaf()) {
-      if (item.getCheckedProperty().get()) {
-        importList.add(item.getMeasureSequence());
+
+  private void updateImportList(FrvaTreeItem item) {
+    if (item instanceof FrvaTreeMeasurementItem) {
+      if (item.isSelected()) {
+        importList.add(((FrvaTreeMeasurementItem)item).getMeasureSequence());
       }
     } else {
       for (Object child : item.getChildren()) {
-        updateImportList((FrvaTreeRootItem) child);
+        updateImportList((FrvaTreeItem) child);
       }
     }
-  }*/
+  }
 
   private WizardPane createFirstPage() {
 
@@ -151,7 +158,7 @@ public class ImportWizard {
       public void onEnteringPage(Wizard wizard) {
 
         File file = new File(chosenDirectoryPath.get());
-        SdCard sdCard = new SdCard(file, chosenSdCardName.get(),model);
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
         sdCard.readInFiles();
         sdCardList.add(sdCard);
 
@@ -159,11 +166,12 @@ public class ImportWizard {
             + " at location" + sdCard.getPath());
 
 
-        TreeViewFactory.extendTreeView2(sdCard, previewTreeView, model);
-        previewTreeView.getRoot().setExpanded(true);
+        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+
       }
     };
+
 
     choseMeasurementsPane.setHeaderText("Chose measurements you want to import.");
     Pane selectMeasurementsGrid = new VBox();
@@ -175,6 +183,11 @@ public class ImportWizard {
     selectMeasurementsGrid.getChildren().add(checkbox);
     selectMeasurementsGrid.getChildren().add(previewTreeView);
     previewTreeView.disableProperty().bind(importAllCheckbox.selectedProperty());
+    importAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+      }
+    });
     choseMeasurementsPane.setContent(selectMeasurementsGrid);
     return choseMeasurementsPane;
 

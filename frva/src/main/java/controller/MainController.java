@@ -2,7 +2,6 @@ package controller;
 
 import controller.util.FrvaSerializer;
 import controller.util.TreeviewItems.FrvaTreeItem;
-import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.ImportWizard;
 import java.io.File;
@@ -70,7 +69,7 @@ public class MainController {
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     //exportButton.setOnAction(event -> exportData());
-    exportButton.setOnAction(event -> FrvaSerializer.serializeDB(treeView));
+    exportButton.setOnAction(event -> FrvaSerializer.serialize(treeView));
     importSdCardButton.setOnAction(event -> importWizard());
 
   }
@@ -79,8 +78,18 @@ public class MainController {
 
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
+
+
     List<SdCard> importedSdCards = model.writeData(list, new File(FrvaModel.LIBRARYPATH).toPath());
-   // addElementsToTreeView(importedSdCards);
+    for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
+    FrvaSerializer.serializeImports(importWizard.getPreviewTreeView());
+    loadTreeStructure(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
+  }
+
+  private void addElementsToTreeView(List<SdCard> importedSdCards) {
+
+
+
   }
 
 
@@ -248,7 +257,6 @@ public class MainController {
     }
     return list;
   }
-
 
 
 }

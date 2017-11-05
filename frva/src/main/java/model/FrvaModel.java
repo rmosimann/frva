@@ -42,14 +42,13 @@ public class FrvaModel {
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
-  private boolean loadLibraryOnStart = false;
+  private boolean loadLibraryOnStart = true;
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
     t.setDaemon(true);
     return t;
   });
 
-  private String libraryPath;
 
   /**
    * Constructor for a new Model.
@@ -61,9 +60,9 @@ public class FrvaModel {
   private void loadLibrary() {
 
 
-    logger.info("Library path is set to " + libraryPath);
+    logger.info("Library path is set to " + LIBRARYPATH);
     if (loadLibraryOnStart) {
-      File folder = new File(libraryPath);
+      File folder = new File(LIBRARYPATH);
       if (!folder.exists()) {
         setUpLibrary(folder);
       }
@@ -231,7 +230,7 @@ public class FrvaModel {
 
 
         if (!measureSequence.getContainingFile().getParent().equals(currentFolder)) {
-          path += File.separator + measureSequence.getContainingFile().getParent();
+          path += File.separator + measureSequence.getContainingFile().getParentFile().getName();
           File dayFolder = new File(path);
           if (!dayFolder.exists()) {
             dayFolder.mkdirs();
@@ -260,7 +259,7 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      System.out.println("in model"+ f.getAbsolutePath());
+      System.out.println("in model" + f.getAbsolutePath());
 
       returnList.add(new SdCard(f, null, this));
 
@@ -306,10 +305,19 @@ public class FrvaModel {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("No Library");
     alert.setHeaderText("No library has been found.");
-    alert.setContentText("Library is going to be set up at " + libraryPath);
+    alert.setContentText("Library is going to be set up at " + LIBRARYPATH);
     Optional<ButtonType> result = alert.showAndWait();
     if (result.get() == ButtonType.OK) {
-      return path.mkdirs();
+      boolean wasSucessful = path.mkdirs();
+      File treestructure = new File(LIBRARYPATH + File.separator + TREESTRUCTURE);
+      try (Writer writer = new FileWriter(treestructure)) {writer.write("TreeView Structure of FRVA-Application\n");
+      } catch (IOException e) {
+        e.printStackTrace();
+        wasSucessful=false;
+      }
+
+
+      return wasSucessful;
     } else {
       Alert exit = new Alert(Alert.AlertType.INFORMATION);
       exit.setTitle("No Library");

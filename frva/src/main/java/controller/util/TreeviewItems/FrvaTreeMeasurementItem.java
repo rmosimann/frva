@@ -22,17 +22,18 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     super(name);
     this.file = file;
     addListener();
-    this.model=model;
-    this.id=id;
+    this.model = model;
+    this.id = id;
 
   }
 
-  public FrvaTreeMeasurementItem(String name,MeasureSequence ms, String id, FrvaModel model){
+  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file, FrvaModel model) {
     super(name);
-    this.measureSequence=ms;
-    addListener();
-    this.id=id;
-    this.model=model;
+    this.measureSequence = ms;
+    //  addListener();
+    this.id = id;
+    this.model = model;
+    this.file = file;
   }
 
   private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
@@ -62,9 +63,9 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-
-    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(),file.getParentFile().getParent(),model);
-   return containingSdCard.readSingleMeasurementSequence(file, id, model);
+    System.out.println("here hello 1234 " + file.getPath());
+    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(), file.getParentFile().getParent(), model);
+    return containingSdCard.readSingleMeasurementSequence(file, id, model);
 
   }
 
@@ -91,12 +92,20 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
   private String checkFile() {
-    return file == null ? "null" : file.getAbsolutePath();
+    return file.getAbsolutePath();
   }
 
   public String serialize() {
 
     return getId() + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + checkFile() + ";";
+  }
+
+  @Override
+  public void setPathToLibrary() {
+    this.measureSequence.setPathToLibrary();
+    this.file = new File(FrvaModel.LIBRARYPATH
+        + File.separator + measureSequence.getContainingSdCard().getName()
+        + File.separator + file.getParentFile().getName() + File.separator + file.getName());
   }
 
 }

@@ -45,6 +45,7 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
         return new FrvaTreeDeviceItem(array[2], array[3]);
       case "2":
         System.out.println("created new Sd item " + array[3]);
+        System.out.println("hello sfsfsknö230943984u "+array[2]+ " " + array[3]);
         return new FrvaTreeSdCardItem(array[2], new File(array[3]),model);
       case "3":
         System.out.println("created new Year item");
@@ -57,7 +58,8 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
         return new FrvaTreeDayItem(array[2]);
       case "6":
         System.out.println("created new Hour item");
-        return new FrvaTreeHourItem(array[2]);
+
+        return new FrvaTreeHourItem(array[2], array[3]);
       case "7":
         //System.out.println("created new Measurement item");
         return new FrvaTreeMeasurementItem(array[2], new File(array[3]), array[0], model);
@@ -65,4 +67,6 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
         throw new NoSuchElementException("depth " + depth + "is unknown");
     }
   }
+
+  public void setPathToLibrary(){};
 }

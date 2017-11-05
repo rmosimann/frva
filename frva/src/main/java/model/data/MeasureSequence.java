@@ -33,12 +33,11 @@ public class MeasureSequence {
   private String[] metadata;
   private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
   private String sequenceUuid;
-  private final File containingFile;
+  private File containingFile;
   private ReflectionIndices reflectionIndices;
   private SdCard containingSdCard;
   private String id;
   private FrvaModel model;
-
 
 
   public enum SequenceKeyName {
@@ -52,20 +51,19 @@ public class MeasureSequence {
   }
 
 
-
   /**
    * Constructor for single Measurment sequence
+   *
    * @param containingFile the file the measure sequence is contained
    */
-  
-  public MeasureSequence(SdCard sdCard, File containingFile,FrvaModel model, List<String>data) {
+
+  public MeasureSequence(SdCard sdCard, File containingFile, FrvaModel model, List<String> data) {
     System.out.println("created new MS");
     this.model = model;
     this.containingFile = containingFile;
     this.containingSdCard = sdCard;
     importData(data);
   }
-
 
 
   private void importData(List<String> fileContent) {
@@ -345,8 +343,12 @@ public class MeasureSequence {
       default:
         return "ERROR";
     }
+  }
 
 
+  public void setPathToLibrary() {
+    containingFile = new File(FrvaModel.LIBRARYPATH + File.separator + containingSdCard.getName() + File.separator + containingFile.getParent()+File.separator+containingFile.getName());
+    System.out.println("*****Set path to: "+containingFile.getAbsolutePath());
   }
 
   public File getContainingFile() {
