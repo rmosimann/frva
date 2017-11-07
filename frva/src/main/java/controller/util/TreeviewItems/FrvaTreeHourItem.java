@@ -11,8 +11,8 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
 
   public FrvaTreeHourItem(String name, String hour) {
     super(name);
-    System.out.println(name);
-    System.out.println(hour);
+   // System.out.println(name);
+   // System.out.println(hour);
     this.hour = Integer.parseInt(hour);
   }
   public FrvaTreeHourItem(int hour) {

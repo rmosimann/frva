@@ -42,7 +42,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
                         Boolean oldValue, Boolean newValue) {
 
       if (newValue) {
-        System.out.println("added one measuremnt to model");
+       // System.out.println("added one measuremnt to model");
         model.getCurrentSelectionList().add(getMeasureSequence());
       } else {
         model.getCurrentSelectionList().removeAll(getMeasureSequence());
@@ -63,7 +63,8 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-    System.out.println("here hello 1234 " + file.getPath());
+   // System.out.println("here hello 1234 " + file.getPath());
+    //TODO
     SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(), file.getParentFile().getParent(), model);
     return containingSdCard.readSingleMeasurementSequence(file, id, model);
 

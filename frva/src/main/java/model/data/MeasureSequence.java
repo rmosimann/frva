@@ -58,7 +58,7 @@ public class MeasureSequence {
    */
 
   public MeasureSequence(SdCard sdCard, File containingFile, FrvaModel model, List<String> data) {
-    System.out.println("created new MS");
+   // System.out.println("created new MS");
     this.model = model;
     this.containingFile = containingFile;
     this.containingSdCard = sdCard;

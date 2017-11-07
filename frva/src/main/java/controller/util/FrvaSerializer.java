@@ -99,12 +99,12 @@ public class FrvaSerializer {
       }
     }
 
-    System.out.println(structure.getAbsolutePath());
+    //System.out.println(structure.getAbsolutePath());
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(structure))) {
       br.readLine();
       while ((line = br.readLine()) != null) {
-        System.out.println(line);
+        //System.out.println(line);
 
         //System.out.println(line.substring(0, 10));
         String[] arr = line.split(";");
@@ -116,16 +116,16 @@ public class FrvaSerializer {
         //TODO what if difference > 0
         if (depthDifference == 0) {
           currentItem.getParent().getChildren().add(temp);
-          System.out.println("here1");
+        //  System.out.println("here1");
         }
 
         if (depthDifference == 1) {
           currentItem.getChildren().add(temp);
-          System.out.println("here2");
+          //System.out.println("here2");
           currentItem = temp;
         }
         if (depthDifference < 0) {
-          System.out.println("here3");
+          //System.out.println("here3");
           while (depthDifference < 1) {
             currentItem = (FrvaTreeItem) currentItem.getParent();
             depthDifference++;

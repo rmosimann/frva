@@ -104,7 +104,7 @@ public class SdCard {
 
     Optional<ButtonType> result = alert.showAndWait();
     if (ButtonType.OK != result.get()) {
-      System.out.println("ok start now");
+      //System.out.println("ok start now");
       return readInFiles();
     } else {
       return measureSequences;
@@ -171,6 +171,7 @@ public class SdCard {
 
 
   public List<MeasureSequence> readInFiles() {
+    long startTime=System.currentTimeMillis();
    // System.out.println("started");
     for (File f : sdCardPath.listFiles()) {
       // System.out.println("started1");
@@ -200,7 +201,7 @@ public class SdCard {
 
               //TODO: probably unneeded measureSequences.add(new MeasureSequence(this, datafile, model, fileContent));
               for (String str : fileContent) {
-                System.out.println(str.substring(0, 20));
+               //System.out.println(str.substring(0, 20));
               }
 
               if (fileContent.size() == 5) {
@@ -214,6 +215,8 @@ public class SdCard {
         }
       }
     }
+
+    System.out.println("Took:" + (System.currentTimeMillis()-startTime));
   //  System.out.println("added now " + measureSequences.size() + " Measuresequences");
     return measureSequences;
   }
