@@ -8,11 +8,10 @@ import controller.util.TreeviewItems.FrvaTreeMonthItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.TreeviewItems.FrvaTreeSdCardItem;
 import controller.util.TreeviewItems.FrvaTreeYearItem;
-import java.util.Iterator;
-import java.util.List;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import model.FrvaModel;
+import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -59,7 +58,8 @@ public class TreeViewFactory {
     root.getChildren().add(checkBoxDeviceItem);
     checkBoxDeviceItem.getChildren().add(sdCardItem);
 
-    for (MeasureSequence ms : sdCard.getMeasureSequences()) {
+    for(DataFile df: sdCard.getDataFiles()){
+    for (MeasureSequence ms : df.getMeasureSequences()) {
       boolean newItem = false;
 
       if (!ms.getYear().equals(yearItem.getYear())) {
@@ -93,7 +93,7 @@ public class TreeViewFactory {
         dayItem.getChildren().add(hourItem);
       }
 
-      hourItem.getChildren().add(new  FrvaTreeMeasurementItem("ID" + ms.getId() + " - " + ms.getTime(), ms, ms.getId(), ms.getContainingFile(), model));
+      hourItem.getChildren().add(new  FrvaTreeMeasurementItem("ID" + ms.getId() + " - " + ms.getTime(), ms, ms.getId(), ms.getDataFile().getOriginalFile(), model));
 
       sdCardCount++;
       yearlyCount++;
@@ -102,6 +102,8 @@ public class TreeViewFactory {
       hourlyCount++;
 
     }
+    }
+
     hourItem.setContainingMeasureSequences(hourlyCount);
     dayItem.setContainingMeasureSequences(dailyCount);
     monthItem.setContainingMeasureSequences(monthlyCount);

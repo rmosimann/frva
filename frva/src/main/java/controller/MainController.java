@@ -81,7 +81,7 @@ public class MainController {
 
 
     List<SdCard> importedSdCards = model.writeData(list, new File(FrvaModel.LIBRARYPATH).toPath());
-    for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
+  //  for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
     FrvaSerializer.serializeImports(importWizard.getPreviewTreeView());
     loadTreeStructure(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
   }

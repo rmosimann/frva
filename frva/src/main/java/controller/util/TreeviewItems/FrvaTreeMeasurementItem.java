@@ -103,7 +103,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   @Override
   public void setPathToLibrary() {
-    this.measureSequence.setPathToLibrary();
+   // this.measureSequence.setPathToLibrary();
     this.file = new File(FrvaModel.LIBRARYPATH
         + File.separator + measureSequence.getContainingSdCard().getName()
         + File.separator + file.getParentFile().getName() + File.separator + file.getName());

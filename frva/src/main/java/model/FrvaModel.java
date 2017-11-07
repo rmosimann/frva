@@ -229,24 +229,24 @@ public class FrvaModel {
         }
 
 
-        if (!measureSequence.getContainingFile().getParent().equals(currentFolder)) {
-          path += File.separator + measureSequence.getContainingFile().getParentFile().getName();
+        if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
+          path += File.separator + measureSequence.getDataFile().getFolderName();
           File dayFolder = new File(path);
           if (!dayFolder.exists()) {
             dayFolder.mkdirs();
           }
-          currentFolder = measureSequence.getContainingFile().getParent();
+          currentFolder = measureSequence.getDataFile().getFolderName();
           logger.info("Created day-folder: " + path);
         }
 
         File file = new File(path + File.separator
-            + measureSequence.getContainingFile().getName());
+            + measureSequence.getDataFile().getDataFileName());
         Writer writer;
 
         if (!file.exists()) {
           writer = Files.newBufferedWriter(Paths.get(file.toURI()));
           logger.info("Created file: " + path + File.separator
-              + measureSequence.getContainingFile().getName());
+              + measureSequence.getDataFile().getDataFileName());
         } else {
           writer = new FileWriter(file, true);
         }

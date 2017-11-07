@@ -159,7 +159,7 @@ public class ImportWizard {
 
         File file = new File(chosenDirectoryPath.get());
         SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
-        sdCard.readInFiles();
+     //   sdCard.readInFiles();
         sdCardList.add(sdCard);
 
         logger.info("set SD-Cardname " + chosenSdCardName.get()

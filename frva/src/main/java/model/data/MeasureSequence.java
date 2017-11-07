@@ -1,10 +1,17 @@
 package model.data;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+import model.FrvaModel;
 
 public class MeasureSequence {
 
@@ -25,15 +32,14 @@ public class MeasureSequence {
   private final DataFile dataFile;
   private ReflectionIndices reflectionIndices;
 
+
   public enum SequenceKeyName {
     VEG,
     WR,
     DC_VEG,
     DC_WR,
-
     RADIANCE_VEG,
     RADIANCE_WR,
-
     REFLECTANCE;
   }
 
@@ -41,7 +47,7 @@ public class MeasureSequence {
   /**
    * Constructor for a MeasurementSequence.
    *
-   * @param input a StringArray containing the measurements
+   * @param input    a StringArray containing the measurements
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(String input, DataFile dataFile) {
@@ -50,13 +56,71 @@ public class MeasureSequence {
     this.dataFile = dataFile;
   }
 
+
   public String[] getMetadata() {
     return metadata;
   }
 
 
   public Map<SequenceKeyName, double[]> getMeasurements() {
+    if (measurements.isEmpty()) {
+      readInMeasurements();
+    }
+    ;
     return measurements;
+  }
+
+
+  public MeasureSequence(List<String> input, DataFile dataFile) {
+    sequenceUuid = UUID.randomUUID().toString();
+    metadata = input.get(0).split(";");
+    this.dataFile = dataFile;
+
+
+  }
+
+
+  public void readInMeasurements() {
+    boolean found = false;
+    String[] input = new String[5];
+    String line = "";
+    try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
+      while ((line = br.readLine()) != null) {
+
+        //   System.out.println(line);
+        if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
+          if (line.split(";")[0].equals(this.getId())) {
+            found = true;
+            input[0]=line;
+            br.readLine();
+            //Read Measurement Sequence
+            for (int i = 1; i < 5; i++) {
+              input[i]=br.readLine();
+              br.readLine();
+            }
+            for (int i = 1; i < input.length; i++) {
+              String[] tmp = input[i].split(";");
+              System.out.println();
+              SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
+              measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
+                  .mapToDouble(Double::parseDouble)
+                  .toArray());
+            }
+          }
+          //skip 9 lines // because of empty lines
+          for (int i = 0; i < 9; i++) {
+            br.readLine();
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    if (!found) {
+      throw new NoSuchElementException("Element with ID " + this.getId() + " has not been found in file " + dataFile.getOriginalFile().getPath());
+    }
+
   }
 
   /**
@@ -79,6 +143,12 @@ public class MeasureSequence {
    * @return a string containing the data.
    */
   public String getCsv() {
+
+
+    if (measurements.isEmpty()) {
+      readInMeasurements();
+    }
+
     StringBuilder sb = new StringBuilder();
     Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
     for (int i = 0; i < 988; i++) {
@@ -280,5 +350,45 @@ public class MeasureSequence {
 
   public boolean hasMeasurements() {
     return this.measurements != null;
+  }
+
+  public String getYear() {
+    return "20" + this.getDate().substring(0, 2);
+  }
+
+  public String getMonth() {
+    switch (this.getDate().substring(3, 5)) {
+      case "01":
+        return "JAN";
+      case "02":
+        return "FEB";
+      case "03":
+        return "MAR";
+      case "04":
+        return "APR";
+      case "05":
+        return "MAY";
+      case "06":
+        return "JUN";
+      case "07":
+        return "JUL";
+      case "08":
+        return "AUG";
+      case "09":
+        return "SEP";
+      case "10":
+        return "OCT";
+      case "11":
+        return "NOV";
+      case "12":
+        return "DEC";
+      default:
+        return "ERROR";
+    }
+  }
+
+
+  public SdCard getContainingSdCard() {
+    return this.dataFile.getSdCard();
   }
 }
