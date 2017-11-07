@@ -44,20 +44,10 @@ public class MeasureSequence {
    * @param input a StringArray containing the measurements
    * @param dataFile contains the path to the datafiles.
    */
-  public MeasureSequence(List<String> input, DataFile dataFile) {
+  public MeasureSequence(String input, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-    metadata = input.get(0).split(";");
+    metadata = input.split(";");
     this.dataFile = dataFile;
-
-    for (int i = 1; i < input.size(); i++) {
-      String[] tmp = input.get(i).split(";");
-
-      SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
-
-      measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
-          .mapToDouble(Double::parseDouble)
-          .toArray());
-    }
   }
 
   public String[] getMetadata() {

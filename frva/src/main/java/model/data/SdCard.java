@@ -38,7 +38,7 @@ public class SdCard {
   }
 
   private List<DataFile> readDatafiles(URL sdCardPath) {
-    List<DataFile> dataFiles = new LinkedList<>();
+    List<DataFile> dataFiles = new ArrayList<>();
     File folder = new File(sdCardPath.getFile());
 
     File[] listOfDirectories = folder.listFiles(File::isDirectory);

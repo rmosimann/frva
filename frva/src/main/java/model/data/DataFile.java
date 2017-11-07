@@ -24,19 +24,21 @@ public class DataFile {
     this.originalFile = filename;
     this.sdCard = sdCard;
 
-    List<String> fileContent = new ArrayList<>();
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(filename));) {
       while ((line = br.readLine()) != null) {
         if (!"".equals(line)) {
-          if (Character.isDigit(line.charAt(0)) && fileContent.size() > 0) {
-            measureSequences.add(new MeasureSequence(fileContent, this));
-            fileContent.clear();
+          if (Character.isDigit(line.charAt(0))) {
+
+            measureSequences.add(new MeasureSequence(line, this));
+            int i=0;
+            while((line=br.readLine())!=null&&i<4){
+              i++;
+            }
           }
-          fileContent.add(line);
         }
       }
-      measureSequences.add(new MeasureSequence(fileContent, this));
+     // measureSequences.add(new MeasureSequence(line, this));
 
     } catch (IOException e) {
       e.printStackTrace();
