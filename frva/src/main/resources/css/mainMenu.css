@@ -1,0 +1,7 @@
+.mainMenuButton {
+    -fx-background-color: green;
+}
+
+.mainMenuButton:hover {
+    -fx-background-color: red;
+}

@@ -9,11 +9,10 @@ import javafx.scene.layout.VBox;
 import model.FrvaModel;
 
 public class MainMenuController {
-
   private final FrvaModel model;
-  Node mainViewPane;
-  Node settingsViewPane;
-  Node liveViewNode;
+  private Node mainViewPane;
+  private Node settingsViewPane;
+  private Node liveViewNode;
 
   @FXML
   private Button buttonLiveView;
@@ -30,7 +29,6 @@ public class MainMenuController {
 
   public MainMenuController(FrvaModel model) {
     this.model = model;
-
 
     try {
       //Load MainView
@@ -62,24 +60,26 @@ public class MainMenuController {
 
   private void addEventhandlers() {
     buttonLibrary.setOnAction(event -> {
-      contentVbox.getChildren().add(mainViewPane);
       contentVbox.getChildren().removeAll(settingsViewPane, liveViewNode);
+      if (!contentVbox.getChildren().contains(mainViewPane)) {
+        contentVbox.getChildren().add(mainViewPane);
+      }
 
     });
 
     buttonLiveView.setOnAction(event -> {
-      contentVbox.getChildren().add(liveViewNode);
       contentVbox.getChildren().removeAll(settingsViewPane, mainViewPane);
+      if (!contentVbox.getChildren().contains(liveViewNode)) {
+        contentVbox.getChildren().add(liveViewNode);
+      }
 
     });
 
     buttonSettings.setOnAction(event -> {
-      contentVbox.getChildren().add(settingsViewPane);
       contentVbox.getChildren().removeAll(liveViewNode, mainViewPane);
+      if (!contentVbox.getChildren().contains(settingsViewPane)) {
+        contentVbox.getChildren().add(settingsViewPane);
+      }
     });
-
-
   }
-
-
 }

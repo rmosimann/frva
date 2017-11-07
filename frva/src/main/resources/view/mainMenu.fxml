@@ -14,7 +14,7 @@
                 <AnchorPane minHeight="60.0" prefHeight="60.0">
                     <children>
                         <Button fx:id="buttonLiveView" layoutX="159.0" layoutY="13.0" mnemonicParsing="false"
-                                text="LiveView">
+                                styleClass="mainMenuButton" text="LiveView">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -24,7 +24,7 @@
                             </graphic>
                         </Button>
                         <Button fx:id="buttonSettings" layoutX="275.0" layoutY="13.0" mnemonicParsing="false"
-                                text="Settings">
+                                styleClass="mainMenuButton" text="Settings">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -34,7 +34,7 @@
                             </graphic>
                         </Button>
                         <Button fx:id="buttonLibrary" layoutX="42.0" layoutY="13.0" mnemonicParsing="false"
-                                text="Library">
+                                styleClass="mainMenuButton" text="Library">
                             <graphic>
                                 <ImageView>
                                     <image>
