@@ -1,12 +1,11 @@
 package model;
 
+import controller.util.TreeviewItems.FrvaTreeItem;
+import controller.util.TreeviewItems.FrvaTreeRootItem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -28,23 +26,29 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import model.data.DataFile;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
 public class FrvaModel {
+  public static final String TREESTRUCTURE = "treeStructure.csv";
+  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
+  public static final String LIBRARYPATH_ABSOLUTE = "file:" + File.separator + File.separator + LIBRARYPATH;
+
   private final Logger logger = Logger.getLogger("FRVA");
+  private final Set<SdCard> cache = new HashSet<>();
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+  private boolean loadLibraryOnStart = true;
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
     t.setDaemon(true);
     return t;
   });
 
-  private String libraryPath;
 
   /**
    * Constructor for a new Model.
@@ -54,32 +58,28 @@ public class FrvaModel {
   }
 
   private void loadLibrary() {
-    libraryPath = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
 
-    String libraryPathAbsolute = "file:" + File.separator + File.separator + libraryPath;
 
-    logger.info("Library path is set to " + libraryPath);
-
-    File folder = new File(libraryPath);
-    if (!folder.exists()) {
-      setUpLibrary(folder);
-    }
-
-    for (File sdfolder : folder.listFiles()) {
-      if (sdfolder.isDirectory()) {
-        try {
-          URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
-
-          library.add(new SdCard(sdcard, null));
-
-        } catch (Exception e) {
-          logger.info(e.getMessage());
-        }
+    logger.info("Library path is set to " + LIBRARYPATH);
+    if (loadLibraryOnStart) {
+      File folder = new File(LIBRARYPATH);
+      if (!folder.exists()) {
+        setUpLibrary(folder);
       }
 
     }
   }
 
+
+  public TreeView readInSdCard(File sdCardLocation, TreeView<FrvaTreeRootItem> treeView, String name) {
+
+
+    TreeItem root = treeView.getRoot();
+    SdCard sdCard = new SdCard(sdCardLocation, name, this);
+    return null;
+
+
+  }
 
   public void addSelectionMapping(int tabId) {
     selectionMap.put(tabId, FXCollections.observableArrayList());
@@ -87,6 +87,10 @@ public class FrvaModel {
 
   public void removeSelectionMapping(int tabId) {
     selectionMap.remove(tabId);
+  }
+
+  public Set<SdCard> getCache() {
+    return cache;
   }
 
   public ObservableList<MeasureSequence> getCurrentSelectionList() {
@@ -132,6 +136,7 @@ public class FrvaModel {
    * @param list List of MesurementSequences to deleteFile.
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
+    /*
     if (confirmDelete(list.stream().filter(Objects::nonNull).count())) {
       Set<DataFile> set = new HashSet<>();
       for (SdCard sdCard : library) {
@@ -151,7 +156,7 @@ public class FrvaModel {
       updateLibrary(set);
 
     }
-
+*/
   }
 
   /**
@@ -159,8 +164,8 @@ public class FrvaModel {
    *
    * @param list a List of all manipulated Files.
    */
-  public void updateLibrary(Set<DataFile> list) {
-    Writer writer = null;
+  public void updateLibrary(Set<MeasureSequence> list) {
+    /*Writer writer = null;
 
     for (DataFile d : list) {
       try {
@@ -179,14 +184,14 @@ public class FrvaModel {
       }
     }
 
-    cleanUpLibrary();
+    cleanUpLibrary();*/
   }
 
 
   /**
    * Writes Data from SDCARDs to Files, in original format.
    *
-   * @param list List of SDCARD to save.
+   * @param list       List of SDCARD to save.
    * @param exportPath the path where the SDCARD is exported to.
    */
   public List<SdCard> writeData(List<MeasureSequence> list, Path exportPath) {
@@ -195,10 +200,12 @@ public class FrvaModel {
     String currentFolder = null;
     String path = null;
     List<File> sdCardFolderList = new ArrayList<>();
+    System.out.println(list.size());
     for (MeasureSequence measureSequence : list) {
       try {
-        if (!measureSequence.getDataFile().getSdCard().equals(sdCard)) {
-          sdCard = measureSequence.getDataFile().getSdCard();
+        System.out.println(measureSequence);
+        if (!measureSequence.getContainingSdCard().equals(sdCard)) {
+          sdCard = measureSequence.getContainingSdCard();
           path = exportPath.toString() + File.separator + sdCard.getName();
           File card = new File(path);
           sdCardFolderList.add(card);
@@ -222,24 +229,24 @@ public class FrvaModel {
         }
 
 
-        if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
-          path += File.separator + measureSequence.getDataFile().getFolderName();
+        if (!measureSequence.getContainingFile().getParent().equals(currentFolder)) {
+          path += File.separator + measureSequence.getContainingFile().getParentFile().getName();
           File dayFolder = new File(path);
           if (!dayFolder.exists()) {
             dayFolder.mkdirs();
           }
-          currentFolder = measureSequence.getDataFile().getFolderName();
+          currentFolder = measureSequence.getContainingFile().getParent();
           logger.info("Created day-folder: " + path);
         }
 
         File file = new File(path + File.separator
-            + measureSequence.getDataFile().getOriginalFileName());
+            + measureSequence.getContainingFile().getName());
         Writer writer;
 
         if (!file.exists()) {
           writer = Files.newBufferedWriter(Paths.get(file.toURI()));
           logger.info("Created file: " + path + File.separator
-              + measureSequence.getDataFile().getOriginalFileName());
+              + measureSequence.getContainingFile().getName());
         } else {
           writer = new FileWriter(file, true);
         }
@@ -252,11 +259,9 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      try {
-        returnList.add(new SdCard(f.toURI().toURL(), null));
-      } catch (MalformedURLException e) {
-        logger.info(e.getMessage());
-      }
+      System.out.println("in model" + f.getAbsolutePath());
+
+      returnList.add(new SdCard(f, null, this));
 
     }
     return returnList;
@@ -300,10 +305,19 @@ public class FrvaModel {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("No Library");
     alert.setHeaderText("No library has been found.");
-    alert.setContentText("Library is going to be set up at " + libraryPath);
+    alert.setContentText("Library is going to be set up at " + LIBRARYPATH);
     Optional<ButtonType> result = alert.showAndWait();
     if (result.get() == ButtonType.OK) {
-      return path.mkdirs();
+      boolean wasSucessful = path.mkdirs();
+      File treestructure = new File(LIBRARYPATH + File.separator + TREESTRUCTURE);
+      try (Writer writer = new FileWriter(treestructure)) {writer.write("TreeView Structure of FRVA-Application\n");
+      } catch (IOException e) {
+        e.printStackTrace();
+        wasSucessful=false;
+      }
+
+
+      return wasSucessful;
     } else {
       Alert exit = new Alert(Alert.AlertType.INFORMATION);
       exit.setTitle("No Library");
@@ -337,7 +351,7 @@ public class FrvaModel {
     while (it.hasNext()) {
       SdCard sdCard = it.next();
       if (sdCard.isEmpty()) {
-        deleteFile(new File(sdCard.getPath().getFile()));
+        deleteFile(sdCard.getPath());
         it.remove();
 
       }
@@ -358,22 +372,13 @@ public class FrvaModel {
     logger.info("deleteFile file " + file);
   }
 
-  public String getLibraryPath() {
-    return libraryPath;
-  }
-
 
   /**
    * Returns the number of measuresequences in the library.
    */
   public int getLibrarySize() {
-    int sum = 0;
-    for (SdCard sdcard : library) {
-      for (DataFile d : sdcard.getDataFiles()) {
-        sum += d.getMeasureSequences().size();
-      }
-
-    }
-    return sum;
+    return 4;
   }
+
+
 }
