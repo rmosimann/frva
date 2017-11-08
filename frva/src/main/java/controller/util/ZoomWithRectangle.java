@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import javafx.util.StringConverter;
 
 
 /**
@@ -55,7 +56,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
   private double yaxisUpperBoundBegin;
   private double moveStartX;
   private double moveStartY;
-  private final int minZoomRectangelSize = 50;
+  private final int minZoomRectangelSize = 30;
   private boolean isActive = false;
 
   private Point2D zoomStartPoint;
@@ -224,7 +225,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
           }
 
           if (zoomRect.getWidth() < minZoomRectangelSize
-              && zoomRect.getHeight() < minZoomRectangelSize) {
+              || zoomRect.getHeight() < minZoomRectangelSize) {
             zoomRect.getStyleClass().add("zoomRectToSmall");
           } else {
             zoomRect.getStyleClass().remove("zoomRectToSmall");
@@ -247,9 +248,10 @@ public class ZoomWithRectangle implements ZoomLineChart {
         Point2D lowerRight = new Point2D(zoomRect.getX() - borderLeft + zoomRect.getWidth(),
             zoomRect.getY() - borderTop + zoomRect.getHeight());
         if (anchorPane.getChildren().remove(zoomRect)
-            && (lowerRight.getX() - upperLeft.getX()) > minZoomRectangelSize
-            && (lowerRight.getY() - upperLeft.getY()) > minZoomRectangelSize) {
+            && ((lowerRight.getX() - upperLeft.getX()) > minZoomRectangelSize
+            || (lowerRight.getY() - upperLeft.getY()) > minZoomRectangelSize)) {
           zoomIn(upperLeft, lowerRight);
+
         }
       }
     };
@@ -393,10 +395,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
     Point2D upperLeftAxis = calculateAxisFromPoint(upperLeft);
     Point2D lowerRightAxis = calculateAxisFromPoint(lowerRight);
 
-    xaxis.setUpperBound(Math.round(lowerRightAxis.getX() + xaxis.getLowerBound()));
-    yaxis.setUpperBound(Math.round(upperLeftAxis.getY() + yaxis.getLowerBound()));
-    xaxis.setLowerBound(Math.round(upperLeftAxis.getX() + xaxis.getLowerBound()));
-    yaxis.setLowerBound(Math.round(lowerRightAxis.getY() + yaxis.getLowerBound()));
+    xaxis.setUpperBound(lowerRightAxis.getX() + xaxis.getLowerBound());
+    yaxis.setUpperBound(upperLeftAxis.getY() + yaxis.getLowerBound());
+    xaxis.setLowerBound(upperLeftAxis.getX() + xaxis.getLowerBound());
+    yaxis.setLowerBound(lowerRightAxis.getY() + yaxis.getLowerBound());
+
+    resetTicking();
   }
 
 
@@ -441,6 +445,27 @@ public class ZoomWithRectangle implements ZoomLineChart {
         && yaxis.getLowerBound() == yaxisLowerBoundBegin) {
       zoomReset();
     }
+    resetTicking();
+  }
+
+
+  private void resetTicking() {
+    double ypertick = (yaxis.getUpperBound() - yaxis.getLowerBound()) / 10;
+
+    yaxis.setTickUnit(ypertick);
+
+    yaxis.setTickLabelFormatter(new StringConverter<Number>() {
+      @Override
+      public String toString(Number object) {
+        double value = Math.round(object.doubleValue() * 1000000.0) / 1000000.0;
+        return (String.valueOf(value));
+      }
+
+      @Override
+      public Number fromString(String string) {
+        return 0;
+      }
+    });
   }
 
 
