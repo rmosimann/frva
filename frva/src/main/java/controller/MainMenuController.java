@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.IOException;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,6 +15,7 @@ public class MainMenuController {
   private Node mainViewPane;
   private Node settingsViewPane;
   private Node liveViewNode;
+  EventHandler<ActionEvent> mainMenuHandler;
 
   @FXML
   private Button buttonLiveView;
@@ -27,6 +30,11 @@ public class MainMenuController {
   private VBox contentVbox;
 
 
+  /**
+   * Creates a MAinMenuController.
+   *
+   * @param model The one and only model.
+   */
   public MainMenuController(FrvaModel model) {
     this.model = model;
 
@@ -54,32 +62,52 @@ public class MainMenuController {
 
   @FXML
   private void initialize() throws IOException {
-    contentVbox.getChildren().add(mainViewPane);
     addEventhandlers();
+    buttonLibrary.fire();
   }
 
+
   private void addEventhandlers() {
-    buttonLibrary.setOnAction(event -> {
-      contentVbox.getChildren().removeAll(settingsViewPane, liveViewNode);
-      if (!contentVbox.getChildren().contains(mainViewPane)) {
-        contentVbox.getChildren().add(mainViewPane);
+    mainMenuHandler = event -> {
+      Button pressedButton;
+      if (event.getSource() instanceof Button) {
+        pressedButton = (Button) event.getSource();
+      } else {
+        throw new IllegalArgumentException();
       }
 
-    });
+      Node nodetouse = null;
 
-    buttonLiveView.setOnAction(event -> {
-      contentVbox.getChildren().removeAll(settingsViewPane, mainViewPane);
-      if (!contentVbox.getChildren().contains(liveViewNode)) {
-        contentVbox.getChildren().add(liveViewNode);
+      if (pressedButton == buttonLibrary) {
+        nodetouse = mainViewPane;
+      } else if (pressedButton == buttonLiveView) {
+        nodetouse = liveViewNode;
+      } else if (pressedButton == buttonSettings) {
+        nodetouse = settingsViewPane;
       }
 
-    });
-
-    buttonSettings.setOnAction(event -> {
-      contentVbox.getChildren().removeAll(liveViewNode, mainViewPane);
-      if (!contentVbox.getChildren().contains(settingsViewPane)) {
-        contentVbox.getChildren().add(settingsViewPane);
+      if (contentVbox.getChildren().size() > 1) {
+        contentVbox.getChildren().remove(1);
       }
-    });
+
+      if (nodetouse != null) {
+        contentVbox.getChildren().add(1, nodetouse);
+      }
+
+      setSelectedButton(pressedButton);
+    };
+
+
+    buttonLibrary.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
+    buttonLiveView.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
+    buttonSettings.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
+  }
+
+  private void setSelectedButton(Button button) {
+    buttonLiveView.getStyleClass().remove("selected");
+    buttonSettings.getStyleClass().remove("selected");
+    buttonLibrary.getStyleClass().remove("selected");
+    button.getStyleClass().add("selected");
+
   }
 }
