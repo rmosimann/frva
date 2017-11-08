@@ -1,4 +1,4 @@
-import controller.MainController;
+import controller.MainMenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,8 +15,8 @@ public class FrvaApp extends Application {
 
     FrvaModel model = new FrvaModel();
 
-    FXMLLoader root = new FXMLLoader(getClass().getResource("view/mainView.fxml"));
-    root.setController(new MainController(model));
+    FXMLLoader root = new FXMLLoader(getClass().getResource("view/mainMenu.fxml"));
+    root.setController(new MainMenuController(model));
     primaryStage.setTitle(model.getApplicationName());
     primaryStage.setScene(new Scene(root.load()));
     primaryStage.getScene().getStylesheets().add(getClass()
