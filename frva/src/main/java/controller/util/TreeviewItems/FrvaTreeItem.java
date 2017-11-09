@@ -12,20 +12,22 @@ import model.data.SdCard;
  */
 public abstract class FrvaTreeItem extends CheckBoxTreeItem {
   private final Logger logger = Logger.getLogger("FRVA");
-
-  public int getContainingMeasureSequences() {
-    return containingMeasureSequences;
-  }
-
-  public void setContainingMeasureSequences(int containingMeasureSequences) {
-    this.containingMeasureSequences = containingMeasureSequences;
-    setValue(getValue().toString() + " (" + containingMeasureSequences + ")");
-  }
-
   private int containingMeasureSequences;
+  private String name;
+
+
+  public void addMeasureSequences(int containingMeasureSequences) {
+    this.containingMeasureSequences += containingMeasureSequences;
+    setValue(name + " (" + this.containingMeasureSequences + ")");
+    //TODO: wrong value
+  //  System.out.println("addMeasureSequences to "+this.containingMeasureSequences );
+  }
+
 
 
   public FrvaTreeItem(String name) {
+    containingMeasureSequences=0;
+    this.name=name;
     setValue(name);
   }
 
@@ -62,7 +64,7 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
         return new FrvaTreeHourItem(array[2], array[3]);
       case "7":
         //System.out.println("created new Measurement item");
-        return new FrvaTreeMeasurementItem(array[2], new File(array[3]), array[0], model);
+        return new FrvaTreeMeasurementItem(array[2], new File(array[3]), array[0], model, false);
       default:
         throw new NoSuchElementException("depth " + depth + "is unknown");
     }

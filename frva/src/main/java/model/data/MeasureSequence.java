@@ -45,38 +45,23 @@ public class MeasureSequence {
 
 
   /**
-   * Constructor for a MeasurementSequence.
+   * Constructor for an empty MeasurementSequence. Only Metadata is stored
    *
-   * @param input    a StringArray containing the measurements
+   * @param metadata String containing the metadata
    * @param dataFile contains the path to the datafiles.
    */
-  public MeasureSequence(String input, DataFile dataFile) {
+  public MeasureSequence(String metadata, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-    metadata = input.split(";");
+    this.metadata = metadata.split(";");
     this.dataFile = dataFile;
   }
 
-
-  public String[] getMetadata() {
-    return metadata;
-  }
-
-
-  public Map<SequenceKeyName, double[]> getMeasurements() {
-    if (measurements.isEmpty()) {
-      readInMeasurements();
-    }
-    ;
-    return measurements;
-  }
-
-
-  public MeasureSequence(List<String> input, DataFile dataFile) {
+  public MeasureSequence(String[] metadata, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-    metadata = input.get(0).split(";");
+   // for(String str:metadata){    System.out.print(str+" ;");}
+    //System.out.println();
+    this.metadata = metadata;
     this.dataFile = dataFile;
-
-
   }
 
 
@@ -91,16 +76,16 @@ public class MeasureSequence {
         if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
           if (line.split(";")[0].equals(this.getId())) {
             found = true;
-            input[0]=line;
+            input[0] = line;
             br.readLine();
             //Read Measurement Sequence
             for (int i = 1; i < 5; i++) {
-              input[i]=br.readLine();
+              input[i] = br.readLine();
               br.readLine();
             }
             for (int i = 1; i < input.length; i++) {
               String[] tmp = input[i].split(";");
-              System.out.println();
+              //System.out.println();
               SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
               measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
                   .mapToDouble(Double::parseDouble)
@@ -233,6 +218,7 @@ public class MeasureSequence {
    * @return Date as String of Type YY-MM-DD.
    */
   public String getDate() {
+    //System.out.println(metadata[0]+" "+metadata[1]);
     return metadata[1].substring(0, 2) + "-" + metadata[1].substring(2, 4) + "-"
         + metadata[1].substring(4, 6);
   }
@@ -391,4 +377,21 @@ public class MeasureSequence {
   public SdCard getContainingSdCard() {
     return this.dataFile.getSdCard();
   }
+
+  public Map<SequenceKeyName, double[]> getMeasurements() {
+    if (measurements.isEmpty()) {
+      readInMeasurements();
+    }
+    return measurements;
+  }
+
+  public String getMetadataAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (String s : metadata) {
+     sb.append(s);
+     sb.append(";");
+    }
+    return sb.toString();
+  }
+
 }

@@ -29,4 +29,10 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
   private String getDeviceId(FrvaTreeRootItem item) {
   return deviceSerialNr;}
+
+  @Override
+  public boolean equals(Object o){
+    return o instanceof FrvaTreeDeviceItem && this.deviceSerialNr.equals(((FrvaTreeDeviceItem)o).deviceSerialNr);
+
+  }
 }

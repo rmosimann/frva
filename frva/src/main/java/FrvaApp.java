@@ -1,4 +1,5 @@
 import controller.MainController;
+import java.awt.SystemTray;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +13,7 @@ public class FrvaApp extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    long time= System.currentTimeMillis();
 
     FrvaModel model = new FrvaModel();
 
@@ -22,5 +24,6 @@ public class FrvaApp extends Application {
     primaryStage.getScene().getStylesheets().add(getClass()
         .getResource("css/master.css").toExternalForm());
     primaryStage.show();
+    System.out.println("Starting time: "+(System.currentTimeMillis()-time)+" ms");
   }
 }

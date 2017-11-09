@@ -14,16 +14,26 @@ public class DataFile {
   private File originalFile;
   private final SdCard sdCard;
   private List<MeasureSequence> measureSequences = new ArrayList<>();
-  private boolean hasBeenChanged;
-
-  public MeasureSequence getLastAddedMeasurement() {
-    return lastAddedMeasurement;
-  }
-
   private MeasureSequence lastAddedMeasurement;
 
+
+
+
+  public DataFile(SdCard sdCard, File filename, List<String[]> metadatas){
+    this.sdCard=sdCard;
+    this.originalFile=filename;
+    for (String[] arr:metadatas
+         ) {
+     // System.out.println(arr.toString());
+      measureSequences.add(new MeasureSequence(arr, this));
+
+
+    }
+
+  }
+
   /**
-   * Constructor for reading in full file
+   * Constructor for reading in metadata
    *
    * @param filename Name of the file
    * @param sdCard   The SDCARD the datafile belongs to
@@ -35,12 +45,15 @@ public class DataFile {
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(filename));) {
       while ((line = br.readLine()) != null) {
+
         if (!"".equals(line)) {
           if (Character.isDigit(line.charAt(0))) {
 
             measureSequences.add(new MeasureSequence(line, this));
             int i = 0;
-            while ((line = br.readLine()) != null && i < 4) {
+
+            //skip empty lines
+            while ((line = br.readLine()) != null && i < 8) {
               i++;
             }
           }
@@ -86,6 +99,10 @@ public class DataFile {
 
   }
 
+  public void setPathToLibrary() {
+    originalFile = new File(FrvaModel.LIBRARYPATH + File.separator + sdCard.getName() + File.separator + originalFile.getParent()+File.separator+originalFile.getName());
+    //System.out.println("*****Set path to: "+originalFile.getAbsolutePath());
+  }
 
   public List<MeasureSequence> getMeasureSequences() {
     return measureSequences;
@@ -111,21 +128,14 @@ public class DataFile {
     return measureSequences.isEmpty();
   }
 
-  public void setHasBeenChanged(boolean b) {
-    this.hasBeenChanged = b;
-  }
-
-  public boolean hasBeenChanged() {
-    return this.hasBeenChanged;
-  }
-
   public File getOriginalFile() {
     return this.originalFile;
   }
-
-  public void setPathToLibrary() {
-    originalFile = new File(FrvaModel.LIBRARYPATH + File.separator + sdCard.getName() + File.separator + originalFile.getParent()+File.separator+originalFile.getName());
-    System.out.println("*****Set path to: "+originalFile.getAbsolutePath());
+  public MeasureSequence getLastAddedMeasurement() {
+    return lastAddedMeasurement;
   }
+
+
+
 
 }

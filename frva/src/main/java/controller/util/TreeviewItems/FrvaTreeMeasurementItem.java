@@ -18,23 +18,28 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private File file;
   private FrvaModel model;
 
-  public FrvaTreeMeasurementItem(String name, File file, String id, FrvaModel model) {
+  public FrvaTreeMeasurementItem(String name, File file, String id, FrvaModel model, boolean isPreview) {
     super(name);
     this.file = file;
     addListener();
     this.model = model;
     this.id = id;
+    if(!isPreview){addListener();
+
+    }
 
   }
 
-  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file, FrvaModel model) {
+  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file, FrvaModel model, boolean isPreview) {
     super(name);
     this.measureSequence = ms;
     //  addListener();
     this.id = id;
     this.model = model;
     this.file = file;
-  }
+    if(!isPreview){addListener();}
+
+    }
 
   private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
@@ -65,7 +70,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     }
    // System.out.println("here hello 1234 " + file.getPath());
     //TODO
-    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(), file.getParentFile().getParent(), model);
+    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(), file.getParentFile().getParent(), model, false);
     return containingSdCard.readSingleMeasurementSequence(file, id, model);
 
   }
@@ -75,7 +80,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
 
     super.selectedProperty().addListener(checkedlistener);
-/*
+
     model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
       selectedProperty().removeListener(checkedlistener);
       if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
@@ -84,7 +89,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
         setSelected(false);
       }
       selectedProperty().addListener(checkedlistener);
-    });*/
+    });
   }
 
   public String getId() {

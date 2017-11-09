@@ -1,21 +1,31 @@
 package model.data;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+import controller.util.TreeviewItems.FrvaTreeSdCardItem;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Random;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javax.xml.crypto.Data;
 import model.FrvaModel;
 
 public class SdCard {
-  private final List<DataFile> dataFiles;
+  private List<DataFile> dataFiles;
   private File sdCardPath;
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
@@ -28,14 +38,24 @@ public class SdCard {
    *
    * @param sdCardPath a Path where the data lays as expected.
    */
-  public SdCard(File sdCardPath, String name, FrvaModel model) {
+  public SdCard(File sdCardPath, String name, FrvaModel model, boolean lazyLoaded) {
+    System.out.println("created new SD Card");
     this.sdCardPath = sdCardPath;
-    this.model=model;
+    System.out.println("sdcardpadh " + sdCardPath.getPath());
+    this.model = model;
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
-    dataFiles = readDatafiles(sdCardPath);
+    if (!lazyLoaded) {
+      dataFiles = readDatafiles(sdCardPath);
+    } else {
+      try {
+        dataFiles = lazyReadDatafiles(sdCardPath);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
 
 
     if (name == null) {
@@ -46,11 +66,51 @@ public class SdCard {
     }
   }
 
+  public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
+    List<DataFile> returnList = new ArrayList<>();
+    String line;
+    String currentFile = "";
+    List<String[]> list = new ArrayList<>();
+
+   //TODO: Serialize before reading in: Serialization has to happen on import
+    // if(!new File(sdCardPath + File.separator + "db.csv").exists()){serialize();}
+    try (BufferedReader reader = new BufferedReader(new FileReader(sdCardPath + File.separator + "db.csv"))) {
+
+      while ((line = reader.readLine()) != null) {
+        String[] data = line.split(";");
+
+        if (!data[0].equals(currentFile)) {
+          if (list.size() > 0) {
+            returnList.add(new DataFile(this, new File(currentFile), list));
+          }
+          currentFile = data[0];
+          list.clear();
+        }
+
+        String[] temp = new String[data.length - 1];
+        for (int i = 0; i < temp.length; i++) {
+          temp[i] = data[i + 1];
+        }
+        list.add(temp);
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+   // System.out.println("created last DataFile with " + list.size() + " Elements");
+
+    if (list.size() > 0) {
+      returnList.add(new DataFile(this, new File(currentFile), list));
+    }
+
+    return returnList;
+  }
+
   private List<DataFile> readDatafiles(File sdCardPath) {
     List<DataFile> dataFiles = new ArrayList<>();
-    File folder = sdCardPath;
 
-    File[] listOfDirectories = folder.listFiles(File::isDirectory);
+    File[] listOfDirectories = sdCardPath.listFiles(File::isDirectory);
 
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
@@ -63,8 +123,11 @@ public class SdCard {
 
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
+    System.out.println(sdCardPath.getAbsolutePath());
+    System.out.println(folder.listFiles().length);
+
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
-        && name.endsWith(".csv"));
+        && name.endsWith(".csv") && !name.equals("db.csv"));
 
     return new CalibrationFile(listOfFiles[0], skipLines);
   }
@@ -93,10 +156,11 @@ public class SdCard {
    */
   public String getDeviceSerialNr() {
     if (this.dataFiles == null || this.dataFiles.isEmpty()) {
-      throw new IllegalArgumentException();
+      return "Empty Dataset";
     }
-    return this.dataFiles.stream()
-        .findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+    return this.dataFiles.stream().findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
+
+
   }
 
   public String getName() {
@@ -200,12 +264,6 @@ public class SdCard {
   }
   */
 
-  @Override
-  public boolean equals(Object object) {
-    return (object instanceof SdCard
-        && ((SdCard) object).getWavelengthCalibrationFile().equals(wavelengthCalibrationFile));
-
-  }
 
   @Override
   public int hashCode() {
@@ -214,9 +272,29 @@ public class SdCard {
 
   public void setPathToLibrary() {
     this.sdCardPath = new File(FrvaModel.LIBRARYPATH + File.separator + this.name);
-    for(DataFile df:dataFiles){
+    for (DataFile df : dataFiles) {
       df.setPathToLibrary();
 
     }
+  }
+
+  public void serialize() {
+    File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
+    try (Writer writer = new FileWriter(file)) {
+      for (MeasureSequence ms : getMeasureSequences()) {
+        writer.write(sdCardPath.getPath() + File.separator + ms.getDataFile().getFolderName() + File.separator + ms.getDataFile().getDataFileName() + ";" + ms.getMetadataAsString() + "\n");
+        writer.flush();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+  }
+  @Override
+  public boolean equals(Object o){
+//    System.out.println("compared SD cards: result "+ this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile));
+   if(this == o){return true;}
+    return o instanceof SdCard &&this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile) ;
   }
 }

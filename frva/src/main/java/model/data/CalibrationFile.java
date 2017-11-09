@@ -46,4 +46,10 @@ public class CalibrationFile {
     return this.originalFile;
   }
 
+  public boolean equals(Object o){
+
+    //TODO: proper implementation: Check if Calib File is truely the same!
+   return o instanceof CalibrationFile && ((CalibrationFile) o).calibration[0]==(calibration[0]);
+  }
+
 }

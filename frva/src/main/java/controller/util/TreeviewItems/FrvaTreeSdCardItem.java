@@ -15,7 +15,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
     super(name);
     //   System.out.println("in FrvaTreeSdCardItem"+ sdCard.getAbsolutePath());
 
-    this.sdCard = new SdCard(sdCard, name, model);
+    this.sdCard = new SdCard(sdCard, name, model, false);
   }
 
   public FrvaTreeSdCardItem(SdCard sdCard) {
@@ -39,5 +39,10 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   public void setPathToLibrary() {
     this.sdCard.setPathToLibrary();
     setValue(sdCard.getName());
+  }
+
+  @Override
+  public boolean equals(Object o){
+   return o instanceof FrvaTreeSdCardItem && this.sdCard.equals(((FrvaTreeSdCardItem) o).sdCard);
   }
 }

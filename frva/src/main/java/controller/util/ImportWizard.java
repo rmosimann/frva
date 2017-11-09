@@ -95,7 +95,6 @@ public class ImportWizard {
         updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
       }
     });
-   // System.out.println("import list size " + importList.size());
     return importList;
   }
 
@@ -150,7 +149,6 @@ public class ImportWizard {
     return choseSdCardNamePane;
   }
 
-
   private WizardPane createThirdPage() {
 
     WizardPane choseMeasurementsPane = new WizardPane() {
@@ -158,7 +156,7 @@ public class ImportWizard {
       public void onEnteringPage(Wizard wizard) {
 
         File file = new File(chosenDirectoryPath.get());
-        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model, false);
      //   sdCard.readInFiles();
         sdCardList.add(sdCard);
 
@@ -166,7 +164,7 @@ public class ImportWizard {
             + " at location" + sdCard.getPath());
 
 
-        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model);
+        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model, true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
 
       }
@@ -192,7 +190,6 @@ public class ImportWizard {
     return choseMeasurementsPane;
 
   }
-
 
   private void choseDirectory() {
     DirectoryChooser directoryChooser = new DirectoryChooser();

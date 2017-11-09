@@ -19,6 +19,7 @@ import model.FrvaModel;
  * Created by patrick.wigger on 03.11.17.
  */
 public class FrvaSerializer {
+  /*
 
   private static final Logger logger = Logger.getLogger("FRVA");
 
@@ -36,6 +37,20 @@ public class FrvaSerializer {
 
     }
   }
+
+  private static void serialize(TreeItem item, Writer writer) throws IOException {
+    writer.write(((FrvaTreeItem) item).serialize() + "\n");
+    writer.flush();
+    if (!item.isLeaf()) {
+      for (Object child : item.getChildren()
+          ) {
+        ((FrvaTreeItem)child).setPathToLibrary();
+        serialize((TreeItem) child, writer);
+
+      }
+    }
+  }
+
 
   public static void serializeImports(TreeView treeView) {
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
@@ -67,22 +82,6 @@ public class FrvaSerializer {
   }
 
 
-  private static void serialize(TreeItem item, Writer writer) throws IOException {
-    writer.write(((FrvaTreeItem) item).serialize() + "\n");
-    writer.flush();
-    if (!item.isLeaf()) {
-      for (Object child : item.getChildren()
-          ) {
-        ((FrvaTreeItem)child).setPathToLibrary();
-        serialize((TreeItem) child, writer);
-
-      }
-    }
-  }
-
-  /**
-   * @param treeView the treeview the Elements are attached to
-   */
   public static void deserializeDB(TreeView treeView, String filepath, FrvaModel model) {
 
     FrvaTreeItem currentItem = (FrvaTreeRootItem) treeView.getRoot();
@@ -144,5 +143,5 @@ public class FrvaSerializer {
     treeView.setShowRoot(true);
 
   }
-
+*/
 }
