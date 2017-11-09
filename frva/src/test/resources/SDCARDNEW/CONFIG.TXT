@@ -1,0 +1,11 @@
+200;Max IT [ms];
+30;Interval [ms]
+20;Serial Resolution;
+1;Serial Stream;
+1;Serial Data Transfer;
+0;FLED Cycle;
+255;FLED Power;
+655;662;672;725;735;
+1;averages QE;
+1;averages_FLAME;
+171109;163441;
