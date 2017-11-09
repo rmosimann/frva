@@ -1,3 +1,4 @@
+import com.intel.bluetooth.RemoteDeviceHelper;
 import java.io.IOException;
 import java.util.Vector;
 import javax.bluetooth.DeviceClass;
@@ -30,7 +31,11 @@ public class RemoteDeviceDiscovery {
         devicesDiscovered.addElement(btDevice);
         try {
           System.out.println("     name " + btDevice.getFriendlyName(false));
+          RemoteDeviceHelper.authenticate(btDevice);
+          System.out.println(cod.getMajorDeviceClass());
+
         } catch (IOException cantGetDeviceName) {
+          System.out.println(cantGetDeviceName.getMessage());
         }
       }
 
@@ -49,6 +54,7 @@ public class RemoteDeviceDiscovery {
     };
 
     synchronized (inquiryCompletedEvent) {
+
       boolean started = LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, listener);
 //      LocalDevice.getLocalDevice().
       if (started) {
@@ -56,6 +62,22 @@ public class RemoteDeviceDiscovery {
         inquiryCompletedEvent.wait();
         System.out.println(devicesDiscovered.size() + " device(s) found");
       }
+
+
+//      devicesDiscovered.forEach(o -> {
+//        RemoteDevice a = (RemoteDevice)o;
+//
+//        System.out.println(a.isAuthenticated());
+//
+//        try {
+//          a.authenticate();
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//        }
+//
+//      });
+
+
     }
   }
 
