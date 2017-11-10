@@ -1,10 +1,10 @@
 package controller;
 
-import controller.util.FrvaSerializer;
 import controller.util.TreeViewFactory;
 import controller.util.TreeviewItems.FrvaTreeItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.ImportWizard;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -69,8 +69,7 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
-    //exportButton.setOnAction(event -> exportData());
-    exportButton.setOnAction(event -> model.serializeLibrary());
+    exportButton.setOnAction(event -> exportData());
     importSdCardButton.setOnAction(event -> importWizard());
 
   }
@@ -81,7 +80,7 @@ public class MainController {
     List<MeasureSequence> list = importWizard.startImport();
 
 
-    List<SdCard> importedSdCards = model.writeData(list, new File(FrvaModel.LIBRARYPATH).toPath());
+    List<SdCard> importedSdCards = model.createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
     //  for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
     for (SdCard sdCard : importedSdCards) {
       sdCard.serialize();
@@ -106,16 +105,16 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      // model.writeData(model.getCurrentSelectionList(), selectedFile.toPath());
+       model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
-    //    if (Desktop.isDesktopSupported()) {
-    //      try {
-    //        Desktop.getDesktop().open(new File(model.getLibraryPath()));
-    //      } catch (IOException e) {
-    //        logger.info(e.getMessage());
-    //      }
-    //    }
+       if (Desktop.isDesktopSupported()) {
+          try {
+            Desktop.getDesktop().open(new File(model.LIBRARYPATH));
+          } catch (IOException e) {
+            logger.info(e.getMessage());
+          }
+        }
   }
 
 
