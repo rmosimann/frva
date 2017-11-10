@@ -57,7 +57,7 @@ public class MainController {
   @FXML
   private void initialize() {
     initializeTabHandling();
-    loadTreeStructure(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
+    loadTreeStructure();
     addEventHandlers();
     //onChangeTab();
   }
@@ -82,15 +82,17 @@ public class MainController {
 
 
     List<SdCard> importedSdCards = model.writeData(list, new File(FrvaModel.LIBRARYPATH).toPath());
-  //  for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
-    //FrvaSerializer.serializeImports(importWizard.getPreviewTreeView());
+    //  for (SdCard sdCard : importedSdCards) {sdCard.setPathToLibrary();}
+    for (SdCard sdCard : importedSdCards) {
+      sdCard.serialize();
+      model.getLibrary().add(sdCard);
+    }
 
-   // for(SdCard sdCard:importedSdCards){sdCard.serialize();}
-    loadTreeStructure(FrvaModel.LIBRARYPATH + File.separator + FrvaModel.TREESTRUCTURE);
+
+    loadTreeStructure();
   }
 
   private void addElementsToTreeView(List<SdCard> importedSdCards) {
-
 
 
   }
@@ -184,14 +186,15 @@ public class MainController {
     newTabId++;
   }
 
-  private void loadTreeStructure(String filepath) {
+  private void loadTreeStructure() {
     treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    System.out.println("*******"+model.getLibrary().size());
-    for (SdCard sdCard: model.getLibrary()
-         ) {TreeViewFactory.extendTreeView(sdCard, treeView,model,false);
+    // System.out.println("*******"+model.getLibrary().size());
+    for (SdCard sdCard : model.getLibrary()
+        ) {
+      TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
     }
-  //  FrvaSerializer.deserializeDB(treeView, filepath, model);
+    //  FrvaSerializer.deserializeDB(treeView, filepath, model);
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
@@ -252,7 +255,7 @@ public class MainController {
   }
 
   private List<FrvaTreeItem> removeTickedMeasurements(TreeItem item,
-                                                          List<FrvaTreeItem> list) {
+                                                      List<FrvaTreeItem> list) {
     if (!item.isLeaf()) {
       for (Object o : item.getChildren()) {
         FrvaTreeItem element = (FrvaTreeItem) o;

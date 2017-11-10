@@ -57,21 +57,9 @@ public class FrvaModel {
     loadLibrary();
   }
 
-  private void loadLibraryLazy() {
-    File librarypath = new File(LIBRARYPATH);
-    if (!librarypath.exists()) {
-      setUpLibrary(librarypath);
-    }
-    for(File sdFolder:librarypath.listFiles()){
-      if(sdFolder.isDirectory()){
-        File sdCard=new File(LIBRARYPATH+sdFolder.getName());
-      }
-    }
-  }
+
 
   private void loadLibrary() {
-
-
     logger.info("Library path is set to " + LIBRARYPATH);
 
     File folder = new File(LIBRARYPATH);
@@ -81,13 +69,9 @@ public class FrvaModel {
 
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
-        //System.out.println(sdfolder.getAbsolutePath());
 
         File sdcard = new File(LIBRARYPATH + sdfolder.getName());
-
         library.add(new SdCard(sdcard, sdfolder.getName(), this,lazyLoading));
-
-
       }
     }
   }
@@ -97,17 +81,13 @@ public class FrvaModel {
         ) {
       sdCard.serialize();
     }
-
-
   }
 
   public TreeView readInSdCard(File sdCardLocation, TreeView<FrvaTreeRootItem> treeView, String name) {
 
-
     TreeItem root = treeView.getRoot();
     SdCard sdCard = new SdCard(sdCardLocation, name, this, false);
     return null;
-
 
   }
 

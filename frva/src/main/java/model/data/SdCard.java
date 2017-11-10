@@ -5,23 +5,13 @@ import controller.util.TreeviewItems.FrvaTreeSdCardItem;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javax.xml.crypto.Data;
 import model.FrvaModel;
 
 public class SdCard {
@@ -39,16 +29,26 @@ public class SdCard {
    * @param sdCardPath a Path where the data lays as expected.
    */
   public SdCard(File sdCardPath, String name, FrvaModel model, boolean lazyLoaded) {
-    System.out.println("created new SD Card");
+   // System.out.println("created new SD Card");
     this.sdCardPath = sdCardPath;
-    System.out.println("sdcardpadh " + sdCardPath.getPath());
+   // System.out.println("sdcardpadh " + sdCardPath.getPath());
     this.model = model;
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
+    //System.out.println("SD CArd has name " + name);
+    if (name == null) {
+      String[] arr = sdCardPath.getPath().split(File.separator);
+      this.name = arr[arr.length - 1];
+     // System.out.println("set name to "+name);
+    } else {
+      this.name = name;
+    }
+
+
     if (!lazyLoaded) {
-      dataFiles = readDatafiles(sdCardPath);
+      readDatafiles(sdCardPath);
     } else {
       try {
         dataFiles = lazyReadDatafiles(sdCardPath);
@@ -58,12 +58,6 @@ public class SdCard {
     }
 
 
-    if (name == null) {
-      String[] arr = sdCardPath.getPath().split(File.separator);
-      this.name = arr[arr.length - 1];
-    } else {
-      this.name = name;
-    }
   }
 
   public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
@@ -73,7 +67,11 @@ public class SdCard {
     List<String[]> list = new ArrayList<>();
 
    //TODO: Serialize before reading in: Serialization has to happen on import
-    // if(!new File(sdCardPath + File.separator + "db.csv").exists()){serialize();}
+     if(!new File(sdCardPath + File.separator + "db.csv").exists()){
+
+       readDatafiles(sdCardPath);
+       serialize();}
+
     try (BufferedReader reader = new BufferedReader(new FileReader(sdCardPath + File.separator + "db.csv"))) {
 
       while ((line = reader.readLine()) != null) {
@@ -107,24 +105,26 @@ public class SdCard {
     return returnList;
   }
 
-  private List<DataFile> readDatafiles(File sdCardPath) {
-    List<DataFile> dataFiles = new ArrayList<>();
+  private void readDatafiles(File sdCardPath) {
+   dataFiles = new ArrayList<>();
 
     File[] listOfDirectories = sdCardPath.listFiles(File::isDirectory);
+    System.out.println("list of dir is " +listOfDirectories.length);
 
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
+      System.out.println("Files: "+listOfDataFiles.length);
       for (File dataFile : listOfDataFiles) {
+      //  System.out.println("added new Datafile");
         dataFiles.add(new DataFile(this, dataFile));
       }
     }
-    return dataFiles;
   }
 
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
-    System.out.println(sdCardPath.getAbsolutePath());
-    System.out.println(folder.listFiles().length);
+   // System.out.println(sdCardPath.getAbsolutePath());
+    //System.out.println(folder.listFiles().length);
 
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv") && !name.equals("db.csv"));
@@ -279,6 +279,7 @@ public class SdCard {
   }
 
   public void serialize() {
+  //  System.out.println("name is currently "+name);
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     try (Writer writer = new FileWriter(file)) {
       for (MeasureSequence ms : getMeasureSequences()) {

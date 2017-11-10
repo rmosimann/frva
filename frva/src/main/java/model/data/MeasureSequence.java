@@ -51,6 +51,7 @@ public class MeasureSequence {
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(String metadata, DataFile dataFile) {
+   // System.out.println("created new MS");
     sequenceUuid = UUID.randomUUID().toString();
     this.metadata = metadata.split(";");
     this.dataFile = dataFile;

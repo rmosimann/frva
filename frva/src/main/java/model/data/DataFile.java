@@ -41,7 +41,7 @@ public class DataFile {
   public DataFile(SdCard sdCard, File filename) {
     this.originalFile = filename;
     this.sdCard = sdCard;
-
+    System.out.println("created new DF");
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(filename));) {
       while ((line = br.readLine()) != null) {
