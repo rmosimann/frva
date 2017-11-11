@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +30,9 @@ public class SdCard {
    * @param sdCardPath a Path where the data lays as expected.
    */
   public SdCard(File sdCardPath, String name, FrvaModel model, boolean lazyLoaded) {
-   // System.out.println("created new SD Card");
+    // System.out.println("created new SD Card");
     this.sdCardPath = sdCardPath;
-   // System.out.println("sdcardpadh " + sdCardPath.getPath());
+    // System.out.println("sdcardpadh " + sdCardPath.getPath());
     this.model = model;
     wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
     sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
@@ -41,7 +42,7 @@ public class SdCard {
     if (name == null) {
       String[] arr = sdCardPath.getPath().split(File.separator);
       this.name = arr[arr.length - 1];
-     // System.out.println("set name to "+name);
+      // System.out.println("set name to "+name);
     } else {
       this.name = name;
     }
@@ -66,11 +67,12 @@ public class SdCard {
     String currentFile = "";
     List<String[]> list = new ArrayList<>();
 
-   //TODO: Serialize before reading in: Serialization has to happen on import
-     if(!new File(sdCardPath + File.separator + "db.csv").exists()){
+    //TODO: Serialize before reading in: Serialization has to happen on import
+    if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
 
-       readDatafiles(sdCardPath);
-       serialize();}
+      readDatafiles(sdCardPath);
+      serialize();
+    }
 
     try (BufferedReader reader = new BufferedReader(new FileReader(sdCardPath + File.separator + "db.csv"))) {
 
@@ -96,7 +98,7 @@ public class SdCard {
       e.printStackTrace();
     }
 
-   // System.out.println("created last DataFile with " + list.size() + " Elements");
+    // System.out.println("created last DataFile with " + list.size() + " Elements");
 
     if (list.size() > 0) {
       returnList.add(new DataFile(this, new File(currentFile), list));
@@ -106,16 +108,16 @@ public class SdCard {
   }
 
   private void readDatafiles(File sdCardPath) {
-   dataFiles = new ArrayList<>();
+    dataFiles = new ArrayList<>();
 
     File[] listOfDirectories = sdCardPath.listFiles(File::isDirectory);
-    System.out.println("list of dir is " +listOfDirectories.length);
+    System.out.println("list of dir is " + listOfDirectories.length);
 
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
-      System.out.println("Files: "+listOfDataFiles.length);
+      System.out.println("Files: " + listOfDataFiles.length);
       for (File dataFile : listOfDataFiles) {
-      //  System.out.println("added new Datafile");
+        //  System.out.println("added new Datafile");
         dataFiles.add(new DataFile(this, dataFile));
       }
     }
@@ -123,7 +125,7 @@ public class SdCard {
 
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
-   // System.out.println(sdCardPath.getAbsolutePath());
+    // System.out.println(sdCardPath.getAbsolutePath());
     //System.out.println(folder.listFiles().length);
 
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
@@ -279,7 +281,7 @@ public class SdCard {
   }
 
   public void serialize() {
-  //  System.out.println("name is currently "+name);
+    //  System.out.println("name is currently "+name);
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     try (Writer writer = new FileWriter(file)) {
       for (MeasureSequence ms : getMeasureSequences()) {
@@ -292,10 +294,42 @@ public class SdCard {
 
 
   }
+
+  /**
+   * Deletes the Metadata from the Database.
+   *
+   * @param id of the MeasurementSequence
+   * @param dataFile the measurementSequence is tin
+   */
+
+  public void removeMetadataEntry(String id, DataFile dataFile) {
+    System.out.println("remove " + id + " from " + dataFile.getOriginalFile().getPath());
+    File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
+    File newdb = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "dbbak.csv");
+
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(file)); Writer writer= new FileWriter(newdb)
+    ) {
+      String line;
+      while((line=reader.readLine())!=null){
+        if(line.split(";")[1].equals(id)){
+          if((line=reader.readLine())==null){break;};
+        }
+        writer.write(line+"\n");
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    file.delete();
+    newdb.renameTo(new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv"));
+  }
+
+  /*TODO: Sync or not?
   @Override
   public boolean equals(Object o){
 //    System.out.println("compared SD cards: result "+ this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile));
    if(this == o){return true;}
     return o instanceof SdCard &&this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile) ;
-  }
+  }*/
 }

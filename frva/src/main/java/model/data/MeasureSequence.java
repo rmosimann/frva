@@ -87,6 +87,7 @@ public class MeasureSequence {
             for (int i = 1; i < input.length; i++) {
               String[] tmp = input[i].split(";");
               //System.out.println();
+              System.out.println(tmp[0].toUpperCase());
               SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
               measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
                   .mapToDouble(Double::parseDouble)

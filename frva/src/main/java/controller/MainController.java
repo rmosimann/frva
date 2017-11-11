@@ -2,11 +2,13 @@ package controller;
 
 import controller.util.TreeViewFactory;
 import controller.util.TreeviewItems.FrvaTreeItem;
+import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
 import controller.util.TreeviewItems.FrvaTreeRootItem;
 import controller.util.ImportWizard;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -105,36 +107,43 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-       model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
+      model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
-       if (Desktop.isDesktopSupported()) {
-          try {
-            Desktop.getDesktop().open(new File(model.LIBRARYPATH));
-          } catch (IOException e) {
-            logger.info(e.getMessage());
-          }
-        }
+    if (Desktop.isDesktopSupported()) {
+      try {
+        Desktop.getDesktop().open(new File(model.LIBRARYPATH));
+      } catch (IOException e) {
+        logger.info(e.getMessage());
+      }
+    }
   }
 
 
   private void deleteSelectedItems() {
+    List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
+    List<MeasureSequence> measurements = new ArrayList<>();
+    System.out.println("now remove "+list.size()+" Items");
+    for (FrvaTreeItem item : list
+        ) {
+      if (item instanceof FrvaTreeMeasurementItem) {
+        measurements.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
+      }
+    }
 
-    /*
+    //Remove Data from model
+    model.deleteMeasureSequences(measurements);
 
-    List<FrvaTreeViewItem> list = removeTickedMeasurements(treeView.getRoot(), new ArrayList<>());
-    List<MeasureSequence> measureSequenceList = list
-        .stream().map(FrvaTreeViewItem::getMeasureSequence).collect(Collectors.toList());
-    model.deleteMeasureSequences(measureSequenceList);
-
-    for (FrvaTreeViewItem item : list) {
+    //Remove Data from TreeView
+    for (FrvaTreeItem item : list) {
       item.getParent().getChildren().remove(item);
-
     }
     unselectTickedItems();
-    */
+    treeView.getCheckModel().clearChecks();
 
   }
+
+
 
 
   private void initializeTabHandling() {

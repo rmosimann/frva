@@ -1,11 +1,13 @@
 package model;
 
-import controller.util.TreeviewItems.FrvaTreeItem;
-import controller.util.TreeviewItems.FrvaTreeRootItem;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -26,15 +29,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
 public class FrvaModel {
   public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
-  public final boolean lazyLoading=true;
+  public final boolean lazyLoading = true;
 
   private final Logger logger = Logger.getLogger("FRVA");
   private final Set<SdCard> cache = new HashSet<>();
@@ -57,7 +58,6 @@ public class FrvaModel {
   }
 
 
-
   private void loadLibrary() {
     logger.info("Library path is set to " + LIBRARYPATH);
 
@@ -70,15 +70,8 @@ public class FrvaModel {
       if (sdfolder.isDirectory()) {
 
         File sdcard = new File(LIBRARYPATH + sdfolder.getName());
-        library.add(new SdCard(sdcard, sdfolder.getName(), this,lazyLoading));
+        library.add(new SdCard(sdcard, sdfolder.getName(), this, lazyLoading));
       }
-    }
-  }
-
-  public void serializeLibrary() {
-    for (SdCard sdCard : library
-        ) {
-      sdCard.serialize();
     }
   }
 
@@ -98,41 +91,90 @@ public class FrvaModel {
    * @param list List of MesurementSequences to deleteFile.
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
-    /*
-    if (confirmDelete(list.stream().filter(Objects::nonNull).count())) {
-      Set<DataFile> set = new HashSet<>();
-      for (SdCard sdCard : library) {
-        for (DataFile dataFile : sdCard.getDataFiles()) {
-          dataFile.getMeasureSequences().removeAll(list);
-        }
-      }
-      for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
-        measureSequenceList.removeAll(list);
-        for (MeasureSequence ms : list) {
-          if (ms != null) {
-            set.add(ms.getDataFile());
+
+   // Set<DataFile> set = new HashSet<>();
+
+    for (MeasureSequence ms : list) {
+      //Remove from DataFile
+      ms.getDataFile().getMeasureSequences().remove(ms);
+      //Collect DataFiles for later update
+   //   set.add(ms.getDataFile());
+      //Remove Metadata Entry from DB
+      ms.getDataFile().getSdCard().removeMetadataEntry(ms.getId(), ms.getDataFile());
+      //Remove Entry from csv
+
+      File updatedFile=new File(ms.getDataFile().getOriginalFile().getAbsolutePath()+".bak");
+
+
+      //TODO Sluggish implementation as it reads through  file for every Measure Seq.
+      try (Writer writer = new BufferedWriter(new FileWriter(updatedFile));
+           BufferedReader reader = new BufferedReader(new FileReader(ms.getDataFile().getOriginalFile()))) {
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+          System.out.println(line.length()>15?"line: "+line.substring(0,15):"line: empty line");
+
+          if (line.split(";")[0].equals(ms.getId())) {
+
+            for (int i = 0; i < 9; i++) {
+              System.out.println("skip line");
+              line=reader.readLine();
+            }
+          }
+          else{
+
+            for (int i = 0; i < 9; i++) {
+
+              System.out.println("add line to file");
+              writer.write(line+"\n");
+              line=reader.readLine();
+            }
+            writer.write(line+"\n");
           }
         }
+
+        //Swop files
+        ms.getDataFile().getOriginalFile().delete();
+        updatedFile.renameTo(ms.getDataFile().getOriginalFile());
+
+
+
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-      updateLibrary(set);
+
+
     }
-*/
+
+
+    for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
+      measureSequenceList.removeAll(list);
+    }
+    System.out.println("ticked measurements: "+ getCurrentSelectionList().size());
+
+    cleanUpLibrary();
+
+    //updateLibrary(set);
+
+
   }
 
   /**
    * Writes changes to the library.
    *
    * @param list a List of all manipulated Files.
+   *             Old implementation with all MS read in. Prlbly not needed anymore.
+   *
    */
   public void updateLibrary(Set<DataFile> list) {
-    Writer writer = null;
+
 
     for (DataFile d : list) {
-      try {
-        File file = new File(LIBRARYPATH + d.getSdCard().getName()
-            + File.separator + d.getFolderName() + File.separator + d.getOriginalFileName());
+      try (Writer writer = new BufferedWriter(new FileWriter(d.getOriginalFile()));
+           BufferedReader reader = new BufferedReader(new FileReader(d.getOriginalFile()))) {
+
         logger.info("rewrite File " + d.getOriginalFileName());
-        writer = Files.newBufferedWriter(Paths.get(file.toURI()));
+
         for (MeasureSequence ms : d.getMeasureSequences()) {
           writer.write(ms.getCsv());
           writer.flush();
@@ -143,7 +185,6 @@ public class FrvaModel {
         logger.info(e.getMessage());
       }
     }
-    cleanUpLibrary();
   }
 
   /**
@@ -169,7 +210,7 @@ public class FrvaModel {
           if (card.exists()) {
             if (confirmOverriding(path)) {
               deleteFile(card);
-              System.out.println("going to export "+getCurrentSelectionList().size()+" Measurement");
+              System.out.println("going to export " + getCurrentSelectionList().size() + " Measurement");
             } else {
               logger.info("Export cancelled");
               return returnList;
@@ -295,12 +336,11 @@ public class FrvaModel {
   public void deleteFile(File file) {
     if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
       for (File f : file.listFiles()) {
-        System.out.println("deleted "+ f.getPath());
         deleteFile(f);
       }
     }
-    System.out.println(file.delete());
-    logger.info("deleteFile file " + file);
+    file.delete();
+    logger.info("deleteFile file " + file + file.exists());
   }
 
   public List<SdCard> getLibrary() {
