@@ -1,8 +1,8 @@
 package controller.util;
 
-import controller.util.TreeviewItems.FrvaTreeItem;
-import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
-import controller.util.TreeviewItems.FrvaTreeRootItem;
+import controller.util.treeviewitems.FrvaTreeItem;
+import controller.util.treeviewitems.FrvaTreeMeasurementItem;
+import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,8 +156,7 @@ public class ImportWizard {
       public void onEnteringPage(Wizard wizard) {
 
         File file = new File(chosenDirectoryPath.get());
-        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model, false);
-     //   sdCard.readInFiles();
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
         sdCardList.add(sdCard);
 
         logger.info("set SD-Cardname " + chosenSdCardName.get()

@@ -14,7 +14,7 @@ public class CalibrationFile {
   /**
    * Constructor.
    *
-   * @param input Array of strings containing the calibration.
+   * @param input     Array of strings containing the calibration.
    * @param skipLines Amount of lines to skip in the beginning.
    */
   public CalibrationFile(File input, int skipLines) {
@@ -46,10 +46,16 @@ public class CalibrationFile {
     return this.originalFile;
   }
 
-  public boolean equals(Object o){
-
+  /**
+   * Equals for the calibraion files, compares deeply.
+   *
+   * @param o Object to compare.
+   * @return true when equal.
+   */
+  @Override
+  public boolean equals(Object o) {
     //TODO: proper implementation: Check if Calib File is truely the same!
-   return o instanceof CalibrationFile && ((CalibrationFile) o).calibration[0]==(calibration[0]);
+    return o instanceof CalibrationFile && ((CalibrationFile) o).calibration[0] == (calibration[0]);
   }
 
 }

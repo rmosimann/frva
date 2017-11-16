@@ -1,21 +1,19 @@
 package model.data;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import controller.util.TreeviewItems.FrvaTreeSdCardItem;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import model.FrvaModel;
 
 public class SdCard {
+  private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles;
   private File sdCardPath;
   private CalibrationFile wavelengthCalibrationFile;
@@ -29,38 +27,34 @@ public class SdCard {
    *
    * @param sdCardPath a Path where the data lays as expected.
    */
-  public SdCard(File sdCardPath, String name, FrvaModel model, boolean lazyLoaded) {
-    // System.out.println("created new SD Card");
+  public SdCard(File sdCardPath, String name, FrvaModel model) {
     this.sdCardPath = sdCardPath;
-    // System.out.println("sdcardpadh " + sdCardPath.getPath());
     this.model = model;
-    wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
-    sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
-    sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
-
-    //System.out.println("SD CArd has name " + name);
     if (name == null) {
       String[] arr = sdCardPath.getPath().split(File.separator);
       this.name = arr[arr.length - 1];
-      // System.out.println("set name to "+name);
     } else {
       this.name = name;
     }
 
+    wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
+    sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
+    sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
-    if (!lazyLoaded) {
-      readDatafiles(sdCardPath);
-    } else {
-      try {
-        dataFiles = lazyReadDatafiles(sdCardPath);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
+    try {
+      dataFiles = lazyReadDatafiles(sdCardPath);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
     }
-
-
   }
 
+  /**
+   * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
+   *
+   * @param sdCardPath Path where the SDCARD is located.
+   * @return A List of all contained DataFiles.
+   * @throws FileNotFoundException when path is not found.
+   */
   public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
     List<DataFile> returnList = new ArrayList<>();
     String line;
@@ -69,13 +63,12 @@ public class SdCard {
 
     //TODO: Serialize before reading in: Serialization has to happen on import
     if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
-
       readDatafiles(sdCardPath);
       serialize();
     }
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(sdCardPath + File.separator + "db.csv"))) {
-
+    try (BufferedReader reader = new BufferedReader(
+        new FileReader(sdCardPath + File.separator + "db.csv"))) {
       while ((line = reader.readLine()) != null) {
         String[] data = line.split(";");
 
@@ -107,17 +100,19 @@ public class SdCard {
     return returnList;
   }
 
+  /**
+   * Puts all DataFiles in a SDCARD Folder into a list.
+   *
+   * @param sdCardPath the List with all DataFiles.
+   */
   private void readDatafiles(File sdCardPath) {
     dataFiles = new ArrayList<>();
 
     File[] listOfDirectories = sdCardPath.listFiles(File::isDirectory);
-    System.out.println("list of dir is " + listOfDirectories.length);
 
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
-      System.out.println("Files: " + listOfDataFiles.length);
       for (File dataFile : listOfDataFiles) {
-        //  System.out.println("added new Datafile");
         dataFiles.add(new DataFile(this, dataFile));
       }
     }
@@ -136,12 +131,12 @@ public class SdCard {
   }
 
 
-  public MeasureSequence readSingleMeasurementSequence(File containingFile, String id, FrvaModel model) {
+  public MeasureSequence readSingleMeasurementSequence(File containingFile,
+                                                       String id, FrvaModel model) {
 
     DataFile df = new DataFile(this, containingFile, id);
     dataFiles.add(df);
     return df.getLastAddedMeasurement();
-
   }
 
 
@@ -160,7 +155,7 @@ public class SdCard {
         isEmpty = false;
       }
     }
-    System.out.println("SDCARD "+sdCardPath+" is empty!");
+    System.out.println("SDCARD " + sdCardPath + " is empty!");
     return isEmpty;
   }
 
@@ -182,8 +177,6 @@ public class SdCard {
   }
 
 
-
-
   /**
    * Getter for the devices Serial-Number.
    *
@@ -193,10 +186,16 @@ public class SdCard {
     if (this.dataFiles == null || this.dataFiles.isEmpty()) {
       return "Empty Dataset";
     }
-    return this.dataFiles.stream().findAny().get().getMeasureSequences().stream().findAny().get().getSerial();
-
-
+    return this.dataFiles.stream()
+        .findAny()
+        .get()
+        .getMeasureSequences()
+        .stream()
+        .findAny()
+        .get()
+        .getSerial();
   }
+
 
   public String getName() {
     return this.name;
@@ -217,66 +216,9 @@ public class SdCard {
   }
 
 
-
   public File getPath() {
     return this.sdCardPath;
   }
-
-
-
-
-/*
-  public List<MeasureSequence> readInFiles() {
-    long startTime=System.currentTimeMillis();
-   // System.out.println("started");
-    for (File f : sdCardPath.listFiles()) {
-      // System.out.println("started1");
-
-      if (f.isDirectory() && f.listFiles().length != 0) {
-        // System.out.println("started2");
-
-        for (File datafile : f.listFiles()) {
-
-          //   System.out.println("started3");
-
-          List<String> fileContent = new ArrayList<>();
-          String line = "";
-          try (BufferedReader br = new BufferedReader(new FileReader(datafile));) {
-            while ((line = br.readLine()) != null) {
-              //  System.out.println("started4");
-              //System.out.println(line.length() > 10 ? line.substring(0, 10) : "empty Line");
-              if (line.length() > 0 && Character.isDigit(line.charAt(0))) {
-                fileContent.add(0, line);
-                br.readLine();
-                //Read Measurement Sequence
-                for (int i = 1; i < 5; i++) {
-                  fileContent.add(i, br.readLine());
-                  br.readLine();
-                }
-              }
-
-              //TODO: probably unneeded measureSequences.add(new MeasureSequence(this, datafile, model, fileContent));
-              for (String str : fileContent) {
-               //System.out.println(str.substring(0, 20));
-              }
-
-              if (fileContent.size() == 5) {
-                measureSequences.add(new MeasureSequence(this, datafile, model, fileContent));
-              }
-              fileContent.clear();
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-
-    System.out.println("Took:" + (System.currentTimeMillis()-startTime));
-  //  System.out.println("added now " + measureSequences.size() + " Measuresequences");
-    return measureSequences;
-  }
-  */
 
 
   @Override
@@ -292,56 +234,21 @@ public class SdCard {
     }
   }
 
+  /**
+   * Writes the Metadata of all MeasurementSequences in this SDCARD to the db.csv file.
+   */
   public void serialize() {
-    //  System.out.println("name is currently "+name);
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     try (Writer writer = new FileWriter(file)) {
       for (MeasureSequence ms : getMeasureSequences()) {
-        writer.write(sdCardPath.getPath() + File.separator + ms.getDataFile().getFolderName() + File.separator + ms.getDataFile().getDataFileName() + ";" + ms.getMetadataAsString() + "\n");
+        writer.write(sdCardPath.getPath() + File.separator
+            + ms.getDataFile().getFolderName() + File.separator
+            + ms.getDataFile().getDataFileName() + ";"
+            + ms.getMetadataAsString() + "\n");
         writer.flush();
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-
   }
-
-  /**
-   * Deletes the Metadata from the Database.
-   *
-   * @param id of the MeasurementSequence
-   * @param dataFile the measurementSequence is tin
-   */
-
-  public void removeMetadataEntry(String id, DataFile dataFile) {
-    System.out.println("remove " + id + " from " + dataFile.getOriginalFile().getPath());
-    File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
-    File newdb = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "dbbak.csv");
-
-
-    try (BufferedReader reader = new BufferedReader(new FileReader(file)); Writer writer= new FileWriter(newdb)
-    ) {
-      String line;
-      while((line=reader.readLine())!=null){
-        if(line.split(";")[1].equals(id)){
-          if((line=reader.readLine())==null){break;};
-        }
-        writer.write(line+"\n");
-      }
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    file.delete();
-    newdb.renameTo(new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv"));
-  }
-
-  /*TODO: Sync or not?
-  @Override
-  public boolean equals(Object o){
-//    System.out.println("compared SD cards: result "+ this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile));
-   if(this == o){return true;}
-    return o instanceof SdCard &&this.getWavelengthCalibrationFile().equals(((SdCard)o).wavelengthCalibrationFile) ;
-  }*/
 }

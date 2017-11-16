@@ -1,4 +1,4 @@
-package controller.util.TreeviewItems;
+package controller.util.treeviewitems;
 
 import java.io.File;
 import model.FrvaModel;
@@ -13,9 +13,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   public FrvaTreeSdCardItem(String name, File sdCard, FrvaModel model) {
     super(name);
-    //   System.out.println("in FrvaTreeSdCardItem"+ sdCard.getAbsolutePath());
-
-    this.sdCard = new SdCard(sdCard, name, model, false);
+    this.sdCard = new SdCard(sdCard, name, model);
   }
 
   public FrvaTreeSdCardItem(SdCard sdCard) {
@@ -23,11 +21,10 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
     this.sdCard = sdCard;
   }
 
-
   @Override
   public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + sdCard.getPath().getAbsolutePath() + ";";
-
+    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";"
+        + sdCard.getPath().getAbsolutePath() + ";";
   }
 
   @Override
@@ -43,12 +40,11 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   @Override
   public void createChildren() {
-
   }
 
   @Override
-  public boolean equals(Object o){
-   return o instanceof FrvaTreeSdCardItem && this.sdCard.equals(((FrvaTreeSdCardItem) o).sdCard);
+  public boolean equals(Object o) {
+    return o instanceof FrvaTreeSdCardItem && this.sdCard.equals(((FrvaTreeSdCardItem) o).sdCard);
   }
 
   public SdCard getSdCard() {

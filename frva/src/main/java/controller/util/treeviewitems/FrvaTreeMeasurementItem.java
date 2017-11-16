@@ -1,4 +1,4 @@
-package controller.util.TreeviewItems;
+package controller.util.treeviewitems;
 
 import java.io.File;
 import javafx.beans.value.ChangeListener;
@@ -19,7 +19,8 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private File file;
   private FrvaModel model;
 
-  public FrvaTreeMeasurementItem(String name, File file, String id, FrvaModel model, boolean isPreview) {
+  public FrvaTreeMeasurementItem(String name, File file, String id,
+                                 FrvaModel model, boolean isPreview) {
     super(name);
     this.file = file;
     addListener();
@@ -27,31 +28,28 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     this.id = id;
     if (!isPreview) {
       addListener();
-
     }
-
   }
 
-  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file, FrvaModel model, boolean isPreview) {
+  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file,
+                                 FrvaModel model, boolean isPreview) {
     super(name);
     this.measureSequence = ms;
-
     this.id = id;
     this.model = model;
     this.file = file;
     if (!isPreview) {
       addListener();
     }
-
   }
 
   private void addListener() {
     measureSequence.deletedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      public void changed(ObservableValue<? extends Boolean> observable,
+                          Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          getParent().getChildren().remove(this);
-          System.out.println(newValue + " removed myself from tree");
+          getParent().getChildren().remove(FrvaTreeMeasurementItem.this);
         }
       }
     });
@@ -61,7 +59,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     @Override
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
-
       if (newValue) {
         // System.out.println("added one measuremnt to model");
         model.getCurrentSelectionList().add(getMeasureSequence());
@@ -78,7 +75,9 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
 
   /**
-   * @returns the measurementsequence lazyloaded: read in from the file system if it has not already been read in.
+   * Getter for the Measurementsequence.
+   *
+   * @returns the measurementsequence lazyloaded: read in from the file system.
    */
   public MeasureSequence getMeasureSequence() {
     if (this.measureSequence != null) {
@@ -95,26 +94,9 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     return this.measureSequence;
   }
 
-  /*
-    private void addListener() {
 
-
-      super.selectedProperty().addListener(checkedlistener);
-
-      model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
-        selectedProperty().removeListener(checkedlistener);
-        if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
-          setSelected(true);
-        } else {
-          setSelected(false);
-        }
-        selectedProperty().addListener(checkedlistener);
-      });
-    }
-  */
   public String getId() {
     return this.id;
-
   }
 
   private String checkFile() {
@@ -122,8 +104,8 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
   public String serialize() {
-
-    return getId() + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + checkFile() + ";";
+    return getId() + ";" + this.getDepth() + ";" + this.getValue().toString() + ";"
+        + checkFile() + ";";
   }
 
   @Override
@@ -136,7 +118,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   @Override
   public void createChildren() {
-
   }
 
 }

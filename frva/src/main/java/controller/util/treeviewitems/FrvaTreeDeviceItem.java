@@ -1,4 +1,4 @@
-package controller.util.TreeviewItems;
+package controller.util.treeviewitems;
 
 import java.util.List;
 import model.data.SdCard;
@@ -10,19 +10,15 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
   private String deviceSerialNr;
 
-
-
-
   public FrvaTreeDeviceItem(String name, String deviceSerialNr) {
     super(name);
-    this.deviceSerialNr=deviceSerialNr;
-
+    this.deviceSerialNr = deviceSerialNr;
   }
 
   @Override
   public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + deviceSerialNr + ";";
-
+    return "-1" + ";" + this.getDepth() + ";"
+        + this.getValue().toString() + ";" + deviceSerialNr + ";";
   }
 
   @Override
@@ -32,22 +28,21 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
   @Override
   public void createChildren() {
-
   }
-
 
   public void createChildren(List<SdCard> list) {
     //create Children: get all SDCards and check for Different devices
     this.getChildren().add(null);
-
   }
 
   private String getDeviceId(FrvaTreeRootItem item) {
-  return deviceSerialNr;}
+    return deviceSerialNr;
+  }
 
   @Override
-  public boolean equals(Object o){
-    return o instanceof FrvaTreeDeviceItem && this.deviceSerialNr.equals(((FrvaTreeDeviceItem)o).deviceSerialNr);
+  public boolean equals(Object o) {
+    return o instanceof FrvaTreeDeviceItem
+        && this.deviceSerialNr.equals(((FrvaTreeDeviceItem) o).deviceSerialNr);
 
   }
 }

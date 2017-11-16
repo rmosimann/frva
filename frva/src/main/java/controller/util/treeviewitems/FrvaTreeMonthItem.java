@@ -1,6 +1,4 @@
-package controller.util.TreeviewItems;
-
-import model.data.SdCard;
+package controller.util.treeviewitems;
 
 /**
  * Created by patrick.wigger on 03.11.17.
@@ -15,10 +13,7 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
 
   @Override
   public String serialize() {
-   // System.out.println("serialized myself");
-    //System.out.println(this.month);
     return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + month + ";";
-
   }
 
   @Override
@@ -31,8 +26,8 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
 
   }
 
-  public String getMonth(){return this.month; }
-
-
+  public String getMonth() {
+    return this.month;
+  }
 }
 

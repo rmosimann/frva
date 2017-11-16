@@ -1,9 +1,6 @@
 package model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -13,14 +10,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -32,8 +30,10 @@ import model.data.MeasureSequence;
 import model.data.SdCard;
 
 public class FrvaModel {
-  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
-  public final boolean lazyLoading = true;
+
+
+  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator
+      + "FRVA" + File.separator;
 
   private final Logger logger = Logger.getLogger("FRVA");
   private final Set<SdCard> cache = new HashSet<>();
@@ -55,7 +55,9 @@ public class FrvaModel {
     loadLibrary();
   }
 
-
+  /**
+   * Loads existing Library or creates new one, when LibraryPath is empty.
+   */
   private void loadLibrary() {
     logger.info("Library path is set to " + LIBRARYPATH);
 
@@ -66,129 +68,72 @@ public class FrvaModel {
 
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
-
-        File sdcard = new File(LIBRARYPATH + sdfolder.getName());
-        library.add(new SdCard(sdcard, sdfolder.getName(), this, lazyLoading));
+        library.add(new SdCard(sdfolder, sdfolder.getName(), this));
       }
     }
   }
 
-
+  /**
+   * Adds entry for a new tab to selection List.
+   *
+   * @param tabId ID that is specified in the created tab.
+   */
   public void addSelectionMapping(int tabId) {
     selectionMap.put(tabId, FXCollections.observableArrayList());
   }
 
+  /**
+   * Removes entry for a closed tab in the selection List.
+   *
+   * @param tabId ID that is specified in the tab.
+   */
   public void removeSelectionMapping(int tabId) {
     selectionMap.remove(tabId);
   }
 
 
   /**
-   * Delets a MeasuremnetSequence from the library and selection.
+   * Delets a MeasurementSequence from the library and model.
    *
-   * @param list List of MesurementSequences to deleteFile.
+   * @param measureSequences List of MesurementSequences to deleteFile.
    */
-  public void deleteMeasureSequences(List<MeasureSequence> list) {
+  public void deleteMeasureSequences(List<MeasureSequence> measureSequences) {
+    Vector<SdCard> changedSdcards = new Vector<>();
+    Vector<DataFile> changedDataFiles = new Vector<>();
 
-    // Set<DataFile> set = new HashSet<>();
-
-    for (MeasureSequence ms : list) {
-      //Remove from DataFile
+    for (MeasureSequence ms : measureSequences) {
+      logger.info("Deleting MesureSequnce: " + ms.getId());
       ms.getDataFile().getMeasureSequences().remove(ms);
-      //Collect DataFiles for later update
-      //   set.add(ms.getDataFile());
-      //Remove Metadata Entry from DB
-      ms.getDataFile().getSdCard().removeMetadataEntry(ms.getId(), ms.getDataFile());
-      //Remove Entry from csv
-
-      File updatedFile = new File(ms.getDataFile().getOriginalFile().getAbsolutePath() + ".bak");
-
-
-      //TODO Sluggish implementation as it reads through  file for every Measure Seq.
-      try (Writer writer = new BufferedWriter(new FileWriter(updatedFile));
-           BufferedReader reader = new BufferedReader(new FileReader(ms.getDataFile().getOriginalFile()))) {
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-          System.out.println(line.length() > 15 ? "line: " + line.substring(0, 15) : "line: empty line");
-
-          if (line.split(";")[0].equals(ms.getId())) {
-
-            for (int i = 0; i < 9; i++) {
-              System.out.println("skip line");
-              line = reader.readLine();
-            }
-          } else {
-
-            for (int i = 0; i < 9; i++) {
-
-              System.out.println("add line to file");
-              writer.write(line + "\n");
-              line = reader.readLine();
-            }
-            writer.write(line + "\n");
-          }
-        }
-
-        //Swop files
-        ms.getDataFile().getOriginalFile().delete();
-        updatedFile.renameTo(ms.getDataFile().getOriginalFile());
-
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      System.out.println("set measurement as deleted");
+      changedSdcards.add(ms.getDataFile().getSdCard());
+      changedDataFiles.add(ms.getDataFile());
       ms.setDeleted(true);
     }
 
+    changedDataFiles.forEach(dataFile -> {
+      dataFile.removeMeasureSequences(
+          measureSequences.stream()
+              .filter(measureSequence -> {
+                return measureSequence.getDataFile().equals(dataFile);
+              })
+              .collect(Collectors.toList())
+      );
+    });
+
+    changedSdcards.forEach(sdCard -> {
+      sdCard.serialize();
+    });
 
     for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
-      measureSequenceList.removeAll(list);
-    }
-    System.out.println("ticked measurements: " + getCurrentSelectionList().size());
-
-
-    //cleanUpLibrary();
-
-    //updateLibrary(set);
-
-
-  }
-
-  /**
-   * Writes changes to the library.
-   *
-   * @param list a List of all manipulated Files.
-   *             Old implementation with all MS read in. Prlbly not needed anymore.
-   */
-  public void updateLibrary(Set<DataFile> list) {
-
-
-    for (DataFile d : list) {
-      try (Writer writer = new BufferedWriter(new FileWriter(d.getOriginalFile()));
-           BufferedReader reader = new BufferedReader(new FileReader(d.getOriginalFile()))) {
-
-        logger.info("rewrite File " + d.getOriginalFileName());
-
-        for (MeasureSequence ms : d.getMeasureSequences()) {
-          writer.write(ms.getCsv());
-          writer.flush();
-        }
-
-        writer.close();
-      } catch (IOException e) {
-        logger.info(e.getMessage());
-      }
+      measureSequenceList.removeAll(measureSequences);
     }
   }
+
 
   /**
    * Writes Data from SDCARDs to Files, in original format.
    *
-   * @param list       List of SDCARD to save.
-   * @param exportPath the path where the SDCARD is exported to.
+   * @param list       List of MeasurementSequences to save.
+   * @param exportPath the path where the SDCARDs are exported to.
    */
   public List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath) {
     List<SdCard> returnList = new ArrayList<>();
@@ -207,7 +152,6 @@ public class FrvaModel {
           if (card.exists()) {
             if (confirmOverriding(path)) {
               deleteFile(card);
-              System.out.println("going to export " + getCurrentSelectionList().size() + " Measurement");
             } else {
               logger.info("Export cancelled");
               return returnList;
@@ -251,7 +195,7 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      returnList.add(new SdCard(f, null, this, false));
+      returnList.add(new SdCard(f, null, this));
     }
     return returnList;
   }
@@ -280,15 +224,6 @@ public class FrvaModel {
     return result.get() == ButtonType.OK;
   }
 
-  private boolean confirmDelete(long amount) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("Warning");
-    alert.setHeaderText(amount + " Measurements are going to be deleted.");
-    alert.setContentText("This action cannot be undone \nDo you want to continue?");
-    Optional<ButtonType> result = alert.showAndWait();
-    return result.get() == ButtonType.OK;
-  }
-
 
   private boolean setUpLibrary(File path) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -311,20 +246,6 @@ public class FrvaModel {
 
 
   /**
-   * Removes empty SDCARDs from library.
-   */
-  public void cleanUpLibrary() {
-    Iterator<SdCard> it = library.listIterator();
-    while (it.hasNext()) {
-      SdCard sdCard = it.next();
-      if (sdCard.isEmpty()) {
-        deleteFile(sdCard.getPath());
-        it.remove();
-      }
-    }
-  }
-
-  /**
    * Deletes a specific file.
    *
    * @param file The File to delete.
@@ -336,8 +257,22 @@ public class FrvaModel {
       }
     }
     file.delete();
-    logger.info("deleteFile file " + file + file.exists());
+    logger.info("Deleted File:" + file);
   }
+
+  /**
+   * Getter to read all MeasurementSequences in the Library.
+   *
+   * @return List of MeasurementSequences.
+   */
+  public List<MeasureSequence> getAllMeasureSequences() {
+    List<MeasureSequence> list = new ArrayList<>();
+    for (SdCard sdCard : library) {
+      list.addAll(sdCard.getMeasureSequences());
+    }
+    return list;
+  }
+
 
   public List<SdCard> getLibrary() {
     return library;
@@ -366,19 +301,5 @@ public class FrvaModel {
   public ObservableList<MeasureSequence> getObservableList(int mapKey) {
     return selectionMap.get(mapKey);
   }
-
-  /**
-   * Getter to read all MeasurementSequences in the Library.
-   *
-   * @return List of MeasurementSequences.
-   */
-  public List<MeasureSequence> getLibraryAsMeasureSequences() {
-    List<MeasureSequence> list = new ArrayList<>();
-    for (SdCard sdCard : library) {
-      list.addAll(sdCard.getMeasureSequences());
-    }
-    return list;
-  }
-
 
 }

@@ -1,13 +1,13 @@
 package controller.util;
 
-import controller.util.TreeviewItems.FrvaTreeDayItem;
-import controller.util.TreeviewItems.FrvaTreeDeviceItem;
-import controller.util.TreeviewItems.FrvaTreeHourItem;
-import controller.util.TreeviewItems.FrvaTreeMeasurementItem;
-import controller.util.TreeviewItems.FrvaTreeMonthItem;
-import controller.util.TreeviewItems.FrvaTreeRootItem;
-import controller.util.TreeviewItems.FrvaTreeSdCardItem;
-import controller.util.TreeviewItems.FrvaTreeYearItem;
+import controller.util.treeviewitems.FrvaTreeDayItem;
+import controller.util.treeviewitems.FrvaTreeDeviceItem;
+import controller.util.treeviewitems.FrvaTreeHourItem;
+import controller.util.treeviewitems.FrvaTreeMeasurementItem;
+import controller.util.treeviewitems.FrvaTreeMonthItem;
+import controller.util.treeviewitems.FrvaTreeRootItem;
+import controller.util.treeviewitems.FrvaTreeSdCardItem;
+import controller.util.treeviewitems.FrvaTreeYearItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import model.FrvaModel;
@@ -35,8 +35,8 @@ public class TreeViewFactory {
 
     String currentDevice = "";
 
-
-    FrvaTreeDeviceItem checkBoxDeviceItem = new FrvaTreeDeviceItem(sdCard.getDeviceSerialNr(), sdCard.getDeviceSerialNr());
+    FrvaTreeDeviceItem checkBoxDeviceItem = new FrvaTreeDeviceItem(sdCard.getDeviceSerialNr(),
+        sdCard.getDeviceSerialNr());
 
     int sdCardCount = 0;
     FrvaTreeSdCardItem sdCardItem = new FrvaTreeSdCardItem(sdCard);
@@ -58,8 +58,7 @@ public class TreeViewFactory {
 
     //Checks if Device has already been added (equals of Tree item... comparison over Serial)
     if (root.getChildren().contains(checkBoxDeviceItem)) {
-      for (Object child : root.getChildren()
-          ) {
+      for (Object child : root.getChildren()) {
         if (checkBoxDeviceItem.equals(child)) {
           //System.out.println("added to existing Device");
           checkBoxDeviceItem = (FrvaTreeDeviceItem) child;
@@ -71,18 +70,16 @@ public class TreeViewFactory {
 
     //Checks if SDCard has already been added (equals of Tree item... comparison over Serial)
 
-    if (checkBoxDeviceItem.getChildren().contains(sdCardItem)&&false) {
-      for (Object child : checkBoxDeviceItem.getChildren()
-          ) {
+    if (checkBoxDeviceItem.getChildren().contains(sdCardItem) && false) {
+      for (Object child : checkBoxDeviceItem.getChildren()) {
         if (sdCardItem.equals(child)) {
-         // System.out.println("added to existing SDCard");
+          // System.out.println("added to existing SDCard");
           sdCardItem = (FrvaTreeSdCardItem) child;
         }
       }
     } else {
       checkBoxDeviceItem.getChildren().add(sdCardItem);
     }
-
 
 
     for (DataFile df : sdCard.getDataFiles()) {
@@ -120,7 +117,8 @@ public class TreeViewFactory {
           dayItem.getChildren().add(hourItem);
         }
 
-        hourItem.getChildren().add(new FrvaTreeMeasurementItem("ID" + ms.getId() + " - " + ms.getTime(), ms, ms.getId(), ms.getDataFile().getOriginalFile(), model, isPreview));
+        hourItem.getChildren().add(new FrvaTreeMeasurementItem("ID" + ms.getId() + " - "
+            + ms.getTime(), ms, ms.getId(), ms.getDataFile().getOriginalFile(), model, isPreview));
 
         sdCardCount++;
         yearlyCount++;

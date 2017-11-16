@@ -1,19 +1,15 @@
 package model.data;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import model.FrvaModel;
 
 public class MeasureSequence {
 
@@ -54,17 +50,20 @@ public class MeasureSequence {
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(String metadata, DataFile dataFile) {
-    // System.out.println("created new MS");
     sequenceUuid = UUID.randomUUID().toString();
     this.metadata = metadata.split(";");
     this.dataFile = dataFile;
     this.deleted = new SimpleBooleanProperty(false);
   }
 
+  /**
+   * Constructor, same as above.
+   *
+   * @param metadata String containing the metadata.
+   * @param dataFile contains the path to the datafiles.
+   */
   public MeasureSequence(String[] metadata, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-    // for(String str:metadata){    System.out.print(str+" ;");}
-    //System.out.println();
     this.metadata = metadata;
     this.dataFile = dataFile;
     this.deleted = new SimpleBooleanProperty(false);
@@ -110,7 +109,8 @@ public class MeasureSequence {
     }
 
     if (!found) {
-      throw new NoSuchElementException("Element with ID " + this.getId() + " has not been found in file " + dataFile.getOriginalFile().getPath());
+      throw new NoSuchElementException("Element with ID " + this.getId()
+          + " has not been found in file " + dataFile.getOriginalFile().getPath());
     }
 
   }
@@ -345,10 +345,19 @@ public class MeasureSequence {
     return this.measurements != null;
   }
 
+  /**
+   * Returns Year created as a String.
+   *
+   * @return year created.
+   */
   public String getYear() {
     return "20" + this.getDate().substring(0, 2);
   }
 
+  /**
+   * Getter for Month of measurement.
+   * @return month as String.
+   */
   public String getMonth() {
     switch (this.getDate().substring(3, 5)) {
       case "01":
@@ -385,6 +394,11 @@ public class MeasureSequence {
     return this.dataFile.getSdCard();
   }
 
+
+  /**
+   * Getter for the measurment Data.
+   * @return the measurements as map.
+   */
   public Map<SequenceKeyName, double[]> getMeasurements() {
     if (measurements.isEmpty()) {
       readInMeasurements();
@@ -392,6 +406,10 @@ public class MeasureSequence {
     return measurements;
   }
 
+  /**
+   * Getter for the metadata.
+   * @return metadaa as String.
+   */
   public String getMetadataAsString() {
     StringBuilder sb = new StringBuilder();
     for (String s : metadata) {
