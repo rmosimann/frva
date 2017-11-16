@@ -26,8 +26,6 @@ public class DataFile {
          ) {
      // System.out.println(arr.toString());
       measureSequences.add(new MeasureSequence(arr, this));
-
-
     }
 
   }

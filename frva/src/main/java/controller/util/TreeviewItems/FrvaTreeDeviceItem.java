@@ -31,6 +31,11 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   }
 
   @Override
+  public void createChildren() {
+
+  }
+
+
   public void createChildren(List<SdCard> list) {
     //create Children: get all SDCards and check for Different devices
     this.getChildren().add(null);

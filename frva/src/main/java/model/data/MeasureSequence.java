@@ -71,7 +71,7 @@ public class MeasureSequence {
   }
 
 
-  public void readInMeasurements() {
+  private void readInMeasurements() {
     boolean found = false;
     String[] input = new String[5];
     String line = "";
