@@ -69,11 +69,9 @@ public class TreeViewFactory {
     }
 
     //Checks if SDCard has already been added (equals of Tree item... comparison over Serial)
-
     if (checkBoxDeviceItem.getChildren().contains(sdCardItem) && false) {
       for (Object child : checkBoxDeviceItem.getChildren()) {
         if (sdCardItem.equals(child)) {
-          // System.out.println("added to existing SDCard");
           sdCardItem = (FrvaTreeSdCardItem) child;
         }
       }
