@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -13,117 +12,117 @@
 
 <?import org.controlsfx.control.CheckTreeView?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
-                <AnchorPane minHeight="60.0" prefHeight="60.0">
+                <VBox minHeight="252.0" prefWidth="252.0" style="-fx-border-color: darkgrey;" HBox.hgrow="NEVER">
                     <children>
-                        <ToggleButton layoutX="515.0" layoutY="19.0" mnemonicParsing="false" selected="true" text="Visualize" />
-                        <ToggleButton layoutX="590.0" layoutY="19.0" mnemonicParsing="false" text="Connect" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0">
-                            <image>
-                                <Image url="@../icons/ic_menu_black_24dp/web/ic_menu_black_24dp_2x.png" />
-                            </image>
-                        </ImageView>
-                    </children>
-                </AnchorPane>
-                <HBox VBox.vgrow="ALWAYS">
-                    <children>
-                        <VBox prefWidth="252.0" style="-fx-border-color: darkgrey;" HBox.hgrow="NEVER">
+                        <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="44.0" minHeight="44.0"
+                              prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;"
+                              VBox.vgrow="NEVER">
                             <children>
-                                <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="44.0" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Button fx:id="expandAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_expand_more_black_24dp/web/ic_expand_more_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="collapseAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_expand_less_black_24dp/web/ic_expand_less_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="selectAllButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_check_black_24dp/web/ic_check_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="selectNoneButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_crop_square_black_24dp/web/ic_crop_square_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <VBox.margin>
-                                        <Insets />
-                                    </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                    </padding>
-                                </HBox>
-                                <CheckTreeView fx:id="treeView" prefWidth="252.0" VBox.vgrow="ALWAYS" />
-                                <HBox alignment="BOTTOM_LEFT" fillHeight="false" layoutX="10.0" layoutY="10.0" maxHeight="44.0" minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Button fx:id="importSdCardButton" accessibleHelp="Import" accessibleText="Import" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView accessibleHelp="Import" accessibleRole="BUTTON" accessibleText="Import">
-                                                    <image>
-                                                        <Image url="@../icons/ic_library_add_black_24dp/web/ic_library_add_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="deleteSelectedItemsButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_delete_black_24dp/web/ic_delete_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="exportButton" mnemonicParsing="false" style="-fx-background-color: none;">
-                                            <graphic>
-                                                <ImageView>
-                                                    <image>
-                                                        <Image url="@../icons/ic_file_upload_black_24dp/web/ic_file_upload_black_24dp_1x.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets />
-                                    </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                    </padding>
-                                </HBox>
+                                <Button fx:id="expandAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_expand_more_black_24dp/web/ic_expand_more_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="collapseAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_expand_less_black_24dp/web/ic_expand_less_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="selectAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_check_black_24dp/web/ic_check_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="selectNoneButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_crop_square_black_24dp/web/ic_crop_square_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
-                        </VBox>
-                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS" />
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                            <padding>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                            </padding>
+                        </HBox>
+                        <CheckTreeView fx:id="treeView" prefWidth="252.0" VBox.vgrow="ALWAYS"/>
+                        <HBox alignment="BOTTOM_LEFT" fillHeight="false" layoutX="10.0" layoutY="10.0" maxHeight="44.0"
+                              minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;"
+                              VBox.vgrow="NEVER">
+                            <children>
+                                <Button fx:id="importSdCardButton" accessibleHelp="Import" accessibleText="Import"
+                                        mnemonicParsing="false" style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView accessibleHelp="Import" accessibleRole="BUTTON"
+                                                   accessibleText="Import">
+                                            <image>
+                                                <Image url="@../icons/ic_library_add_black_24dp/web/ic_library_add_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="deleteSelectedItemsButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_delete_black_24dp/web/ic_delete_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="exportButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_file_upload_black_24dp/web/ic_file_upload_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                            <padding>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                            </padding>
+                        </HBox>
                     </children>
-                </HBox>
+                </VBox>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                         style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS"/>
             </children>
-        </VBox>
+        </HBox>
     </children>
 </AnchorPane>

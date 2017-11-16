@@ -1,0 +1,18 @@
+.mainMenuButton {
+    -fx-background-color: linear-gradient(#F4F4F4 0%, #f0f0f0 50%, #D1D1D1 100%);
+    -fx-border-color: #D1D1D1;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+
+}
+
+.mainMenuButton:hover {
+    -fx-background-color: linear-gradient(#D1D1D1 0%, #D1D1D1 50%, #D1D1D1 100%);
+    -fx-border-color: #D1D1D1;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+}
+
+.mainMenuButton.selected {
+    -fx-background-color: linear-gradient(#D1D1D1 0%, #f0f0f0 50%, #F4F4F4 100%);
+}

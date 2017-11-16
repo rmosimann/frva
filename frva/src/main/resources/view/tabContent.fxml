@@ -135,22 +135,22 @@
                     </VBox.margin>
                 </Label>
                 <RadioButton fx:id="radioButtonRaw" mnemonicParsing="false" text="Raw"/>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                <CheckBox fx:id="checkBoxRawVeg" mnemonicParsing="false" selected="true" text="VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                <CheckBox fx:id="checkBoxRawWr" mnemonicParsing="false" selected="true" text="WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_VEG">
+                <CheckBox fx:id="checkBoxRawDcVeg" mnemonicParsing="false" selected="true" text="DC_VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_WR">
+                <CheckBox fx:id="checkBoxRawDcWr" mnemonicParsing="false" selected="true" text="DC_WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
@@ -160,12 +160,12 @@
                         <Insets top="10.0"/>
                     </padding>
                 </RadioButton>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                <CheckBox fx:id="checkBoxRadianceVeg" mnemonicParsing="false" selected="true" text="VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                <CheckBox fx:id="checkBoxRadianceWr" mnemonicParsing="false" selected="true" text="WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
