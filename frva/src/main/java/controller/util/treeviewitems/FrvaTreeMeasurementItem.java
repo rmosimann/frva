@@ -13,7 +13,6 @@ import model.data.SdCard;
  */
 public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
-
   private MeasureSequence measureSequence;
   private String id;
   private File file;
@@ -24,18 +23,16 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
    *
    * @param name      name.
    * @param ms        measurementSequence.
-   * @param id        id of the ms
-   * @param file      file.
    * @param model     the one and only model.
    * @param isPreview true when only used for preview.
    */
-  public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file,
+  public FrvaTreeMeasurementItem(String name, MeasureSequence ms,
                                  FrvaModel model, boolean isPreview) {
     super(name);
     this.measureSequence = ms;
-    this.id = id;
+    this.id = ms.getId();
     this.model = model;
-    this.file = file;
+    this.file = ms.getDataFile().getOriginalFile();
     if (!isPreview) {
       addListener();
     }
@@ -73,6 +70,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   /**
    * Getter for the Measurementsequence.
+   *
    * @return the measurementsequence lazyloaded: read in from the file system.
    */
   public MeasureSequence getMeasureSequence() {

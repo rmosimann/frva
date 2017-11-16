@@ -118,14 +118,7 @@ public class MainController {
       sdCard.serialize();
       model.getLibrary().add(sdCard);
     }
-
-
     loadTreeStructure();
-  }
-
-  private void addElementsToTreeView(List<SdCard> importedSdCards) {
-
-
   }
 
 
@@ -232,8 +225,6 @@ public class MainController {
     }
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
-
-
   }
 
 
@@ -302,6 +293,4 @@ public class MainController {
     }
     return list;
   }
-
-
 }

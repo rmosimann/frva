@@ -4,6 +4,7 @@ package controller.util.treeviewitems;
  * Created by patrick.wigger on 03.11.17.
  */
 public class FrvaTreeDayItem extends FrvaTreeItem {
+
   private String day;
 
   public FrvaTreeDayItem(String day) {
@@ -14,7 +15,6 @@ public class FrvaTreeDayItem extends FrvaTreeItem {
   @Override
   public String serialize() {
     return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + day + ";";
-
   }
 
   @Override
@@ -24,7 +24,6 @@ public class FrvaTreeDayItem extends FrvaTreeItem {
 
   @Override
   public void createChildren() {
-
   }
 
   public String getDay() {

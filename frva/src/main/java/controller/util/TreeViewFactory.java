@@ -115,7 +115,7 @@ public class TreeViewFactory {
         }
 
         hourItem.getChildren().add(new FrvaTreeMeasurementItem("ID" + ms.getId() + " - "
-            + ms.getTime(), ms, ms.getId(), ms.getDataFile().getOriginalFile(), model, isPreview));
+            + ms.getTime(), ms, model, isPreview));
 
         sdCardCount++;
         yearlyCount++;

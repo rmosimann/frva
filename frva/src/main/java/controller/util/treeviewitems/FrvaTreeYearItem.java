@@ -15,11 +15,9 @@ public class FrvaTreeYearItem extends FrvaTreeItem {
     this.year = year;
   }
 
-
   @Override
   public String serialize() {
     return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + year + ";";
-
   }
 
   @Override

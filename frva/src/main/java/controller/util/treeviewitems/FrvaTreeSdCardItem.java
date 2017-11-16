@@ -1,20 +1,13 @@
 package controller.util.treeviewitems;
 
-import java.io.File;
-import model.FrvaModel;
 import model.data.SdCard;
 
 /**
  * Created by patrick.wigger on 03.11.17.
  */
 public class FrvaTreeSdCardItem extends FrvaTreeItem {
+
   private SdCard sdCard;
-
-
-  public FrvaTreeSdCardItem(String name, File sdCard, FrvaModel model) {
-    super(name);
-    this.sdCard = new SdCard(sdCard, name, model);
-  }
 
   public FrvaTreeSdCardItem(SdCard sdCard) {
     super(sdCard.getName());
@@ -30,12 +23,6 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   @Override
   public int getDepth() {
     return 2;
-  }
-
-
-  public void setPathToLibrary() {
-    this.sdCard.setPathToLibrary();
-    setValue(sdCard.getName());
   }
 
   @Override
