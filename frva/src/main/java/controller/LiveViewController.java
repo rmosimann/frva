@@ -25,6 +25,11 @@ public class LiveViewController {
     INIT, BLUETOOTH_OFF, LIST_DEVICES, CONNECTING, CONNECTED, CONNECTION_FAILED;
   }
 
+  /**
+   * Constructor.
+   *
+   * @param model the one and only model.
+   */
   public LiveViewController(FrvaModel model) {
     state = State.INIT;
     if (!BluetoothConnection.isBluetoothOn()) {
@@ -43,6 +48,9 @@ public class LiveViewController {
     });
   }
 
+  /**
+   * Shows dialog when bluetooth is powered off.
+   */
   public void displayBluetoothOffDialog() {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle("Bluetooth is off");
