@@ -22,7 +22,6 @@ public class DataFile {
 
   /**
    * Creates a Datafile.
-   *
    * @param sdCard    SDCARD containing the Datafile.
    * @param filename  the file.
    * @param metadatas ??.
@@ -37,7 +36,6 @@ public class DataFile {
 
   /**
    * Constructor for reading in metadata.
-   *
    * @param filename Name of the file
    * @param sdCard   The SDCARD the datafile belongs to
    */
@@ -71,7 +69,6 @@ public class DataFile {
 
   /**
    * Constructor for reading in single Measurement.
-   *
    * @param sdCard The SDCARD the datafile belongs to
    * @param containingFile the file.
    * @param id the id of the measurement.

@@ -14,7 +14,7 @@ import model.FrvaModel;
 
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
-  private List<DataFile> dataFiles;
+  private List<DataFile> dataFiles = new ArrayList<>();
   private File sdCardPath;
   private CalibrationFile wavelengthCalibrationFile;
   private CalibrationFile sensorCalibrationFileWr;
@@ -51,7 +51,6 @@ public class SdCard {
 
   /**
    * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
-   *
    * @param sdCardPath Path where the SDCARD is located.
    * @return A List of all contained DataFiles.
    * @throws FileNotFoundException when path is not found.
@@ -62,37 +61,35 @@ public class SdCard {
     String currentFile = "";
     List<String[]> list = new ArrayList<>();
 
-    //TODO: Serialize before reading in: Serialization has to happen on import
     if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
-      readDatafiles(sdCardPath);
+      returnList = readDatafiles(sdCardPath);
       serialize();
-    }
-
-    try (BufferedReader reader = new BufferedReader(
-        new FileReader(sdCardPath + File.separator + "db.csv"))) {
-      while ((line = reader.readLine()) != null) {
-        String[] data = line.split(";");
-
-        if (!data[0].equals(currentFile)) {
-          if (list.size() > 0) {
-            returnList.add(new DataFile(this, new File(currentFile), list));
+    } else {
+      try (BufferedReader reader = new BufferedReader(
+          new FileReader(sdCardPath + File.separator + "db.csv"))) {
+        while ((line = reader.readLine()) != null) {
+          String[] data = line.split(";");
+          if (!data[0].equals(currentFile)) {
+            if (list.size() > 0) {
+              returnList.add(new DataFile(this, new File(currentFile), list));
+            }
+            currentFile = data[0];
+            list.clear();
           }
-          currentFile = data[0];
-          list.clear();
+
+          String[] temp = new String[data.length - 1];
+          for (int i = 0; i < temp.length; i++) {
+            temp[i] = data[i + 1];
+          }
+          list.add(temp);
         }
 
-        String[] temp = new String[data.length - 1];
-        for (int i = 0; i < temp.length; i++) {
-          temp[i] = data[i + 1];
-        }
-        list.add(temp);
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    if (list.size() > 0) {
-      returnList.add(new DataFile(this, new File(currentFile), list));
+      if (list.size() > 0) {
+        returnList.add(new DataFile(this, new File(currentFile), list));
+      }
     }
 
     return returnList;
@@ -103,17 +100,17 @@ public class SdCard {
    *
    * @param sdCardPath the List with all DataFiles.
    */
-  private void readDatafiles(File sdCardPath) {
-    dataFiles = new ArrayList<>();
-
+  private List<DataFile> readDatafiles(File sdCardPath) {
+    List<DataFile> returnList = new ArrayList<>();
     File[] listOfDirectories = sdCardPath.listFiles(File::isDirectory);
 
     for (File directory : listOfDirectories) {
       File[] listOfDataFiles = directory.listFiles();
       for (File dataFile : listOfDataFiles) {
-        dataFiles.add(new DataFile(this, dataFile));
+        returnList.add(new DataFile(this, dataFile));
       }
     }
+    return returnList;
   }
 
 
@@ -159,22 +156,6 @@ public class SdCard {
   }
 
 
-  public CalibrationFile getWavelengthCalibrationFile() {
-    return wavelengthCalibrationFile;
-  }
-
-  public CalibrationFile getSensorCalibrationFileWr() {
-    return sensorCalibrationFileWr;
-  }
-
-  public CalibrationFile getSensorCalibrationFileVeg() {
-    return sensorCalibrationFileVeg;
-  }
-
-  public List<DataFile> getDataFiles() {
-    return dataFiles;
-  }
-
 
   /**
    * Getter for the devices Serial-Number.
@@ -215,16 +196,6 @@ public class SdCard {
   }
 
 
-  public File getPath() {
-    return this.sdCardPath;
-  }
-
-
-  @Override
-  public int hashCode() {
-    return wavelengthCalibrationFile.hashCode();
-  }
-
   /**
    * Sets the path of this SDCARD to the Library (after import).
    */
@@ -240,6 +211,14 @@ public class SdCard {
    */
   public void serialize() {
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
+    if (file.getParentFile() != null) {
+      file.getParentFile().mkdirs();
+    }
+    try {
+      file.createNewFile();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     try (Writer writer = new FileWriter(file)) {
       for (MeasureSequence ms : getMeasureSequences()) {
         writer.write(sdCardPath.getPath() + File.separator
@@ -251,5 +230,30 @@ public class SdCard {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return wavelengthCalibrationFile.hashCode();
+  }
+
+  public CalibrationFile getWavelengthCalibrationFile() {
+    return wavelengthCalibrationFile;
+  }
+
+  public CalibrationFile getSensorCalibrationFileWr() {
+    return sensorCalibrationFileWr;
+  }
+
+  public CalibrationFile getSensorCalibrationFileVeg() {
+    return sensorCalibrationFileVeg;
+  }
+
+  public List<DataFile> getDataFiles() {
+    return dataFiles;
+  }
+
+  public File getPath() {
+    return this.sdCardPath;
   }
 }
