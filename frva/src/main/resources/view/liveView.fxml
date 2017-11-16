@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,5 +26,112 @@
                 </Label>
             </children>
         </Pane>
+        <ListView layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0"
+                  AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
+        <AnchorPane layoutX="277.0" layoutY="69.0" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="277.0"
+                    AnchorPane.rightAnchor="270.0" AnchorPane.topAnchor="69.0">
+            <children>
+                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
+                           prefHeight="553.0" prefWidth="732.0" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                        <NumberAxis tickUnit="100" fx:id="xaxis"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="yaxis" tickUnit="1"/>
+                    </yAxis>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                </LineChart>
+            </children>
+        </AnchorPane>
+        <TextArea disable="true" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
+                  AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="444.0"/>
+        <HBox layoutX="1050.0" layoutY="330.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+            <children>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change Mode" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+        <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
+              AnchorPane.topAnchor="59.0">
+            <children>
+                <Label text="Connected to">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <Label text="D-Flox V0.7 JB-006-BM">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
+                <Label text="Connection Status">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label text="connected">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
+                <Label text="SystemTime">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label text="08:15:23 17.08.2016">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
+                <Label text="System Mode">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label text="automatic">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
+                <Label text="GPS - Location">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label text="47°22′N 8°33′E">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

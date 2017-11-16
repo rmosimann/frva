@@ -1,3 +1,5 @@
+package controller.util.bluetooth;
+
 import com.intel.bluetooth.RemoteDeviceHelper;
 import java.io.IOException;
 import java.util.Vector;
@@ -9,10 +11,7 @@ import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
 
 /**
- * Minimal Device Discovery example.
- * <p>
- * On linux x64 :
- * sudo apt-get install libbluetooth-dev
+ * sudo apt-get install libbluetooth-dev.
  */
 public class RemoteDeviceDiscovery {
 
@@ -46,38 +45,23 @@ public class RemoteDeviceDiscovery {
         }
       }
 
-      public void serviceSearchCompleted(int transID, int respCode) {
+      public void serviceSearchCompleted(int transId, int respCode) {
       }
 
-      public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+      public void servicesDiscovered(int transId, ServiceRecord[] servRecord) {
       }
     };
 
     synchronized (inquiryCompletedEvent) {
 
-      boolean started = LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, listener);
-//      LocalDevice.getLocalDevice().
+      boolean started = LocalDevice.getLocalDevice().getDiscoveryAgent()
+          .startInquiry(DiscoveryAgent.GIAC, listener);
+
       if (started) {
         System.out.println("wait for device inquiry to complete...");
         inquiryCompletedEvent.wait();
         System.out.println(devicesDiscovered.size() + " device(s) found");
       }
-
-
-//      devicesDiscovered.forEach(o -> {
-//        RemoteDevice a = (RemoteDevice)o;
-//
-//        System.out.println(a.isAuthenticated());
-//
-//        try {
-//          a.authenticate();
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//        }
-//
-//      });
-
-
     }
   }
 

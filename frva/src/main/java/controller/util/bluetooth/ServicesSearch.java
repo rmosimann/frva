@@ -1,3 +1,5 @@
+package controller.util.bluetooth;
+
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -10,11 +12,12 @@ import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
 
 /**
+ * static final UUID SERIAL_PORT = new UUID(0x1101);
  * Minimal Services Search example.
  */
 public class ServicesSearch {
 
-  static final UUID OBEX_FILE_TRANSFER = new UUID(0x1106);
+  static final UUID SERIAL_PORT = new UUID(0x1101);
 
   public static final Vector/*<String>*/ serviceFound = new Vector();
 
@@ -25,9 +28,9 @@ public class ServicesSearch {
 
     serviceFound.clear();
 
-    UUID serviceUUID = OBEX_FILE_TRANSFER;
+    UUID serviceuuid = SERIAL_PORT;
     if ((args != null) && (args.length > 0)) {
-      serviceUUID = new UUID(args[0], false);
+      serviceuuid = new UUID(args[0], false);
     }
 
     final Object serviceSearchCompletedEvent = new Object();
@@ -40,9 +43,10 @@ public class ServicesSearch {
       public void inquiryCompleted(int discType) {
       }
 
-      public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+      public void servicesDiscovered(int transId, ServiceRecord[] servRecord) {
         for (int i = 0; i < servRecord.length; i++) {
-          String url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
+          String url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT,
+              false);
           if (url == null) {
             continue;
           }
@@ -56,7 +60,7 @@ public class ServicesSearch {
         }
       }
 
-      public void serviceSearchCompleted(int transID, int respCode) {
+      public void serviceSearchCompleted(int transId, int respCode) {
         System.out.println("service search completed!");
         synchronized (serviceSearchCompletedEvent) {
           serviceSearchCompletedEvent.notifyAll();
@@ -65,21 +69,23 @@ public class ServicesSearch {
 
     };
 
-    UUID[] searchUuidSet = new UUID[] {serviceUUID};
+    UUID[] searchUuidSet = new UUID[] {serviceuuid};
     int[] attrIDs = new int[] {
         0x0100 // Service name
     };
 
-    for (Enumeration en = RemoteDeviceDiscovery.devicesDiscovered.elements(); en.hasMoreElements(); ) {
+    for (Enumeration en = RemoteDeviceDiscovery.devicesDiscovered.elements();
+         en.hasMoreElements(); ) {
       RemoteDevice btDevice = (RemoteDevice) en.nextElement();
 
       synchronized (serviceSearchCompletedEvent) {
-        System.out.println("search services on " + btDevice.getBluetoothAddress() + " " + btDevice.getFriendlyName(false));
-        LocalDevice.getLocalDevice().getDiscoveryAgent().searchServices(attrIDs, searchUuidSet, btDevice, listener);
+        System.out.println("search services on " + btDevice.getBluetoothAddress() + " "
+            + btDevice.getFriendlyName(false));
+        LocalDevice.getLocalDevice().getDiscoveryAgent()
+            .searchServices(attrIDs, searchUuidSet, btDevice, listener);
         serviceSearchCompletedEvent.wait();
       }
     }
 
   }
-
 }
