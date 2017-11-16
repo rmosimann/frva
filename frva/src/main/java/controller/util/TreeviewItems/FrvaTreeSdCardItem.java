@@ -42,7 +42,16 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   }
 
   @Override
+  public void createChildren() {
+
+  }
+
+  @Override
   public boolean equals(Object o){
    return o instanceof FrvaTreeSdCardItem && this.sdCard.equals(((FrvaTreeSdCardItem) o).sdCard);
+  }
+
+  public SdCard getSdCard() {
+    return sdCard;
   }
 }

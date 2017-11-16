@@ -10,7 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -73,6 +77,35 @@ public class MainController {
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     exportButton.setOnAction(event -> exportData());
     importSdCardButton.setOnAction(event -> importWizard());
+    treeView.getCheckModel().getCheckedItems().addListener(new ListChangeListener() {
+      @Override
+      public void onChanged(Change c) {
+        while (c.next()) {
+          if (c.wasAdded()) {
+            c.getAddedSubList().forEach(new Consumer() {
+              @Override
+              public void accept(Object o) {
+                if (o instanceof FrvaTreeMeasurementItem) {
+                System.out.println("add item to list");
+                  model.getCurrentSelectionList().add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
+                }
+              }
+            });
+          }
+          else {
+            c.getRemoved().forEach(new Consumer() {
+              @Override
+              public void accept(Object o) {
+                if (o instanceof FrvaTreeMeasurementItem) {
+                  System.out.println("remove item from list");
+                  model.getCurrentSelectionList().remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
+                }
+              }
+            });
+          }
+        }
+      }
+    });
 
   }
 
@@ -123,7 +156,7 @@ public class MainController {
   private void deleteSelectedItems() {
     List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
     List<MeasureSequence> measurements = new ArrayList<>();
-    System.out.println("now remove "+list.size()+" Items");
+    System.out.println("now remove " + list.size() + " Items");
     for (FrvaTreeItem item : list
         ) {
       if (item instanceof FrvaTreeMeasurementItem) {
@@ -135,15 +168,15 @@ public class MainController {
     model.deleteMeasureSequences(measurements);
 
     //Remove Data from TreeView
+    /*
     for (FrvaTreeItem item : list) {
-      item.getParent().getChildren().remove(item);
-    }
+      if (!(item instanceof FrvaTreeRootItem)) {
+        item.getParent().getChildren().remove(item);
+      }
+    }*/
     unselectTickedItems();
     treeView.getCheckModel().clearChecks();
-
   }
-
-
 
 
   private void initializeTabHandling() {
@@ -197,12 +230,10 @@ public class MainController {
   private void loadTreeStructure() {
     treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    // System.out.println("*******"+model.getLibrary().size());
     for (SdCard sdCard : model.getLibrary()
         ) {
       TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
     }
-    //  FrvaSerializer.deserializeDB(treeView, filepath, model);
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 

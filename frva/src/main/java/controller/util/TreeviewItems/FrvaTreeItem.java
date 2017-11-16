@@ -72,6 +72,5 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
 
   public void setPathToLibrary() {
   }
-
-  ;
+  public abstract void createChildren();
 }

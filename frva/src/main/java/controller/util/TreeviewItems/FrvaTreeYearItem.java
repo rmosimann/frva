@@ -28,4 +28,9 @@ public class FrvaTreeYearItem extends FrvaTreeItem {
   public int getDepth() {
     return 3;
   }
+
+  @Override
+  public void createChildren() {
+
+  }
 }

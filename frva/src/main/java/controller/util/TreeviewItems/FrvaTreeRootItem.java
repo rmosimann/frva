@@ -30,6 +30,11 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     return 0;
   }
 
+  @Override
+  public void createChildren() {
+
+  }
+
 
   /**
    * Constructor for TreeView lazyLoaded.

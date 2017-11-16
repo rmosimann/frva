@@ -3,6 +3,7 @@ package controller.util.TreeviewItems;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TreeItem;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -24,7 +25,8 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     addListener();
     this.model = model;
     this.id = id;
-    if(!isPreview){addListener();
+    if (!isPreview) {
+      addListener();
 
     }
 
@@ -33,13 +35,27 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file, FrvaModel model, boolean isPreview) {
     super(name);
     this.measureSequence = ms;
-    //  addListener();
+
     this.id = id;
     this.model = model;
     this.file = file;
-    if(!isPreview){addListener();}
-
+    if (!isPreview) {
+      addListener();
     }
+
+  }
+
+  private void addListener() {
+    measureSequence.deletedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          getParent().getChildren().remove(this);
+          System.out.println(newValue + " removed myself from tree");
+        }
+      }
+    });
+  }
 
   private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
     @Override
@@ -47,7 +63,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
                         Boolean oldValue, Boolean newValue) {
 
       if (newValue) {
-       // System.out.println("added one measuremnt to model");
+        // System.out.println("added one measuremnt to model");
         model.getCurrentSelectionList().add(getMeasureSequence());
       } else {
         model.getCurrentSelectionList().removeAll(getMeasureSequence());
@@ -68,30 +84,34 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-   // System.out.println("here hello 1234 " + file.getPath());
-    //TODO
-    SdCard containingSdCard = new SdCard(file.getParentFile().getParentFile(), file.getParentFile().getParent(), model, false);
-    return containingSdCard.readSingleMeasurementSequence(file, id, model);
-
+    // System.out.println("here hello 1234 " + file.getPath());
+    TreeItem item = this;
+    while (!(item instanceof FrvaTreeSdCardItem)) {
+      item = item.getParent();
+    }
+    SdCard containingSdCard = ((FrvaTreeSdCardItem) item).getSdCard();
+    this.measureSequence = containingSdCard.readSingleMeasurementSequence(file, id, model);
+    addListener();
+    return this.measureSequence;
   }
 
+  /*
+    private void addListener() {
 
-  private void addListener() {
 
+      super.selectedProperty().addListener(checkedlistener);
 
-    super.selectedProperty().addListener(checkedlistener);
-
-    model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
-      selectedProperty().removeListener(checkedlistener);
-      if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
-        setSelected(true);
-      } else {
-        setSelected(false);
-      }
-      selectedProperty().addListener(checkedlistener);
-    });
-  }
-
+      model.getCurrentlySelectedTabProperty().addListener((observable, oldValue, newValue) -> {
+        selectedProperty().removeListener(checkedlistener);
+        if (model.getCurrentSelectionList().contains(getMeasureSequence())) {
+          setSelected(true);
+        } else {
+          setSelected(false);
+        }
+        selectedProperty().addListener(checkedlistener);
+      });
+    }
+  */
   public String getId() {
     return this.id;
 
@@ -108,10 +128,15 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   @Override
   public void setPathToLibrary() {
-   // this.measureSequence.setPathToLibrary();
+    // this.measureSequence.setPathToLibrary();
     this.file = new File(FrvaModel.LIBRARYPATH
         + File.separator + measureSequence.getContainingSdCard().getName()
         + File.separator + file.getParentFile().getName() + File.separator + file.getName());
+  }
+
+  @Override
+  public void createChildren() {
+
   }
 
 }

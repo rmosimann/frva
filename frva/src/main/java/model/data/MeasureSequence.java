@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import model.FrvaModel;
 
 public class MeasureSequence {
@@ -31,6 +33,7 @@ public class MeasureSequence {
   private final String sequenceUuid;
   private final DataFile dataFile;
   private ReflectionIndices reflectionIndices;
+  private BooleanProperty deleted;
 
 
   public enum SequenceKeyName {
@@ -51,18 +54,20 @@ public class MeasureSequence {
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(String metadata, DataFile dataFile) {
-   // System.out.println("created new MS");
+    // System.out.println("created new MS");
     sequenceUuid = UUID.randomUUID().toString();
     this.metadata = metadata.split(";");
     this.dataFile = dataFile;
+    this.deleted = new SimpleBooleanProperty(false);
   }
 
   public MeasureSequence(String[] metadata, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-   // for(String str:metadata){    System.out.print(str+" ;");}
+    // for(String str:metadata){    System.out.print(str+" ;");}
     //System.out.println();
     this.metadata = metadata;
     this.dataFile = dataFile;
+    this.deleted = new SimpleBooleanProperty(false);
   }
 
 
@@ -390,10 +395,21 @@ public class MeasureSequence {
   public String getMetadataAsString() {
     StringBuilder sb = new StringBuilder();
     for (String s : metadata) {
-     sb.append(s);
-     sb.append(";");
+      sb.append(s);
+      sb.append(";");
     }
     return sb.toString();
   }
 
+  public void setDeleted(boolean deleted) {
+    this.deleted.set(deleted);
+  }
+
+  public boolean isDeleted() {
+    return deleted.get();
+  }
+
+  public BooleanProperty deletedProperty() {
+    return deleted;
+  }
 }

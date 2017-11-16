@@ -26,6 +26,11 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
     return 4;
   }
 
+  @Override
+  public void createChildren() {
+
+  }
+
   public String getMonth(){return this.month; }
 
 

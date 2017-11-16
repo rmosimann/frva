@@ -1,5 +1,8 @@
 package controller.util.TreeviewItems;
 
+import java.util.List;
+import model.data.SdCard;
+
 /**
  * Created by patrick.wigger on 03.11.17.
  */
@@ -25,6 +28,13 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   @Override
   public int getDepth() {
     return 1;
+  }
+
+  @Override
+  public void createChildren(List<SdCard> list) {
+    //create Children: get all SDCards and check for Different devices
+    this.getChildren().add(null);
+
   }
 
   private String getDeviceId(FrvaTreeRootItem item) {

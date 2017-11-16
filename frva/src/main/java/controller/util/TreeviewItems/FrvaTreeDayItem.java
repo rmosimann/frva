@@ -26,6 +26,11 @@ public class FrvaTreeDayItem extends FrvaTreeItem{
     return 5;
   }
 
+  @Override
+  public void createChildren() {
+
+  }
+
   public String getDay() {
     return day;
   }

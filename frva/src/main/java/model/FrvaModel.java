@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -92,18 +90,18 @@ public class FrvaModel {
    */
   public void deleteMeasureSequences(List<MeasureSequence> list) {
 
-   // Set<DataFile> set = new HashSet<>();
+    // Set<DataFile> set = new HashSet<>();
 
     for (MeasureSequence ms : list) {
       //Remove from DataFile
       ms.getDataFile().getMeasureSequences().remove(ms);
       //Collect DataFiles for later update
-   //   set.add(ms.getDataFile());
+      //   set.add(ms.getDataFile());
       //Remove Metadata Entry from DB
       ms.getDataFile().getSdCard().removeMetadataEntry(ms.getId(), ms.getDataFile());
       //Remove Entry from csv
 
-      File updatedFile=new File(ms.getDataFile().getOriginalFile().getAbsolutePath()+".bak");
+      File updatedFile = new File(ms.getDataFile().getOriginalFile().getAbsolutePath() + ".bak");
 
 
       //TODO Sluggish implementation as it reads through  file for every Measure Seq.
@@ -112,24 +110,23 @@ public class FrvaModel {
 
         String line;
         while ((line = reader.readLine()) != null) {
-          System.out.println(line.length()>15?"line: "+line.substring(0,15):"line: empty line");
+          System.out.println(line.length() > 15 ? "line: " + line.substring(0, 15) : "line: empty line");
 
           if (line.split(";")[0].equals(ms.getId())) {
 
             for (int i = 0; i < 9; i++) {
               System.out.println("skip line");
-              line=reader.readLine();
+              line = reader.readLine();
             }
-          }
-          else{
+          } else {
 
             for (int i = 0; i < 9; i++) {
 
               System.out.println("add line to file");
-              writer.write(line+"\n");
-              line=reader.readLine();
+              writer.write(line + "\n");
+              line = reader.readLine();
             }
-            writer.write(line+"\n");
+            writer.write(line + "\n");
           }
         }
 
@@ -138,21 +135,22 @@ public class FrvaModel {
         updatedFile.renameTo(ms.getDataFile().getOriginalFile());
 
 
-
       } catch (IOException e) {
         e.printStackTrace();
       }
 
-
+      System.out.println("set measurement as deleted");
+      ms.setDeleted(true);
     }
 
 
     for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
       measureSequenceList.removeAll(list);
     }
-    System.out.println("ticked measurements: "+ getCurrentSelectionList().size());
+    System.out.println("ticked measurements: " + getCurrentSelectionList().size());
 
-    cleanUpLibrary();
+
+    //cleanUpLibrary();
 
     //updateLibrary(set);
 
@@ -164,7 +162,6 @@ public class FrvaModel {
    *
    * @param list a List of all manipulated Files.
    *             Old implementation with all MS read in. Prlbly not needed anymore.
-   *
    */
   public void updateLibrary(Set<DataFile> list) {
 
@@ -323,7 +320,6 @@ public class FrvaModel {
       if (sdCard.isEmpty()) {
         deleteFile(sdCard.getPath());
         it.remove();
-
       }
     }
   }

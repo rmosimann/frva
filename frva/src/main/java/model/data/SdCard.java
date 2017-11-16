@@ -123,6 +123,7 @@ public class SdCard {
     }
   }
 
+
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
     // System.out.println(sdCardPath.getAbsolutePath());
@@ -132,6 +133,35 @@ public class SdCard {
         && name.endsWith(".csv") && !name.equals("db.csv"));
 
     return new CalibrationFile(listOfFiles[0], skipLines);
+  }
+
+
+  public MeasureSequence readSingleMeasurementSequence(File containingFile, String id, FrvaModel model) {
+
+    DataFile df = new DataFile(this, containingFile, id);
+    dataFiles.add(df);
+    return df.getLastAddedMeasurement();
+
+  }
+
+
+  /**
+   * Checks if SDCARD is empty, empty DataFiles are removed before.
+   *
+   * @return true when empty.
+   */
+  public boolean isEmpty() {
+    if (dataFiles.isEmpty()) {
+      return true;
+    }
+    boolean isEmpty = true;
+    for (DataFile dfile : dataFiles) {
+      if (!dfile.isEmpty()) {
+        isEmpty = false;
+      }
+    }
+    System.out.println("SDCARD "+sdCardPath+" is empty!");
+    return isEmpty;
   }
 
 
@@ -151,6 +181,9 @@ public class SdCard {
     return dataFiles;
   }
 
+
+
+
   /**
    * Getter for the devices Serial-Number.
    *
@@ -169,6 +202,7 @@ public class SdCard {
     return this.name;
   }
 
+
   /**
    * Getter to read all MeasurementSequences in this SDCARD.
    *
@@ -182,36 +216,14 @@ public class SdCard {
     return list;
   }
 
-  /**
-   * Checks if SDCARD is empty, empty DataFiles are removed before.
-   *
-   * @return true when empty.
-   */
-  public boolean isEmpty() {
-    if (dataFiles.isEmpty()) {
-      return true;
-    }
-    boolean isEmpty = true;
-    for (DataFile dfile : dataFiles) {
-      if (!dfile.isEmpty()) {
-        isEmpty = false;
-      }
-    }
-    return isEmpty;
-  }
+
 
   public File getPath() {
     return this.sdCardPath;
   }
 
 
-  public MeasureSequence readSingleMeasurementSequence(File containingFile, String id, FrvaModel model) {
 
-    DataFile df = new DataFile(this, containingFile, id);
-    dataFiles.add(df);
-    return df.getLastAddedMeasurement();
-
-  }
 
 /*
   public List<MeasureSequence> readInFiles() {

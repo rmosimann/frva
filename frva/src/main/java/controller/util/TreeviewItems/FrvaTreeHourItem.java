@@ -30,6 +30,11 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
     return 6;
   }
 
+  @Override
+  public void createChildren() {
+
+  }
+
   public int getHour() {
     //System.out.println(hour);
     return hour;
