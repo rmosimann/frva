@@ -33,7 +33,6 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
   }
 
   public int getHour() {
-    //System.out.println(hour);
     return hour;
   }
 }

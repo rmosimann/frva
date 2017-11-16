@@ -91,9 +91,6 @@ public class SdCard {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    // System.out.println("created last DataFile with " + list.size() + " Elements");
-
     if (list.size() > 0) {
       returnList.add(new DataFile(this, new File(currentFile), list));
     }
@@ -158,7 +155,6 @@ public class SdCard {
         isEmpty = false;
       }
     }
-    System.out.println("SDCARD " + sdCardPath + " is empty!");
     return isEmpty;
   }
 

@@ -76,8 +76,6 @@ public class MeasureSequence {
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
       while ((line = br.readLine()) != null) {
-
-        //   System.out.println(line);
         if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
           if (line.split(";")[0].equals(this.getId())) {
             found = true;
@@ -90,8 +88,6 @@ public class MeasureSequence {
             }
             for (int i = 1; i < input.length; i++) {
               String[] tmp = input[i].split(";");
-              //System.out.println();
-              System.out.println(tmp[0].toUpperCase());
               SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
               measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
                   .mapToDouble(Double::parseDouble)
@@ -113,19 +109,6 @@ public class MeasureSequence {
           + " has not been found in file " + dataFile.getOriginalFile().getPath());
     }
 
-  }
-
-  /**
-   * Prints the content of the MeasureSequence to the console.
-   */
-  public void print() {
-    Arrays.stream(metadata).forEach(a -> System.out.print(a + " "));
-
-    for (Map.Entry<SequenceKeyName, double[]> entry : measurements.entrySet()) {
-      System.out.println();
-      System.out.print(entry.getKey());
-      Arrays.stream(entry.getValue()).forEach(a -> System.out.print(a + " "));
-    }
   }
 
 
@@ -221,11 +204,9 @@ public class MeasureSequence {
 
   /**
    * Getter for the Date of the Sequence.
-   *
    * @return Date as String of Type YY-MM-DD.
    */
   public String getDate() {
-    //System.out.println(metadata[0]+" "+metadata[1]);
     return metadata[1].substring(0, 2) + "-" + metadata[1].substring(2, 4) + "-"
         + metadata[1].substring(4, 6);
   }

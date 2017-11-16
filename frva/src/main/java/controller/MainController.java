@@ -87,7 +87,6 @@ public class MainController {
               @Override
               public void accept(Object o) {
                 if (o instanceof FrvaTreeMeasurementItem) {
-                  System.out.println("add item to list");
                   model.getCurrentSelectionList()
                       .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
                 }
@@ -98,7 +97,6 @@ public class MainController {
               @Override
               public void accept(Object o) {
                 if (o instanceof FrvaTreeMeasurementItem) {
-                  System.out.println("remove item from list");
                   model.getCurrentSelectionList()
                       .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
                 }
