@@ -71,9 +71,11 @@ public class DataFile {
 
 
   /**
-   * Constructor for reading in single file.
+   * Constructor for reading in single Measurement.
    *
    * @param sdCard The SDCARD the datafile belongs to
+   * @param containingFile the file.
+   * @param id the id of the measurement.
    */
   public DataFile(SdCard sdCard, File containingFile, String id) {
     this.originalFile = containingFile;
@@ -83,8 +85,6 @@ public class DataFile {
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(containingFile))) {
       while ((line = br.readLine()) != null) {
-
-        //   System.out.println(line);
         if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
           if (line.split(";")[0].equals(id)) {
             found = true;

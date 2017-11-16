@@ -23,10 +23,10 @@ public class TreeViewFactory {
 
   /**
    * Creates a treeview.
-   *
    * @param sdCard   SdCard containing the data.
    * @param treeView view on which the data should be attached to
    * @param model    the model of the application
+   * @param isPreview true when used for preview.
    */
 
   public static void extendTreeView(SdCard sdCard, TreeView<FrvaTreeRootItem> treeView,
@@ -60,7 +60,6 @@ public class TreeViewFactory {
     if (root.getChildren().contains(checkBoxDeviceItem)) {
       for (Object child : root.getChildren()) {
         if (checkBoxDeviceItem.equals(child)) {
-          //System.out.println("added to existing Device");
           checkBoxDeviceItem = (FrvaTreeDeviceItem) child;
         }
       }

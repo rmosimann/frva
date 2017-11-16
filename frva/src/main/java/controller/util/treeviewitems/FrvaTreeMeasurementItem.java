@@ -19,18 +19,16 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private File file;
   private FrvaModel model;
 
-  public FrvaTreeMeasurementItem(String name, File file, String id,
-                                 FrvaModel model, boolean isPreview) {
-    super(name);
-    this.file = file;
-    addListener();
-    this.model = model;
-    this.id = id;
-    if (!isPreview) {
-      addListener();
-    }
-  }
-
+  /**
+   * Constructor.
+   *
+   * @param name      name.
+   * @param ms        measurementSequence.
+   * @param id        id of the ms
+   * @param file      file.
+   * @param model     the one and only model.
+   * @param isPreview true when only used for preview.
+   */
   public FrvaTreeMeasurementItem(String name, MeasureSequence ms, String id, File file,
                                  FrvaModel model, boolean isPreview) {
     super(name);
@@ -60,7 +58,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
       if (newValue) {
-        // System.out.println("added one measuremnt to model");
         model.getCurrentSelectionList().add(getMeasureSequence());
       } else {
         model.getCurrentSelectionList().removeAll(getMeasureSequence());
@@ -76,14 +73,12 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   /**
    * Getter for the Measurementsequence.
-   *
-   * @returns the measurementsequence lazyloaded: read in from the file system.
+   * @return the measurementsequence lazyloaded: read in from the file system.
    */
   public MeasureSequence getMeasureSequence() {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-    // System.out.println("here hello 1234 " + file.getPath());
     TreeItem item = this;
     while (!(item instanceof FrvaTreeSdCardItem)) {
       item = item.getParent();
@@ -106,14 +101,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   public String serialize() {
     return getId() + ";" + this.getDepth() + ";" + this.getValue().toString() + ";"
         + checkFile() + ";";
-  }
-
-  @Override
-  public void setPathToLibrary() {
-    // this.measureSequence.setPathToLibrary();
-    this.file = new File(FrvaModel.LIBRARYPATH
-        + File.separator + measureSequence.getContainingSdCard().getName()
-        + File.separator + file.getParentFile().getName() + File.separator + file.getName());
   }
 
   @Override

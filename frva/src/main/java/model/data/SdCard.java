@@ -24,8 +24,9 @@ public class SdCard {
 
   /**
    * Constructor.
-   *
    * @param sdCardPath a Path where the data lays as expected.
+   * @param name the Name of that SDCARD.
+   * @param model the one and onla model.
    */
   public SdCard(File sdCardPath, String name, FrvaModel model) {
     this.sdCardPath = sdCardPath;
@@ -121,19 +122,21 @@ public class SdCard {
 
   private CalibrationFile readCalibrationFile(File sdCardPath, String filter, int skipLines) {
     File folder = sdCardPath;
-    // System.out.println(sdCardPath.getAbsolutePath());
-    //System.out.println(folder.listFiles().length);
-
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv") && !name.equals("db.csv"));
-
     return new CalibrationFile(listOfFiles[0], skipLines);
   }
 
-
+  /**
+   * Returns a single MeasurementSequence.
+   *
+   * @param containingFile the file where it is stored.
+   * @param id             the ID of the Measurementsequence.
+   * @param model          the one and only model.
+   * @return a single MeasurementSequence.
+   */
   public MeasureSequence readSingleMeasurementSequence(File containingFile,
                                                        String id, FrvaModel model) {
-
     DataFile df = new DataFile(this, containingFile, id);
     dataFiles.add(df);
     return df.getLastAddedMeasurement();
@@ -226,11 +229,13 @@ public class SdCard {
     return wavelengthCalibrationFile.hashCode();
   }
 
+  /**
+   * Sets the path of this SDCARD to the Library (after import).
+   */
   public void setPathToLibrary() {
     this.sdCardPath = new File(FrvaModel.LIBRARYPATH + File.separator + this.name);
     for (DataFile df : dataFiles) {
       df.setPathToLibrary();
-
     }
   }
 
