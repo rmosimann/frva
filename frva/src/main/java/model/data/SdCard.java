@@ -24,9 +24,10 @@ public class SdCard {
 
   /**
    * Constructor.
+   *
    * @param sdCardPath a Path where the data lays as expected.
-   * @param name the Name of that SDCARD.
-   * @param model the one and onla model.
+   * @param name       the Name of that SDCARD.
+   * @param model      the one and onla model.
    */
   public SdCard(File sdCardPath, String name, FrvaModel model) {
     this.sdCardPath = sdCardPath;
@@ -43,7 +44,10 @@ public class SdCard {
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
     try {
+      System.out.println("read in files" + sdCardPath.getPath());
+      System.out.println(sdCardPath.listFiles().length);
       dataFiles = lazyReadDatafiles(sdCardPath);
+
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -51,11 +55,13 @@ public class SdCard {
 
   /**
    * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
+   *
    * @param sdCardPath Path where the SDCARD is located.
    * @return A List of all contained DataFiles.
    * @throws FileNotFoundException when path is not found.
    */
   public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
+    System.out.println("Read in files lazy");
     List<DataFile> returnList = new ArrayList<>();
     String line;
     String currentFile = "";
@@ -63,7 +69,9 @@ public class SdCard {
 
     if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
       returnList = readDatafiles(sdCardPath);
-      serialize();
+      if (this.isPathInLibrary()) {
+        serialize();
+      }
     } else {
       try (BufferedReader reader = new BufferedReader(
           new FileReader(sdCardPath + File.separator + "db.csv"))) {
@@ -93,6 +101,11 @@ public class SdCard {
     }
 
     return returnList;
+  }
+
+  private boolean isPathInLibrary() {
+    System.out.println(sdCardPath.getPath() + "is in lib?:" + this.sdCardPath.getPath().contains(FrvaModel.LIBRARYPATH));
+    return this.sdCardPath.getPath().contains(FrvaModel.LIBRARYPATH);
   }
 
   /**
@@ -154,7 +167,6 @@ public class SdCard {
     }
     return isEmpty;
   }
-
 
 
   /**

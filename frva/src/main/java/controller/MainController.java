@@ -107,7 +107,7 @@ public class MainController {
     //TODO get this working on Linux
     if (Desktop.isDesktopSupported()) {
       try {
-        Desktop.getDesktop().open(new File(model.LIBRARYPATH));
+        Desktop.getDesktop().open(selectedFile);
       } catch (IOException e) {
         logger.info(e.getMessage());
       }
@@ -198,6 +198,7 @@ public class MainController {
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
+    //TODO Deregister Listener?
     treeView.getCheckModel().getCheckedItems().addListener(new ListChangeListener() {
       @Override
       public void onChanged(Change c) {
