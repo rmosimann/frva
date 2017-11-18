@@ -78,34 +78,6 @@ public class MainController {
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     exportButton.setOnAction(event -> exportData());
     importSdCardButton.setOnAction(event -> importWizard());
-    treeView.getCheckModel().getCheckedItems().addListener(new ListChangeListener() {
-      @Override
-      public void onChanged(Change c) {
-        while (c.next()) {
-          if (c.wasAdded()) {
-            c.getAddedSubList().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
-              }
-            });
-          } else {
-            c.getRemoved().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
-              }
-            });
-          }
-        }
-      }
-    });
 
   }
 
@@ -225,6 +197,36 @@ public class MainController {
     }
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
+
+    treeView.getCheckModel().getCheckedItems().addListener(new ListChangeListener() {
+      @Override
+      public void onChanged(Change c) {
+        while (c.next()) {
+          if (c.wasAdded()) {
+            c.getAddedSubList().forEach(new Consumer() {
+              @Override
+              public void accept(Object o) {
+                if (o instanceof FrvaTreeMeasurementItem) {
+                  model.getCurrentSelectionList()
+                      .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
+                }
+              }
+            });
+          } else {
+            c.getRemoved().forEach(new Consumer() {
+              @Override
+              public void accept(Object o) {
+                if (o instanceof FrvaTreeMeasurementItem) {
+                  model.getCurrentSelectionList()
+                      .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
+                }
+              }
+            });
+          }
+        }
+      }
+    });
+
   }
 
 
