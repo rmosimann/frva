@@ -44,8 +44,6 @@ public class SdCard {
     sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
 
     try {
-      System.out.println("read in files" + sdCardPath.getPath());
-      System.out.println(sdCardPath.listFiles().length);
       dataFiles = lazyReadDatafiles(sdCardPath);
 
     } catch (FileNotFoundException e) {
@@ -61,7 +59,6 @@ public class SdCard {
    * @throws FileNotFoundException when path is not found.
    */
   public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
-    System.out.println("Read in files lazy");
     List<DataFile> returnList = new ArrayList<>();
     String line;
     String currentFile = "";
@@ -84,14 +81,12 @@ public class SdCard {
             currentFile = data[0];
             list.clear();
           }
-
           String[] temp = new String[data.length - 1];
           for (int i = 0; i < temp.length; i++) {
             temp[i] = data[i + 1];
           }
           list.add(temp);
         }
-
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -99,12 +94,10 @@ public class SdCard {
         returnList.add(new DataFile(this, new File(currentFile), list));
       }
     }
-
     return returnList;
   }
 
   private boolean isPathInLibrary() {
-    System.out.println(sdCardPath.getPath() + "is in lib?:" + this.sdCardPath.getPath().contains(FrvaModel.LIBRARYPATH));
     return this.sdCardPath.getPath().contains(FrvaModel.LIBRARYPATH);
   }
 
