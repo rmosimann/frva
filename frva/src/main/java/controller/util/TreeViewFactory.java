@@ -121,33 +121,4 @@ public class TreeViewFactory {
     checkBoxDeviceItem.addMeasureSequences(sdCardCount);
     treeView.setShowRoot(false);
   }
-
-  public static void createLazyTreeview(SdCard sdCard, TreeView<FrvaTreeRootItem> treeView,
-                                        FrvaModel model, boolean isPreview) {
-
-
-    FrvaTreeDeviceItem checkBoxDeviceItem = new FrvaTreeDeviceItem(sdCard.getDeviceSerialNr(),
-        sdCard.getDeviceSerialNr());
-
-    int sdCardCount = 0;
-    FrvaTreeSdCardItem sdCardItem = new FrvaTreeSdCardItem(sdCard);
-
-
-    TreeItem root = treeView.getRoot();
-
-    //Checks if Device has already been added (equals of Tree item... comparison over Serial)
-    if (root.getChildren().contains(checkBoxDeviceItem)) {
-      for (Object child : root.getChildren()) {
-        if (checkBoxDeviceItem.equals(child)) {
-          checkBoxDeviceItem = (FrvaTreeDeviceItem) child;
-        }
-      }
-    } else {
-      root.getChildren().add(checkBoxDeviceItem);
-    }
-
-
-  }
-
-
 }
