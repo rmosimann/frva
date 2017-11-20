@@ -17,15 +17,6 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     super(name);
   }
 
-  @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + "Root" + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 0;
-  }
 
   /**
    * Creates children as part of the LazyLoading procedure.

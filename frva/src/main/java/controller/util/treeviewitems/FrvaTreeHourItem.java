@@ -16,16 +16,6 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + hour + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 6;
-  }
-
-  @Override
   public void createChildren(List<SdCard> list) {
 
   }

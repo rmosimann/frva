@@ -46,17 +46,6 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";"
-        + sdCard.getPath().getAbsolutePath() + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 2;
-  }
-
-  @Override
   public void createChildren(List<SdCard> list) {
     this.getChildren().clear();
 

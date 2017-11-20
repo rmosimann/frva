@@ -16,16 +16,6 @@ public class FrvaTreeDayItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + day + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 5;
-  }
-
-  @Override
   public void createChildren(List<SdCard> list) {
   }
 

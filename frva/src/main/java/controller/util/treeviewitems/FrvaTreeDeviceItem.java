@@ -21,17 +21,6 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";"
-        + this.getValue().toString() + ";" + deviceSerialNr + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 1;
-  }
-
-  @Override
   public void createChildren(List<SdCard> list) {
     for (SdCard sdCard : list) {
       FrvaTreeItem sdCardItem = new FrvaTreeSdCardItem(sdCard);
@@ -57,5 +46,6 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   public boolean equals(Object o) {
     return o instanceof FrvaTreeDeviceItem
         && this.deviceSerialNr.equals(((FrvaTreeDeviceItem) o).deviceSerialNr);
+
   }
 }

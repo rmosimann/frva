@@ -16,16 +16,6 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
   private String month;
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + month + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 4;
-  }
-
-  @Override
   public void createChildren(List<SdCard> list) {
   }
 
