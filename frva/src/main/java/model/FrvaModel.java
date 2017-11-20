@@ -4,24 +4,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -33,7 +30,13 @@ import model.data.MeasureSequence;
 import model.data.SdCard;
 
 public class FrvaModel {
+
+
+  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator
+      + "FRVA" + File.separator;
+
   private final Logger logger = Logger.getLogger("FRVA");
+  private final Set<SdCard> cache = new HashSet<>();
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
@@ -44,7 +47,6 @@ public class FrvaModel {
     return t;
   });
 
-  private String libraryPath;
 
   /**
    * Constructor for a new Model.
@@ -53,143 +55,87 @@ public class FrvaModel {
     loadLibrary();
   }
 
+  /**
+   * Loads existing Library or creates new one, when LibraryPath is empty.
+   */
   private void loadLibrary() {
-    libraryPath = System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
+    logger.info("Library path is set to " + LIBRARYPATH);
 
-    String libraryPathAbsolute = "file:" + File.separator + File.separator + libraryPath;
-
-    logger.info("Library path is set to " + libraryPath);
-
-    File folder = new File(libraryPath);
+    File folder = new File(LIBRARYPATH);
     if (!folder.exists()) {
       setUpLibrary(folder);
     }
 
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
-        try {
-          URL sdcard = new URI(libraryPathAbsolute + sdfolder.getName()).toURL();
-
-          library.add(new SdCard(sdcard, null));
-
-        } catch (Exception e) {
-          logger.info(e.getMessage());
-        }
+        library.add(new SdCard(sdfolder, sdfolder.getName(), this));
       }
-
     }
   }
 
-
+  /**
+   * Adds entry for a new tab to selection List.
+   *
+   * @param tabId ID that is specified in the created tab.
+   */
   public void addSelectionMapping(int tabId) {
     selectionMap.put(tabId, FXCollections.observableArrayList());
   }
 
+  /**
+   * Removes entry for a closed tab in the selection List.
+   *
+   * @param tabId ID that is specified in the tab.
+   */
   public void removeSelectionMapping(int tabId) {
     selectionMap.remove(tabId);
   }
 
-  public ObservableList<MeasureSequence> getCurrentSelectionList() {
-    return selectionMap.get(currentlySelectedTab.get());
-  }
-
-  public String getApplicationName() {
-    return applicationName;
-  }
-
-  public List<SdCard> getLibrary() {
-    return library;
-  }
-
-  public void addSdCard(SdCard sdCard) {
-    library.add(sdCard);
-  }
-
-  public void addMeasurementsToLibrary(List<MeasureSequence> listToAdd) {
-
-  }
-
-  public void setCurrentlySelectedTab(int currentlySelectedTab) {
-    this.currentlySelectedTab.set(currentlySelectedTab);
-  }
-
-  public ObservableList<MeasureSequence> getObservableList(int mapKey) {
-    return selectionMap.get(mapKey);
-  }
-
-  public IntegerProperty getCurrentlySelectedTabProperty() {
-    return currentlySelectedTab;
-  }
-
-  public Executor getExecutor() {
-    return executor;
-  }
-
 
   /**
-   * Delets a MeasuremnetSequence from the library and selection.
+   * Delets a MeasurementSequence from the library and model.
    *
-   * @param list List of MesurementSequences to deleteFile.
+   * @param measureSequences List of MesurementSequences to deleteFile.
    */
-  public void deleteMeasureSequences(List<MeasureSequence> list) {
-    if (confirmDelete(list.stream().filter(Objects::nonNull).count())) {
-      Set<DataFile> set = new HashSet<>();
-      for (SdCard sdCard : library) {
-        for (DataFile dataFile : sdCard.getDataFiles()) {
-          dataFile.getMeasureSequences().removeAll(list);
-        }
-      }
-      for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
-        measureSequenceList.removeAll(list);
-        for (MeasureSequence ms : list) {
-          if (ms != null) {
-            set.add(ms.getDataFile());
-          }
-        }
-      }
+  public void deleteMeasureSequences(List<MeasureSequence> measureSequences) {
+    Vector<SdCard> changedSdcards = new Vector<>();
+    Vector<DataFile> changedDataFiles = new Vector<>();
 
-      updateLibrary(set);
-
+    for (MeasureSequence ms : measureSequences) {
+      logger.info("Deleting MesureSequnce: " + ms.getId());
+      ms.getDataFile().getMeasureSequences().remove(ms);
+      changedSdcards.add(ms.getDataFile().getSdCard());
+      changedDataFiles.add(ms.getDataFile());
+      ms.setDeleted(true);
     }
 
-  }
+    changedDataFiles.forEach(dataFile -> {
+      dataFile.removeMeasureSequences(
+          measureSequences.stream()
+              .filter(measureSequence -> {
+                return measureSequence.getDataFile().equals(dataFile);
+              })
+              .collect(Collectors.toList())
+      );
+    });
 
-  /**
-   * Writes changes to the library.
-   *
-   * @param list a List of all manipulated Files.
-   */
-  public void updateLibrary(Set<DataFile> list) {
-    Writer writer = null;
+    changedSdcards.forEach(sdCard -> {
+      sdCard.serialize();
+    });
 
-    for (DataFile d : list) {
-      try {
-        File file = new File(libraryPath + d.getSdCard().getName()
-            + File.separator + d.getFolderName() + File.separator + d.getOriginalFileName());
-        logger.info("rewrite File " + d.getOriginalFileName());
-        writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-        for (MeasureSequence ms : d.getMeasureSequences()) {
-          writer.write(ms.getCsv());
-          writer.flush();
-        }
-
-        writer.close();
-      } catch (IOException e) {
-        logger.info(e.getMessage());
-      }
+    for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
+      measureSequenceList.removeAll(measureSequences);
     }
-
-    cleanUpLibrary();
   }
 
 
   /**
    * Writes Data from SDCARDs to Files, in original format.
-   *
-   * @param list List of SDCARD to save.
-   * @param exportPath the path where the SDCARD is exported to.
+   * @param list       List of MeasurementSequences to save.
+   * @param exportPath the path where the SDCARDs are exported to.
+   * @return a list of the written SDCARDS.
    */
-  public List<SdCard> writeData(List<MeasureSequence> list, Path exportPath) {
+  public List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath) {
     List<SdCard> returnList = new ArrayList<>();
     SdCard sdCard = null;
     String currentFolder = null;
@@ -197,14 +143,14 @@ public class FrvaModel {
     List<File> sdCardFolderList = new ArrayList<>();
     for (MeasureSequence measureSequence : list) {
       try {
-        if (!measureSequence.getDataFile().getSdCard().equals(sdCard)) {
-          sdCard = measureSequence.getDataFile().getSdCard();
+        if (!measureSequence.getContainingSdCard().equals(sdCard)) {
+          sdCard = measureSequence.getContainingSdCard();
           path = exportPath.toString() + File.separator + sdCard.getName();
           File card = new File(path);
           sdCardFolderList.add(card);
 
           if (card.exists()) {
-            if (confirmOverriding(path, card)) {
+            if (confirmOverriding(path)) {
               deleteFile(card);
             } else {
               logger.info("Export cancelled");
@@ -214,13 +160,10 @@ public class FrvaModel {
           //Create SD Card Folder
           if (card.mkdirs()) {
             logger.info("Created SD-Card: " + path);
-            //Create Calibration Files
             writeCalibrationFiles(sdCard, path);
             currentFolder = null;
           }
-
         }
-
 
         if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
           path += File.separator + measureSequence.getDataFile().getFolderName();
@@ -233,13 +176,13 @@ public class FrvaModel {
         }
 
         File file = new File(path + File.separator
-            + measureSequence.getDataFile().getOriginalFileName());
+            + measureSequence.getDataFile().getDataFileName());
         Writer writer;
 
         if (!file.exists()) {
           writer = Files.newBufferedWriter(Paths.get(file.toURI()));
           logger.info("Created file: " + path + File.separator
-              + measureSequence.getDataFile().getOriginalFileName());
+              + measureSequence.getDataFile().getDataFileName());
         } else {
           writer = new FileWriter(file, true);
         }
@@ -252,12 +195,7 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      try {
-        returnList.add(new SdCard(f.toURI().toURL(), null));
-      } catch (MalformedURLException e) {
-        logger.info(e.getMessage());
-      }
-
+      returnList.add(new SdCard(f, null, this));
     }
     return returnList;
   }
@@ -276,7 +214,7 @@ public class FrvaModel {
     logger.info("Created Calibration Files");
   }
 
-  private boolean confirmOverriding(String path, File card) {
+  private boolean confirmOverriding(String path) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("Warning");
     alert.setHeaderText("Directory already exists");
@@ -286,21 +224,12 @@ public class FrvaModel {
     return result.get() == ButtonType.OK;
   }
 
-  private boolean confirmDelete(long amount) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("Warning");
-    alert.setHeaderText(amount + " Measurements are going to be deleted.");
-    alert.setContentText("This action cannot be undone \nDo you want to continue?");
-    Optional<ButtonType> result = alert.showAndWait();
-    return result.get() == ButtonType.OK;
-  }
-
 
   private boolean setUpLibrary(File path) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("No Library");
     alert.setHeaderText("No library has been found.");
-    alert.setContentText("Library is going to be set up at " + libraryPath);
+    alert.setContentText("Library is going to be set up at " + LIBRARYPATH);
     Optional<ButtonType> result = alert.showAndWait();
     if (result.get() == ButtonType.OK) {
       return path.mkdirs();
@@ -315,34 +244,6 @@ public class FrvaModel {
     return false;
   }
 
-  /**
-   * Getter to read all MeasurementSequences in the Library.
-   *
-   * @return List of MeasurementSequences.
-   */
-  public List<MeasureSequence> getLibraryAsMeasureSequences() {
-
-    List<MeasureSequence> list = new ArrayList<>();
-    for (SdCard sdCard : library) {
-      list.addAll(sdCard.getMeasureSequences());
-    }
-    return list;
-  }
-
-  /**
-   * Removes empty SDCARDs from library.
-   */
-  public void cleanUpLibrary() {
-    Iterator<SdCard> it = library.listIterator();
-    while (it.hasNext()) {
-      SdCard sdCard = it.next();
-      if (sdCard.isEmpty()) {
-        deleteFile(new File(sdCard.getPath().getFile()));
-        it.remove();
-
-      }
-    }
-  }
 
   /**
    * Deletes a specific file.
@@ -355,25 +256,50 @@ public class FrvaModel {
         deleteFile(f);
       }
     }
-    logger.info("deleteFile file " + file);
+    file.delete();
+    logger.info("Deleted File:" + file);
   }
-
-  public String getLibraryPath() {
-    return libraryPath;
-  }
-
 
   /**
-   * Returns the number of measuresequences in the library.
+   * Getter to read all MeasurementSequences in the Library.
+   *
+   * @return List of MeasurementSequences.
    */
-  public int getLibrarySize() {
-    int sum = 0;
-    for (SdCard sdcard : library) {
-      for (DataFile d : sdcard.getDataFiles()) {
-        sum += d.getMeasureSequences().size();
-      }
-
+  public List<MeasureSequence> getAllMeasureSequences() {
+    List<MeasureSequence> list = new ArrayList<>();
+    for (SdCard sdCard : library) {
+      list.addAll(sdCard.getMeasureSequences());
     }
-    return sum;
+    return list;
   }
+
+
+  public List<SdCard> getLibrary() {
+    return library;
+  }
+
+  public Executor getExecutor() {
+    return executor;
+  }
+
+  public String getApplicationName() {
+    return applicationName;
+  }
+
+  public ObservableList<MeasureSequence> getCurrentSelectionList() {
+    return selectionMap.get(currentlySelectedTab.get());
+  }
+
+  public IntegerProperty getCurrentlySelectedTabProperty() {
+    return currentlySelectedTab;
+  }
+
+  public void setCurrentlySelectedTab(int currentlySelectedTab) {
+    this.currentlySelectedTab.set(currentlySelectedTab);
+  }
+
+  public ObservableList<MeasureSequence> getObservableList(int mapKey) {
+    return selectionMap.get(mapKey);
+  }
+
 }

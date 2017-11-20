@@ -1,10 +1,15 @@
 package model.data;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 public class MeasureSequence {
 
@@ -24,62 +29,86 @@ public class MeasureSequence {
   private final String sequenceUuid;
   private final DataFile dataFile;
   private ReflectionIndices reflectionIndices;
+  private BooleanProperty deleted;
+
 
   public enum SequenceKeyName {
     VEG,
     WR,
     DC_VEG,
     DC_WR,
-
     RADIANCE_VEG,
     RADIANCE_WR,
-
     REFLECTANCE;
   }
 
 
   /**
-   * Constructor for a MeasurementSequence.
+   * Constructor for an empty MeasurementSequence. Only Metadata is stored
    *
-   * @param input    a StringArray containing the measurements
+   * @param metadata String containing the metadata
    * @param dataFile contains the path to the datafiles.
    */
-  public MeasureSequence(List<String> input, DataFile dataFile) {
+  public MeasureSequence(String metadata, DataFile dataFile) {
     sequenceUuid = UUID.randomUUID().toString();
-    metadata = input.get(0).split(";");
+    this.metadata = metadata.split(";");
     this.dataFile = dataFile;
-
-    for (int i = 1; i < input.size(); i++) {
-      String[] tmp = input.get(i).split(";");
-
-      SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
-
-      measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
-          .mapToDouble(Double::parseDouble)
-          .toArray());
-    }
-  }
-
-  public String[] getMetadata() {
-    return metadata;
-  }
-
-
-  public Map<SequenceKeyName, double[]> getMeasurements() {
-    return measurements;
+    this.deleted = new SimpleBooleanProperty(false);
   }
 
   /**
-   * Prints the content of the MeasureSequence to the console.
+   * Constructor, same as above.
+   *
+   * @param metadata String containing the metadata.
+   * @param dataFile contains the path to the datafiles.
    */
-  public void print() {
-    Arrays.stream(metadata).forEach(a -> System.out.print(a + " "));
+  public MeasureSequence(String[] metadata, DataFile dataFile) {
+    sequenceUuid = UUID.randomUUID().toString();
+    this.metadata = metadata;
+    this.dataFile = dataFile;
+    this.deleted = new SimpleBooleanProperty(false);
+  }
 
-    for (Map.Entry<SequenceKeyName, double[]> entry : measurements.entrySet()) {
-      System.out.println();
-      System.out.print(entry.getKey());
-      Arrays.stream(entry.getValue()).forEach(a -> System.out.print(a + " "));
+
+  private void readInMeasurements() {
+    boolean found = false;
+    String[] input = new String[5];
+    String line = "";
+    try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
+      while ((line = br.readLine()) != null) {
+        if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
+          if (line.split(";")[0].equals(this.getId())) {
+            found = true;
+            input[0] = line;
+            br.readLine();
+            //Read Measurement Sequence
+            for (int i = 1; i < 5; i++) {
+              input[i] = br.readLine();
+              br.readLine();
+            }
+            for (int i = 1; i < input.length; i++) {
+              String[] tmp = input[i].split(";");
+              SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
+              measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
+                  .mapToDouble(Double::parseDouble)
+                  .toArray());
+            }
+          }
+          //skip 9 lines // because of empty lines
+          for (int i = 0; i < 9; i++) {
+            br.readLine();
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+
+    if (!found) {
+      throw new NoSuchElementException("Element with ID " + this.getId()
+          + " has not been found in file " + dataFile.getOriginalFile().getPath());
+    }
+
   }
 
 
@@ -89,6 +118,12 @@ public class MeasureSequence {
    * @return a string containing the data.
    */
   public String getCsv() {
+
+
+    if (measurements.isEmpty()) {
+      readInMeasurements();
+    }
+
     StringBuilder sb = new StringBuilder();
     Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
     for (int i = 0; i < 988; i++) {
@@ -169,7 +204,6 @@ public class MeasureSequence {
 
   /**
    * Getter for the Date of the Sequence.
-   *
    * @return Date as String of Type YY-MM-DD.
    */
   public String getDate() {
@@ -288,5 +322,91 @@ public class MeasureSequence {
 
   public boolean hasMeasurements() {
     return this.measurements != null;
+  }
+
+  /**
+   * Returns Year created as a String.
+   *
+   * @return year created.
+   */
+  public String getYear() {
+    return "20" + this.getDate().substring(0, 2);
+  }
+
+  /**
+   * Getter for Month of measurement.
+   * @return month as String.
+   */
+  public String getMonth() {
+    switch (this.getDate().substring(3, 5)) {
+      case "01":
+        return "JAN";
+      case "02":
+        return "FEB";
+      case "03":
+        return "MAR";
+      case "04":
+        return "APR";
+      case "05":
+        return "MAY";
+      case "06":
+        return "JUN";
+      case "07":
+        return "JUL";
+      case "08":
+        return "AUG";
+      case "09":
+        return "SEP";
+      case "10":
+        return "OCT";
+      case "11":
+        return "NOV";
+      case "12":
+        return "DEC";
+      default:
+        return "ERROR";
+    }
+  }
+
+
+  public SdCard getContainingSdCard() {
+    return this.dataFile.getSdCard();
+  }
+
+
+  /**
+   * Getter for the measurment Data.
+   * @return the measurements as map.
+   */
+  public Map<SequenceKeyName, double[]> getMeasurements() {
+    if (measurements.isEmpty()) {
+      readInMeasurements();
+    }
+    return measurements;
+  }
+
+  /**
+   * Getter for the metadata.
+   * @return metadaa as String.
+   */
+  public String getMetadataAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (String s : metadata) {
+      sb.append(s);
+      sb.append(";");
+    }
+    return sb.toString();
+  }
+
+  public void setDeleted(boolean deleted) {
+    this.deleted.set(deleted);
+  }
+
+  public boolean isDeleted() {
+    return deleted.get();
+  }
+
+  public BooleanProperty deletedProperty() {
+    return deleted;
   }
 }
