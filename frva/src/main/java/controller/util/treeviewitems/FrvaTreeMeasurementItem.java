@@ -62,11 +62,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     }
   };
 
-  @Override
-  public int getDepth() {
-    return 7;
-  }
-
 
   /**
    * Getter for the Measurementsequence.
@@ -94,11 +89,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
 
   private String checkFile() {
     return file.getAbsolutePath();
-  }
-
-  public String serialize() {
-    return getId() + ";" + this.getDepth() + ";" + this.getValue().toString() + ";"
-        + checkFile() + ";";
   }
 
   @Override

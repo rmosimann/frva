@@ -10,16 +10,6 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";" + this.getValue().toString() + ";" + "Root" + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 0;
-  }
-
-  @Override
   public void createChildren() {
   }
 }

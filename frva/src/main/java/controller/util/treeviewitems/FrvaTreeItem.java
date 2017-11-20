@@ -33,9 +33,5 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
     //TODO: wrong value
   }
 
-  public abstract String serialize();
-
-  public abstract int getDepth();
-
   public abstract void createChildren();
 }

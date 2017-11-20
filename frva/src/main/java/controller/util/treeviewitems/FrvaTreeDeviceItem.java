@@ -13,17 +13,6 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   }
 
   @Override
-  public String serialize() {
-    return "-1" + ";" + this.getDepth() + ";"
-        + this.getValue().toString() + ";" + deviceSerialNr + ";";
-  }
-
-  @Override
-  public int getDepth() {
-    return 1;
-  }
-
-  @Override
   public void createChildren() {
   }
 
