@@ -1,29 +1,55 @@
 package controller;
 
-import controller.util.bluetooth.BluetoothConnection;
-import java.util.Optional;
+import controller.util.bluetooth.ConnectionState;
+import controller.util.bluetooth.ConnectionStateBltOff;
+import controller.util.bluetooth.ConnectionStateInit;
+import java.util.List;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javax.bluetooth.ServiceRecord;
 import model.FrvaModel;
 
 
 public class LiveViewController {
   private final FrvaModel model;
-  private State state;
-  private Node viewNode;
+  private Node activeView;
 
-  public void setViewNode(Node viewNode) {
-    this.viewNode = viewNode;
-  }
+  List<ServiceRecord[]> availableServiceRecords;
 
-  public Node getViewNode() {
-    return viewNode;
-  }
+  private ConnectionState state;
+  private ConnectionState bltoff = new ConnectionStateBltOff(this);
+  private ConnectionState searching;
+  private ConnectionState initState = new ConnectionStateInit(this);
 
-  public enum State {
-    INIT, BLUETOOTH_OFF, LIST_DEVICES, CONNECTING, CONNECTED, CONNECTION_FAILED;
-  }
+  @FXML
+  private HBox messageBOxOutgreyHbox;
+
+  @FXML
+  private HBox messageBoxHbox;
+
+  @FXML
+  private Label messageBoxTitleLabel;
+
+  @FXML
+  private Label messageBoxTextLabel;
+
+  @FXML
+  private Button cancelButton;
+
+  @FXML
+  private HBox messageBoxSearchingHbox;
+
+  @FXML
+  private Label messageBoxTitleSearchingLabel;
+
+  @FXML
+  private HBox messageBoxConnectToHbox;
+
+  @FXML
+  private Label messageBoxTitleSelectLabel;
 
   /**
    * Constructor.
@@ -31,47 +57,54 @@ public class LiveViewController {
    * @param model the one and only model.
    */
   public LiveViewController(FrvaModel model) {
-    state = State.INIT;
-    if (!BluetoothConnection.isBluetoothOn()) {
-      state = State.BLUETOOTH_OFF;
-      displayBluetoothOffDialog();
-    }
+    state = initState;
     this.model = model;
     addListeners();
   }
 
   private void addListeners() {
     model.activeViewProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.equals(viewNode)) {
-        //do something
+      if (newValue.equals(activeView)) {
+        state.handle();
       }
     });
   }
 
+
   /**
-   * Shows dialog when bluetooth is powered off.
+   * Displays a dialog to indicate that the BLuetooth is off.
+   * @param active  true displays, false not.
    */
-  public void displayBluetoothOffDialog() {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Bluetooth is off");
-    alert.setHeaderText(null);
-    alert.setContentText("You need to turn on Bluetooth to use LiveView");
-
-
-    Optional<ButtonType> result = alert.showAndWait();
-    if (result.get() == ButtonType.OK) {
-      // ... user chose OK
-    } else {
-      // ... user chose CANCEL or closed the dialog
-    }
-
+  public void displayBluetoothOffDialog(boolean active) {
+    messageBOxOutgreyHbox.setVisible(active);
+    messageBoxHbox.setVisible(active);
+    cancelButton.setOnAction(event -> state.handle());
   }
 
-  public void displayBluetoothDevicesDialog() {
 
+  public void setActiveView(Node activeView) {
+    this.activeView = activeView;
   }
 
-  public void bla() {
+  public Node getActiveView() {
+    return activeView;
+  }
 
+  public void setState(ConnectionState state) {
+    this.state = state;
+  }
+
+  public void displaySearchingDialog(boolean active) {
+    messageBOxOutgreyHbox.setVisible(active);
+    messageBoxSearchingHbox.setVisible(active);
+  }
+
+
+  public List<ServiceRecord[]> getAvailableServiceRecords() {
+    return availableServiceRecords;
+  }
+
+  public void setAvailableServiceRecords(List<ServiceRecord[]> availableServiceRecords) {
+    this.availableServiceRecords = availableServiceRecords;
   }
 }

@@ -133,5 +133,66 @@
                 </Label>
             </children>
         </VBox>
+        <HBox fx:id="messageBOxOutgreyHbox" alignment="CENTER" fillHeight="false" layoutX="33.0" layoutY="260.0"
+              opacity="0.52" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: grey;" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0"/>
+        <HBox fx:id="messageBoxHbox" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleLabel" layoutX="14.0" layoutY="38.0"
+                               text="BLuetooth is off/unavailable">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="messageBoxTextLabel" layoutX="14.0" layoutY="79.0" prefHeight="26.0"
+                               prefWidth="226.0" text="Bluetooth activate you must."/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <Button fx:id="cancelButton" layoutX="418.0" layoutY="160.0" mnemonicParsing="false"
+                                text="Refresh"/>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+        <HBox fx:id="messageBoxSearchingHbox" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleSearchingLabel" layoutX="14.0" layoutY="38.0"
+                               text="Searching for devices...">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <Button layoutX="423.0" layoutY="160.0" mnemonicParsing="false" text="Cancel"/>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+        <HBox fx:id="messageBoxConnectToHbox" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleSelectLabel" layoutX="14.0" layoutY="38.0" text="Connect to:">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <VBox layoutX="96.0" layoutY="92.0" prefHeight="94.0" prefWidth="308.0"/>
+                        <Button layoutX="418.0" layoutY="160.0" mnemonicParsing="false" text="Refresh"/>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
     </children>
 </AnchorPane>

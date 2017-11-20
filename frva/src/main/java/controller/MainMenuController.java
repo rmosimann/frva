@@ -50,7 +50,7 @@ public class MainMenuController {
       LiveViewController liveViewController = new LiveViewController(model);
       loader.setController(liveViewController);
       liveViewNode = loader.load();
-      liveViewController.setViewNode(liveViewNode);
+      liveViewController.setActiveView(liveViewNode);
 
 
       loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
