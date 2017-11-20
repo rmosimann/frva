@@ -190,11 +190,14 @@ public class MainController {
   }
 
   private void loadTreeStructure() {
-    treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    for (SdCard sdCard : model.getLibrary()) {
+    FrvaTreeRootItem root= new FrvaTreeRootItem("Library");
+    root.createChildren(model.getLibrary());
+    treeView.setRoot(root);
+
+    /*for (SdCard sdCard : model.getLibrary()) {
       TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
-    }
+    }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 

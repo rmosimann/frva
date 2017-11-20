@@ -1,5 +1,8 @@
 package controller.util.treeviewitems;
 
+import java.util.List;
+import model.data.SdCard;
+
 /**
  * Created by patrick.wigger on 03.11.17.
  */
@@ -26,7 +29,7 @@ public class FrvaTreeYearItem extends FrvaTreeItem {
   }
 
   @Override
-  public void createChildren() {
+  public void createChildren(List<SdCard> list) {
 
   }
 }
