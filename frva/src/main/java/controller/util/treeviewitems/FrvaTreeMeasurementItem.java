@@ -26,7 +26,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
    * @param isPreview true when only used for preview.
    */
   public FrvaTreeMeasurementItem(String name, MeasureSequence ms,
-                                  boolean isPreview) {
+                                 boolean isPreview) {
     super(name);
     this.measureSequence = ms;
     this.id = ms.getId();

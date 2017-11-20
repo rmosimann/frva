@@ -27,11 +27,16 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     return 0;
   }
 
-
+  /**
+   * Creates children as part of the LazyLoading procedure.
+   *
+   * @param list of which the treeview should be created from
+   */
   public void createChildren(List<SdCard> list) {
 
-    List<String> deviceNames= list.stream().map(f -> (f.getDeviceSerialNr())).collect(Collectors.toList());
-    boolean containesItemAlready=false;
+    List<String> deviceNames = list.stream().map(f -> (f.getDeviceSerialNr()))
+        .collect(Collectors.toList());
+    boolean containesItemAlready = false;
     for (String deviceName : deviceNames) {
       FrvaTreeItem deviceItem = new FrvaTreeDeviceItem(deviceName, deviceName);
       Iterator it = this.getChildren().iterator();
@@ -39,11 +44,13 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
         Object currentElement = it.next();
         if (deviceItem.equals(currentElement)) {
           deviceItem = (FrvaTreeDeviceItem) currentElement;
-          containesItemAlready=true;
+          containesItemAlready = true;
 
         }
       }
-      if(!containesItemAlready){this.getChildren().add(deviceItem);}
+      if (!containesItemAlready) {
+        this.getChildren().add(deviceItem);
+      }
       deviceItem.createChildren(list);
     }
   }

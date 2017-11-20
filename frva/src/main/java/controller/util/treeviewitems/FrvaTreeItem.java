@@ -16,6 +16,7 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
 
   /**
    * Constructor.
+   *
    * @param name the name of this Item.
    */
   public FrvaTreeItem(String name) {
@@ -32,7 +33,6 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
   public void addMeasureSequences(int containingMeasureSequences) {
     this.containingMeasureSequences += containingMeasureSequences;
     setValue(name + " (" + this.containingMeasureSequences + ")");
-    //TODO: wrong value
   }
 
   public abstract String serialize();

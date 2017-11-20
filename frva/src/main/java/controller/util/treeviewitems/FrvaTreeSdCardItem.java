@@ -17,22 +17,27 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   private SdCard sdCard;
   private boolean loaded;
 
+  /**
+   * Creates a SdCard item.
+   * @param sdCard the sdCard the item is referring to.
+   */
   public FrvaTreeSdCardItem(SdCard sdCard) {
     super(sdCard.getName());
     this.sdCard = sdCard;
-    loaded=false;
+    loaded = false;
     addListeners();
   }
 
   private void addListeners() {
     this.expandedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      public void changed(ObservableValue<? extends Boolean> observable,
+                          Boolean oldValue, Boolean newValue) {
         List sdCards = new ArrayList();
         sdCards.add(sdCard);
-        if (newValue&&!loaded) {
+        if (newValue && !loaded) {
           createChildren(sdCards);
-          loaded=true;
+          loaded = true;
         }
 
       }
