@@ -176,8 +176,8 @@
                 </Pane>
             </children>
         </HBox>
-        <HBox fx:id="messageBoxConnectToHbox" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
-              prefHeight="100.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0"
+        <HBox fx:id="messageBoxAvailableDevicesHbox" alignment="CENTER" fillHeight="false" layoutX="43.0"
+              layoutY="270.0" prefHeight="100.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
@@ -188,7 +188,8 @@
                             </font>
                         </Label>
                         <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
-                        <VBox layoutX="96.0" layoutY="92.0" prefHeight="94.0" prefWidth="308.0"/>
+                        <VBox fx:id="AvailableDevicesListVbox" layoutX="96.0" layoutY="92.0" prefHeight="94.0"
+                              prefWidth="308.0"/>
                         <Button layoutX="418.0" layoutY="160.0" mnemonicParsing="false" text="Refresh"/>
                     </children>
                 </Pane>
