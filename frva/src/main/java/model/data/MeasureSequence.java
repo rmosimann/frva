@@ -25,7 +25,6 @@ public class MeasureSequence {
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
   private final String[] metadata;
-  //  private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
   private ReflectionIndices reflectionIndices;
