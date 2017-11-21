@@ -177,7 +177,7 @@ public class MainController {
     try {
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/tabContent.fxml"));
-      loader.setController(new TabController(model, newTabId));
+      loader.setController(new TabController(model, newTabId, this));
       newtab.setContent(loader.load());
     } catch (IOException e) {
       e.printStackTrace();
@@ -255,7 +255,10 @@ public class MainController {
   }
 
 
-  private void unselectTickedItems() {
+  /**
+   * Deselects all Measurements in the TreeView.
+   */
+  public void unselectTickedItems() {
     if (treeView.getSelectionModel().getSelectedItems().size() > 1) {
       treeView.getSelectionModel().getSelectedItems().forEach(item ->
           ((FrvaTreeItem) item).setSelected(false));

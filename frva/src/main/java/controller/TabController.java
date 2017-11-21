@@ -44,6 +44,7 @@ import model.data.MeasureSequence;
 public class TabController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
+  private final MainController mainController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
@@ -176,12 +177,13 @@ public class TabController {
 
   /**
    * Constructor for new TabController.
-   *
    * @param model     The one and only Model.
    * @param thisTabId the ID of this Tab.
+   * @param mainController  The MainController containing this tab.
    */
-  public TabController(FrvaModel model, int thisTabId) {
+  public TabController(FrvaModel model, int thisTabId, MainController mainController) {
     this.model = model;
+    this.mainController = mainController;
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
     listToWatch = model.getObservableList(thisTabId);
@@ -302,12 +304,6 @@ public class TabController {
 
         } else {
           displayMessageBox(true, change.getAddedSubList().size());
-          ignoreLimitButton.setOnAction(event -> {
-            ignoreMaxToProcess = true;
-            change.getAddedSubList().forEach(this::addSingleSequence);
-            actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
-                !actualShowingSeqeunces.contains(sequence)));
-          });
           actualShowingSeqeunces.removeAll(change.getAddedSubList());
         }
       }
@@ -317,14 +313,24 @@ public class TabController {
   private void displayMessageBox(boolean active, int ammount) {
     if (!(messageBox.isVisible() && active)) {
       messageBox.setVisible(active);
-      messageBoxTitleLabel.setText("You selected too much");
-      messageBoxTextLabel.setText("You selected " + ammount + " measurements at once. That will take a long time to display.");
+      messageBoxTitleLabel.setText("Selection to big to display");
+      messageBoxTextLabel.setText("You selected " + ammount + " measurements at once. "
+          + "\nThis will take a long time to display.");
       messageBoxButtonHBox.getChildren().clear();
-      Button a = new Button();
-      a.setText("draw anyway...");
-      Button b = new Button();
-      b.setText("deselect all");
-      messageBoxButtonHBox.getChildren().addAll(b, a);
+      Button drawAnywayButton = new Button();
+      drawAnywayButton.setText("Draw anyway...");
+      drawAnywayButton.setOnAction(event -> {
+        ignoreMaxToProcess = true;
+        actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
+            !actualShowingSeqeunces.contains(sequence)));
+        displayMessageBox(false, 0);
+      });
+      Button deselectAllButton = new Button();
+      deselectAllButton.setText("Deselect all");
+      deselectAllButton.setOnAction(event -> {
+        mainController.unselectTickedItems();
+      });
+      messageBoxButtonHBox.getChildren().addAll(deselectAllButton, drawAnywayButton);
     }
   }
 
