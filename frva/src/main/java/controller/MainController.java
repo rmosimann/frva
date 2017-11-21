@@ -125,7 +125,7 @@ public class MainController {
         }
       }
       treeView.getCheckModel().clearChecks();
-<model.deleteMeasureSequences(measurements);
+      model.deleteMeasureSequences(measurements);
     }
   }
 
