@@ -25,7 +25,6 @@ public class MeasureSequence {
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
   private final String[] metadata;
-  private final Map<SequenceKeyName, double[]> measurements = new HashMap<>();
   private final String sequenceUuid;
   private final DataFile dataFile;
   private ReflectionIndices reflectionIndices;
@@ -70,7 +69,13 @@ public class MeasureSequence {
   }
 
 
-  private void readInMeasurements() {
+  /**
+   * Returns the Measurements, fresh from the file.
+   *
+   * @return A Map with all the measurements.
+   */
+  public Map<SequenceKeyName, double[]> getMeasurements() {
+    Map<SequenceKeyName, double[]> measurements = new HashMap<>();
     boolean found = false;
     String[] input = new String[5];
     String line = "";
@@ -109,7 +114,7 @@ public class MeasureSequence {
       throw new NoSuchElementException("Element with ID " + this.getId()
           + " has not been found in file " + dataFile.getOriginalFile().getPath());
     }
-
+    return measurements;
   }
 
 
@@ -119,17 +124,13 @@ public class MeasureSequence {
    * @return a string containing the data.
    */
   public String getCsv() {
-
-
-    if (measurements.isEmpty()) {
-      readInMeasurements();
-    }
-
     StringBuilder sb = new StringBuilder();
     Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
     for (int i = 0; i < 988; i++) {
       sb.append(";");
     }
+
+    Map<SequenceKeyName, double[]> measurements = getMeasurements();
 
     sb.append("\n\n" + "WR" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.WR)).forEach(a -> sb.append((int) a + ";"));
@@ -205,6 +206,7 @@ public class MeasureSequence {
 
   /**
    * Getter for the Date of the Sequence.
+   *
    * @return Date as String of Type YY-MM-DD.
    */
   public String getDate() {
@@ -230,6 +232,8 @@ public class MeasureSequence {
     double[] waveCalibration = dataFile.getSdCard().getCalibrationFile().getWl_F1();
     double[] vegCalibration = dataFile.getSdCard().getCalibrationFile().getDw_coef_F1();
     double[] wrCalibration = dataFile.getSdCard().getCalibrationFile().getUp_coef_F1();
+
+    Map<SequenceKeyName, double[]> measurements = getMeasurements();
 
     double[] vegs = measurements.get(SequenceKeyName.VEG);
     double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
@@ -321,10 +325,6 @@ public class MeasureSequence {
     return dataFile;
   }
 
-  public boolean hasMeasurements() {
-    return this.measurements != null;
-  }
-
   /**
    * Returns Year created as a String.
    *
@@ -336,6 +336,7 @@ public class MeasureSequence {
 
   /**
    * Getter for Month of measurement.
+   *
    * @return month as String.
    */
   public String getMonth() {
@@ -370,24 +371,9 @@ public class MeasureSequence {
   }
 
 
-  public SdCard getContainingSdCard() {
-    return this.dataFile.getSdCard();
-  }
-
-
-  /**
-   * Getter for the measurment Data.
-   * @return the measurements as map.
-   */
-  public Map<SequenceKeyName, double[]> getMeasurements() {
-    if (measurements.isEmpty()) {
-      readInMeasurements();
-    }
-    return measurements;
-  }
-
   /**
    * Getter for the metadata.
+   *
    * @return metadaa as String.
    */
   public String getMetadataAsString() {
@@ -397,6 +383,10 @@ public class MeasureSequence {
       sb.append(";");
     }
     return sb.toString();
+  }
+
+  public SdCard getContainingSdCard() {
+    return this.dataFile.getSdCard();
   }
 
   public void setDeleted(boolean deleted) {
