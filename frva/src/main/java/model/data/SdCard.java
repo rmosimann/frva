@@ -15,6 +15,7 @@ import model.FrvaModel;
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
+
   private File sdCardPath;
   private CalibrationFile calibrationFile;
   private String name;
@@ -26,6 +27,7 @@ public class SdCard {
    * @param name       the Name of that SDCARD.
    */
   public SdCard(File sdCardPath, String name) {
+
     this.sdCardPath = sdCardPath;
     if (name == null) {
       String[] arr = sdCardPath.getPath().split(File.separator);
@@ -38,8 +40,8 @@ public class SdCard {
 
 
     try {
-      dataFiles = lazyReadDatafiles(sdCardPath);
-
+      lazyReadDatafiles(sdCardPath);
+      System.out.println("datafiles now "+ dataFiles.size());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -52,14 +54,13 @@ public class SdCard {
    * @return A List of all contained DataFiles.
    * @throws FileNotFoundException when path is not found.
    */
-  public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
-    List<DataFile> returnList = new ArrayList<>();
+  public void lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
     String line;
     String currentFile = "";
     List<String[]> list = new ArrayList<>();
 
     if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
-      returnList = readDatafiles(sdCardPath);
+      dataFiles = readDatafiles(sdCardPath);
       if (this.isPathInLibrary()) {
         serialize();
       }
@@ -70,7 +71,7 @@ public class SdCard {
           String[] data = line.split(";");
           if (!data[0].equals(currentFile)) {
             if (list.size() > 0) {
-              returnList.add(new DataFile(this, new File(currentFile), list));
+              dataFiles.add(new DataFile(this, new File(currentFile), list));
             }
             currentFile = data[0];
             list.clear();
@@ -85,10 +86,9 @@ public class SdCard {
         e.printStackTrace();
       }
       if (list.size() > 0) {
-        returnList.add(new DataFile(this, new File(currentFile), list));
+        dataFiles.add(new DataFile(this, new File(currentFile), list));
       }
     }
-    return returnList;
   }
 
   private boolean isPathInLibrary() {
@@ -188,8 +188,11 @@ public class SdCard {
    */
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
+    System.out.println("Datafiles "+dataFiles.size());
     for (DataFile dataFile : dataFiles) {
       list.addAll(dataFile.getMeasureSequences());
+      System.out.println("MS  "+dataFile.getMeasureSequences().size());
+
     }
     return list;
   }
@@ -209,6 +212,7 @@ public class SdCard {
    * Writes the Metadata of all MeasurementSequences in this SDCARD to the db.csv file.
    */
   public void serialize() {
+    System.out.println("try to serialize");
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     if (file.getParentFile() != null) {
       file.getParentFile().mkdirs();

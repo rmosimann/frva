@@ -62,14 +62,8 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     }
-    TreeItem item = this;
-    while (!(item instanceof FrvaTreeSdCardItem)) {
-      item = item.getParent();
-    }
-    SdCard containingSdCard = ((FrvaTreeSdCardItem) item).getSdCard();
-    this.measureSequence = containingSdCard.readSingleMeasurementSequence(file, id, model);
-    addListener();
-    return this.measureSequence;
+    else{
+      System.out.println("No Measureseqence");return null;}
   }
 
 

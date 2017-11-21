@@ -1,10 +1,13 @@
 package model.data;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -34,6 +37,7 @@ public class MeasureSequence {
   public enum SequenceKeyName {
     VEG,
     WR,
+    WR2,
     DC_VEG,
     DC_WR,
     RADIANCE_VEG,
@@ -69,31 +73,74 @@ public class MeasureSequence {
   }
 
 
+  public Map<SequenceKeyName, double[]> getMeasurements() {
+    Map<SequenceKeyName, double[]> measurements = new HashMap<>();
+    String line = "";
+    boolean found = false;
+    boolean done = false;
+    try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
+      while ((line = br.readLine()) != null && !found) {
+
+        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0].equals(this.getId()))) {
+          //System.out.println("found Measurement " + line.charAt(0));
+          found = true;
+
+
+          while ((line = br.readLine()) != null && !done) {
+            if (line.length() > 0) {
+              if (Character.isDigit(line.charAt(0))) {
+                done = true;
+              } else {
+                String[] temp = line.split(";");
+                SequenceKeyName key = SequenceKeyName.valueOf(temp[0].toUpperCase());
+                System.out.println(temp[0].toUpperCase());
+
+                measurements.put(key, Arrays.stream(Arrays.copyOfRange(temp, 1, temp.length))
+                    .mapToDouble(Double::parseDouble)
+                    .toArray());
+              }
+            }
+          }
+        }
+
+      }
+      //TODO: better skip
+
+
+    } catch (IOException e) {
+    }
+    return measurements.isEmpty() ? null : measurements;
+  }
+
+
   /**
    * Returns the Measurements, fresh from the file.
    *
    * @return A Map with all the measurements.
    */
-  public Map<SequenceKeyName, double[]> getMeasurements() {
+  public Map<SequenceKeyName, double[]> getMeasurements2() {
     Map<SequenceKeyName, double[]> measurements = new HashMap<>();
     boolean found = false;
-    String[] input = new String[5];
+    String[] input = new String[7];
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
       while ((line = br.readLine()) != null) {
         if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
           if (line.split(";")[0].equals(this.getId())) {
+            System.out.println("found measurement with Id " + this.getId());
             found = true;
             input[0] = line;
             br.readLine();
             //Read Measurement Sequence
-            for (int i = 1; i < 5; i++) {
+            for (int i = 1; i < 7; i++) {
+
               input[i] = br.readLine();
+              System.out.println("read line " + input[i]);
+
               br.readLine();
             }
             for (int i = 1; i < input.length; i++) {
               String[] tmp = input[i].split(";");
-              System.out.println(tmp[0].toUpperCase());
               SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
               measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
                   .mapToDouble(Double::parseDouble)
@@ -101,8 +148,10 @@ public class MeasureSequence {
             }
           }
           //skip 9 lines // because of empty lines
-          for (int i = 0; i < 9; i++) {
-            br.readLine();
+          for (int i = 0; i < 11; i++) {
+            System.out.println("skip: " + br.readLine());
+
+
           }
         }
       }
