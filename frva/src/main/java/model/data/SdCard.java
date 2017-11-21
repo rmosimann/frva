@@ -39,6 +39,7 @@ public class SdCard {
     calibrationFile = readCalibrationFile(sdCardPath, "cal", 1);
 
 
+
     try {
       lazyReadDatafiles(sdCardPath);
       System.out.println("datafiles now "+ dataFiles.size());
@@ -162,17 +163,7 @@ public class SdCard {
    * @return SerialNumber as String.
    */
   public String getDeviceSerialNr() {
-    if (this.dataFiles == null || this.dataFiles.isEmpty()) {
-      return "Empty Dataset";
-    }
-    return this.dataFiles.stream()
-        .findAny()
-        .get()
-        .getMeasureSequences()
-        .stream()
-        .findAny()
-        .get()
-        .getSerial();
+   return this.calibrationFile.getMetadata().get(0);
   }
 
 

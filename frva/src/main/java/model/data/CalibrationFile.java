@@ -55,8 +55,8 @@ public class CalibrationFile {
       wl_F2.add(Double.parseDouble(splitLine[3]));
       up_coef_F2.add(Double.parseDouble(splitLine[4]));
       dw_coef_F2.add(Double.parseDouble(splitLine[5]));
-      if (!splitLine.equals("")) {
-        metadata.add(splitLine[5]);
+      if (splitLine.length>6) {
+        metadata.add(splitLine[6]);
       }
     }
   }
@@ -90,8 +90,8 @@ public class CalibrationFile {
     return getAsArray(dw_coef_F2);
   }
 
-  public String[] getMetadata() {
-    return (String[]) metadata.stream().toArray();
+  public List<String> getMetadata() {
+    return metadata;
   }
 
   private double[] getAsArray(List<Double> original) {
