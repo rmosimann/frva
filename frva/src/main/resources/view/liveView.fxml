@@ -134,7 +134,7 @@
             </children>
         </VBox>
         <HBox fx:id="messageBOxOutgreyHbox" alignment="CENTER" fillHeight="false" layoutX="33.0" layoutY="260.0"
-              opacity="0.52" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: grey;" visible="false"
+              opacity="0.0" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0"/>
         <HBox fx:id="messageBoxHbox" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
