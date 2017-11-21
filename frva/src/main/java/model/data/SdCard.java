@@ -16,22 +16,17 @@ public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
   private File sdCardPath;
-  private CalibrationFile wavelengthCalibrationFile;
-  private CalibrationFile sensorCalibrationFileWr;
-  private CalibrationFile sensorCalibrationFileVeg;
+  private CalibrationFile calibrationFile;
   private String name;
-  private FrvaModel model;
 
   /**
    * Constructor.
    *
    * @param sdCardPath a Path where the data lays as expected.
    * @param name       the Name of that SDCARD.
-   * @param model      the one and onla model.
    */
-  public SdCard(File sdCardPath, String name, FrvaModel model) {
+  public SdCard(File sdCardPath, String name) {
     this.sdCardPath = sdCardPath;
-    this.model = model;
     if (name == null) {
       String[] arr = sdCardPath.getPath().split(File.separator);
       this.name = arr[arr.length - 1];
@@ -39,9 +34,8 @@ public class SdCard {
       this.name = name;
     }
 
-    wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
-    sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
-    sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
+    calibrationFile = readCalibrationFile(sdCardPath, "cal", 1);
+
 
     try {
       dataFiles = lazyReadDatafiles(sdCardPath);
@@ -239,19 +233,11 @@ public class SdCard {
 
   @Override
   public int hashCode() {
-    return wavelengthCalibrationFile.hashCode();
+    return calibrationFile.hashCode();
   }
 
-  public CalibrationFile getWavelengthCalibrationFile() {
-    return wavelengthCalibrationFile;
-  }
-
-  public CalibrationFile getSensorCalibrationFileWr() {
-    return sensorCalibrationFileWr;
-  }
-
-  public CalibrationFile getSensorCalibrationFileVeg() {
-    return sensorCalibrationFileVeg;
+  public CalibrationFile getCalibrationFile() {
+    return calibrationFile;
   }
 
   public List<DataFile> getDataFiles() {

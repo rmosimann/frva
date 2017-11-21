@@ -68,7 +68,7 @@ public class FrvaModel {
 
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
-        library.add(new SdCard(sdfolder, sdfolder.getName(), this));
+        library.add(new SdCard(sdfolder, sdfolder.getName()));
       }
     }
   }
@@ -195,22 +195,16 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      returnList.add(new SdCard(f, null, this));
+      returnList.add(new SdCard(f, null));
     }
     return returnList;
   }
 
 
   private void writeCalibrationFiles(SdCard sdCard, String path) throws IOException {
-    Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
+    Files.copy(Paths.get(sdCard.getCalibrationFile().getCalibrationFile().toURI()),
         Paths.get(new File(path + File.separator
-            + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
-    Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
-        Paths.get(new File(path + File.separator
-            + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
-    Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
-        Paths.get(new File(path + File.separator
-            + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
+            + sdCard.getCalibrationFile().getCalibrationFile().getName()).toURI()));
     logger.info("Created Calibration Files");
   }
 

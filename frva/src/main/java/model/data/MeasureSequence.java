@@ -88,6 +88,7 @@ public class MeasureSequence {
             }
             for (int i = 1; i < input.length; i++) {
               String[] tmp = input[i].split(";");
+              System.out.println(tmp[0].toUpperCase());
               SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
               measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
                   .mapToDouble(Double::parseDouble)
@@ -226,9 +227,9 @@ public class MeasureSequence {
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
 
-    double[] waveCalibration = dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
-    double[] vegCalibration = dataFile.getSdCard().getSensorCalibrationFileVeg().getCalibration();
-    double[] wrCalibration = dataFile.getSdCard().getSensorCalibrationFileWr().getCalibration();
+    double[] waveCalibration = dataFile.getSdCard().getCalibrationFile().getWl_F1();
+    double[] vegCalibration = dataFile.getSdCard().getCalibrationFile().getDw_coef_F1();
+    double[] wrCalibration = dataFile.getSdCard().getCalibrationFile().getUp_coef_F1();
 
     double[] vegs = measurements.get(SequenceKeyName.VEG);
     double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
@@ -308,7 +309,7 @@ public class MeasureSequence {
 
 
   public double[] getWavlengthCalibration() {
-    return dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
+    return dataFile.getSdCard().getCalibrationFile().getWl_F1();
   }
 
   public String getSequenceUuid() {

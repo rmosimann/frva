@@ -50,17 +50,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     });
   }
 
-  private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
-    @Override
-    public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
-      if (newValue) {
-        model.getCurrentSelectionList().add(getMeasureSequence());
-      } else {
-        model.getCurrentSelectionList().removeAll(getMeasureSequence());
-      }
-    }
-  };
+
 
 
   /**

@@ -156,7 +156,7 @@ public class ImportWizard {
       public void onEnteringPage(Wizard wizard) {
 
         File file = new File(chosenDirectoryPath.get());
-        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get());
         sdCardList.add(sdCard);
 
         logger.info("set SD-Cardname " + chosenSdCardName.get()
