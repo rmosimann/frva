@@ -118,8 +118,6 @@ public class MeasureSequence {
    * @return a string containing the data.
    */
   public String getCsv() {
-
-
     if (measurements.isEmpty()) {
       readInMeasurements();
     }
@@ -204,6 +202,7 @@ public class MeasureSequence {
 
   /**
    * Getter for the Date of the Sequence.
+   *
    * @return Date as String of Type YY-MM-DD.
    */
   public String getDate() {
@@ -229,6 +228,8 @@ public class MeasureSequence {
     double[] waveCalibration = dataFile.getSdCard().getWavelengthCalibrationFile().getCalibration();
     double[] vegCalibration = dataFile.getSdCard().getSensorCalibrationFileVeg().getCalibration();
     double[] wrCalibration = dataFile.getSdCard().getSensorCalibrationFileWr().getCalibration();
+
+    Map<SequenceKeyName, double[]> measurements = getMeasurements();
 
     double[] vegs = measurements.get(SequenceKeyName.VEG);
     double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
@@ -335,6 +336,7 @@ public class MeasureSequence {
 
   /**
    * Getter for Month of measurement.
+   *
    * @return month as String.
    */
   public String getMonth() {
@@ -376,6 +378,7 @@ public class MeasureSequence {
 
   /**
    * Getter for the measurment Data.
+   *
    * @return the measurements as map.
    */
   public Map<SequenceKeyName, double[]> getMeasurements() {
@@ -387,6 +390,7 @@ public class MeasureSequence {
 
   /**
    * Getter for the metadata.
+   *
    * @return metadaa as String.
    */
   public String getMetadataAsString() {
