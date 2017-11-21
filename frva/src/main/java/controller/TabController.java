@@ -34,6 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.FrvaModel;
@@ -161,6 +162,18 @@ public class TabController {
   @FXML
   private CheckBox checkBoxRadianceWr;
 
+  @FXML
+  private HBox messageBox;
+
+  @FXML
+  private Label messageBoxTitleLabel;
+
+  @FXML
+  private Label messageBoxTextLabel;
+
+  @FXML
+  private HBox messageBoxButtonHBox;
+
   /**
    * Constructor for new TabController.
    *
@@ -252,6 +265,7 @@ public class TabController {
         };
 
         task.setOnSucceeded(e -> {
+          displayMessageBox(false, 0);
           actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
               !actualShowingSeqeunces.contains(sequence)));
           actualShowingSeqeunces.retainAll(listToWatch);
@@ -278,7 +292,6 @@ public class TabController {
       while (change.next()) {
         if (change.wasAdded() && (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()
             || ignoreMaxToProcess)) {
-          crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
           calculateIndices();
           ignoreMaxToProcess = false;
@@ -286,16 +299,10 @@ public class TabController {
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
           calculateIndices();
-          if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
-            crossedLimitBox.setVisible(false);
-          }
 
         } else {
-          crossedLimitBox.setVisible(true);
-          crossedLimitLabel.setText("You added " + change.getAddedSubList().size()
-              + " at once, this will take some time to compute.");
+          displayMessageBox(true, change.getAddedSubList().size());
           ignoreLimitButton.setOnAction(event -> {
-            crossedLimitBox.setVisible(false);
             ignoreMaxToProcess = true;
             change.getAddedSubList().forEach(this::addSingleSequence);
             actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
@@ -305,6 +312,20 @@ public class TabController {
         }
       }
     });
+  }
+
+  private void displayMessageBox(boolean active, int ammount) {
+    if (!(messageBox.isVisible() && active)) {
+      messageBox.setVisible(active);
+      messageBoxTitleLabel.setText("You selected too much");
+      messageBoxTextLabel.setText("You selected " + ammount + " measurements at once. That will take a long time to display.");
+      messageBoxButtonHBox.getChildren().clear();
+      Button a = new Button();
+      a.setText("draw anyway...");
+      Button b = new Button();
+      b.setText("deselect all");
+      messageBoxButtonHBox.getChildren().addAll(b, a);
+    }
   }
 
   /**

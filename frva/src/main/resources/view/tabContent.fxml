@@ -225,11 +225,28 @@
                 <Button fx:id="ignoreLimitButton" mnemonicParsing="false" text="ignore"/>
             </children>
         </VBox>
-        <HBox alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox fx:id="messageBox" alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0"
+              styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" styleClass="nooopacy"/>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleLabel" layoutX="14.0" layoutY="38.0" text="Title">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="messageBoxTextLabel" layoutX="14.0" layoutY="79.0" prefHeight="68.0"
+                               prefWidth="467.0" text="text" wrapText="true"/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <HBox fx:id="messageBoxButtonHBox" alignment="BOTTOM_RIGHT" layoutX="127.0" layoutY="145.0"
+                              prefHeight="40.0" prefWidth="360.0" spacing="10.0">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </HBox>
+                    </children>
+                </Pane>
             </children>
         </HBox>
     </children>
