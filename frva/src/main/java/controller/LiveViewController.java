@@ -68,6 +68,9 @@ public class LiveViewController {
   @FXML
   private VBox AvailableDevicesListVbox;
 
+  @FXML
+  private Button availableDevicesButton;
+
 
   /**
    * Constructor.
@@ -97,7 +100,8 @@ public class LiveViewController {
 
   /**
    * Displays a dialog to indicate that the BLuetooth is off.
-   * @param active  true displays, false not.
+   *
+   * @param active true displays, false not.
    */
   public void displayBluetoothOffDialog(boolean active) {
     messageBOxOutgreyHbox.setVisible(active);
@@ -136,16 +140,19 @@ public class LiveViewController {
 
   public void displayAvailableDevicesDialog(boolean active) {
 
+    if (active) {
+      availableServiceRecords.forEach(serviceRecords -> {
+        System.out.println("mddddddddddmdmdmd" + serviceRecords);
+        serviceRecordButton = new Button();
+        serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
+        serviceRecordButton.setOnAction(event -> BluetoothConnection.connectToService(serviceRecords));
+        AvailableDevicesListVbox.getChildren().add(serviceRecordButton);
+      });
+    }
 
-    availableServiceRecords.forEach(serviceRecords -> {
-      System.out.println("mddddddddddmdmdmd" + serviceRecords);
-      serviceRecordButton = new Button();
-      serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
-      serviceRecordButton.setOnAction(event -> BluetoothConnection.connectToService(serviceRecords));
-      AvailableDevicesListVbox.getChildren().add(serviceRecordButton);
-    });
     messageBOxOutgreyHbox.setVisible(active);
     messageBoxAvailableDevicesHbox.setVisible(active);
 
+    availableDevicesButton.setOnAction(event -> displayAvailableDevicesDialog(false));
   }
 }
