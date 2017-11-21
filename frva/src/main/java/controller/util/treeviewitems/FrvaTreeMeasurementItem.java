@@ -1,6 +1,7 @@
 package controller.util.treeviewitems;
 
 import java.io.File;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -16,22 +17,19 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private MeasureSequence measureSequence;
   private String id;
   private File file;
-  private FrvaModel model;
 
   /**
    * Constructor.
    *
    * @param name      name.
    * @param ms        measurementSequence.
-   * @param model     the one and only model.
    * @param isPreview true when only used for preview.
    */
   public FrvaTreeMeasurementItem(String name, MeasureSequence ms,
-                                 FrvaModel model, boolean isPreview) {
+                                 boolean isPreview) {
     super(name);
     this.measureSequence = ms;
     this.id = ms.getId();
-    this.model = model;
     this.file = ms.getDataFile().getOriginalFile();
     if (!isPreview) {
       addListener();
@@ -76,7 +74,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
   @Override
-  public void createChildren() {
+  public void createChildren(List<SdCard> list) {
   }
 
 }
