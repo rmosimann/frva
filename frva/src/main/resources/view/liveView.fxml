@@ -48,8 +48,9 @@
                 </LineChart>
             </children>
         </AnchorPane>
-        <TextArea disable="true" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
-                  AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="444.0"/>
+        <TextArea fx:id="miniTerminalTextArea" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
+                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"
+                  AnchorPane.topAnchor="444.0"/>
         <HBox layoutX="1050.0" layoutY="330.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
             <children>
                 <VBox alignment="CENTER" HBox.hgrow="ALWAYS">

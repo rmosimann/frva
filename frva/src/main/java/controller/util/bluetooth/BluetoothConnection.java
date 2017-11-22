@@ -139,7 +139,7 @@ public class BluetoothConnection {
       logger.info("Connecting to: " + connectionUrl);
       connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
     }
-    BlueCoveImpl.shutdown();
+
     return connection;
   }
 

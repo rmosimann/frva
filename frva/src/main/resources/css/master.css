@@ -1,5 +1,6 @@
 @import "graph.css";
 @import "mainMenu.css";
+@import "liveView.css";
 
 .messageBoxHeader {
     -fx-background-color: cadetblue;

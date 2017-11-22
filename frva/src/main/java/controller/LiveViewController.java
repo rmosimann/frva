@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
@@ -62,6 +63,9 @@ public class LiveViewController {
 
   @FXML
   private Button bltDisconnectButton;
+
+  @FXML
+  private TextArea miniTerminalTextArea;
 
 
   /**
@@ -115,8 +119,8 @@ public class LiveViewController {
         serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
         serviceRecordButton.setOnAction(event -> {
           setSelectedServiceRecord(serviceRecords);
-          setState(new ConnectionStateConnecting(this));
           displayAvailableDevicesDialog(false);
+          setState(new ConnectionStateConnecting(this));
         });
         msgBoxDevicesList.getChildren().add(serviceRecordButton);
       });
@@ -178,5 +182,7 @@ public class LiveViewController {
     return openStreamConnection;
   }
 
-
+  public TextArea getMiniTerminalTextArea() {
+    return miniTerminalTextArea;
+  }
 }
