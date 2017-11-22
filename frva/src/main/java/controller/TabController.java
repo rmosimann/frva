@@ -107,16 +107,7 @@ public class TabController {
   private VBox calculatingLabelBox;
 
   @FXML
-  private VBox crossedLimitBox;
-
-  @FXML
   private VBox vegetationIndicesBox;
-
-  @FXML
-  private Button ignoreLimitButton;
-
-  @FXML
-  private Label crossedLimitLabel;
 
   @FXML
   private Label indexNdviMinLabel;
