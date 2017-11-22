@@ -1,9 +1,10 @@
 package controller.util;
 
+import controller.util.treeviewitems.FrvaTreeItem;
+import controller.util.treeviewitems.FrvaTreeMeasurementItem;
+import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,7 +14,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.layout.GridPane;
@@ -23,7 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import model.FrvaModel;
-import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 import org.controlsfx.dialog.Wizard;
@@ -38,7 +37,12 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
-  private TreeView<FrvaTreeViewItem> previewTreeView;
+
+  public TreeView<FrvaTreeRootItem> getPreviewTreeView() {
+    return previewTreeView;
+  }
+
+  private TreeView<FrvaTreeRootItem> previewTreeView;
   private List<MeasureSequence> importList;
   private FrvaModel model;
   private final Logger logger = Logger.getLogger("FRVA");
@@ -65,7 +69,7 @@ public class ImportWizard {
   private void initalizeTreeView() {
     this.previewTreeView = new TreeView<>();
     previewTreeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    previewTreeView.setRoot(new FrvaTreeViewItem(FrvaTreeViewItem.Type.ROOT));
+    previewTreeView.setRoot(new FrvaTreeRootItem("Library"));
   }
 
   /**
@@ -75,12 +79,12 @@ public class ImportWizard {
    */
   public List<MeasureSequence> startImport() {
 
-
     Wizard wizard = new Wizard(owner);
     //First Page
     WizardPane choseSdCardPane = createFirstPage();
     WizardPane choseSdCardNamePane = createSecondPage();
     WizardPane selectMeasurementsPane = createThirdPage();
+
     wizard.setFlow(new Wizard.LinearFlow(choseSdCardPane, choseSdCardNamePane,
         selectMeasurementsPane));
 
@@ -88,20 +92,20 @@ public class ImportWizard {
     // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
-        updateImportList((FrvaTreeViewItem) previewTreeView.getRoot());
+        updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
       }
     });
     return importList;
   }
 
-  private void updateImportList(FrvaTreeViewItem item) {
-    if (item.isLeaf()) {
-      if (item.getCheckedProperty().get()) {
-        importList.add(item.getMeasureSequence());
+  private void updateImportList(FrvaTreeItem item) {
+    if (item instanceof FrvaTreeMeasurementItem) {
+      if (item.isSelected()) {
+        importList.add(((FrvaTreeMeasurementItem)item).getMeasureSequence());
       }
     } else {
       for (Object child : item.getChildren()) {
-        updateImportList((FrvaTreeViewItem) child);
+        updateImportList((FrvaTreeItem) child);
       }
     }
   }
@@ -145,29 +149,26 @@ public class ImportWizard {
     return choseSdCardNamePane;
   }
 
-
   private WizardPane createThirdPage() {
 
     WizardPane choseMeasurementsPane = new WizardPane() {
       @Override
       public void onEnteringPage(Wizard wizard) {
-        try {
-          File file = new File(chosenDirectoryPath.get());
-          SdCard sdCard = new SdCard(file.toURI().toURL(), chosenSdCardName.get());
-          sdCardList.add(sdCard);
 
-          logger.info("set SD-Cardname " + chosenSdCardName.get()
-              + " at location" + sdCard.getPath().getFile());
+        File file = new File(chosenDirectoryPath.get());
+        SdCard sdCard = new SdCard(file, chosenSdCardName.get(), model);
+        sdCardList.add(sdCard);
 
-        } catch (MalformedURLException e) {
-          e.getMessage();
-        }
+        logger.info("set SD-Cardname " + chosenSdCardName.get()
+            + " at location" + sdCard.getPath());
 
-        TreeViewFactory.extendTreeView(sdCardList, previewTreeView, model, true);
-        previewTreeView.getRoot().setExpanded(true);
-        ((FrvaTreeViewItem) previewTreeView.getRoot()).setSelected(true);
+
+        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model, true);
+        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+
       }
     };
+
 
     choseMeasurementsPane.setHeaderText("Chose measurements you want to import.");
     Pane selectMeasurementsGrid = new VBox();
@@ -179,11 +180,15 @@ public class ImportWizard {
     selectMeasurementsGrid.getChildren().add(checkbox);
     selectMeasurementsGrid.getChildren().add(previewTreeView);
     previewTreeView.disableProperty().bind(importAllCheckbox.selectedProperty());
+    importAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+      }
+    });
     choseMeasurementsPane.setContent(selectMeasurementsGrid);
     return choseMeasurementsPane;
 
   }
-
 
   private void choseDirectory() {
     DirectoryChooser directoryChooser = new DirectoryChooser();

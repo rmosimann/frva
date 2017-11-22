@@ -3,12 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
@@ -135,22 +135,22 @@
                     </VBox.margin>
                 </Label>
                 <RadioButton fx:id="radioButtonRaw" mnemonicParsing="false" text="Raw"/>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                <CheckBox fx:id="checkBoxRawVeg" mnemonicParsing="false" selected="true" text="VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                <CheckBox fx:id="checkBoxRawWr" mnemonicParsing="false" selected="true" text="WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_VEG">
+                <CheckBox fx:id="checkBoxRawDcVeg" mnemonicParsing="false" selected="true" text="DC_VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="DC_WR">
+                <CheckBox fx:id="checkBoxRawDcWr" mnemonicParsing="false" selected="true" text="DC_WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
@@ -160,12 +160,12 @@
                         <Insets top="10.0"/>
                     </padding>
                 </RadioButton>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="VEG">
+                <CheckBox fx:id="checkBoxRadianceVeg" mnemonicParsing="false" selected="true" text="VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
-                <CheckBox disable="true" mnemonicParsing="false" selected="true" text="WR">
+                <CheckBox fx:id="checkBoxRadianceWr" mnemonicParsing="false" selected="true" text="WR">
                     <VBox.margin>
                         <Insets left="35.0"/>
                     </VBox.margin>
@@ -211,18 +211,29 @@
                 </Label>
             </children>
         </VBox>
-        <VBox fx:id="crossedLimitBox" alignment="CENTER" layoutX="246.0" layoutY="283.0" prefHeight="134.0"
-              prefWidth="272.0" spacing="20.0" visible="false">
+        <HBox fx:id="messageBox" alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0"
+              styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label fx:id="crossedLimitLabel"
-                       style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
-                       textAlignment="CENTER" wrapText="true">
-                    <font>
-                        <Font size="20.0"/>
-                    </font>
-                </Label>
-                <Button fx:id="ignoreLimitButton" mnemonicParsing="false" text="ignore"/>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleLabel" layoutX="14.0" layoutY="38.0" text="Title">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="messageBoxTextLabel" layoutX="14.0" layoutY="79.0" prefHeight="68.0"
+                               prefWidth="467.0" text="text" wrapText="true"/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <HBox fx:id="messageBoxButtonHBox" alignment="BOTTOM_RIGHT" layoutX="127.0" layoutY="145.0"
+                              prefHeight="40.0" prefWidth="360.0" spacing="10.0">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </HBox>
+                    </children>
+                </Pane>
             </children>
-        </VBox>
+        </HBox>
     </children>
 </AnchorPane>

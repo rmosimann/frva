@@ -12,6 +12,7 @@ public class FrvaApp extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    long time = System.currentTimeMillis();
 
     FrvaModel model = new FrvaModel();
 

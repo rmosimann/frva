@@ -3,11 +3,13 @@ package controller;
 import controller.util.ZoomLineChart;
 import controller.util.ZoomWithRectangle;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -27,10 +29,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.FrvaModel;
@@ -40,6 +44,7 @@ import model.data.MeasureSequence;
 public class TabController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
+  private final MainController mainController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
@@ -50,6 +55,8 @@ public class TabController {
   private boolean updatedelayisrunning = false;
   private final ObservableList<MeasureSequence> actualShowingSeqeunces =
       FXCollections.observableArrayList();
+  private ArrayList<MeasureSequence.SequenceKeyName> filterThoseSeries = new ArrayList<>();
+  private ArrayList<XYChart.Series<Double, Double>> filteredSeries = new ArrayList<>();
 
   private final IntegerProperty maxSeqeuncesToDisplay = new SimpleIntegerProperty(80);
   private final IntegerProperty maxSeqeuncesToProcess = new SimpleIntegerProperty(40);
@@ -58,7 +65,7 @@ public class TabController {
 
   private final String axisLabelWaveLength = "Wavelength [nanometer]";
   private final String axisLabelDigitalNumber = "DN (digital number)";
-  private final String axisLabelRadiance = "[W/( m²sr nm)]";
+  private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
   private final String axisLabelReflectance = "Reflectance Factor";
   private final String axisLabelBands = "Bands";
 
@@ -100,16 +107,7 @@ public class TabController {
   private VBox calculatingLabelBox;
 
   @FXML
-  private VBox crossedLimitBox;
-
-  @FXML
   private VBox vegetationIndicesBox;
-
-  @FXML
-  private Button ignoreLimitButton;
-
-  @FXML
-  private Label crossedLimitLabel;
 
   @FXML
   private Label indexNdviMinLabel;
@@ -138,15 +136,45 @@ public class TabController {
   @FXML
   private Label indexPriAverageLabel;
 
+  @FXML
+  private CheckBox checkBoxRawVeg;
+
+  @FXML
+  private CheckBox checkBoxRawWr;
+
+  @FXML
+  private CheckBox checkBoxRawDcVeg;
+
+  @FXML
+  private CheckBox checkBoxRawDcWr;
+
+  @FXML
+  private CheckBox checkBoxRadianceVeg;
+
+  @FXML
+  private CheckBox checkBoxRadianceWr;
+
+  @FXML
+  private HBox messageBox;
+
+  @FXML
+  private Label messageBoxTitleLabel;
+
+  @FXML
+  private Label messageBoxTextLabel;
+
+  @FXML
+  private HBox messageBoxButtonHBox;
 
   /**
    * Constructor for new TabController.
-   *
    * @param model     The one and only Model.
    * @param thisTabId the ID of this Tab.
+   * @param mainController  The MainController containing this tab.
    */
-  public TabController(FrvaModel model, int thisTabId) {
+  public TabController(FrvaModel model, int thisTabId, MainController mainController) {
     this.model = model;
+    this.mainController = mainController;
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
     listToWatch = model.getObservableList(thisTabId);
@@ -230,6 +258,7 @@ public class TabController {
         };
 
         task.setOnSucceeded(e -> {
+          displayMessageBox(false, 0);
           actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
               !actualShowingSeqeunces.contains(sequence)));
           actualShowingSeqeunces.retainAll(listToWatch);
@@ -256,7 +285,6 @@ public class TabController {
       while (change.next()) {
         if (change.wasAdded() && (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()
             || ignoreMaxToProcess)) {
-          crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
           calculateIndices();
           ignoreMaxToProcess = false;
@@ -264,25 +292,37 @@ public class TabController {
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
           calculateIndices();
-          if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
-            crossedLimitBox.setVisible(false);
-          }
 
         } else {
-          crossedLimitBox.setVisible(true);
-          crossedLimitLabel.setText("You added " + change.getAddedSubList().size()
-              + " at once, this will take some time to compute.");
-          ignoreLimitButton.setOnAction(event -> {
-            crossedLimitBox.setVisible(false);
-            ignoreMaxToProcess = true;
-            change.getAddedSubList().forEach(this::addSingleSequence);
-            actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
-                !actualShowingSeqeunces.contains(sequence)));
-          });
+          displayMessageBox(true, change.getAddedSubList().size());
           actualShowingSeqeunces.removeAll(change.getAddedSubList());
         }
       }
     });
+  }
+
+  private void displayMessageBox(boolean active, int ammount) {
+    if (!(messageBox.isVisible() && active)) {
+      messageBox.setVisible(active);
+      messageBoxTitleLabel.setText("Selection to big to display");
+      messageBoxTextLabel.setText("You selected " + ammount + " measurements at once. "
+          + "\nThis will take a long time to display.");
+      messageBoxButtonHBox.getChildren().clear();
+      Button drawAnywayButton = new Button();
+      drawAnywayButton.setText("Draw anyway...");
+      drawAnywayButton.setOnAction(event -> {
+        ignoreMaxToProcess = true;
+        actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
+            !actualShowingSeqeunces.contains(sequence)));
+        displayMessageBox(false, 0);
+      });
+      Button deselectAllButton = new Button();
+      deselectAllButton.setText("Deselect all");
+      deselectAllButton.setOnAction(event -> {
+        mainController.unselectTickedItems();
+      });
+      messageBoxButtonHBox.getChildren().addAll(deselectAllButton, drawAnywayButton);
+    }
   }
 
   /**
@@ -375,6 +415,62 @@ public class TabController {
       }
       redrawMeasurementSequences();
     });
+
+
+    checkBoxRawVeg.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.VEG);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.VEG);
+      }
+      filter();
+    });
+
+    checkBoxRawWr.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.WR);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.WR);
+      }
+      filter();
+    });
+
+    checkBoxRawDcVeg.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.DC_VEG);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.DC_VEG);
+      }
+      filter();
+    });
+
+    checkBoxRawDcWr.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.DC_WR);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.DC_WR);
+      }
+      filter();
+    });
+
+    checkBoxRadianceVeg.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.RADIANCE_VEG);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.RADIANCE_VEG);
+      }
+      filter();
+    });
+
+    checkBoxRadianceWr.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.RADIANCE_WR);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.RADIANCE_WR);
+      }
+      filter();
+    });
+
   }
 
 
@@ -387,6 +483,7 @@ public class TabController {
     lineChartData.clear();
     actualShowingSeqeunces.clear();
     actualShowingSeqeunces.addAll(listToWatch);
+
   }
 
 
@@ -402,9 +499,49 @@ public class TabController {
         lineChartData.removeIf(doubleDoubleSeries -> {
           return doubleDoubleSeries.getName().contains(sequence.getSequenceUuid());
         });
+
+        filteredSeries.removeIf(doubleDoubleSeries -> {
+          return doubleDoubleSeries.getName().contains(sequence.getSequenceUuid());
+        });
+
         runningUpdates.setValue(runningUpdates.get() - 1);
       });
     });
+  }
+
+
+  /**
+   * Filters the displayed series according to the ticked checkboxes under Raw and Radiance.
+   * Sets the Axis to autoranging to reset the zoom level.
+   */
+  private void filter() {
+    filteredSeries.addAll(
+        lineChartData.filtered(doubleDoubleSeries -> {
+          return filterThoseSeries.contains(MeasureSequence.SequenceKeyName.valueOf(
+              doubleDoubleSeries.getName().split("/")[1]));
+        }));
+
+    lineChartData.removeIf(doubleDoubleSeries -> {
+      return filterThoseSeries.contains(MeasureSequence.SequenceKeyName.valueOf(
+          doubleDoubleSeries.getName().split("/")[1]));
+    });
+
+    lineChartData.addAll(
+        filteredSeries.stream()
+            .filter(doubleDoubleSeries -> {
+              return !filterThoseSeries.contains(MeasureSequence.SequenceKeyName.valueOf(
+                  doubleDoubleSeries.getName().split("/")[1]));
+            }).collect(Collectors.toList())
+    );
+
+    filteredSeries.removeIf(doubleDoubleSeries -> {
+      return !filterThoseSeries.contains(MeasureSequence.SequenceKeyName.valueOf(
+          doubleDoubleSeries.getName().split("/")[1]));
+    });
+
+    xaxis.setAutoRanging(true);
+    yaxis.setAutoRanging(true);
+
   }
 
 
@@ -435,17 +572,22 @@ public class TabController {
       for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
         double[] data = entry.getValue();
         LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
-        series.setName(sequence.getSequenceUuid());
+        series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
+
         for (int i = 0; i < data.length; i++) {
-          double x = asWavelength ? calibration[i] : i;
-          double y = data[i];
-          series.getData().add(new XYChart.Data<>(x, y));
+          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
+            double x = asWavelength ? calibration[i] : i;
+            double y = data[i];
+            series.getData().add(new XYChart.Data<>(x, y));
+          }
         }
 
         Platform.runLater(() -> {
           lineChartData.add(series);
           formatSerieLayout(entry.getKey(), sequence, series);
+          filter();
         });
+
       }
       Platform.runLater(() -> {
         runningUpdates.setValue(runningUpdates.get() - 1);
@@ -466,6 +608,7 @@ public class TabController {
                                  MeasureSequence sequence, XYChart.Series<Double, Double> series) {
     Tooltip tooltip = new Tooltip();
     tooltip.setOpacity(0.9);
+
     hackTooltipStartTiming(tooltip);
 
     Tooltip.install(series.getNode(), tooltip);
@@ -503,30 +646,31 @@ public class TabController {
       fieldBehavior.setAccessible(true);
       Object objBehavior = fieldBehavior.get(tooltip);
 
-      Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-      fieldTimer.setAccessible(true);
-      Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+      Field activationTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+      activationTimer.setAccessible(true);
+      Timeline objTimer = (Timeline) activationTimer.get(objBehavior);
 
       objTimer.getKeyFrames().clear();
-      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50)));
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
+
+      Field hideTimer = objBehavior.getClass().getDeclaredField("hideTimer");
+      hideTimer.setAccessible(true);
+      objTimer = (Timeline) hideTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(50000)));
+
+      Field leftTimer = objBehavior.getClass().getDeclaredField("leftTimer");
+      leftTimer.setAccessible(true);
+      objTimer = (Timeline) leftTimer.get(objBehavior);
+
+      objTimer.getKeyFrames().clear();
+      objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
+
+
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }
-
-
-  private void calculateIndicies() {
-    /*
-     * NDVI:
-     *    NDVI is defined as (NIR - RED) / (NIR + RED)
-     *    where NIR = reflectance at wavelength 920nm
-     *    RED = reflectance at wavelength 696nm
-     *
-     * TCARI
-     *
-     * PRI
-     *
-     */
   }
 
 }
