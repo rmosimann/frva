@@ -22,4 +22,8 @@ public class FrvaTreeYearItem extends FrvaTreeItem {
   public void createChildren(List<SdCard> list) {
 
   }
+  @Override
+  public boolean equals(Object o){
+    return o instanceof FrvaTreeYearItem && ((FrvaTreeYearItem)o).year.equals(this.year);
+  }
 }
