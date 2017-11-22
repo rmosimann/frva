@@ -1,5 +1,6 @@
 package controller.util.bluetooth;
 
+import com.intel.bluetooth.BlueCoveImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +66,7 @@ public class BluetoothConnection {
       @Override
       public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         remotes.add(btDevice);
-        logger.info("BLuetooth: discovered device - " + btDevice.getBluetoothAddress());
+        logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
       }
 
       @Override
@@ -111,16 +112,16 @@ public class BluetoothConnection {
 
           logger.info("Bluetooth: service search started");
           inquiryCompletedEvent.wait();
-        } catch (BluetoothStateException e) {
-          e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BluetoothStateException e) {
           e.printStackTrace();
         }
       }
     });
 
+    BlueCoveImpl.shutdown();
     return serviceRecords;
   }
+
 
   /**
    * Opens a connection to a service on a Bluetoothdevice.
@@ -129,36 +130,34 @@ public class BluetoothConnection {
    * @param serviceRecords The service to connect to.
    * @return a connection where the stream can be opened.
    */
-  public static StreamConnection connectToService(ServiceRecord[] serviceRecords) {
+  public static StreamConnection connectToService(ServiceRecord[] serviceRecords)
+      throws IOException {
     StreamConnection connection = null;
     for (ServiceRecord serviceRecord : serviceRecords) {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-      try {
-        connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
     }
+    BlueCoveImpl.shutdown();
     return connection;
   }
+
 
   /**
    * Closes a Connection.
    *
    * @param streamConnection the Connection to close.
    */
-  public static void closeConnection(StreamConnection streamConnection) {
-    try {
-      streamConnection.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  public static void closeConnection(StreamConnection streamConnection) throws IOException {
+    streamConnection.close();
+    BlueCoveImpl.shutdown();
   }
+
 
   /**
    * Checks the powerstate of the systems bluetooth device.
+   *
    * @return true when enabled.
    */
   public static boolean isBluetoothOn() {

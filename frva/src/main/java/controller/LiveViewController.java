@@ -1,8 +1,10 @@
 package controller;
 
-import controller.util.bluetooth.BluetoothConnection;
 import controller.util.bluetooth.ConnectionState;
+import controller.util.bluetooth.ConnectionStateConnecting;
+import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
+import controller.util.bluetooth.ConnectionStateSearching;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
@@ -12,10 +14,10 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
+import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
 
 
@@ -23,9 +25,11 @@ public class LiveViewController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private Node activeView;
-  ConnectionStateInit connectionStateInit;
+  private ConnectionStateInit connectionStateInit;
 
-  List<ServiceRecord[]> availableServiceRecords;
+  private List<ServiceRecord[]> availableServiceRecords;
+  private ServiceRecord[] selectedServiceRecord;
+  private StreamConnection openStreamConnection;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
@@ -39,37 +43,25 @@ public class LiveViewController {
   private NumberAxis yaxis;
 
   @FXML
-  private HBox messageBOxOutgreyHbox;
+  private HBox msgBoxBltOff;
 
   @FXML
-  private HBox messageBoxHbox;
+  private Button msgBoxBltOffRefreshButton;
 
   @FXML
-  private Label messageBoxTitleLabel;
+  private HBox msgBoxSearching;
 
   @FXML
-  private Label messageBoxTextLabel;
+  private HBox msgBoxDevices;
 
   @FXML
-  private Button cancelButton;
+  private VBox msgBoxDevicesList;
 
   @FXML
-  private HBox messageBoxSearchingHbox;
+  private Button msgBoxDevicesRefreshButton;
 
   @FXML
-  private Label messageBoxTitleSearchingLabel;
-
-  @FXML
-  private HBox messageBoxAvailableDevicesHbox;
-
-  @FXML
-  private Label messageBoxTitleSelectLabel;
-
-  @FXML
-  private VBox AvailableDevicesListVbox;
-
-  @FXML
-  private Button availableDevicesButton;
+  private Button bltDisconnectButton;
 
 
   /**
@@ -78,12 +70,12 @@ public class LiveViewController {
    * @param model the one and only model.
    */
   public LiveViewController(FrvaModel model) {
-
     connectionStateInit = new ConnectionStateInit(this);
     state.setValue(connectionStateInit);
     this.model = model;
     addListeners();
   }
+
 
   private void addListeners() {
     model.activeViewProperty().addListener((observable, oldValue, newValue) -> {
@@ -100,59 +92,91 @@ public class LiveViewController {
 
   /**
    * Displays a dialog to indicate that the BLuetooth is off.
-   *
    * @param active true displays, false not.
    */
   public void displayBluetoothOffDialog(boolean active) {
-    messageBOxOutgreyHbox.setVisible(active);
-    messageBoxHbox.setVisible(active);
-    cancelButton.setOnAction(event -> state.getValue().handle());
+    msgBoxBltOff.setVisible(active);
+    msgBoxBltOffRefreshButton.setOnAction(event -> state.getValue().handle());
   }
 
+
+  /**
+   * Dialog to displays all availble Devices with a SPP.
+   *
+   * @param active true to show the dialog.
+   */
+  public void displayAvailableDevicesDialog(boolean active) {
+    if (active) {
+      if (availableServiceRecords.size() > 0) {
+        msgBoxDevicesList.getChildren().clear();
+      }
+      availableServiceRecords.forEach(serviceRecords -> {
+        Button serviceRecordButton = new Button();
+        serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
+        serviceRecordButton.setOnAction(event -> {
+          setSelectedServiceRecord(serviceRecords);
+          setState(new ConnectionStateConnecting(this));
+          displayAvailableDevicesDialog(false);
+        });
+        msgBoxDevicesList.getChildren().add(serviceRecordButton);
+      });
+    }
+
+    msgBoxDevices.setVisible(active);
+
+    msgBoxDevicesRefreshButton.setOnAction(event -> {
+      setState(new ConnectionStateSearching(this));
+      displayAvailableDevicesDialog(false);
+    });
+  }
+
+  /**
+   * Dialog displayed during deviceSearch.
+   *
+   * @param active true to show the dialog.
+   */
+  public void displaySearchingDialog(boolean active) {
+    msgBoxSearching.setVisible(active);
+  }
+
+  /**
+   * Enables the DisconnectButton on the view.
+   */
+  public void enableBltDisconnectButton() {
+    bltDisconnectButton.setDisable(false);
+    bltDisconnectButton.setOnAction(event -> {
+      bltDisconnectButton.setDisable(true);
+      setState(new ConnectionStateDisconnecting(this));
+    });
+  }
 
   public void setActiveView(Node activeView) {
     this.activeView = activeView;
-  }
-
-  public Node getActiveView() {
-    return activeView;
   }
 
   public void setState(ConnectionState state) {
     this.state.setValue(state);
   }
 
-  public void displaySearchingDialog(boolean active) {
-    messageBOxOutgreyHbox.setVisible(active);
-    messageBoxSearchingHbox.setVisible(active);
-  }
-
-
-  public List<ServiceRecord[]> getAvailableServiceRecords() {
-    return availableServiceRecords;
-  }
-
   public void setAvailableServiceRecords(List<ServiceRecord[]> availableServiceRecords) {
     this.availableServiceRecords = availableServiceRecords;
   }
 
-  Button serviceRecordButton;
-
-  public void displayAvailableDevicesDialog(boolean active) {
-
-    if (active) {
-      availableServiceRecords.forEach(serviceRecords -> {
-        System.out.println("mddddddddddmdmdmd" + serviceRecords);
-        serviceRecordButton = new Button();
-        serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
-        serviceRecordButton.setOnAction(event -> BluetoothConnection.connectToService(serviceRecords));
-        AvailableDevicesListVbox.getChildren().add(serviceRecordButton);
-      });
-    }
-
-    messageBOxOutgreyHbox.setVisible(active);
-    messageBoxAvailableDevicesHbox.setVisible(active);
-
-    availableDevicesButton.setOnAction(event -> displayAvailableDevicesDialog(false));
+  public void setSelectedServiceRecord(ServiceRecord[] selectedServiceRecord) {
+    this.selectedServiceRecord = selectedServiceRecord;
   }
+
+  public ServiceRecord[] getSelectedServiceRecord() {
+    return selectedServiceRecord;
+  }
+
+  public void setOpenStreamConnection(StreamConnection openStreamConnection) {
+    this.openStreamConnection = openStreamConnection;
+  }
+
+  public StreamConnection getOpenStreamConnection() {
+    return openStreamConnection;
+  }
+
+
 }

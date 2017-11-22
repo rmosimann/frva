@@ -15,3 +15,8 @@
 .messageBoxOutgrey {
     -fx-background-color: rgba(100, 100, 100, 0.5);
 }
+
+.messageBoxTitle {
+    -fx-font-size: 16pt;
+    -fx-font-weight: 700;
+}

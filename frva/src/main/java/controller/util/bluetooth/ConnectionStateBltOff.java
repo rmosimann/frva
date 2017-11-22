@@ -2,7 +2,7 @@ package controller.util.bluetooth;
 
 import controller.LiveViewController;
 
-public class ConnectionStateBltOff implements ConnectionState {
+public class ConnectionStateBltOff extends AbstractConnectionState {
 
   private final LiveViewController liveViewController;
 
