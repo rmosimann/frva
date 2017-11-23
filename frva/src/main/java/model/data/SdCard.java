@@ -132,11 +132,10 @@ public class SdCard {
    *
    * @param containingFile the file where it is stored.
    * @param id             the ID of the Measurementsequence.
-   * @param model          the one and only model.
    * @return a single MeasurementSequence.
    */
   public MeasureSequence readSingleMeasurementSequence(File containingFile,
-                                                       String id, FrvaModel model) {
+                                                       String id) {
     DataFile df = new DataFile(this, containingFile, id);
     dataFiles.add(df);
     return df.getLastAddedMeasurement();

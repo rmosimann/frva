@@ -136,7 +136,7 @@ public class MainController {
     alert.setHeaderText(amount + " Measurements are going to be deleted.");
     alert.setContentText("This action cannot be undone \nDo you want to continue?");
     Optional<ButtonType> result = alert.showAndWait();
-    return result.get() == ButtonType.OK;
+    return result.isPresent() ? result.get() == ButtonType.OK : false;
   }
 
 
@@ -189,11 +189,14 @@ public class MainController {
   }
 
   private void loadTreeStructure() {
-    treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    for (SdCard sdCard : model.getLibrary()) {
+    FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
+    root.createChildren(model.getLibrary());
+    treeView.setRoot(root);
+
+    /*for (SdCard sdCard : model.getLibrary()) {
       TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
-    }
+    }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
