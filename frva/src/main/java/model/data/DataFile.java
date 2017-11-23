@@ -19,6 +19,7 @@ public class DataFile {
   private final SdCard sdCard;
   private List<MeasureSequence> measureSequences = new ArrayList<>();
   private MeasureSequence lastAddedMeasurement;
+  private int measurementLength = 5;
 
   /**
    * Creates a Datafile.
@@ -56,7 +57,7 @@ public class DataFile {
             int i = 0;
 
             //skip empty lines
-            while ((line = br.readLine()) != null && i < 4) {
+            while ((line = br.readLine()) != null && i < measurementLength - 1) {
               i++;
             }
           }
@@ -123,11 +124,12 @@ public class DataFile {
       String line;
       while ((line = reader.readLine()) != null) {
         if (ids.contains(line.split(";")[0])) {
-          for (int i = 0; i < 9; i++) {
+          //TODO: Magic Numbers
+          for (int i = 0; i < measurementLength; i++) {
             line = reader.readLine();
           }
         } else {
-          for (int i = 0; i < 9; i++) {
+          for (int i = 0; i < measurementLength; i++) {
             writer.write(line + "\n");
             line = reader.readLine();
           }
