@@ -49,8 +49,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
 
-
-
   /**
    * Getter for the Measurementsequence.
    *
@@ -59,9 +57,10 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   public MeasureSequence getMeasureSequence() {
     if (this.measureSequence != null) {
       return measureSequence;
+    } else {
+      System.out.println("No Measureseqence");
+      return null;
     }
-    else{
-      System.out.println("No Measureseqence");return null;}
   }
 
 

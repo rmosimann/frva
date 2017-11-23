@@ -22,6 +22,7 @@ public class DataFile {
 
   /**
    * Creates a Datafile.
+   *
    * @param sdCard    SDCARD containing the Datafile.
    * @param filename  the file.
    * @param metadatas ??.
@@ -36,6 +37,7 @@ public class DataFile {
 
   /**
    * Constructor for reading in metadata.
+   *
    * @param filename Name of the file
    * @param sdCard   The SDCARD the datafile belongs to
    */
@@ -43,7 +45,7 @@ public class DataFile {
     this.originalFile = filename;
     this.sdCard = sdCard;
     String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(filename));) {
+    try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
       while ((line = br.readLine()) != null) {
 
         if (!"".equals(line)) {
@@ -51,8 +53,8 @@ public class DataFile {
 
             measureSequences.add(new MeasureSequence(line, this));
             int i = 0;
-        //    System.out.println("added measuresequence"+ line);
-          //  System.out.println(measureSequences.size());
+            //    System.out.println("added measuresequence"+ line);
+            //  System.out.println(measureSequences.size());
 
             //skip empty lines
             while ((line = br.readLine()) != null && i < 8) {
@@ -66,7 +68,7 @@ public class DataFile {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println(
-         "Exception"
+          "Exception"
       );
     }
   }
@@ -74,9 +76,10 @@ public class DataFile {
 
   /**
    * Constructor for reading in single Measurement.
-   * @param sdCard The SDCARD the datafile belongs to
+   *
+   * @param sdCard         The SDCARD the datafile belongs to
    * @param containingFile the file.
-   * @param id the id of the measurement.
+   * @param id             the id of the measurement.
    */
   public DataFile(SdCard sdCard, File containingFile, String id) {
     this.originalFile = containingFile;

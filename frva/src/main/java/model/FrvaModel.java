@@ -128,6 +128,7 @@ public class FrvaModel {
 
   /**
    * Writes Data from SDCARDs to Files, in original format.
+   *
    * @param list       List of MeasurementSequences to save.
    * @param exportPath the path where the SDCARDs are exported to.
    * @return a list of the written SDCARDS.

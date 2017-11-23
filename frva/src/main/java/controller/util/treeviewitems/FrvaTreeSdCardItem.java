@@ -20,6 +20,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   /**
    * Creates a SdCard item.
+   *
    * @param sdCard the sdCard the item is referring to.
    */
   public FrvaTreeSdCardItem(SdCard sdCard) {
@@ -63,7 +64,6 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
     FrvaTreeHourItem hourItem = new FrvaTreeHourItem(-1);
 
 
-
     for (DataFile df : sdCard.getDataFiles()) {
       for (MeasureSequence ms : df.getMeasureSequences()) {
         boolean newItem = false;
@@ -72,9 +72,10 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
           yearItem.addMeasureSequences(yearlyCount);
           yearlyCount = 0;
           yearItem = new FrvaTreeYearItem(ms.getYear());
-          for (Object child:getChildren()) {if(yearItem.equals(child)){
-            yearItem=(FrvaTreeYearItem)child;
-          }
+          for (Object child : getChildren()) {
+            if (yearItem.equals(child)) {
+              yearItem = (FrvaTreeYearItem) child;
+            }
 
           }
           getChildren().add(yearItem);

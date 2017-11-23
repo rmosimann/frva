@@ -42,7 +42,7 @@ public class MeasureSequence {
     DC_WR,
     RADIANCE_VEG,
     RADIANCE_WR,
-    REFLECTANCE;
+    REFLECTANCE
   }
 
 
@@ -82,7 +82,6 @@ public class MeasureSequence {
       while ((line = br.readLine()) != null && !found) {
 
         if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0].equals(this.getId()))) {
-          //System.out.println("found Measurement " + line.charAt(0));
           found = true;
 
 
@@ -108,62 +107,9 @@ public class MeasureSequence {
 
 
     } catch (IOException e) {
+      System.out.println(e);
     }
     return measurements.isEmpty() ? null : measurements;
-  }
-
-
-  /**
-   * Returns the Measurements, fresh from the file.
-   *
-   * @return A Map with all the measurements.
-   */
-  public Map<SequenceKeyName, double[]> getMeasurements2() {
-    Map<SequenceKeyName, double[]> measurements = new HashMap<>();
-    boolean found = false;
-    String[] input = new String[7];
-    String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
-      while ((line = br.readLine()) != null) {
-        if (line.length() > 1 && Character.isDigit(line.charAt(0))) {
-          if (line.split(";")[0].equals(this.getId())) {
-            System.out.println("found measurement with Id " + this.getId());
-            found = true;
-            input[0] = line;
-            br.readLine();
-            //Read Measurement Sequence
-            for (int i = 1; i < 7; i++) {
-
-              input[i] = br.readLine();
-              System.out.println("read line " + input[i]);
-
-              br.readLine();
-            }
-            for (int i = 1; i < input.length; i++) {
-              String[] tmp = input[i].split(";");
-              SequenceKeyName key = SequenceKeyName.valueOf(tmp[0].toUpperCase());
-              measurements.put(key, Arrays.stream(Arrays.copyOfRange(tmp, 1, tmp.length))
-                  .mapToDouble(Double::parseDouble)
-                  .toArray());
-            }
-          }
-          //skip 9 lines // because of empty lines
-          for (int i = 0; i < 11; i++) {
-            System.out.println("skip: " + br.readLine());
-
-
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    if (!found) {
-      throw new NoSuchElementException("Element with ID " + this.getId()
-          + " has not been found in file " + dataFile.getOriginalFile().getPath());
-    }
-    return measurements;
   }
 
 
