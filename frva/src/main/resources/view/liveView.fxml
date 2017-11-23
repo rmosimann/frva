@@ -30,14 +30,14 @@
                         mnemonicParsing="false" text="Disconnect"/>
             </children>
         </Pane>
-        <ListView layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0"
+        <ListView layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0" AnchorPane.bottomAnchor="0.0"
                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
-        <AnchorPane layoutX="277.0" layoutY="69.0" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="277.0"
-                    AnchorPane.rightAnchor="270.0" AnchorPane.topAnchor="69.0">
+        <AnchorPane layoutX="343.0" layoutY="74.0" prefHeight="546.0" prefWidth="664.0" AnchorPane.bottomAnchor="41.0"
+                    AnchorPane.leftAnchor="342.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="73.0">
             <children>
                 <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
-                           prefHeight="553.0" prefWidth="732.0" AnchorPane.bottomAnchor="0.0"
-                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                           AnchorPane.topAnchor="0.0">
                     <xAxis>
                         <NumberAxis tickUnit="100" fx:id="xaxis"/>
                     </xAxis>
@@ -157,8 +157,9 @@
             </children>
         </HBox>
         <HBox fx:id="msgBoxSearching" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
-              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
                     <children>
