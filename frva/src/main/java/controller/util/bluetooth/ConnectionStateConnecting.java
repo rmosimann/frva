@@ -44,7 +44,6 @@ public class ConnectionStateConnecting extends AbstractConnectionState {
         int read;
         while ((read = dataIn.read()) != -1) {
           System.out.print((char) read);
-          liveViewController.getMiniTerminalTextArea().appendText(String.valueOf((char) read));
         }
         return null;
       }
