@@ -76,14 +76,14 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
           for (Object child : getChildren()) {
             if (yearItem.equals(child)) {
               yearItem = (FrvaTreeYearItem) child;
-              alreadyExisting=true;
+              alreadyExisting = true;
             }
           }
-          if(!alreadyExisting) {
+          if (!alreadyExisting) {
             getChildren().add(yearItem);
-            alreadyExisting=false;
+            alreadyExisting = false;
           }
-            newItem = true;
+          newItem = true;
         }
 
         if (!ms.getMonth().equals(monthItem.getMonth()) || newItem) {
