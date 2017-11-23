@@ -129,13 +129,9 @@ public class TreeViewFactory {
     hourItem.addMeasureSequences(hourlyCount);
     dayItem.addMeasureSequences(dailyCount);
     monthItem.addMeasureSequences(monthlyCount);
+    yearItem.addMeasureSequences(yearlyCount);
     sdCardItem.addMeasureSequences(sdCardCount);
-
-    sdCardItem.addMeasureSequences(sdCardCount);
+    checkBoxDeviceItem.addMeasureSequences(sdCardCount);
     treeView.setShowRoot(false);
-
-
   }
-
-
 }
