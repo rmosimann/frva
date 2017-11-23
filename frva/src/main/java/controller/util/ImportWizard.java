@@ -4,9 +4,13 @@ import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
@@ -37,6 +41,8 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
+
+  private File chosenDirectory;
 
   public TreeView<FrvaTreeRootItem> getPreviewTreeView() {
     return previewTreeView;
@@ -101,7 +107,7 @@ public class ImportWizard {
   private void updateImportList(FrvaTreeItem item) {
     if (item instanceof FrvaTreeMeasurementItem) {
       if (item.isSelected()) {
-        importList.add(((FrvaTreeMeasurementItem)item).getMeasureSequence());
+        importList.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
       }
     } else {
       for (Object child : item.getChildren()) {
@@ -142,6 +148,20 @@ public class ImportWizard {
     choseSdCardNameGrid.setHgap(10);
 
     TextField sdCardNameField = new TextField();
+
+    DateFormat df = new SimpleDateFormat("YYYYMMdd_HHmm");
+    Date dateobj = new Date();
+    sdCardNameField.setText("import_" + df.format(dateobj));
+
+    List<String> existingSdcardNames = model.getLibrary().stream()
+        .map(sdCard -> sdCard.getName())
+        .collect(Collectors.toList());
+    int sdcardnameVersion = 0;
+    while (existingSdcardNames.contains(sdCardNameField.getText())) {
+      sdcardnameVersion++;
+      sdCardNameField.setText("import_" + df.format(dateobj) + "(" + sdcardnameVersion + ")");
+    }
+
     sdCardNameField.setPromptText("SD-Card Name");
     choseSdCardNameGrid.add(sdCardNameField, 0, 0);
     chosenSdCardName.bind(sdCardNameField.textProperty());
@@ -154,14 +174,11 @@ public class ImportWizard {
     WizardPane choseMeasurementsPane = new WizardPane() {
       @Override
       public void onEnteringPage(Wizard wizard) {
-
-        File file = new File(chosenDirectoryPath.get());
-        SdCard sdCard = new SdCard(file, chosenSdCardName.get());
+        SdCard sdCard = new SdCard(chosenDirectory, chosenSdCardName.get());
         sdCardList.add(sdCard);
 
         logger.info("set SD-Cardname " + chosenSdCardName.get()
             + " at location" + sdCard.getPath());
-
 
         TreeViewFactory.extendTreeView(sdCard, previewTreeView, model, true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
@@ -190,12 +207,15 @@ public class ImportWizard {
 
   }
 
+
   private void choseDirectory() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
+    if (chosenDirectory != null) {
+      directoryChooser.setInitialDirectory(chosenDirectory);
+    }
     directoryChooser.setTitle("Select SD-Card");
-    File chosenFile = directoryChooser.showDialog(owner);
-    chosenDirectoryPath.set(chosenFile.getAbsolutePath());
+    chosenDirectory = directoryChooser.showDialog(owner);
+    chosenDirectoryPath.set(chosenDirectory.getAbsolutePath());
   }
-
 
 }

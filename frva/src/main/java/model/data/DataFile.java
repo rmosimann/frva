@@ -53,8 +53,6 @@ public class DataFile {
 
             measureSequences.add(new MeasureSequence(line, this));
             int i = 0;
-            //    System.out.println("added measuresequence"+ line);
-            //  System.out.println(measureSequences.size());
 
             //skip empty lines
             while ((line = br.readLine()) != null && i < 8) {
@@ -67,9 +65,6 @@ public class DataFile {
 
     } catch (IOException e) {
       e.printStackTrace();
-      System.out.println(
-          "Exception"
-      );
     }
   }
 

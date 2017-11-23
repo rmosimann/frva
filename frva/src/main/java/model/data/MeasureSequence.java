@@ -93,7 +93,6 @@ public class MeasureSequence {
               } else {
                 String[] temp = line.split(";");
                 SequenceKeyName key = SequenceKeyName.valueOf(temp[0].toUpperCase());
-                System.out.println(temp[0].toUpperCase());
 
                 measurements.put(key, Arrays.stream(Arrays.copyOfRange(temp, 1, temp.length))
                     .mapToDouble(Double::parseDouble)
@@ -108,7 +107,7 @@ public class MeasureSequence {
 
 
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return measurements.isEmpty() ? null : measurements;
   }

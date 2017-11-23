@@ -208,7 +208,6 @@ public class MainController {
               @Override
               public void accept(Object o) {
                 if (o instanceof FrvaTreeMeasurementItem) {
-                  System.out.println(((FrvaTreeMeasurementItem) o).getMeasureSequence().getId());
                   model.getCurrentSelectionList()
                       .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
                 }
