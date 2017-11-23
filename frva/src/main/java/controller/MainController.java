@@ -157,7 +157,8 @@ public class MainController {
         });
     model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
       @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+                          Number newValue) {
         treeView.getCheckModel().getCheckedItems().removeListener(treeViewListener);
         unselectTickedItems(treeView.getRoot());
         for (MeasureSequence ms : model.getCurrentSelectionList()) {
@@ -321,8 +322,7 @@ public class MainController {
         ((FrvaTreeMeasurementItem) item).setSelected(true);
       }
     } else {
-      for (Object child : item.getChildren()
-          ) {
+      for (Object child : item.getChildren()) {
         checkTreeItemWithMeasurement(((FrvaTreeItem) child), ms);
 
       }
