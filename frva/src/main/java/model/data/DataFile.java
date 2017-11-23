@@ -56,7 +56,6 @@ public class DataFile {
             int i = 0;
             //skip empty lines
             while ((line = br.readLine()) != null && i < 4) {
-              System.out.println("skip " + (line.length() > 10 ? line.substring(0, 10) : "empty Line"));
               i++;
             }
           }
