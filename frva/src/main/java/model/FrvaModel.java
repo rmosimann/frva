@@ -9,11 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -40,7 +38,6 @@ public class FrvaModel {
       + "FRVA" + File.separator;
 
   private final Logger logger = Logger.getLogger("FRVA");
-  private final Set<SdCard> cache = new HashSet<>();
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
@@ -74,7 +71,7 @@ public class FrvaModel {
 
     for (File sdfolder : folder.listFiles()) {
       if (sdfolder.isDirectory()) {
-        library.add(new SdCard(sdfolder, sdfolder.getName(), this));
+        library.add(new SdCard(sdfolder, sdfolder.getName()));
       }
     }
   }
@@ -137,6 +134,7 @@ public class FrvaModel {
 
   /**
    * Writes Data from SDCARDs to Files, in original format.
+   *
    * @param list       List of MeasurementSequences to save.
    * @param exportPath the path where the SDCARDs are exported to.
    * @return a list of the written SDCARDS.
@@ -145,18 +143,19 @@ public class FrvaModel {
     List<SdCard> returnList = new ArrayList<>();
     SdCard sdCard = null;
     String currentFolder = null;
-    String path = null;
+    String sdCardPath = null;
+    String dayFolderPath = null;
     List<File> sdCardFolderList = new ArrayList<>();
     for (MeasureSequence measureSequence : list) {
       try {
         if (!measureSequence.getContainingSdCard().equals(sdCard)) {
           sdCard = measureSequence.getContainingSdCard();
-          path = exportPath.toString() + File.separator + sdCard.getName();
-          File card = new File(path);
+          sdCardPath = exportPath.toString() + File.separator + sdCard.getName();
+          File card = new File(sdCardPath);
           sdCardFolderList.add(card);
 
           if (card.exists()) {
-            if (confirmOverriding(path)) {
+            if (confirmOverriding(sdCardPath)) {
               deleteFile(card);
             } else {
               logger.info("Export cancelled");
@@ -165,32 +164,34 @@ public class FrvaModel {
           }
           //Create SD Card Folder
           if (card.mkdirs()) {
-            logger.info("Created SD-Card: " + path);
-            writeCalibrationFiles(sdCard, path);
+            logger.info("Created SD-Card: " + sdCardPath);
+            writeCalibrationFiles(sdCard, sdCardPath);
             currentFolder = null;
           }
         }
 
+        //create DataFileFolder
         if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
-          path += File.separator + measureSequence.getDataFile().getFolderName();
-          File dayFolder = new File(path);
+          dayFolderPath = sdCardPath + File.separator
+              + measureSequence.getDataFile().getFolderName();
+          File dayFolder = new File(dayFolderPath);
           if (!dayFolder.exists()) {
             dayFolder.mkdirs();
           }
           currentFolder = measureSequence.getDataFile().getFolderName();
-          logger.info("Created day-folder: " + path);
+          logger.info("Created day-folder: " + dayFolderPath);
         }
 
-        File file = new File(path + File.separator
+        File dataFile = new File(dayFolderPath + File.separator
             + measureSequence.getDataFile().getDataFileName());
         Writer writer;
 
-        if (!file.exists()) {
-          writer = Files.newBufferedWriter(Paths.get(file.toURI()));
-          logger.info("Created file: " + path + File.separator
+        if (!dataFile.exists()) {
+          writer = Files.newBufferedWriter(Paths.get(dataFile.toURI()));
+          logger.info("Created dataFile: " + sdCardPath + File.separator
               + measureSequence.getDataFile().getDataFileName());
         } else {
-          writer = new FileWriter(file, true);
+          writer = new FileWriter(dataFile, true);
         }
         writer.write(measureSequence.getCsv());
         writer.flush();
@@ -201,22 +202,16 @@ public class FrvaModel {
 
     }
     for (File f : sdCardFolderList) {
-      returnList.add(new SdCard(f, null, this));
+      returnList.add(new SdCard(f, null));
     }
     return returnList;
   }
 
 
   private void writeCalibrationFiles(SdCard sdCard, String path) throws IOException {
-    Files.copy(Paths.get(sdCard.getSensorCalibrationFileVeg().getCalibrationFile().toURI()),
+    Files.copy(Paths.get(sdCard.getCalibrationFile().getCalibrationFile().toURI()),
         Paths.get(new File(path + File.separator
-            + sdCard.getSensorCalibrationFileVeg().getCalibrationFile().getName()).toURI()));
-    Files.copy(Paths.get(sdCard.getSensorCalibrationFileWr().getCalibrationFile().toURI()),
-        Paths.get(new File(path + File.separator
-            + sdCard.getSensorCalibrationFileWr().getCalibrationFile().getName()).toURI()));
-    Files.copy(Paths.get(sdCard.getWavelengthCalibrationFile().getCalibrationFile().toURI()),
-        Paths.get(new File(path + File.separator
-            + sdCard.getWavelengthCalibrationFile().getCalibrationFile().getName()).toURI()));
+            + sdCard.getCalibrationFile().getCalibrationFile().getName()).toURI()));
     logger.info("Created Calibration Files");
   }
 

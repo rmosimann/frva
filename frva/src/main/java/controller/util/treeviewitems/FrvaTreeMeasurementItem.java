@@ -1,6 +1,7 @@
 package controller.util.treeviewitems;
 
 import java.io.File;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -16,22 +17,19 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   private MeasureSequence measureSequence;
   private String id;
   private File file;
-  private FrvaModel model;
 
   /**
    * Constructor.
    *
    * @param name      name.
    * @param ms        measurementSequence.
-   * @param model     the one and only model.
    * @param isPreview true when only used for preview.
    */
   public FrvaTreeMeasurementItem(String name, MeasureSequence ms,
-                                 FrvaModel model, boolean isPreview) {
+                                 boolean isPreview) {
     super(name);
     this.measureSequence = ms;
     this.id = ms.getId();
-    this.model = model;
     this.file = ms.getDataFile().getOriginalFile();
     if (!isPreview) {
       addListener();
@@ -50,18 +48,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     });
   }
 
-  private ChangeListener<Boolean> checkedlistener = new ChangeListener<Boolean>() {
-    @Override
-    public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
-      if (newValue) {
-        model.getCurrentSelectionList().add(getMeasureSequence());
-      } else {
-        model.getCurrentSelectionList().removeAll(getMeasureSequence());
-      }
-    }
-  };
-
 
   /**
    * Getter for the Measurementsequence.
@@ -71,15 +57,10 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   public MeasureSequence getMeasureSequence() {
     if (this.measureSequence != null) {
       return measureSequence;
+    } else {
+      System.out.println("No Measureseqence");
+      return null;
     }
-    TreeItem item = this;
-    while (!(item instanceof FrvaTreeSdCardItem)) {
-      item = item.getParent();
-    }
-    SdCard containingSdCard = ((FrvaTreeSdCardItem) item).getSdCard();
-    this.measureSequence = containingSdCard.readSingleMeasurementSequence(file, id, model);
-    addListener();
-    return this.measureSequence;
   }
 
 
@@ -92,7 +73,7 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
   @Override
-  public void createChildren() {
+  public void createChildren(List<SdCard> list) {
   }
 
 }

@@ -1,7 +1,9 @@
 package controller.util.treeviewitems;
 
+import java.util.List;
 import java.util.logging.Logger;
 import javafx.scene.control.CheckBoxTreeItem;
+import model.data.SdCard;
 
 /**
  * Created by patrick.wigger on 03.11.17.
@@ -30,8 +32,7 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
   public void addMeasureSequences(int containingMeasureSequences) {
     this.containingMeasureSequences += containingMeasureSequences;
     setValue(name + " (" + this.containingMeasureSequences + ")");
-    //TODO: wrong value
   }
 
-  public abstract void createChildren();
+  public abstract void createChildren(List<SdCard> list);
 }

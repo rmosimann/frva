@@ -23,9 +23,10 @@ public class TreeViewFactory {
 
   /**
    * Creates a treeview.
-   * @param sdCard   SdCard containing the data.
-   * @param treeView view on which the data should be attached to
-   * @param model    the model of the application
+   *
+   * @param sdCard    SdCard containing the data.
+   * @param treeView  view on which the data should be attached to
+   * @param model     the model of the application
    * @param isPreview true when used for preview.
    */
 
@@ -33,7 +34,6 @@ public class TreeViewFactory {
                                     FrvaModel model, boolean isPreview) {
 
 
-    String currentDevice = "";
 
     FrvaTreeDeviceItem checkBoxDeviceItem = new FrvaTreeDeviceItem(sdCard.getDeviceSerialNr(),
         sdCard.getDeviceSerialNr());
@@ -43,7 +43,6 @@ public class TreeViewFactory {
 
     int yearlyCount = 0;
     FrvaTreeYearItem yearItem = new FrvaTreeYearItem("Year");
-
     int monthlyCount = 0;
     FrvaTreeMonthItem monthItem = new FrvaTreeMonthItem("Month");
 
@@ -67,17 +66,7 @@ public class TreeViewFactory {
       root.getChildren().add(checkBoxDeviceItem);
     }
 
-    //Checks if SDCard has already been added (equals of Tree item... comparison over Serial)
-    if (checkBoxDeviceItem.getChildren().contains(sdCardItem) && false) {
-      for (Object child : checkBoxDeviceItem.getChildren()) {
-        if (sdCardItem.equals(child)) {
-          sdCardItem = (FrvaTreeSdCardItem) child;
-        }
-      }
-    } else {
-      checkBoxDeviceItem.getChildren().add(sdCardItem);
-    }
-
+    checkBoxDeviceItem.getChildren().add(sdCardItem);
 
     for (DataFile df : sdCard.getDataFiles()) {
       for (MeasureSequence ms : df.getMeasureSequences()) {
@@ -115,27 +104,20 @@ public class TreeViewFactory {
         }
 
         hourItem.getChildren().add(new FrvaTreeMeasurementItem("ID" + ms.getId() + " - "
-            + ms.getTime(), ms, model, isPreview));
-
+            + ms.getTime(), ms, isPreview));
         sdCardCount++;
         yearlyCount++;
         monthlyCount++;
         dailyCount++;
         hourlyCount++;
-
       }
     }
-
     hourItem.addMeasureSequences(hourlyCount);
     dayItem.addMeasureSequences(dailyCount);
     monthItem.addMeasureSequences(monthlyCount);
+    yearItem.addMeasureSequences(yearlyCount);
     sdCardItem.addMeasureSequences(sdCardCount);
-
-    sdCardItem.addMeasureSequences(sdCardCount);
+    checkBoxDeviceItem.addMeasureSequences(sdCardCount);
     treeView.setShowRoot(false);
-
-
   }
-
-
 }

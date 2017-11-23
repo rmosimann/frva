@@ -15,23 +15,20 @@ import model.FrvaModel;
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
+
   private File sdCardPath;
-  private CalibrationFile wavelengthCalibrationFile;
-  private CalibrationFile sensorCalibrationFileWr;
-  private CalibrationFile sensorCalibrationFileVeg;
+  private CalibrationFile calibrationFile;
   private String name;
-  private FrvaModel model;
 
   /**
    * Constructor.
    *
    * @param sdCardPath a Path where the data lays as expected.
    * @param name       the Name of that SDCARD.
-   * @param model      the one and onla model.
    */
-  public SdCard(File sdCardPath, String name, FrvaModel model) {
+  public SdCard(File sdCardPath, String name) {
+
     this.sdCardPath = sdCardPath;
-    this.model = model;
     if (name == null) {
       String[] arr = sdCardPath.getPath().split(File.separator);
       this.name = arr[arr.length - 1];
@@ -39,13 +36,12 @@ public class SdCard {
       this.name = name;
     }
 
-    wavelengthCalibrationFile = readCalibrationFile(sdCardPath, "wl_", 1);
-    sensorCalibrationFileWr = readCalibrationFile(sdCardPath, "radioWR_", 0);
-    sensorCalibrationFileVeg = readCalibrationFile(sdCardPath, "radioVEG_", 0);
+    calibrationFile = readCalibrationFile(sdCardPath, "cal", 1);
+
 
     try {
-      dataFiles = lazyReadDatafiles(sdCardPath);
-
+      lazyReadDatafiles(sdCardPath);
+      System.out.println("datafiles now " + dataFiles.size());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -55,17 +51,15 @@ public class SdCard {
    * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
    *
    * @param sdCardPath Path where the SDCARD is located.
-   * @return A List of all contained DataFiles.
    * @throws FileNotFoundException when path is not found.
    */
-  public List<DataFile> lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
-    List<DataFile> returnList = new ArrayList<>();
+  public void lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
     String line;
     String currentFile = "";
     List<String[]> list = new ArrayList<>();
 
     if (!new File(sdCardPath + File.separator + "db.csv").exists()) {
-      returnList = readDatafiles(sdCardPath);
+      dataFiles = readDatafiles(sdCardPath);
       if (this.isPathInLibrary()) {
         serialize();
       }
@@ -76,7 +70,7 @@ public class SdCard {
           String[] data = line.split(";");
           if (!data[0].equals(currentFile)) {
             if (list.size() > 0) {
-              returnList.add(new DataFile(this, new File(currentFile), list));
+              dataFiles.add(new DataFile(this, new File(currentFile), list));
             }
             currentFile = data[0];
             list.clear();
@@ -91,10 +85,9 @@ public class SdCard {
         e.printStackTrace();
       }
       if (list.size() > 0) {
-        returnList.add(new DataFile(this, new File(currentFile), list));
+        dataFiles.add(new DataFile(this, new File(currentFile), list));
       }
     }
-    return returnList;
   }
 
   private boolean isPathInLibrary() {
@@ -132,11 +125,10 @@ public class SdCard {
    *
    * @param containingFile the file where it is stored.
    * @param id             the ID of the Measurementsequence.
-   * @param model          the one and only model.
    * @return a single MeasurementSequence.
    */
   public MeasureSequence readSingleMeasurementSequence(File containingFile,
-                                                       String id, FrvaModel model) {
+                                                       String id) {
     DataFile df = new DataFile(this, containingFile, id);
     dataFiles.add(df);
     return df.getLastAddedMeasurement();
@@ -168,17 +160,7 @@ public class SdCard {
    * @return SerialNumber as String.
    */
   public String getDeviceSerialNr() {
-    if (this.dataFiles == null || this.dataFiles.isEmpty()) {
-      return "Empty Dataset";
-    }
-    return this.dataFiles.stream()
-        .findAny()
-        .get()
-        .getMeasureSequences()
-        .stream()
-        .findAny()
-        .get()
-        .getSerial();
+    return this.calibrationFile.getMetadata().get(0);
   }
 
 
@@ -194,8 +176,11 @@ public class SdCard {
    */
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
+    System.out.println("Datafiles " + dataFiles.size());
     for (DataFile dataFile : dataFiles) {
       list.addAll(dataFile.getMeasureSequences());
+      System.out.println("MS  " + dataFile.getMeasureSequences().size());
+
     }
     return list;
   }
@@ -215,6 +200,7 @@ public class SdCard {
    * Writes the Metadata of all MeasurementSequences in this SDCARD to the db.csv file.
    */
   public void serialize() {
+    System.out.println("try to serialize");
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     if (file.getParentFile() != null) {
       file.getParentFile().mkdirs();
@@ -239,19 +225,11 @@ public class SdCard {
 
   @Override
   public int hashCode() {
-    return wavelengthCalibrationFile.hashCode();
+    return calibrationFile.hashCode();
   }
 
-  public CalibrationFile getWavelengthCalibrationFile() {
-    return wavelengthCalibrationFile;
-  }
-
-  public CalibrationFile getSensorCalibrationFileWr() {
-    return sensorCalibrationFileWr;
-  }
-
-  public CalibrationFile getSensorCalibrationFileVeg() {
-    return sensorCalibrationFileVeg;
+  public CalibrationFile getCalibrationFile() {
+    return calibrationFile;
   }
 
   public List<DataFile> getDataFiles() {

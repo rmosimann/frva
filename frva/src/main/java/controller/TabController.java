@@ -558,7 +558,7 @@ public class TabController {
 
       Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRaw)) {
-        entries = sequence.getMeasurements().entrySet();
+        entries = sequence.getData().entrySet();
       }
       if (togglGroupYaxis.getSelectedToggle().equals(radioButtonRadiance)) {
         entries = sequence.getRadiance().entrySet();

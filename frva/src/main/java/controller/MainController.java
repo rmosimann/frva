@@ -1,11 +1,9 @@
 package controller;
 
 import controller.util.ImportWizard;
-import controller.util.TreeViewFactory;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,13 +103,13 @@ public class MainController {
       model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
-    if (Desktop.isDesktopSupported()) {
-      try {
-        Desktop.getDesktop().open(selectedFile);
-      } catch (IOException e) {
-        logger.info(e.getMessage());
-      }
-    }
+    //    if (Desktop.isDesktopSupported()) {
+    //      try {
+    //        Desktop.getDesktop().open(selectedFile);
+    //      } catch (IOException e) {
+    //        logger.info(e.getMessage());
+    //      }
+    //    }
   }
 
 
@@ -124,9 +122,8 @@ public class MainController {
           measurements.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
         }
       }
-
-      model.deleteMeasureSequences(measurements);
       treeView.getCheckModel().clearChecks();
+      model.deleteMeasureSequences(measurements);
     }
   }
 
@@ -137,7 +134,7 @@ public class MainController {
     alert.setHeaderText(amount + " Measurements are going to be deleted.");
     alert.setContentText("This action cannot be undone \nDo you want to continue?");
     Optional<ButtonType> result = alert.showAndWait();
-    return result.get() == ButtonType.OK;
+    return result.isPresent() ? result.get() == ButtonType.OK : false;
   }
 
 
@@ -190,11 +187,14 @@ public class MainController {
   }
 
   private void loadTreeStructure() {
-    treeView.setRoot(new FrvaTreeRootItem("Library"));
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    for (SdCard sdCard : model.getLibrary()) {
+    FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
+    root.createChildren(model.getLibrary());
+    treeView.setRoot(root);
+
+    /*for (SdCard sdCard : model.getLibrary()) {
       TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
-    }
+    }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
 
@@ -208,6 +208,7 @@ public class MainController {
               @Override
               public void accept(Object o) {
                 if (o instanceof FrvaTreeMeasurementItem) {
+                  System.out.println(((FrvaTreeMeasurementItem) o).getMeasureSequence().getId());
                   model.getCurrentSelectionList()
                       .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
                 }
