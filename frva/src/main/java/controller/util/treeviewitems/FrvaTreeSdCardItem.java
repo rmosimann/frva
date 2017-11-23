@@ -21,7 +21,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
   /**
    * Creates a SdCard item.
    *
-   * @param sdCard the sdCard the item is referring to.
+   * @param sdCard    the sdCard the item is referring to.
    * @param isPreview true if import scenario.
    */
   public FrvaTreeSdCardItem(SdCard sdCard, boolean isPreview) {
@@ -47,11 +47,24 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
       }
     });
-
+    this.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+                          Boolean newValue) {
+        List sdCards = new ArrayList();
+        sdCards.add(sdCard);
+        if (newValue && !loaded) {
+          createChildren(sdCards);
+          getChildren().forEach(o -> ((FrvaTreeItem) o).setSelected(true));
+          loaded = true;
+        }
+      }
+    });
   }
 
   /**
    * Creates its Children depending on list.
+   *
    * @param list of SdCards which is input data for creating Treeview.
    */
   public void createChildren(List<SdCard> list) {
