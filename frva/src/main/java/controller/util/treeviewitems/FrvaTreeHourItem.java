@@ -15,10 +15,7 @@ public class FrvaTreeHourItem extends FrvaTreeItem {
     this.hour = hour;
   }
 
-  @Override
-  public void createChildren(List<SdCard> list) {
 
-  }
 
   public int getHour() {
     return hour;

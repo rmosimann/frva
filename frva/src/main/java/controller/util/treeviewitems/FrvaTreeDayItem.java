@@ -15,9 +15,8 @@ public class FrvaTreeDayItem extends FrvaTreeItem {
     this.day = day;
   }
 
-  @Override
-  public void createChildren(List<SdCard> list) {
-  }
+
+
 
   public String getDay() {
     return day;

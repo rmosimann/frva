@@ -34,5 +34,4 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
     setValue(name + " (" + this.containingMeasureSequences + ")");
   }
 
-  public abstract void createChildren(List<SdCard> list);
 }

@@ -23,11 +23,13 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
    *
    * @param sdCard the sdCard the item is referring to.
    */
-  public FrvaTreeSdCardItem(SdCard sdCard) {
+  public FrvaTreeSdCardItem(SdCard sdCard, boolean isPreview) {
     super(sdCard.getName());
     this.sdCard = sdCard;
     loaded = false;
-    addListeners();
+    if (!isPreview) {
+      addListeners();
+    }
   }
 
   private void addListeners() {
@@ -47,7 +49,6 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   }
 
-  @Override
   public void createChildren(List<SdCard> list) {
     this.getChildren().clear();
 

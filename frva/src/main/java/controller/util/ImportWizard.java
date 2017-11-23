@@ -180,7 +180,8 @@ public class ImportWizard {
         logger.info("set SD-Cardname " + chosenSdCardName.get()
             + " at location" + sdCard.getPath());
 
-        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model, true);
+        ((FrvaTreeRootItem)previewTreeView.getRoot()).createChildren(sdCardList, true);
+
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
 
       }

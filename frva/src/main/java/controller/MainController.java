@@ -89,6 +89,10 @@ public class MainController {
       model.getLibrary().add(sdCard);
     }
     loadTreeStructure();
+    for (MeasureSequence ms:model.getCurrentSelectionList()
+         ) {
+
+    }
   }
 
 
@@ -189,7 +193,7 @@ public class MainController {
   private void loadTreeStructure() {
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
     FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
-    root.createChildren(model.getLibrary());
+    root.createChildren(model.getLibrary(),false);
     treeView.setRoot(root);
 
     /*for (SdCard sdCard : model.getLibrary()) {

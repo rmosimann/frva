@@ -20,10 +20,9 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
     this.deviceSerialNr = deviceSerialNr;
   }
 
-  @Override
-  public void createChildren(List<SdCard> list) {
+  public void createChildren(List<SdCard> list, boolean isPreview) {
     for (SdCard sdCard : list) {
-      FrvaTreeItem sdCardItem = new FrvaTreeSdCardItem(sdCard);
+      FrvaTreeSdCardItem sdCardItem = new FrvaTreeSdCardItem(sdCard, isPreview);
       boolean containesItemAlready = false;
 
       Iterator it = this.getChildren().iterator();
@@ -36,7 +35,11 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
       }
       if (!containesItemAlready) {
         this.getChildren().add(sdCardItem);
-        sdCardItem.getChildren().add(new FrvaTreeYearItem("pseudo-Element"));
+        if (isPreview) {
+          sdCardItem.createChildren(list);
+        } else {
+          sdCardItem.getChildren().add(new FrvaTreeYearItem("pseudo-Element"));
+        }
       }
 
     }
