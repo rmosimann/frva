@@ -39,10 +39,9 @@ public class SdCard {
     calibrationFile = readCalibrationFile(sdCardPath, "cal", 1);
 
 
-
     try {
       lazyReadDatafiles(sdCardPath);
-      System.out.println("datafiles now "+ dataFiles.size());
+      System.out.println("datafiles now " + dataFiles.size());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -162,7 +161,7 @@ public class SdCard {
    * @return SerialNumber as String.
    */
   public String getDeviceSerialNr() {
-   return this.calibrationFile.getMetadata().get(0);
+    return this.calibrationFile.getMetadata().get(0);
   }
 
 
@@ -178,10 +177,10 @@ public class SdCard {
    */
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
-    System.out.println("Datafiles "+dataFiles.size());
+    System.out.println("Datafiles " + dataFiles.size());
     for (DataFile dataFile : dataFiles) {
       list.addAll(dataFile.getMeasureSequences());
-      System.out.println("MS  "+dataFile.getMeasureSequences().size());
+      System.out.println("MS  " + dataFile.getMeasureSequences().size());
 
     }
     return list;
