@@ -34,6 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.FrvaModel;
@@ -43,6 +44,7 @@ import model.data.MeasureSequence;
 public class TabController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
+  private final MainController mainController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
@@ -105,16 +107,7 @@ public class TabController {
   private VBox calculatingLabelBox;
 
   @FXML
-  private VBox crossedLimitBox;
-
-  @FXML
   private VBox vegetationIndicesBox;
-
-  @FXML
-  private Button ignoreLimitButton;
-
-  @FXML
-  private Label crossedLimitLabel;
 
   @FXML
   private Label indexNdviMinLabel;
@@ -161,14 +154,27 @@ public class TabController {
   @FXML
   private CheckBox checkBoxRadianceWr;
 
+  @FXML
+  private HBox messageBox;
+
+  @FXML
+  private Label messageBoxTitleLabel;
+
+  @FXML
+  private Label messageBoxTextLabel;
+
+  @FXML
+  private HBox messageBoxButtonHBox;
+
   /**
    * Constructor for new TabController.
-   *
    * @param model     The one and only Model.
    * @param thisTabId the ID of this Tab.
+   * @param mainController  The MainController containing this tab.
    */
-  public TabController(FrvaModel model, int thisTabId) {
+  public TabController(FrvaModel model, int thisTabId, MainController mainController) {
     this.model = model;
+    this.mainController = mainController;
     lineChartData = FXCollections.observableArrayList();
     tabId = thisTabId;
     listToWatch = model.getObservableList(thisTabId);
@@ -252,6 +258,7 @@ public class TabController {
         };
 
         task.setOnSucceeded(e -> {
+          displayMessageBox(false, 0);
           actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
               !actualShowingSeqeunces.contains(sequence)));
           actualShowingSeqeunces.retainAll(listToWatch);
@@ -278,7 +285,6 @@ public class TabController {
       while (change.next()) {
         if (change.wasAdded() && (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()
             || ignoreMaxToProcess)) {
-          crossedLimitBox.setVisible(false);
           change.getAddedSubList().forEach(this::addSingleSequence);
           calculateIndices();
           ignoreMaxToProcess = false;
@@ -286,25 +292,37 @@ public class TabController {
         } else if (change.wasRemoved()) {
           change.getRemoved().forEach(this::removeSingleSequence);
           calculateIndices();
-          if (change.getAddedSubList().size() < maxSeqeuncesToProcess.getValue()) {
-            crossedLimitBox.setVisible(false);
-          }
 
         } else {
-          crossedLimitBox.setVisible(true);
-          crossedLimitLabel.setText("You added " + change.getAddedSubList().size()
-              + " at once, this will take some time to compute.");
-          ignoreLimitButton.setOnAction(event -> {
-            crossedLimitBox.setVisible(false);
-            ignoreMaxToProcess = true;
-            change.getAddedSubList().forEach(this::addSingleSequence);
-            actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
-                !actualShowingSeqeunces.contains(sequence)));
-          });
+          displayMessageBox(true, change.getAddedSubList().size());
           actualShowingSeqeunces.removeAll(change.getAddedSubList());
         }
       }
     });
+  }
+
+  private void displayMessageBox(boolean active, int ammount) {
+    if (!(messageBox.isVisible() && active)) {
+      messageBox.setVisible(active);
+      messageBoxTitleLabel.setText("Selection to big to display");
+      messageBoxTextLabel.setText("You selected " + ammount + " measurements at once. "
+          + "\nThis will take a long time to display.");
+      messageBoxButtonHBox.getChildren().clear();
+      Button drawAnywayButton = new Button();
+      drawAnywayButton.setText("Draw anyway...");
+      drawAnywayButton.setOnAction(event -> {
+        ignoreMaxToProcess = true;
+        actualShowingSeqeunces.addAll(listToWatch.filtered(sequence ->
+            !actualShowingSeqeunces.contains(sequence)));
+        displayMessageBox(false, 0);
+      });
+      Button deselectAllButton = new Button();
+      deselectAllButton.setText("Deselect all");
+      deselectAllButton.setOnAction(event -> {
+        mainController.unselectTickedItems();
+      });
+      messageBoxButtonHBox.getChildren().addAll(deselectAllButton, drawAnywayButton);
+    }
   }
 
   /**
