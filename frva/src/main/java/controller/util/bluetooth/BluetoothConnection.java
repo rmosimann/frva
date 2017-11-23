@@ -66,7 +66,11 @@ public class BluetoothConnection {
       @Override
       public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         remotes.add(btDevice);
-        logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
+        try {
+          logger.info("Bluetooth: discovered device - " + btDevice.getFriendlyName(true));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
 
       @Override
@@ -118,7 +122,6 @@ public class BluetoothConnection {
       }
     });
 
-    BlueCoveImpl.shutdown();
     return serviceRecords;
   }
 

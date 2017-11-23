@@ -5,6 +5,8 @@ import controller.util.bluetooth.ConnectionStateConnecting;
 import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
@@ -14,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -97,6 +100,7 @@ public class LiveViewController {
 
   /**
    * Displays a dialog to indicate that the BLuetooth is off.
+   *
    * @param active true displays, false not.
    */
   public void displayBluetoothOffDialog(boolean active) {
@@ -116,8 +120,26 @@ public class LiveViewController {
         msgBoxDevicesList.getChildren().clear();
       }
       availableServiceRecords.forEach(serviceRecords -> {
+        String deviceAddress = serviceRecords[0].getHostDevice().getBluetoothAddress();
+        String deviceName = deviceAddress;
+        try {
+          deviceName = serviceRecords[0].getHostDevice().getFriendlyName(true);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
+        VBox buttonLabaleBox = new VBox();
+        Label namelabel = new Label(deviceName);
+        namelabel.setStyle("-fx-font-weight: bold");
+        String[] split = deviceAddress.split("(?<=\\G..)");
+        Label addresslabel = new Label(Arrays.toString(split)
+            .replace(", ", ":"));
+        buttonLabaleBox.getChildren().addAll(namelabel, addresslabel);
         Button serviceRecordButton = new Button();
-        serviceRecordButton.setText(serviceRecords[0].getConnectionURL(0, false));
+        serviceRecordButton.setGraphic(buttonLabaleBox);
+        serviceRecordButton.setPrefWidth(200);
+        serviceRecordButton.setPrefHeight(50);
+
         serviceRecordButton.setOnAction(event -> {
           setSelectedServiceRecord(serviceRecords);
           displayAvailableDevicesDialog(false);
