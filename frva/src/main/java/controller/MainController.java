@@ -1,6 +1,7 @@
 package controller;
 
 import controller.util.ImportWizard;
+import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
@@ -91,12 +92,9 @@ public class MainController {
       sdCard.serialize();
       model.getLibrary().add(sdCard);
     }
-    loadTreeStructure();
-    for (MeasureSequence ms:model.getCurrentSelectionList()
-         ) {
-
-    }
+    ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
   }
+
 
 
   /**
@@ -209,12 +207,9 @@ public class MainController {
   private void loadTreeStructure() {
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
     FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
-    root.createChildren(model.getLibrary(),false);
+    root.createChildren(model.getLibrary(), false);
     treeView.setRoot(root);
 
-    /*for (SdCard sdCard : model.getLibrary()) {
-      TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
-    }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
     treeViewListener = new ListChangeListener() {
@@ -326,9 +321,8 @@ public class MainController {
         ((FrvaTreeMeasurementItem) item).setSelected(true);
       }
     } else {
-      for (Object child : item.getChildren()) {
+      for (Object child : item.getChildren()) {;
         checkTreeItemWithMeasurement(((FrvaTreeItem) child), ms);
-
       }
     }
 
