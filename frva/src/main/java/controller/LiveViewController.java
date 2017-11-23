@@ -89,6 +89,7 @@ public class LiveViewController {
     });
 
     state.addListener(observable -> {
+      logger.info("New state is: " + state.getValue().getClass().getSimpleName());
       state.getValue().handle();
     });
   }
