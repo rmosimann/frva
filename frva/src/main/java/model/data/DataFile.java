@@ -47,17 +47,16 @@ public class DataFile {
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
       while ((line = br.readLine()) != null) {
-
+        System.out.println(line.length() > 10 ? line.substring(0, 10) : "empty line");
         if (!"".equals(line)) {
           if (Character.isDigit(line.charAt(0))) {
-
+            //   System.out.println("added measuresequence"+ line.substring(0,20));
             measureSequences.add(new MeasureSequence(line, this));
+            //TODO: Evaluate length of measurements so no magic number occures
             int i = 0;
-            //    System.out.println("added measuresequence"+ line);
-            //  System.out.println(measureSequences.size());
-
             //skip empty lines
-            while ((line = br.readLine()) != null && i < 8) {
+            while ((line = br.readLine()) != null && i < 4) {
+              System.out.println("skip " + (line.length() > 10 ? line.substring(0, 10) : "empty Line"));
               i++;
             }
           }
