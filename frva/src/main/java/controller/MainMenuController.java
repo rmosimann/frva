@@ -47,8 +47,11 @@ public class MainMenuController {
 
       loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/liveView.fxml"));
-      loader.setController(new LiveViewController(model));
+      LiveViewController liveViewController = new LiveViewController(model);
+      loader.setController(liveViewController);
       liveViewNode = loader.load();
+      liveViewController.setActiveView(liveViewNode);
+
 
       loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/settingsView.fxml"));
@@ -92,6 +95,7 @@ public class MainMenuController {
 
       if (nodetouse != null) {
         contentVbox.getChildren().add(1, nodetouse);
+        model.setActiveView(nodetouse);
       }
 
       setSelectedButton(pressedButton);

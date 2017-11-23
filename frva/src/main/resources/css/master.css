@@ -1,5 +1,6 @@
 @import "graph.css";
 @import "mainMenu.css";
+@import "liveView.css";
 
 .messageBoxHeader {
     -fx-background-color: cadetblue;
@@ -14,4 +15,9 @@
 
 .messageBoxOutgrey {
     -fx-background-color: rgba(100, 100, 100, 0.5);
+}
+
+.messageBoxTitle {
+    -fx-font-size: 16pt;
+    -fx-font-weight: 700;
 }

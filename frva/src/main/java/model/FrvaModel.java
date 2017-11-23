@@ -18,11 +18,15 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javax.bluetooth.RemoteDevice;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -37,7 +41,9 @@ public class FrvaModel {
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
+  private final ObjectProperty<Node> activeView = new SimpleObjectProperty<>();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+  private final ObservableList<RemoteDevice> bltDevices = FXCollections.observableArrayList();
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
     t.setDaemon(true);
@@ -297,4 +303,20 @@ public class FrvaModel {
     return selectionMap.get(mapKey);
   }
 
+
+  public ObservableList<RemoteDevice> getBltDevices() {
+    return bltDevices;
+  }
+
+  public Node getActiveView() {
+    return activeView.get();
+  }
+
+  public ObjectProperty<Node> activeViewProperty() {
+    return activeView;
+  }
+
+  public void setActiveView(Node activeView) {
+    this.activeView.set(activeView);
+  }
 }

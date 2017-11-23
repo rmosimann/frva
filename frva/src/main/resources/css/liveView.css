@@ -1,0 +1,10 @@
+.terminalMiniView {
+
+    -fx-background-color: black;
+    -fx-text-fill: lime;
+    -fx-font-size: 6pt;
+}
+
+.text-area .scroll-pane .content {
+    -fx-background-color: black;
+}
