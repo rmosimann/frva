@@ -67,6 +67,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
     for (DataFile df : sdCard.getDataFiles()) {
       for (MeasureSequence ms : df.getMeasureSequences()) {
         boolean newItem = false;
+        boolean alreadyExisting = false;
 
         if (!ms.getYear().equals(yearItem.getYear())) {
           yearItem.addMeasureSequences(yearlyCount);
@@ -75,11 +76,14 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
           for (Object child : getChildren()) {
             if (yearItem.equals(child)) {
               yearItem = (FrvaTreeYearItem) child;
+              alreadyExisting=true;
             }
-
           }
-          getChildren().add(yearItem);
-          newItem = true;
+          if(!alreadyExisting) {
+            getChildren().add(yearItem);
+            alreadyExisting=false;
+          }
+            newItem = true;
         }
 
         if (!ms.getMonth().equals(monthItem.getMonth()) || newItem) {
