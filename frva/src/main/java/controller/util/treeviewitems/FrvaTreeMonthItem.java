@@ -15,9 +15,6 @@ public class FrvaTreeMonthItem extends FrvaTreeItem {
 
   private String month;
 
-  @Override
-  public void createChildren(List<SdCard> list) {
-  }
 
   public String getMonth() {
     return this.month;

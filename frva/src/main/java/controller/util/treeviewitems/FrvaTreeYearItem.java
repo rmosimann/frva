@@ -18,10 +18,6 @@ public class FrvaTreeYearItem extends FrvaTreeItem {
     this.year = year;
   }
 
-  @Override
-  public void createChildren(List<SdCard> list) {
-
-  }
 
   @Override
   public boolean equals(Object o) {

@@ -3,6 +3,7 @@ package controller.util;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
+import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
@@ -76,6 +78,7 @@ public class ImportWizard {
     this.previewTreeView = new TreeView<>();
     previewTreeView.setCellFactory(CheckBoxTreeCell.forTreeView());
     previewTreeView.setRoot(new FrvaTreeRootItem("Library"));
+    previewTreeView.setShowRoot(false);
   }
 
   /**
@@ -98,7 +101,7 @@ public class ImportWizard {
     // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
-        updateImportList((FrvaTreeRootItem) previewTreeView.getRoot());
+        updateImportList((FrvaTreeItem) previewTreeView.getRoot());
       }
     });
     return importList;
@@ -180,8 +183,16 @@ public class ImportWizard {
         logger.info("set SD-Cardname " + chosenSdCardName.get()
             + " at location" + sdCard.getPath());
 
-        TreeViewFactory.extendTreeView(sdCard, previewTreeView, model, true);
+        ((FrvaTreeRootItem) previewTreeView.getRoot()).createChildren(sdCardList, true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+        previewTreeView.setRoot(previewTreeView.getRoot().getChildren().get(0)
+            .getChildren().get(0));
+        previewTreeView.setOnMouseClicked(event -> {
+          previewTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+          previewTreeView.getSelectionModel().getSelectedItems().forEach(item ->
+              ((FrvaTreeItem) item).setSelected(true));
+        });
+
 
       }
     };

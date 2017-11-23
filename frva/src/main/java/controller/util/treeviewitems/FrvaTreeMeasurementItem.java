@@ -69,8 +69,5 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     return file.getAbsolutePath();
   }
 
-  @Override
-  public void createChildren(List<SdCard> list) {
-  }
 
 }

@@ -23,26 +23,25 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
    *
    * @param list of which the treeview should be created from
    */
-  public void createChildren(List<SdCard> list) {
+  public void createChildren(List<SdCard> list, boolean createFull) {
 
     List<String> deviceNames = list.stream().map(f -> (f.getDeviceSerialNr()))
         .collect(Collectors.toList());
     boolean containesItemAlready = false;
     for (String deviceName : deviceNames) {
-      FrvaTreeItem deviceItem = new FrvaTreeDeviceItem(deviceName, deviceName);
+      FrvaTreeDeviceItem deviceItem = new FrvaTreeDeviceItem(deviceName, deviceName);
       Iterator it = this.getChildren().iterator();
       while (it.hasNext()) {
         Object currentElement = it.next();
         if (deviceItem.equals(currentElement)) {
           deviceItem = (FrvaTreeDeviceItem) currentElement;
           containesItemAlready = true;
-
         }
       }
       if (!containesItemAlready) {
         this.getChildren().add(deviceItem);
       }
-      deviceItem.createChildren(list);
+      deviceItem.createChildren(list, createFull);
     }
   }
 }

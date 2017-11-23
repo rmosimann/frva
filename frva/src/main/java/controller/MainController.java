@@ -1,6 +1,7 @@
 package controller;
 
 import controller.util.ImportWizard;
+import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
@@ -91,7 +92,7 @@ public class MainController {
       sdCard.serialize();
       model.getLibrary().add(sdCard);
     }
-    loadTreeStructure();
+    ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
   }
 
 
@@ -204,13 +205,10 @@ public class MainController {
 
   private void loadTreeStructure() {
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
-    root.createChildren(model.getLibrary());
+    FrvaTreeRootItem root = new FrvaTreeRootItem("empty Library");
+    root.createChildren(model.getLibrary(), false);
     treeView.setRoot(root);
 
-    /*for (SdCard sdCard : model.getLibrary()) {
-      TreeViewFactory.extendTreeView(sdCard, treeView, model, false);
-    }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
     treeViewListener = new ListChangeListener() {
@@ -243,6 +241,21 @@ public class MainController {
     };
     //TODO Deregister Listener?
     treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
+    treeView.getRoot().getChildren().addListener(new ListChangeListener() {
+      @Override
+      public void onChanged(Change c) {
+        c.next();
+        if (c.getList().size() == 0) {
+          treeView.setShowRoot(true);
+        } else {
+          treeView.setShowRoot(false);
+        }
+      }
+    });
+    if (treeView.getRoot().getChildren().size() != 0) {
+      treeView.setShowRoot(false);
+    }
+
 
   }
 
@@ -323,8 +336,8 @@ public class MainController {
       }
     } else {
       for (Object child : item.getChildren()) {
+        ;
         checkTreeItemWithMeasurement(((FrvaTreeItem) child), ms);
-
       }
     }
 
