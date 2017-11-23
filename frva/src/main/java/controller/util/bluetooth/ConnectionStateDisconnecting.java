@@ -3,7 +3,7 @@ package controller.util.bluetooth;
 import controller.LiveViewController;
 import java.io.IOException;
 
-public class ConnectionStateDisconnecting extends AbstractConnectionState {
+public class ConnectionStateDisconnecting implements ConnectionState {
   private final LiveViewController liveViewController;
 
   public ConnectionStateDisconnecting(LiveViewController liveViewController) {

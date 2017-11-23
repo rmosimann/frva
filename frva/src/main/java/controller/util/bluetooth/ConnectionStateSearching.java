@@ -3,7 +3,7 @@ package controller.util.bluetooth;
 import controller.LiveViewController;
 import javafx.concurrent.Task;
 
-public class ConnectionStateSearching extends AbstractConnectionState {
+public class ConnectionStateSearching implements ConnectionState {
   private final LiveViewController liveViewController;
 
   public ConnectionStateSearching(LiveViewController liveViewController) {

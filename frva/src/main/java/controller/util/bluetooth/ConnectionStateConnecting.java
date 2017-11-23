@@ -4,7 +4,7 @@ import controller.LiveViewController;
 import java.io.IOException;
 import javax.microedition.io.StreamConnection;
 
-public class ConnectionStateConnecting extends AbstractConnectionState {
+public class ConnectionStateConnecting implements ConnectionState {
   private final LiveViewController liveViewController;
 
   public ConnectionStateConnecting(LiveViewController liveViewController) {

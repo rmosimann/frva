@@ -151,6 +151,7 @@ public class BluetoothConnection {
    * Closes a Connection.
    *
    * @param streamConnection the Connection to close.
+   * @throws IOException when there is a problem.
    */
   public static void closeConnection(StreamConnection streamConnection) throws IOException {
     streamConnection.close();
