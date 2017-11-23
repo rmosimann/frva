@@ -1,15 +1,11 @@
 package model.data;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -72,8 +68,12 @@ public class MeasureSequence {
     this.deleted = new SimpleBooleanProperty(false);
   }
 
+  /**
+   * Reads in the measurement-data from the file system.
+   * @return the read in measurements in a map.
+   */
 
-  public Map<SequenceKeyName, double[]> getMeasurements() {
+  public Map<SequenceKeyName, double[]> getData() {
     Map<SequenceKeyName, double[]> measurements = new HashMap<>();
     String line = "";
     boolean found = false;
@@ -81,7 +81,8 @@ public class MeasureSequence {
     try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
       while ((line = br.readLine()) != null && !found) {
 
-        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0].equals(this.getId()))) {
+        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0]
+            .equals(this.getId()))) {
           found = true;
 
 
@@ -125,7 +126,7 @@ public class MeasureSequence {
       sb.append(";");
     }
 
-    Map<SequenceKeyName, double[]> measurements = getMeasurements();
+    Map<SequenceKeyName, double[]> measurements = getData();
 
     sb.append("\n\n" + "WR" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.WR)).forEach(a -> sb.append((int) a + ";"));
@@ -224,11 +225,11 @@ public class MeasureSequence {
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
 
-    double[] waveCalibration = dataFile.getSdCard().getCalibrationFile().getWl_F1();
-    double[] vegCalibration = dataFile.getSdCard().getCalibrationFile().getDw_coef_F1();
-    double[] wrCalibration = dataFile.getSdCard().getCalibrationFile().getUp_coef_F1();
+    double[] waveCalibration = dataFile.getSdCard().getCalibrationFile().getWlF1();
+    double[] vegCalibration = dataFile.getSdCard().getCalibrationFile().getDwCoefF1();
+    double[] wrCalibration = dataFile.getSdCard().getCalibrationFile().getUpCoefF1();
 
-    Map<SequenceKeyName, double[]> measurements = getMeasurements();
+    Map<SequenceKeyName, double[]> measurements = getData();
 
     double[] vegs = measurements.get(SequenceKeyName.VEG);
     double[] dcVegs = measurements.get(SequenceKeyName.DC_VEG);
@@ -308,7 +309,7 @@ public class MeasureSequence {
 
 
   public double[] getWavlengthCalibration() {
-    return dataFile.getSdCard().getCalibrationFile().getWl_F1();
+    return dataFile.getSdCard().getCalibrationFile().getWlF1();
   }
 
   public String getSequenceUuid() {

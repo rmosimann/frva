@@ -51,7 +51,6 @@ public class SdCard {
    * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
    *
    * @param sdCardPath Path where the SDCARD is located.
-   * @return A List of all contained DataFiles.
    * @throws FileNotFoundException when path is not found.
    */
   public void lazyReadDatafiles(File sdCardPath) throws FileNotFoundException {
