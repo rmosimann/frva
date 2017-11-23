@@ -22,6 +22,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
    * Creates a SdCard item.
    *
    * @param sdCard the sdCard the item is referring to.
+   * @param isPreview true if import scenario.
    */
   public FrvaTreeSdCardItem(SdCard sdCard, boolean isPreview) {
     super(sdCard.getName());
@@ -49,6 +50,10 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   }
 
+  /**
+   * Creates its Children depending on list.
+   * @param list of SdCards which is input data for creating Treeview.
+   */
   public void createChildren(List<SdCard> list) {
     this.getChildren().clear();
 

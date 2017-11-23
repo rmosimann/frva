@@ -185,12 +185,13 @@ public class ImportWizard {
 
         ((FrvaTreeRootItem) previewTreeView.getRoot()).createChildren(sdCardList, true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
-        previewTreeView.setRoot(previewTreeView.getRoot().getChildren().get(0).getChildren().get(0));
-          previewTreeView.setOnMouseClicked(event -> {
-            previewTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            previewTreeView.getSelectionModel().getSelectedItems().forEach(item ->
-                ((FrvaTreeItem) item).setSelected(true));
-          });
+        previewTreeView.setRoot(previewTreeView.getRoot().getChildren().get(0)
+            .getChildren().get(0));
+        previewTreeView.setOnMouseClicked(event -> {
+          previewTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+          previewTreeView.getSelectionModel().getSelectedItems().forEach(item ->
+              ((FrvaTreeItem) item).setSelected(true));
+        });
 
 
       }

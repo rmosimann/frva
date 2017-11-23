@@ -96,7 +96,6 @@ public class MainController {
   }
 
 
-
   /**
    * Exports Data to a specific folder.
    */
@@ -206,7 +205,7 @@ public class MainController {
 
   private void loadTreeStructure() {
     treeView.setCellFactory(CheckBoxTreeCell.forTreeView());
-    FrvaTreeRootItem root = new FrvaTreeRootItem("Library");
+    FrvaTreeRootItem root = new FrvaTreeRootItem("empty Library");
     root.createChildren(model.getLibrary(), false);
     treeView.setRoot(root);
 
@@ -242,6 +241,21 @@ public class MainController {
     };
     //TODO Deregister Listener?
     treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
+    treeView.getRoot().getChildren().addListener(new ListChangeListener() {
+      @Override
+      public void onChanged(Change c) {
+        c.next();
+        if (c.getList().size() == 0) {
+          treeView.setShowRoot(true);
+        } else {
+          treeView.setShowRoot(false);
+        }
+      }
+    });
+    if (treeView.getRoot().getChildren().size() != 0) {
+      treeView.setShowRoot(false);
+    }
+
 
   }
 
@@ -321,7 +335,8 @@ public class MainController {
         ((FrvaTreeMeasurementItem) item).setSelected(true);
       }
     } else {
-      for (Object child : item.getChildren()) {;
+      for (Object child : item.getChildren()) {
+        ;
         checkTreeItemWithMeasurement(((FrvaTreeItem) child), ms);
       }
     }

@@ -20,6 +20,11 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
     this.deviceSerialNr = deviceSerialNr;
   }
 
+  /**
+   * Creates its children depending on list.
+   * @param list of SdCards which should be created
+   * @param isPreview true if import scenario (Fully loaded then)
+   */
   public void createChildren(List<SdCard> list, boolean isPreview) {
     for (SdCard sdCard : list) {
       FrvaTreeSdCardItem sdCardItem = new FrvaTreeSdCardItem(sdCard, isPreview);
