@@ -43,7 +43,6 @@ public class TreeViewFactory {
 
     int yearlyCount = 0;
     FrvaTreeYearItem yearItem = new FrvaTreeYearItem("Year");
-
     int monthlyCount = 0;
     FrvaTreeMonthItem monthItem = new FrvaTreeMonthItem("Month");
 

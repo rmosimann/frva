@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TreeItem;
 import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
@@ -19,6 +20,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
 
   /**
    * Creates a SdCard item.
+   *
    * @param sdCard the sdCard the item is referring to.
    */
   public FrvaTreeSdCardItem(SdCard sdCard) {
@@ -61,6 +63,7 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
     int hourlyCount = 0;
     FrvaTreeHourItem hourItem = new FrvaTreeHourItem(-1);
 
+
     for (DataFile df : sdCard.getDataFiles()) {
       for (MeasureSequence ms : df.getMeasureSequences()) {
         boolean newItem = false;
@@ -69,6 +72,12 @@ public class FrvaTreeSdCardItem extends FrvaTreeItem {
           yearItem.addMeasureSequences(yearlyCount);
           yearlyCount = 0;
           yearItem = new FrvaTreeYearItem(ms.getYear());
+          for (Object child : getChildren()) {
+            if (yearItem.equals(child)) {
+              yearItem = (FrvaTreeYearItem) child;
+            }
+
+          }
           getChildren().add(yearItem);
           newItem = true;
         }

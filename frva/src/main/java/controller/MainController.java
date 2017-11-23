@@ -1,11 +1,9 @@
 package controller;
 
 import controller.util.ImportWizard;
-import controller.util.TreeViewFactory;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,13 +103,13 @@ public class MainController {
       model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
-    if (Desktop.isDesktopSupported()) {
-      try {
-        Desktop.getDesktop().open(selectedFile);
-      } catch (IOException e) {
-        logger.info(e.getMessage());
-      }
-    }
+    //    if (Desktop.isDesktopSupported()) {
+    //      try {
+    //        Desktop.getDesktop().open(selectedFile);
+    //      } catch (IOException e) {
+    //        logger.info(e.getMessage());
+    //      }
+    //    }
   }
 
 

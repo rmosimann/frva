@@ -49,7 +49,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   }
 
 
-
   /**
    * Getter for the Measurementsequence.
    *
@@ -58,15 +57,10 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
   public MeasureSequence getMeasureSequence() {
     if (this.measureSequence != null) {
       return measureSequence;
+    } else {
+      System.out.println("No Measureseqence");
+      return null;
     }
-    TreeItem item = this;
-    while (!(item instanceof FrvaTreeSdCardItem)) {
-      item = item.getParent();
-    }
-    SdCard containingSdCard = ((FrvaTreeSdCardItem) item).getSdCard();
-    this.measureSequence = containingSdCard.readSingleMeasurementSequence(file, id);
-    addListener();
-    return this.measureSequence;
   }
 
 
