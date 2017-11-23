@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +35,7 @@ public class MainController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private int newTabId = 0;
+  private ListChangeListener treeViewListener;
 
   @FXML
   private CheckTreeView treeView;
@@ -64,8 +67,8 @@ public class MainController {
     initializeTabHandling();
     loadTreeStructure();
     addEventHandlers();
-    //onChangeTab();
   }
+
 
   private void addEventHandlers() {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
@@ -156,6 +159,19 @@ public class MainController {
             model.setCurrentlySelectedTab((Integer) newValue);
           }
         });
+    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+                          Number newValue) {
+        treeView.getCheckModel().getCheckedItems().removeListener(treeViewListener);
+        unselectTickedItems(treeView.getRoot());
+        for (MeasureSequence ms : model.getCurrentSelectionList()) {
+          checkTreeItemWithMeasurement((FrvaTreeItem) treeView.getRoot(), ms);
+
+        }
+        treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
+      }
+    });
   }
 
   /**
@@ -201,9 +217,7 @@ public class MainController {
     }*/
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
-
-    //TODO Deregister Listener?
-    treeView.getCheckModel().getCheckedItems().addListener(new ListChangeListener() {
+    treeViewListener = new ListChangeListener() {
       @Override
       public void onChanged(Change c) {
         while (c.next()) {
@@ -230,7 +244,9 @@ public class MainController {
           }
         }
       }
-    });
+    };
+    //TODO Deregister Listener?
+    treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
 
   }
 
@@ -302,5 +318,19 @@ public class MainController {
       }
     }
     return list;
+  }
+
+  private void checkTreeItemWithMeasurement(FrvaTreeItem item, MeasureSequence ms) {
+    if (item instanceof FrvaTreeMeasurementItem) {
+      if (((FrvaTreeMeasurementItem) item).getMeasureSequence().equals(ms)) {
+        ((FrvaTreeMeasurementItem) item).setSelected(true);
+      }
+    } else {
+      for (Object child : item.getChildren()) {
+        checkTreeItemWithMeasurement(((FrvaTreeItem) child), ms);
+
+      }
+    }
+
   }
 }
