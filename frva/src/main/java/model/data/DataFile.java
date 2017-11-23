@@ -54,6 +54,7 @@ public class DataFile {
             measureSequences.add(new MeasureSequence(line, this));
             //TODO: Evaluate length of measurements so no magic number occures
             int i = 0;
+
             //skip empty lines
             while ((line = br.readLine()) != null && i < 4) {
               i++;
@@ -65,9 +66,6 @@ public class DataFile {
 
     } catch (IOException e) {
       e.printStackTrace();
-      System.out.println(
-          "Exception"
-      );
     }
   }
 

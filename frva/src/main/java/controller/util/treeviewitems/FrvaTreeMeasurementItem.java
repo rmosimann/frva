@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TreeItem;
-import model.FrvaModel;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -58,7 +56,6 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
     if (this.measureSequence != null) {
       return measureSequence;
     } else {
-      System.out.println("No Measureseqence");
       return null;
     }
   }

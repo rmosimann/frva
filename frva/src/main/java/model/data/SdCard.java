@@ -41,7 +41,7 @@ public class SdCard {
 
     try {
       lazyReadDatafiles(sdCardPath);
-      System.out.println("datafiles now " + dataFiles.size());
+
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -176,10 +176,9 @@ public class SdCard {
    */
   public List<MeasureSequence> getMeasureSequences() {
     List<MeasureSequence> list = new ArrayList<>();
-    System.out.println("Datafiles " + dataFiles.size());
+
     for (DataFile dataFile : dataFiles) {
       list.addAll(dataFile.getMeasureSequences());
-      System.out.println("MS  " + dataFile.getMeasureSequences().size());
 
     }
     return list;
@@ -200,7 +199,6 @@ public class SdCard {
    * Writes the Metadata of all MeasurementSequences in this SDCARD to the db.csv file.
    */
   public void serialize() {
-    System.out.println("try to serialize");
     File file = new File(FrvaModel.LIBRARYPATH + File.separator + name + File.separator + "db.csv");
     if (file.getParentFile() != null) {
       file.getParentFile().mkdirs();
