@@ -70,6 +70,7 @@ public class MeasureSequence {
 
   /**
    * Reads in the measurement-data from the file system.
+   *
    * @return the read in measurements in a map.
    */
 
@@ -121,31 +122,32 @@ public class MeasureSequence {
   public String getCsv() {
     StringBuilder sb = new StringBuilder();
     Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
-    for (int i = 0; i < 988; i++) {
-      sb.append(";");
-    }
+
 
     Map<SequenceKeyName, double[]> measurements = getData();
 
-    sb.append("\n\n" + "WR" + ";");
+    sb.append("\n" + "WR" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.WR)).forEach(a -> sb.append((int) a + ";"));
-    sb.deleteCharAt(sb.length() - 1);
+    sb.append(";");
 
-    sb.append("\n\n" + "VEG" + ";");
+    sb.append("\n" + "VEG" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.VEG)).forEach(a -> sb.append((int) a + ";"));
-    sb.deleteCharAt(sb.length() - 1);
+    sb.append(";");
 
+    sb.append("\n" + "WR2" + ";");
+    Arrays.stream(measurements.get(SequenceKeyName.WR2)).forEach(a -> sb.append((int) a + ";"));
+    sb.append(";");
 
-    sb.append("\n\n" + "DC_WR" + ";");
+    sb.append("\n" + "DC_WR" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.DC_WR)).forEach(a -> sb.append((int) a + ";"));
-    sb.deleteCharAt(sb.length() - 1);
+    sb.append(";");
 
-
-    sb.append("\n\n" + "DC_VEG" + ";");
+    sb.append("\n" + "DC_VEG" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.DC_VEG)).forEach(a -> sb.append((int) a + ";"));
-    sb.deleteCharAt(sb.length() - 1);
+    //sb.deleteCharAt(sb.length() - 1);
+    sb.append(";");
 
-    sb.append("\n\n");
+    sb.append("\n");
     return sb.toString();
   }
 
