@@ -105,7 +105,7 @@ public class ImportWizard {
         selectMeasurementsPane));
 
 
-   // show wizard and wait for response
+    // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
         updateImportList((FrvaTreeItem) previewTreeView.getRoot());
@@ -248,11 +248,11 @@ public class ImportWizard {
         }
       }).length == 1) {
         chosenDirectoryPath.set(chosenDirectory.getParentFile().getAbsolutePath());
-        chosenDirectory=new File(chosenDirectoryPath.get());
+        chosenDirectory = new File(chosenDirectoryPath.get());
         validDir.setValue(true);
       } else {
         chosenDirectoryPath.set(null);
-        chosenDirectory=null;
+        chosenDirectory = null;
         validDir.setValue(false);
 
       }
