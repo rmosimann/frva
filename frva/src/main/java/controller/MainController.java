@@ -1,7 +1,6 @@
 package controller;
 
 import controller.util.ImportWizard;
-import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
@@ -119,16 +118,21 @@ public class MainController {
 
   private void deleteSelectedItems() {
     List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
-    if (confirmDelete(list.size())) {
+    System.out.println(list.size());
+    if (confirmDelete(list.stream().filter(p->p instanceof FrvaTreeMeasurementItem).count())) {
       List<MeasureSequence> measurements = new ArrayList<>();
       for (FrvaTreeItem item : list) {
         if (item instanceof FrvaTreeMeasurementItem) {
           measurements.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
+          item.removeMeasureSequence();
         }
+
       }
-      treeView.getCheckModel().clearChecks();
+      unselectTickedItems(treeView.getRoot());
       model.deleteMeasureSequences(measurements);
     }
+
+
   }
 
 

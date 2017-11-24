@@ -1,5 +1,6 @@
 package controller.util;
 
+import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
@@ -27,6 +28,8 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -48,6 +51,7 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
+  private Wizard wizard;
 
   private File chosenDirectory;
   private BooleanProperty validDir;
@@ -93,9 +97,8 @@ public class ImportWizard {
    */
   public List<MeasureSequence> startImport() {
 
-    Wizard wizard = new Wizard(owner);
+    wizard = new Wizard(owner);
     wizard.invalidProperty().bind(validDir.not());
-
     //First Page
     WizardPane choseSdCardPane = createFirstPage();
     WizardPane choseSdCardNamePane = createSecondPage();
@@ -105,7 +108,7 @@ public class ImportWizard {
         selectMeasurementsPane));
 
 
-   // show wizard and wait for response
+    // show wizard and wait for response
     wizard.showAndWait().ifPresent(result -> {
       if (result == ButtonType.FINISH) {
         updateImportList((FrvaTreeItem) previewTreeView.getRoot());
@@ -143,121 +146,122 @@ public class ImportWizard {
     chosenDirectoryLabel.textProperty().bind(chosenDirectoryPath);
     choseSdCardGrid.add(chosenDirectoryLabel, 1, 0);
     choseSdCard.setContent(choseSdCardGrid);
-    return choseSdCard;
-  }
 
-  private WizardPane createSecondPage() {
-
-    WizardPane choseSdCardNamePane = new WizardPane();
-    choseSdCardNamePane.setHeaderText("Please chose a name for the SD-Card you want to import");
-
-    GridPane choseSdCardNameGrid = new GridPane();
-
-    choseSdCardNameGrid.setVgap(40);
-    choseSdCardNameGrid.setHgap(10);
-
-    TextField sdCardNameField = new TextField();
-
-    DateFormat df = new SimpleDateFormat("YYYYMMdd_HHmm");
-    Date dateobj = new Date();
-    sdCardNameField.setText("import_" + df.format(dateobj));
-
-    List<String> existingSdcardNames = model.getLibrary().stream()
-        .map(sdCard -> sdCard.getName())
-        .collect(Collectors.toList());
-    int sdcardnameVersion = 0;
-    while (existingSdcardNames.contains(sdCardNameField.getText())) {
-      sdcardnameVersion++;
-      sdCardNameField.setText("import_" + df.format(dateobj) + "(" + sdcardnameVersion + ")");
-    }
-
-    sdCardNameField.setPromptText("SD-Card Name");
-    choseSdCardNameGrid.add(sdCardNameField, 0, 0);
-    chosenSdCardName.bind(sdCardNameField.textProperty());
-    choseSdCardNamePane.setContent(choseSdCardNameGrid);
-    return choseSdCardNamePane;
-  }
-
-  private WizardPane createThirdPage() {
-
-    WizardPane choseMeasurementsPane = new WizardPane() {
-      @Override
-      public void onEnteringPage(Wizard wizard) {
-        SdCard sdCard = new SdCard(chosenDirectory, chosenSdCardName.get());
-        sdCardList.add(sdCard);
-
-        logger.info("set SD-Cardname " + chosenSdCardName.get()
-            + " at location" + sdCard.getPath());
-
-        ((FrvaTreeRootItem) previewTreeView.getRoot()).createChildren(sdCardList, true);
-        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
-        previewTreeView.setRoot(previewTreeView.getRoot().getChildren().get(0)
-            .getChildren().get(0));
-        previewTreeView.setOnMouseClicked(event -> {
-          previewTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-          previewTreeView.getSelectionModel().getSelectedItems().forEach(item ->
-              ((FrvaTreeItem) item).setSelected(true));
-        });
-
+          return choseSdCard;
 
       }
-    };
 
+    private WizardPane createSecondPage () {
 
-    choseMeasurementsPane.setHeaderText("Chose measurements you want to import.");
-    Pane selectMeasurementsGrid = new VBox();
-    HBox checkbox = new HBox();
-    CheckBox importAllCheckbox = new CheckBox();
-    Label importAllLabel = new Label("Import full SD-Card");
-    importAllCheckbox.setSelected(true);
-    checkbox.getChildren().addAll(importAllCheckbox, importAllLabel);
-    selectMeasurementsGrid.getChildren().add(checkbox);
-    selectMeasurementsGrid.getChildren().add(previewTreeView);
-    previewTreeView.disableProperty().bind(importAllCheckbox.selectedProperty());
-    importAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+      WizardPane choseSdCardNamePane = new WizardPane();
+      choseSdCardNamePane.setHeaderText("Please chose a name for the SD-Card you want to import");
+
+      GridPane choseSdCardNameGrid = new GridPane();
+
+      choseSdCardNameGrid.setVgap(40);
+      choseSdCardNameGrid.setHgap(10);
+
+      TextField sdCardNameField = new TextField();
+
+      DateFormat df = new SimpleDateFormat("YYYYMMdd_HHmm");
+      Date dateobj = new Date();
+      sdCardNameField.setText("import_" + df.format(dateobj));
+
+      List<String> existingSdcardNames = model.getLibrary().stream()
+          .map(sdCard -> sdCard.getName())
+          .collect(Collectors.toList());
+      int sdcardnameVersion = 0;
+      while (existingSdcardNames.contains(sdCardNameField.getText())) {
+        sdcardnameVersion++;
+        sdCardNameField.setText("import_" + df.format(dateobj) + "(" + sdcardnameVersion + ")");
       }
-    });
-    choseMeasurementsPane.setContent(selectMeasurementsGrid);
-    return choseMeasurementsPane;
 
-  }
-
-
-  private void choseDirectory() {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (chosenDirectory != null) {
-      directoryChooser.setInitialDirectory(chosenDirectory);
+      sdCardNameField.setPromptText("SD-Card Name");
+      choseSdCardNameGrid.add(sdCardNameField, 0, 0);
+      chosenSdCardName.bind(sdCardNameField.textProperty());
+      choseSdCardNamePane.setContent(choseSdCardNameGrid);
+      return choseSdCardNamePane;
     }
-    directoryChooser.setTitle("Select SD-Card");
-    chosenDirectory = directoryChooser.showDialog(owner);
-    if (chosenDirectory != null) {
-      if (chosenDirectory.listFiles(new FilenameFilter() {
+
+    private WizardPane createThirdPage () {
+
+      WizardPane choseMeasurementsPane = new WizardPane() {
         @Override
-        public boolean accept(File dir, String name) {
-          return name.equals("cal.csv");
-        }
-      }).length == 1) {
-        chosenDirectoryPath.set(chosenDirectory.getAbsolutePath());
-        validDir.setValue(true);
-      } else if (chosenDirectory.getParentFile().list(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.equals("cal.csv");
-        }
-      }).length == 1) {
-        chosenDirectoryPath.set(chosenDirectory.getParentFile().getAbsolutePath());
-        chosenDirectory=new File(chosenDirectoryPath.get());
-        validDir.setValue(true);
-      } else {
-        chosenDirectoryPath.set(null);
-        chosenDirectory=null;
-        validDir.setValue(false);
+        public void onEnteringPage(Wizard wizard) {
+          SdCard sdCard = new SdCard(chosenDirectory, chosenSdCardName.get());
+          sdCardList.add(sdCard);
 
+          logger.info("set SD-Cardname " + chosenSdCardName.get()
+              + " at location" + sdCard.getPath());
+
+          ((FrvaTreeRootItem) previewTreeView.getRoot()).createChildren(sdCardList, true);
+          ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+          previewTreeView.setRoot(previewTreeView.getRoot().getChildren().get(0)
+              .getChildren().get(0));
+          previewTreeView.setOnMouseClicked(event -> {
+            previewTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            previewTreeView.getSelectionModel().getSelectedItems().forEach(item ->
+                ((FrvaTreeItem) item).setSelected(true));
+          });
+
+
+        }
+      };
+
+
+      choseMeasurementsPane.setHeaderText("Chose measurements you want to import.");
+      Pane selectMeasurementsGrid = new VBox();
+      HBox checkbox = new HBox();
+      CheckBox importAllCheckbox = new CheckBox();
+      Label importAllLabel = new Label("Import full SD-Card");
+      importAllCheckbox.setSelected(true);
+      checkbox.getChildren().addAll(importAllCheckbox, importAllLabel);
+      selectMeasurementsGrid.getChildren().add(checkbox);
+      selectMeasurementsGrid.getChildren().add(previewTreeView);
+      previewTreeView.disableProperty().bind(importAllCheckbox.selectedProperty());
+      importAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue) {
+          ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);
+        }
+      });
+      choseMeasurementsPane.setContent(selectMeasurementsGrid);
+      return choseMeasurementsPane;
+
+    }
+
+
+    private void choseDirectory () {
+      DirectoryChooser directoryChooser = new DirectoryChooser();
+      if (chosenDirectory != null) {
+        directoryChooser.setInitialDirectory(chosenDirectory);
+      }
+      directoryChooser.setTitle("Select SD-Card");
+      chosenDirectory = directoryChooser.showDialog(owner);
+      if (chosenDirectory != null) {
+        if (chosenDirectory.listFiles(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            return name.equals("cal.csv");
+          }
+        }).length == 1) {
+          chosenDirectoryPath.set(chosenDirectory.getAbsolutePath());
+          validDir.setValue(true);
+        } else if (chosenDirectory.getParentFile().list(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            return name.equals("cal.csv");
+          }
+        }).length == 1) {
+          chosenDirectoryPath.set(chosenDirectory.getParentFile().getAbsolutePath());
+          chosenDirectory = new File(chosenDirectoryPath.get());
+          validDir.setValue(true);
+        } else {
+          chosenDirectoryPath.set(null);
+          chosenDirectory = null;
+          validDir.setValue(false);
+
+        }
       }
     }
-    System.out.println(chosenDirectoryPath.toString());
-  }
 
-}
+  }
