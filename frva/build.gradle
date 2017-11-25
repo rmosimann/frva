@@ -21,12 +21,12 @@ dependencies {
 
     switch(System.getProperty('os.name').toLowerCase().split()[0]) {
         case 'windows':
-            compile 'net.sf.bluecove:bluecove-gpl:2.1.0'
-            compile 'net.sf.bluecove:bluecove:2.1.0'
+            compile 'org.ow2.chameleon.commons.bluecove:bluecove:2.1.1-63'
+            //compile files('libs/bluecove-2.1.1-SNAPSHOT.jar')
             break
         case 'linux':
-            compile 'net.sf.bluecove:bluecove-gpl:2.1.0'
-            compile 'net.sf.bluecove:bluecove:2.1.0'
+            compile 'net.sf.bluecove:bluecove-gpl:2.1.1'
+            compile 'net.sf.bluecove:bluecove:2.1.1'
             break
         case 'mac':
             compile files('libs/bluecove-2.1.2')
