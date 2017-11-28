@@ -13,8 +13,6 @@ import model.FrvaModel;
 
 public class LiveDataParser {
 
-
-
   private static final Logger logger = Logger.getLogger("FRVA");
 
   public enum Commands {
@@ -53,7 +51,7 @@ public class LiveDataParser {
 
   ArrayDeque<String> commandQueue = new ArrayDeque<>();
 
-  private final ObjectProperty<DataParserState> state = new SimpleObjectProperty<>();
+  private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
 
   public LiveDataParser(LiveViewController liveViewController, FrvaModel model) {
     this.liveViewController = liveViewController;
@@ -70,7 +68,7 @@ public class LiveDataParser {
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
-    state.setValue(new DataParserStateInit(this));
+    currentCommand.setValue(new CommandC(this));
 
     startInputParsing(inputStream);
   }
@@ -95,15 +93,12 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
-            state.getValue().handleInput((char) read);
+            currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
           e.printStackTrace();
         }
-
       }
-
-
     };
 
     Thread thread = new Thread(runnable);
@@ -127,8 +122,8 @@ public class LiveDataParser {
     return commandQueue;
   }
 
-  public void setState(DataParserState state) {
-    this.state.set(state);
+  public void setCurrentCommand(AbstractCommand currentCommand) {
+    this.currentCommand.set(currentCommand);
   }
 
   public LiveViewController getLiveViewController() {
