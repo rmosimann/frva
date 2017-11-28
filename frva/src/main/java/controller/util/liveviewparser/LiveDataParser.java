@@ -70,7 +70,6 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
-            System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
@@ -109,7 +108,11 @@ public class LiveDataParser {
   }
 
   public void runNextCommand() {
-    currentCommand.setValue(commandQueue.poll());
-    currentCommand.getValue().sendCommand();
+    if (commandQueue.size() > 0) {
+      currentCommand.setValue(commandQueue.poll());
+      currentCommand.getValue().sendCommand();
+    } else {
+      currentCommand.setValue(new CommandIdle(this, model));
+    }
   }
 }

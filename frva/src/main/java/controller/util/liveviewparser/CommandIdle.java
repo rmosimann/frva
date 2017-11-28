@@ -23,6 +23,6 @@ public class CommandIdle extends AbstractCommand {
 
   @Override
   public void onQueueUpdate() {
-    liveDataParser.setCurrentCommand(liveDataParser.getCommandQueue().pollFirst());
+    liveDataParser.runNextCommand();
   }
 }

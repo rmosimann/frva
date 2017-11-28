@@ -6,6 +6,7 @@ import model.FrvaModel;
  * Created by patrick.wigger on 28.11.17.
  */
 public class CommandC extends AbstractCommand {
+  StringBuilder stringBuilder = new StringBuilder();
 
   public CommandC(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
@@ -18,6 +19,10 @@ public class CommandC extends AbstractCommand {
 
   @Override
   public void receive(char read) {
+    stringBuilder.append((char) read);
 
+    if (stringBuilder.toString().contains("awaiting commands...")) {
+      liveDataParser.runNextCommand();
+    }
   }
 }
