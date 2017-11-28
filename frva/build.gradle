@@ -29,7 +29,7 @@ dependencies {
             compile 'net.sf.bluecove:bluecove:2.1.0'
             break
         case 'mac':
-            compile files('libs/bluecove-2.1.2')
+            compile fileTree(dir: 'libs', include: '*.jar')
             break
         default:
             throw new Exception('Unknown OS')

@@ -5,6 +5,7 @@ import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
@@ -45,6 +50,7 @@ public class ImportWizard {
   private List<SdCard> sdCardList;
 
   private File chosenDirectory;
+  private BooleanProperty validDir;
 
   public TreeView<FrvaTreeRootItem> getPreviewTreeView() {
     return previewTreeView;
@@ -63,6 +69,7 @@ public class ImportWizard {
    * @param model the model of the project
    */
   public ImportWizard(Window owner, FrvaModel model) {
+    validDir = new SimpleBooleanProperty(false);
     this.owner = owner;
     this.chosenDirectoryPath = new SimpleStringProperty("no directory chosen");
     this.chosenSdCardName = new SimpleStringProperty("unknown SDCARD");
@@ -70,8 +77,6 @@ public class ImportWizard {
     initalizeTreeView();
     importList = new ArrayList<>();
     sdCardList = new ArrayList<>();
-
-
   }
 
   private void initalizeTreeView() {
@@ -89,6 +94,8 @@ public class ImportWizard {
   public List<MeasureSequence> startImport() {
 
     Wizard wizard = new Wizard(owner);
+    wizard.invalidProperty().bind(validDir.not());
+
     //First Page
     WizardPane choseSdCardPane = createFirstPage();
     WizardPane choseSdCardNamePane = createSecondPage();
@@ -135,7 +142,6 @@ public class ImportWizard {
     Label chosenDirectoryLabel = new Label();
     chosenDirectoryLabel.textProperty().bind(chosenDirectoryPath);
     choseSdCardGrid.add(chosenDirectoryLabel, 1, 0);
-
     choseSdCard.setContent(choseSdCardGrid);
     return choseSdCard;
   }
@@ -226,7 +232,31 @@ public class ImportWizard {
     }
     directoryChooser.setTitle("Select SD-Card");
     chosenDirectory = directoryChooser.showDialog(owner);
-    chosenDirectoryPath.set(chosenDirectory.getAbsolutePath());
+    if (chosenDirectory != null) {
+      if (chosenDirectory.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.equals("cal.csv");
+        }
+      }).length == 1) {
+        chosenDirectoryPath.set(chosenDirectory.getAbsolutePath());
+        validDir.setValue(true);
+      } else if (chosenDirectory.getParentFile().list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.equals("cal.csv");
+        }
+      }).length == 1) {
+        chosenDirectoryPath.set(chosenDirectory.getParentFile().getAbsolutePath());
+        chosenDirectory = new File(chosenDirectoryPath.get());
+        validDir.setValue(true);
+      } else {
+        chosenDirectoryPath.set(null);
+        chosenDirectory = null;
+        validDir.setValue(false);
+
+      }
+    }
   }
 
 }
