@@ -16,37 +16,57 @@ public class SerialConnection {
   private SerialPort flox;
 
   /**
+   * Start Connection alone.
+   * @param args the args
+   */
+  public static void main(String[] args) {
+    SerialPort[] arr = SerialPort.getCommPorts();
+    for (SerialPort sp : arr) {
+      System.out.println(sp.getSystemPortName());
+
+    }
+    SerialPort sp = SerialPort.getCommPort("cu.JB-104-ETH-DevB");
+    SerialConnection sc = new SerialConnection(sp);
+    sc.start();
+    sc.read(System.out);
+  }
+
+
+  /**
    * Constructor creates a new Serial connection.
+   *
    * @param flox The serialPort to which the connection should be established.
    */
   public SerialConnection(SerialPort flox) {
     this.flox = flox;
     flox.setBaudRate(57600);
     flox.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED);
-    inputStream = flox.getInputStream();
-    outputStream = flox.getOutputStream();
   }
 
   /**
    * Starts the new serial connection.
-   * @return true when sucessfull.
+   *
+   * @return true when sucessful.
    */
   public boolean start() {
-   return flox.openPort();
+    boolean temp = flox.openPort();
+    inputStream = flox.getInputStream();
+    outputStream = flox.getOutputStream();
+    return temp;
   }
 
   /**
    * Stops a serial Connection by closing port.
    * @return true when sucessful.
    */
-  public boolean stop(){
+  public boolean stop() {
     return this.flox.closePort();
   }
 
   /**
-   *
+   * sends a character to the flox via serial connection.
    * @param command The command to send via serial connection
-   * @throws IOException
+   * @throws IOException when send is not sucessful
    */
   public void send(Character command) throws IOException {
     outputStream.write(command);
