@@ -15,6 +15,8 @@ public class LiveDataParser {
 
   private static final Logger logger = Logger.getLogger("FRVA");
 
+
+
   public enum Commands {
     C, //Lists all commands
     B, // - Connect App
@@ -49,7 +51,7 @@ public class LiveDataParser {
 
  Runnable runnable;
 
-  ArrayDeque<String> commandQueue = new ArrayDeque<>();
+  ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
 
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
 
@@ -78,7 +80,7 @@ public class LiveDataParser {
    *
    * @param command    the command to execute.
    */
-  public void addCommandToQueue(String command) {
+  public void addCommandToQueue(CommandInterface command) {
     commandQueue.add(command);
   }
 
@@ -118,7 +120,7 @@ public class LiveDataParser {
     logger.info("Sent Command: " + command);
   }
 
-  public Queue<String> getCommandQueue() {
+  public Queue<CommandInterface> getCommandQueue() {
     return commandQueue;
   }
 
@@ -128,5 +130,9 @@ public class LiveDataParser {
 
   public LiveViewController getLiveViewController() {
     return liveViewController;
+  }
+
+  public void runNextCommand() {
+    currentCommand.setValue(commandQueue.poll());
   }
 }
