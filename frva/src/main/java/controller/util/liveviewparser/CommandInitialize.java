@@ -5,16 +5,16 @@ import model.FrvaModel;
 /**
  * Created by patrick.wigger on 28.11.17.
  */
-public class ComandInitialize extends AbstractCommand {
+public class CommandInitialize extends AbstractCommand {
   StringBuilder sb = new StringBuilder();
 
-  public ComandInitialize(LiveDataParser ldP, FrvaModel model) {
-    super(ldP, model);
+  public CommandInitialize(LiveDataParser liveDataParser, FrvaModel model) {
+    super(liveDataParser, model);
   }
 
   @Override
   public void sendCommand() {
-    liveDataParser.sendCommand(LiveDataParser.Commands.C.name());
+    liveDataParser.sendCommand(Commands.C.toString());
   }
 
   @Override
@@ -22,11 +22,11 @@ public class ComandInitialize extends AbstractCommand {
     sb.append((char) read);
 
     if (sb.toString().contains("awaiting commands...")) {
-      liveDataParser.addCommandToQueue(new CommandManualMode());
+      liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser, model));
       liveDataParser.runNextCommand();
     }
-    if(sb.toString().contains("; ;")){
-      liveDataParser.addCommandToQueue(new CommandAutoMode());
+    if (sb.toString().contains("; ;")) {
+      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
       liveDataParser.runNextCommand();
 
     }

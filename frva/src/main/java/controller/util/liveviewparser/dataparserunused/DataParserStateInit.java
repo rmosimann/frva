@@ -1,8 +1,10 @@
-package controller.util.liveviewparser;
+package controller.util.liveviewparser.dataparserunused;
+
+import controller.util.liveviewparser.LiveDataParser;
 
 public class DataParserStateInit extends AbstractDataParserState {
   StringBuilder sb = new StringBuilder();
-  boolean awaitingGPS = false;
+  boolean awaitingGps = false;
   boolean awaitingCmdList = false;
   boolean awaitingConfig = false;
   boolean autoMode = false;
@@ -15,8 +17,8 @@ public class DataParserStateInit extends AbstractDataParserState {
    */
   public DataParserStateInit(LiveDataParser liveDataParser) {
     super(liveDataParser);
-    liveDataParser.sendCommand(LiveDataParser.Commands.C.name());
-    awaitingCmdList = true;
+    //    liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.C.name());
+    //    awaitingCmdList = true;
   }
 
 
@@ -31,19 +33,19 @@ public class DataParserStateInit extends AbstractDataParserState {
 
     if (awaitingCmdList && sb.toString().contains("awaiting commands...")) {
       cmdList();
-      awaitingGPS = true;
-      liveDataParser.sendCommand(LiveDataParser.Commands.G.name());
+      awaitingGps = true;
+      //      liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.G.name());
     }
-    if (awaitingGPS && sb.toString().length() == 70) {
+    if (awaitingGps && sb.toString().length() == 70) {
       gps();
       awaitingConfig = true;
-      liveDataParser.sendCommand(LiveDataParser.Commands.c.name());
+      //      liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.c.name());
     }
 
     if (awaitingConfig && sb.toString().contains("config.txt written")) {
       config();
       autoMode = true;
-      liveDataParser.sendCommand("A");
+      //      liveDataParser.sendCommand("A");
 
     }
   }
@@ -60,7 +62,7 @@ public class DataParserStateInit extends AbstractDataParserState {
   }
 
   private void gps() {
-    awaitingGPS = false;
+    awaitingGps = false;
     //System.out.println(sb.toString());
     buffer = sb.toString().split("\n");
     for (String str : buffer) {
@@ -74,7 +76,7 @@ public class DataParserStateInit extends AbstractDataParserState {
     liveDataParser.getLiveViewController().getDeviceStatus().setLat(gpsLat);
     double gpsLon = parseDouble(buffer[3]);
     liveDataParser.getLiveViewController().getDeviceStatus().setLongitude(gpsLon);
-    awaitingGPS = false;
+    awaitingGps = false;
 
   }
 

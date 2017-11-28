@@ -1,4 +1,6 @@
-package controller.util.liveviewparser;
+package controller.util.liveviewparser.dataparserunused;
+
+import controller.util.liveviewparser.LiveDataParser;
 
 public abstract class AbstractDataParserState implements DataParserState {
   protected final LiveDataParser liveDataParser;
@@ -11,15 +13,7 @@ public abstract class AbstractDataParserState implements DataParserState {
     System.out.println("stupid");
   }
 
-  public void goToDebugMode() {
-
-  }
-
-  public void goToManualMode() {
-
-  }
-
-  public void goToAutoMode() {
-
+  public void onQueueUpdate() {
+    System.out.println("Nothing to do here");
   }
 }

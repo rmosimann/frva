@@ -7,18 +7,17 @@ import model.FrvaModel;
  */
 public class CommandC extends AbstractCommand {
 
-  public CommandC(LiveDataParser ldP, FrvaModel model) {
-    super(ldP, model);
+  public CommandC(LiveDataParser liveDataParser, FrvaModel model) {
+    super(liveDataParser, model);
   }
 
   @Override
   public void sendCommand() {
-    liveDataParser.sendCommand(LiveDataParser.Commands.C.name());
+    liveDataParser.sendCommand(Commands.C.toString());
   }
 
   @Override
-  public void receive(char C) {
-
+  public void receive(char read) {
 
   }
 }

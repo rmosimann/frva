@@ -75,7 +75,6 @@ public class LiveViewController {
   private TextArea miniTerminalTextArea;
 
 
-
   /**
    * Constructor.
    *
@@ -224,5 +223,7 @@ public class LiveViewController {
   }
 
 
-  public DeviceStatus getDeviceStatus() {return deviceStatus;}
+  public DeviceStatus getDeviceStatus() {
+    return deviceStatus;
+  }
 }

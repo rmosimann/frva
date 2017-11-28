@@ -5,54 +5,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import model.FrvaModel;
 
 public class LiveDataParser {
-
   private static final Logger logger = Logger.getLogger("FRVA");
-
-
-
-  public enum Commands {
-    C, //Lists all commands
-    B, // - Connect App
-    fc, // - send calibration file
-    f1, // - transfers the current raw file QE
-    f2, // - transfers the current raw file FLAME
-    A, // - go back to automatic mode
-    O, // - Optimise
-    M, // - measure without Optimisation
-    m, // - measure with Optimisation
-    I, // x - set integration time to x ms(eg. I 500)
-    IM, // x - set maximum integration time to x ms (eg. IM 1000
-    i, // x - set the interval between measurements to x s (eg. i 60)
-    iL, // x - sets the cycles between FLED to x cycles, 0=off
-    S, // x - sets the resolution of sent bytes to x
-    a1, // x - set the QE averages to x (eg. a1 3)
-    a2, // x - set the FLAME averages to x (eg. a2 3)
-    G, // - Show GPS position
-    c, // - ReadIn config.txt
-    T, // - to set date+time
-    ss, // - toggle serial stream
-    st, // - toggle serial data transfer
-    FLAME // - toggle FLAME spectrometer
-  }
-
-
 
   private final LiveViewController liveViewController;
   private final FrvaModel model;
   private InputStream inputStream;
   private OutputStream outputStream;
 
- Runnable runnable;
+  Runnable inputStremReader;
 
-  ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
-
+  private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
 
   public LiveDataParser(LiveViewController liveViewController, FrvaModel model) {
@@ -70,23 +38,30 @@ public class LiveDataParser {
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
-    currentCommand.setValue(new CommandC(this, model));
+    currentCommand.setValue(new CommandInitialize(this, model));
+    currentCommand.getValue().sendCommand();
 
     startInputParsing(inputStream);
+
+    currentCommand.addListener(observable -> {
+      logger.info("New Command: " + currentCommand.getValue().toString());
+    });
+
   }
 
   /**
    * Add command to execute to the que whitch is processed when in ManualMode.
    *
-   * @param command    the command to execute.
+   * @param command the command to execute.
    */
   public void addCommandToQueue(CommandInterface command) {
     commandQueue.add(command);
+    currentCommand.getValue().onQueueUpdate();
   }
 
 
   private void startInputParsing(InputStream inputStream) {
-    runnable = new Runnable() {
+    inputStremReader = new Runnable() {
       @Override
       public void run() {
 
@@ -95,6 +70,7 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
+            System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
@@ -103,7 +79,7 @@ public class LiveDataParser {
       }
     };
 
-    Thread thread = new Thread(runnable);
+    Thread thread = new Thread(inputStremReader);
     thread.setDaemon(true);
     thread.start();
   }
@@ -120,11 +96,11 @@ public class LiveDataParser {
     logger.info("Sent Command: " + command);
   }
 
-  public Queue<CommandInterface> getCommandQueue() {
+  public ArrayDeque<CommandInterface> getCommandQueue() {
     return commandQueue;
   }
 
-  public void setCurrentCommand(AbstractCommand currentCommand) {
+  public void setCurrentCommand(CommandInterface currentCommand) {
     this.currentCommand.set(currentCommand);
   }
 
@@ -134,5 +110,6 @@ public class LiveDataParser {
 
   public void runNextCommand() {
     currentCommand.setValue(commandQueue.poll());
+    currentCommand.getValue().sendCommand();
   }
 }

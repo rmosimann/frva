@@ -36,7 +36,8 @@ public class SerialConnection {
     //sc.read(System.out);
     //sc.send('A');
 
-    LiveDataParser ldp = new LiveDataParser(new LiveViewController(new FrvaModel()), new FrvaModel());
+    LiveDataParser ldp = new LiveDataParser(
+        new LiveViewController(new FrvaModel()), new FrvaModel());
     ldp.startParsing(sp.getInputStream(), sp.getOutputStream());
 
 
@@ -102,7 +103,6 @@ public class SerialConnection {
         while (true) {
           while (inputStream.available() > 0) {
             int i = inputStream.read();
-           // System.out.print((char) i);
             printStream.print(((char) i));
           }
         }

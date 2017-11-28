@@ -26,7 +26,7 @@ public class FakeDataStream extends InputStream {
       public void run() {
         while (currentCommand != 'q') {
           if (currentCommand == 'C') {
-            printStream.println("Sending Commands now");
+            printStream.println("Sending controller.util.liveviewparser.Commands now");
             try {
               Thread.sleep(time);
             } catch (InterruptedException e) {
@@ -34,7 +34,7 @@ public class FakeDataStream extends InputStream {
             }
           }
           if (currentCommand == 'G') {
-            printStream.println("Sending Commands now");
+            printStream.println("Sending controller.util.liveviewparser.Commands now");
             try {
               Thread.sleep(time);
             } catch (InterruptedException e) {
@@ -42,7 +42,7 @@ public class FakeDataStream extends InputStream {
             }
           }
           if (currentCommand == 'c') {
-            printStream.println("Sending Commands now");
+            printStream.println("Sending controller.util.liveviewparser.Commands now");
             try {
               Thread.sleep(time);
             } catch (InterruptedException e) {
@@ -73,7 +73,7 @@ public class FakeDataStream extends InputStream {
   @Override
   public int read() throws IOException {
     index = index % measurement.length();
-   // System.out.println(measurement.charAt(index+1));
+    // System.out.println(measurement.charAt(index+1));
     return measurement.charAt(index++);
   }
 
@@ -518,12 +518,16 @@ public class FakeDataStream extends InputStream {
       + "Lon = 0.00000\n";
 
 
-
-  public static OutputStream getOutputStream(){
+  /**
+   * Does something.
+   *
+   * @return a outputstream.
+   */
+  public static OutputStream getOutputStream() {
     return new OutputStream() {
       @Override
       public void write(int b) throws IOException {
-        currentCommand=(char)b;
+        currentCommand = (char) b;
       }
     };
   }

@@ -1,4 +1,6 @@
-package controller.util.liveviewparser;
+package controller.util.liveviewparser.dataparserunused;
+
+import controller.util.liveviewparser.LiveDataParser;
 
 public class DataParserStateManual extends AbstractDataParserState {
 
@@ -12,8 +14,8 @@ public class DataParserStateManual extends AbstractDataParserState {
       liveDataParser.sendCommand(s);
     });*/
 
-//    liveDataParser.setCurrentCommand(new DataParserStateAutomode(liveDataParser));
-//    liveDataParser.setCurrentCommand(new DataParserStateDebug(liveDataParser));
+    //    liveDataParser.setCurrentCommand(new DataParserStateAutomode(liveDataParser));
+    //    liveDataParser.setCurrentCommand(new DataParserStateDebug(liveDataParser));
   }
 
   @Override

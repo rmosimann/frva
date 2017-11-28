@@ -1,19 +1,24 @@
 package controller.util.liveviewparser;
 
-import controller.LiveViewController;
+import java.util.logging.Logger;
 import model.FrvaModel;
 
 /**
  * Created by patrick.wigger on 28.11.17.
  */
 public abstract class AbstractCommand implements CommandInterface {
-  protected LiveDataParser liveDataParser;
-  public FrvaModel model;
+  private static final Logger logger = Logger.getLogger("FRVA");
 
-  public AbstractCommand(LiveDataParser ldP, FrvaModel model) {
-    this.liveDataParser = ldP;
+  protected LiveDataParser liveDataParser;
+  protected FrvaModel model;
+
+  protected AbstractCommand(LiveDataParser liveDataParser, FrvaModel model) {
+    this.liveDataParser = liveDataParser;
     this.model = model;
   }
 
+  public void onQueueUpdate() {
+    System.out.println("Nothing to do");
+  }
 }
 
