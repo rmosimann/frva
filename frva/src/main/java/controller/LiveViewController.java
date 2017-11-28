@@ -6,6 +6,7 @@ import controller.util.bluetooth.ConnectionStateConnecting;
 import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
+import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
@@ -51,6 +53,12 @@ public class LiveViewController {
   private NumberAxis yaxis;
 
   @FXML
+  private TextArea miniTerminalTextArea;
+
+  @FXML
+  private Button changeModeButton;
+
+  @FXML
   private HBox msgBoxBltOff;
 
   @FXML
@@ -72,7 +80,10 @@ public class LiveViewController {
   private Button bltDisconnectButton;
 
   @FXML
-  private TextArea miniTerminalTextArea;
+  private TextField sendAnyCommandField;
+
+  @FXML
+  private Button sendAnyCommandButton;
 
 
   /**
@@ -86,6 +97,23 @@ public class LiveViewController {
     this.model = model;
     liveDataParser = new LiveDataParser(this, model);
     addListeners();
+
+  }
+
+  @FXML
+  private void initialize() {
+    defineButtonActions();
+  }
+
+
+  private void defineButtonActions() {
+    sendAnyCommandButton.setOnAction(event -> {
+      String command = sendAnyCommandField.getText();
+      sendAnyCommandField.setText("");
+      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+    });
   }
 
 

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -55,7 +56,8 @@
             <children>
                 <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change Mode" VBox.vgrow="ALWAYS"/>
+                        <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="Change Mode"
+                                VBox.vgrow="ALWAYS"/>
                         <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
                         <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
                     </children>
@@ -196,5 +198,11 @@
         </HBox>
         <Button fx:id="bltDisconnectButton" disable="true" mnemonicParsing="false" text="Disconnect"
                 AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"/>
+        <HBox layoutX="1049.0" layoutY="280.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+            <children>
+                <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
+                <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
+            </children>
+        </HBox>
     </children>
 </AnchorPane>

@@ -17,7 +17,8 @@ public class DataParserStateInit extends AbstractDataParserState {
    */
   public DataParserStateInit(LiveDataParser liveDataParser) {
     super(liveDataParser);
-    //    liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.C.name());
+    //    liveDataParser.executeCommand(
+    // LiveDataParser.controller.util.liveviewparser.Commands.C.name());
     //    awaitingCmdList = true;
   }
 
@@ -34,18 +35,20 @@ public class DataParserStateInit extends AbstractDataParserState {
     if (awaitingCmdList && sb.toString().contains("awaiting commands...")) {
       cmdList();
       awaitingGps = true;
-      //      liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.G.name());
+      //      liveDataParser.executeCommand(
+      // LiveDataParser.controller.util.liveviewparser.Commands.G.name());
     }
     if (awaitingGps && sb.toString().length() == 70) {
       gps();
       awaitingConfig = true;
-      //      liveDataParser.sendCommand(LiveDataParser.controller.util.liveviewparser.Commands.c.name());
+      //      liveDataParser.executeCommand(
+      // LiveDataParser.controller.util.liveviewparser.Commands.c.name());
     }
 
     if (awaitingConfig && sb.toString().contains("config.txt written")) {
       config();
       autoMode = true;
-      //      liveDataParser.sendCommand("A");
+      //      liveDataParser.executeCommand("A");
 
     }
   }

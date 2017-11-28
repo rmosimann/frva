@@ -11,7 +11,7 @@ public class DataParserStateManual extends AbstractDataParserState {
 
   private void runCommands(LiveDataParser liveDataParser) {
     /*liveDataParser.commandQueue.forEach(s -> {
-      liveDataParser.sendCommand(s);
+      liveDataParser.executeCommand(s);
     });*/
 
     //    liveDataParser.setCurrentCommand(new DataParserStateAutomode(liveDataParser));

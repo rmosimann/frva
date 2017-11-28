@@ -15,7 +15,7 @@ public class CommandAutoMode extends AbstractCommand {
 
   @Override
   public void sendCommand() {
-    liveDataParser.sendCommand(Commands.A.toString());
+    liveDataParser.executeCommand(Commands.A.toString());
   }
 
   @Override

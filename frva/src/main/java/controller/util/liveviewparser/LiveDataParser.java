@@ -15,10 +15,9 @@ public class LiveDataParser {
 
   private final LiveViewController liveViewController;
   private final FrvaModel model;
-  private InputStream inputStream;
   private OutputStream outputStream;
 
-  Runnable inputStremReader;
+  private Runnable inputStremReader;
 
   private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
@@ -36,7 +35,6 @@ public class LiveDataParser {
    * @param outputStream the outputstream to write to.
    */
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
-    this.inputStream = inputStream;
     this.outputStream = outputStream;
     currentCommand.setValue(new CommandInitialize(this, model));
     currentCommand.getValue().sendCommand();
@@ -44,9 +42,8 @@ public class LiveDataParser {
     startInputParsing(inputStream);
 
     currentCommand.addListener(observable -> {
-      logger.info("New Command: " + currentCommand.getValue().toString());
+      logger.info("CurrentCommand: " + currentCommand.getValue().getClass().getSimpleName());
     });
-
   }
 
   /**
@@ -60,6 +57,11 @@ public class LiveDataParser {
   }
 
 
+  /**
+   * Creates a Thread where the input from the InputStrem is handled.
+   *
+   * @param inputStream inputStran to handle.
+   */
   private void startInputParsing(InputStream inputStream) {
     inputStremReader = new Runnable() {
       @Override
@@ -83,8 +85,12 @@ public class LiveDataParser {
     thread.start();
   }
 
-
-  protected void sendCommand(String command) {
+  /**
+   * Sends a String to the OutputStream.
+   *
+   * @param command the string wthout linebreak.
+   */
+  void executeCommand(String command) {
     try {
       outputStream.write(command.getBytes());
       outputStream.write(10);
@@ -99,15 +105,16 @@ public class LiveDataParser {
     return commandQueue;
   }
 
-  public void setCurrentCommand(CommandInterface currentCommand) {
-    this.currentCommand.set(currentCommand);
-  }
-
   public LiveViewController getLiveViewController() {
     return liveViewController;
   }
 
-  public void runNextCommand() {
+
+  /**
+   * Polls next command from CommandQueue and executes it.
+   * When Queue is empty IdleMode is activated.
+   */
+  void runNextCommand() {
     if (commandQueue.size() > 0) {
       currentCommand.setValue(commandQueue.poll());
       currentCommand.getValue().sendCommand();
