@@ -9,10 +9,11 @@ import java.util.Queue;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.concurrent.Task;
 import model.FrvaModel;
 
 public class LiveDataParser {
+
+
 
   private static final Logger logger = Logger.getLogger("FRVA");
 
@@ -21,7 +22,7 @@ public class LiveDataParser {
   private InputStream inputStream;
   private OutputStream outputStream;
 
-  Task<Void> bltSearchingTask;
+ Runnable runnable;
 
   Queue<String> commandQueue = new ArrayDeque<>();
 
@@ -43,6 +44,7 @@ public class LiveDataParser {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
     state.setValue(new DataParserStateInit(this));
+
     startInputParsing(inputStream);
   }
 
@@ -60,35 +62,43 @@ public class LiveDataParser {
 
 
   private void startInputParsing(InputStream inputStream) {
-    bltSearchingTask = new Task<Void>() {
+    runnable = new Runnable() {
       @Override
-      protected Void call() throws Exception {
+      public void run() {
+
         InputStream dataIn = null;
         dataIn = inputStream;
         int read;
-        while ((read = dataIn.read()) != -1) {
-          state.getValue().handleInput((char) read);
-
+        try {
+          while ((read = dataIn.read()) != -1) {
+            state.getValue().handleInput((char) read);
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
         }
-        return null;
+
       }
+
+
     };
 
-    Thread thread = new Thread(bltSearchingTask);
-    thread.setDaemon(true);
+    Thread thread = new Thread(runnable);
+   // thread.setDaemon(true);
     thread.start();
   }
 
 
-  protected void sendCommand(String command) {
-    String commandWithBreak = command + "\n";
-
+  protected void sendCommand(char command) {
     try {
-      outputStream.write(commandWithBreak.getBytes());
+
+      outputStream.write(command);
+      outputStream.write(10);
+      outputStream.flush();
     } catch (IOException e) {
       e.printStackTrace();
+      System.out.println("EX");
     }
-    logger.info("Sent Command: " + commandWithBreak);
+    logger.info("Sent Command: " + command);
   }
 
   public Queue<String> getCommandQueue() {

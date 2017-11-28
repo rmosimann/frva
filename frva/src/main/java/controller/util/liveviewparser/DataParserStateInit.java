@@ -1,5 +1,7 @@
 package controller.util.liveviewparser;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 public class DataParserStateInit extends AbstractDataParserState {
 
   /**
@@ -9,8 +11,9 @@ public class DataParserStateInit extends AbstractDataParserState {
    */
   public DataParserStateInit(LiveDataParser liveDataParser) {
     super(liveDataParser);
-    liveDataParser.sendCommand("G");
-    liveDataParser.sendCommand("c");
+    liveDataParser.sendCommand('C');
+    liveDataParser.sendCommand('G');
+   liveDataParser.sendCommand('c');
   }
 
   /**

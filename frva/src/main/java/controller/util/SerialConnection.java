@@ -1,10 +1,13 @@
 package controller.util;
 
 import com.fazecast.jSerialComm.SerialPort;
+import controller.LiveViewController;
+import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import model.FrvaModel;
 
 /**
  * Created by patrick.wigger on 09.11.17.
@@ -17,6 +20,7 @@ public class SerialConnection {
 
   /**
    * Start Connection alone.
+   *
    * @param args the args
    */
   public static void main(String[] args) {
@@ -28,7 +32,14 @@ public class SerialConnection {
     SerialPort sp = SerialPort.getCommPort("cu.JB-104-ETH-DevB");
     SerialConnection sc = new SerialConnection(sp);
     sc.start();
-    sc.read(System.out);
+
+    //sc.read(System.out);
+    //sc.send('A');
+
+    LiveDataParser ldp = new LiveDataParser(new LiveViewController(new FrvaModel()), new FrvaModel());
+    ldp.startParsing(sp.getInputStream(), sp.getOutputStream());
+
+
   }
 
 
@@ -57,6 +68,7 @@ public class SerialConnection {
 
   /**
    * Stops a serial Connection by closing port.
+   *
    * @return true when sucessful.
    */
   public boolean stop() {
@@ -65,16 +77,22 @@ public class SerialConnection {
 
   /**
    * sends a character to the flox via serial connection.
+   *
    * @param command The command to send via serial connection
    * @throws IOException when send is not sucessful
    */
-  public void send(Character command) throws IOException {
-    outputStream.write(command);
-    outputStream.write(10);
+  public void send(Character command) {
+    try {
+      outputStream.write(command);
+      outputStream.write(10);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
    * Reads the incoming Data via the serial connection.
+   *
    * @param printStream the stream where the data is sent to.
    */
   public void read(PrintStream printStream) {
@@ -84,6 +102,7 @@ public class SerialConnection {
         while (true) {
           while (inputStream.available() > 0) {
             int i = inputStream.read();
+           // System.out.print((char) i);
             printStream.print(((char) i));
           }
         }
