@@ -5,6 +5,7 @@ import controller.util.bluetooth.ConnectionStateConnecting;
 import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
+import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,8 @@ public class LiveViewController {
   private StreamConnection openStreamConnection;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
+
+  private LiveDataParser liveDataParser;
 
   @FXML
   private LineChart<?, ?> datachart;
@@ -71,6 +74,7 @@ public class LiveViewController {
   private TextArea miniTerminalTextArea;
 
 
+
   /**
    * Constructor.
    *
@@ -80,6 +84,7 @@ public class LiveViewController {
     connectionStateInit = new ConnectionStateInit(this);
     state.setValue(connectionStateInit);
     this.model = model;
+    liveDataParser = new LiveDataParser(this, model);
     addListeners();
   }
 
@@ -207,5 +212,13 @@ public class LiveViewController {
 
   public TextArea getMiniTerminalTextArea() {
     return miniTerminalTextArea;
+  }
+
+  public void setLiveDataParser(LiveDataParser liveDataParser) {
+    this.liveDataParser = liveDataParser;
+  }
+
+  public LiveDataParser getLiveDataParser() {
+    return liveDataParser;
   }
 }

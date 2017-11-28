@@ -11,6 +11,7 @@ public class ConnectionStateConnected implements ConnectionState {
 
   @Override
   public void handle() {
+
     liveViewController.enableBltDisconnectButton();
   }
 }

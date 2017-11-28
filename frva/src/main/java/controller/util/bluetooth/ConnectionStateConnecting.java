@@ -26,6 +26,13 @@ public class ConnectionStateConnecting implements ConnectionState {
     }
     liveViewController.setOpenStreamConnection(streamConnection);
 
+    try {
+      liveViewController.getLiveDataParser()
+          .startParsing(streamConnection.openInputStream(), streamConnection.openOutputStream());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     liveViewController.displayAvailableDevicesDialog(false);
     liveViewController.setState(new ConnectionStateConnected(liveViewController));
   }
