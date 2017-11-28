@@ -1,6 +1,5 @@
 package model;
 
-import controller.util.FakeDataStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class FrvaModel {
    */
   public FrvaModel() {
     loadLibrary();
-    FakeDataStream.startDataStream(System.out,10000);
+    //    FakeDataStream.startDataStream(System.out,10000);
   }
 
   /**
