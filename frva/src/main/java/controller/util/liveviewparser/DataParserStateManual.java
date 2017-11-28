@@ -12,8 +12,8 @@ public class DataParserStateManual extends AbstractDataParserState {
       liveDataParser.sendCommand(s);
     });
 
-    liveDataParser.setState(new DataParserStateAutomode(liveDataParser));
-    liveDataParser.setState(new DataParserStateDebug(liveDataParser));
+    liveDataParser.setCurrentCommand(new DataParserStateAutomode(liveDataParser));
+    liveDataParser.setCurrentCommand(new DataParserStateDebug(liveDataParser));
   }
 
   @Override
