@@ -257,7 +257,6 @@ public class ImportWizard {
 
       }
     }
-    System.out.println(chosenDirectoryPath.toString());
   }
 
 }
