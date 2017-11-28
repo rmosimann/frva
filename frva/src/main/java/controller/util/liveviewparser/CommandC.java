@@ -19,5 +19,6 @@ public class CommandC extends AbstractCommand {
   @Override
   public void receive(char C) {
 
+
   }
 }
