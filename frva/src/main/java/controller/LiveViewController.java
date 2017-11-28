@@ -1,5 +1,6 @@
 package controller;
 
+import controller.util.DeviceStatus;
 import controller.util.bluetooth.ConnectionState;
 import controller.util.bluetooth.ConnectionStateConnecting;
 import controller.util.bluetooth.ConnectionStateDisconnecting;
@@ -31,7 +32,7 @@ public class LiveViewController {
   private final FrvaModel model;
   private Node activeView;
   private ConnectionStateInit connectionStateInit;
-
+  private DeviceStatus deviceStatus = new DeviceStatus();
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
   private StreamConnection openStreamConnection;
@@ -221,4 +222,7 @@ public class LiveViewController {
   public LiveDataParser getLiveDataParser() {
     return liveDataParser;
   }
+
+
+  public DeviceStatus getDeviceStatus() {return deviceStatus;}
 }

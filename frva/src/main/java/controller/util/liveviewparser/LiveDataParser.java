@@ -42,6 +42,8 @@ public class LiveDataParser {
     FLAME // - toggle FLAME spectrometer
   }
 
+
+
   private final LiveViewController liveViewController;
   private final FrvaModel model;
   private InputStream inputStream;
@@ -127,5 +129,9 @@ public class LiveDataParser {
 
   public void setState(DataParserState state) {
     this.state.set(state);
+  }
+
+  public LiveViewController getLiveViewController() {
+    return liveViewController;
   }
 }
