@@ -8,8 +8,7 @@ public class DataParserStateAutomode extends AbstractDataParserState {
 
   public DataParserStateAutomode(LiveDataParser liveDataParser) {
     super(liveDataParser);
-    //    liveDataParser.executeCommand(
-    // LiveDataParser.controller.util.liveviewparser.Commands.A.name());
+    //    liveDataParser.executeCommand(Commands.A.name());
   }
 
   @Override
