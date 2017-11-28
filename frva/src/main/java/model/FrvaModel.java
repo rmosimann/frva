@@ -1,5 +1,6 @@
 package model;
 
+import controller.util.FakeDataStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import model.data.DataFile;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
+
 public class FrvaModel {
 
 
@@ -56,6 +58,7 @@ public class FrvaModel {
    */
   public FrvaModel() {
     loadLibrary();
+    FakeDataStream.startDataStream(System.out,10000);
   }
 
   /**
