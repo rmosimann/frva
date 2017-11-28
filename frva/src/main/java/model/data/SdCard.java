@@ -142,13 +142,21 @@ public class SdCard {
    */
   public boolean isEmpty() {
     if (dataFiles.isEmpty()) {
+      deleteFile(sdCardPath);
+      System.out.println("delete " + sdCardPath + " because it is empty");
+
       return true;
     }
     boolean isEmpty = true;
     for (DataFile dfile : dataFiles) {
+      System.out.println("dataFile");
       if (!dfile.isEmpty()) {
         isEmpty = false;
       }
+    }
+    if (isEmpty) {
+      deleteFile(sdCardPath);
+      System.out.println("delete " + sdCardPath + " because it is empty");
     }
     return isEmpty;
   }
@@ -237,4 +245,21 @@ public class SdCard {
   public File getPath() {
     return this.sdCardPath;
   }
+
+  /**
+   * Deletes a specific file.
+   *
+   * @param file The File to delete.
+   */
+  public void deleteFile(File file) {
+    if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
+      for (File f : file.listFiles()) {
+        deleteFile(f);
+      }
+    }
+    file.delete();
+    logger.info("Deleted File:" + file);
+  }
+
 }
+
