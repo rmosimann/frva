@@ -17,7 +17,7 @@ public class DataParserStateAutomode extends AbstractDataParserState {
     if (/*Measurement ist fertig &&*/ true) {
       if (liveDataParser.commandQueue.size() > 0) {
         liveDataParser.sendCommand(LiveDataParser.Commands.C.name());
-        liveDataParser.setCurrentCommand(new DataParserStateManual(liveDataParser));
+//        liveDataParser.setCurrentCommand(new DataParserStateManual(liveDataParser));
       } else if (liveDataParser.commandQueue.size() > 0) {
 
 

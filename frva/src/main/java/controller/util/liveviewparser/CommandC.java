@@ -1,6 +1,5 @@
 package controller.util.liveviewparser;
 
-import controller.LiveViewController;
 import model.FrvaModel;
 
 /**
@@ -18,7 +17,7 @@ public class CommandC extends AbstractCommand {
   }
 
   @Override
-  public void receive() {
+  public void receive(char C) {
 
   }
 }
