@@ -68,7 +68,7 @@ public class LiveDataParser {
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
-    currentCommand.setValue(new CommandC(this));
+    currentCommand.setValue(new CommandC(this, model));
 
     startInputParsing(inputStream);
   }
