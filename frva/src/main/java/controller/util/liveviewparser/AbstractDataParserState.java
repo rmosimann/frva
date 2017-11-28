@@ -11,4 +11,15 @@ public abstract class AbstractDataParserState implements DataParserState {
     System.out.println("stupid");
   }
 
+  public void goToDebugMode() {
+
+  }
+
+  public void goToManualMode() {
+
+  }
+
+  public void goToAutoMode() {
+
+  }
 }

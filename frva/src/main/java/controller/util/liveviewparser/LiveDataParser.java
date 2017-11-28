@@ -17,6 +17,31 @@ public class LiveDataParser {
 
   private static final Logger logger = Logger.getLogger("FRVA");
 
+  public enum Commands {
+    C, //Lists all commands
+    B, // - Connect App
+    fc, // - send calibration file
+    f1, // - transfers the current raw file QE
+    f2, // - transfers the current raw file FLAME
+    A, // - go back to automatic mode
+    O, // - Optimise
+    M, // - measure without Optimisation
+    m, // - measure with Optimisation
+    I, // x - set integration time to x ms(eg. I 500)
+    IM, // x - set maximum integration time to x ms (eg. IM 1000
+    i, // x - set the interval between measurements to x s (eg. i 60)
+    iL, // x - sets the cycles between FLED to x cycles, 0=off
+    S, // x - sets the resolution of sent bytes to x
+    a1, // x - set the QE averages to x (eg. a1 3)
+    a2, // x - set the FLAME averages to x (eg. a2 3)
+    G, // - Show GPS position
+    c, // - ReadIn config.txt
+    T, // - to set date+time
+    ss, // - toggle serial stream
+    st, // - toggle serial data transfer
+    FLAME // - toggle FLAME spectrometer
+  }
+
   private final LiveViewController liveViewController;
   private final FrvaModel model;
   private InputStream inputStream;
@@ -24,7 +49,7 @@ public class LiveDataParser {
 
  Runnable runnable;
 
-  Queue<String> commandQueue = new ArrayDeque<>();
+  ArrayDeque<String> commandQueue = new ArrayDeque<>();
 
   private final ObjectProperty<DataParserState> state = new SimpleObjectProperty<>();
 
@@ -51,13 +76,10 @@ public class LiveDataParser {
   /**
    * Add command to execute to the que whitch is processed when in ManualMode.
    *
-   * @param command    the commend to execute.
-   * @param stayManual true if State should rest in manual mode after all commands.
+   * @param command    the command to execute.
    */
-  public void addComandToQueue(String command, boolean stayManual) {
-
+  public void addCommandToQueue(String command) {
     commandQueue.add(command);
-
   }
 
 
@@ -83,20 +105,18 @@ public class LiveDataParser {
     };
 
     Thread thread = new Thread(runnable);
-   // thread.setDaemon(true);
+    thread.setDaemon(true);
     thread.start();
   }
 
 
-  protected void sendCommand(char command) {
+  protected void sendCommand(String command) {
     try {
-
-      outputStream.write(command);
+      outputStream.write(command.getBytes());
       outputStream.write(10);
       outputStream.flush();
     } catch (IOException e) {
       e.printStackTrace();
-      System.out.println("EX");
     }
     logger.info("Sent Command: " + command);
   }
@@ -105,4 +125,7 @@ public class LiveDataParser {
     return commandQueue;
   }
 
+  public void setState(DataParserState state) {
+    this.state.set(state);
+  }
 }
