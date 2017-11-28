@@ -43,6 +43,7 @@ public class DataParserStateInit extends AbstractDataParserState {
       awaitingConfig = true;
       //      liveDataParser.executeCommand(
       // LiveDataParser.controller.util.liveviewparser.Commands.c.name());
+
     }
 
     if (awaitingConfig && sb.toString().contains("config.txt written")) {
