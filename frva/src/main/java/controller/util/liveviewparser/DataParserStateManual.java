@@ -1,4 +1,8 @@
 package controller.util.liveviewparser;
 
-public class DataParserStateManual implements DataParserState {
+public class DataParserStateManual extends AbstractDataParserState {
+
+  public DataParserStateManual(LiveDataParser liveDataParser) {
+    super(liveDataParser);
+  }
 }
