@@ -91,6 +91,5 @@ public class CommandT extends AbstractCommand {
       liveDataParser.executeCommand("Y");
       liveDataParser.runNextCommand();
     }
-
   }
 }
