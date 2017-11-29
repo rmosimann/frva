@@ -9,7 +9,9 @@ import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
 import controller.util.liveviewparser.CommandC;
+import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandT;
+import controller.util.liveviewparser.Commandc;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
@@ -87,6 +89,9 @@ public class LiveViewController {
   private Button commandCButton;
 
   @FXML
+  private Button commandcButton;
+
+  @FXML
   private HBox msgBoxBltOff;
 
   @FXML
@@ -106,6 +111,9 @@ public class LiveViewController {
 
   @FXML
   private Button bltDisconnectButton;
+
+  @FXML
+  private Button commandManualModeButton;
 
   /**
    * Constructor.
@@ -151,6 +159,15 @@ public class LiveViewController {
     setTimeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandT(liveDataParser, model, null));
     });
+
+    commandcButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new Commandc(liveDataParser, model));
+    });
+
+    commandManualModeButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new CommandManualMode(liveDataParser, model));
+    });
+
   }
 
 

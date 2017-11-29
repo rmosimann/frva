@@ -49,9 +49,9 @@
                 </LineChart>
             </children>
         </AnchorPane>
-        <TextArea fx:id="miniTerminalTextArea" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
-                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"
-                  AnchorPane.topAnchor="444.0"/>
+        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
+                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
+                  AnchorPane.topAnchor="563.0"/>
         <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
               AnchorPane.topAnchor="59.0">
             <children>
@@ -106,33 +106,28 @@
                 </Label>
             </children>
         </VBox>
-        <HBox layoutX="1049.0" layoutY="280.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+        <HBox layoutX="1049.0" layoutY="620.0" prefWidth="215.0" AnchorPane.bottomAnchor="10.0"
+              AnchorPane.rightAnchor="15.0">
             <children>
                 <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
                 <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
             </children>
         </HBox>
-        <HBox layoutX="1050.0" layoutY="350.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="250.0">
             <children>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="AutoMode"
-                                VBox.vgrow="ALWAYS"/>
-                        <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="126.0" text="Set time"
-                                VBox.vgrow="ALWAYS"/>
-                        <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="126.0" text="Command-C"
-                                VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change IT" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Shutter" VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
+                <Button fx:id="commandManualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode"/>
+                <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode"
+                        VBox.vgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" prefWidth="215.0" text="Change IT" VBox.vgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" prefWidth="215.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" prefWidth="215.0" text="Shutter" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
+                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="215.0" text="Command-C"
+                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="commandcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-c"/>
             </children>
-        </HBox>
+        </VBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
               prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
