@@ -22,13 +22,12 @@ public class CommandInitialize extends AbstractCommand {
     sb.append((char) read);
 
     if (sb.toString().contains("awaiting commands...")) {
-      liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser, model));
+      if (sb.toString().contains("; ;")) {
+        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+      } else {
+        liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser, model));
+      }
       liveDataParser.runNextCommand();
-    }
-    if (sb.toString().contains("; ;")) {
-      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
-      liveDataParser.runNextCommand();
-
     }
 
 

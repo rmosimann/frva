@@ -8,6 +8,7 @@ import model.FrvaModel;
 public class CommandAutoMode extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private int lineInCycle;
+  private boolean commandWaiting = false;
 
   public CommandAutoMode(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
@@ -26,12 +27,11 @@ public class CommandAutoMode extends AbstractCommand {
       handleLine(stringBuilder);
       stringBuilder = new StringBuilder();
     }
-
   }
+
 
   private void handleLine(StringBuilder line) {
     lineInCycle++;
-    System.out.print(line.toString());
 
     if (line.toString().contains("Start FLAME Cycle")) {
       //Create MeasureSequence
@@ -40,13 +40,22 @@ public class CommandAutoMode extends AbstractCommand {
     }
 
 
-    if (lineInCycle == 23) {
+    if (lineInCycle == 23 && commandWaiting) {
       //do something with the line
-      if (liveDataParser.getCommandQueue().size() > 0) {
+      if (commandWaiting) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
-        liveDataParser.runNextCommand();
+        liveDataParser.setCurrentCommand(liveDataParser.getCommandQueue().pollFirst());
       }
     }
 
+
+  }
+
+  @Override
+  public void onQueueUpdate() {
+    if (!commandWaiting) {
+      commandWaiting = true;
+      liveDataParser.getCommandQueue().peek().sendCommand();
+    }
   }
 }

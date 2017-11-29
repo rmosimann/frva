@@ -52,6 +52,7 @@ public class LiveDataParser {
    * @param command the command to execute.
    */
   public void addCommandToQueue(CommandInterface command) {
+    System.out.println("---- added to queue: " + command.getClass().getSimpleName());
     commandQueue.add(command);
     currentCommand.getValue().onQueueUpdate();
   }
@@ -72,6 +73,7 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
+            System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
@@ -101,15 +103,6 @@ public class LiveDataParser {
     logger.info("Sent Command: " + command);
   }
 
-  public ArrayDeque<CommandInterface> getCommandQueue() {
-    return commandQueue;
-  }
-
-  public LiveViewController getLiveViewController() {
-    return liveViewController;
-  }
-
-
   /**
    * Polls next command from CommandQueue and executes it.
    * When Queue is empty IdleMode is activated.
@@ -121,5 +114,17 @@ public class LiveDataParser {
     } else {
       currentCommand.setValue(new CommandIdle(this, model));
     }
+  }
+
+  public ArrayDeque<CommandInterface> getCommandQueue() {
+    return commandQueue;
+  }
+
+  public LiveViewController getLiveViewController() {
+    return liveViewController;
+  }
+
+  public void setCurrentCommand(CommandInterface currentCommand) {
+    this.currentCommand.set(currentCommand);
   }
 }

@@ -18,7 +18,7 @@ public abstract class AbstractCommand implements CommandInterface {
   }
 
   public void onQueueUpdate() {
-    System.out.println("Nothing to do");
+    logger.fine("Nothing to do");
   }
 }
 

@@ -7,6 +7,7 @@ import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
+import controller.util.liveviewparser.CommandAutoMode;
 import controller.util.liveviewparser.CommandC;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
@@ -119,6 +120,10 @@ public class LiveViewController {
 
     commandCButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandC(liveDataParser, model));
+    });
+
+    changeModeButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
     });
   }
 
