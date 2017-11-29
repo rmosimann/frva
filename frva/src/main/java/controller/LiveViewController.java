@@ -87,7 +87,7 @@ public class LiveViewController {
   private Button sendAnyCommandButton;
 
   @FXML
-  private Button CommandCButton;
+  private Button commandCButton;
 
 
   /**
@@ -117,7 +117,7 @@ public class LiveViewController {
       liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
     });
 
-    CommandCButton.setOnAction(event -> {
+    commandCButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandC(liveDataParser, model));
     });
   }
