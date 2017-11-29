@@ -120,7 +120,8 @@
                         VBox.vgrow="ALWAYS"/>
                 <Button mnemonicParsing="false" prefWidth="215.0" text="Change IT" VBox.vgrow="ALWAYS"/>
                 <Button mnemonicParsing="false" prefWidth="215.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
-                <Button mnemonicParsing="false" prefWidth="215.0" text="Shutter" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefWidth="215.0"
+                        text="Manual Measurement" VBox.vgrow="ALWAYS"/>
                 <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
                         VBox.vgrow="ALWAYS"/>
                 <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="215.0" text="Command-C"

@@ -9,6 +9,7 @@ import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
 import controller.util.liveviewparser.CommandC;
+import controller.util.liveviewparser.CommandM;
 import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandT;
 import controller.util.liveviewparser.Commandc;
@@ -125,6 +126,9 @@ public class LiveViewController {
   @FXML
   private Button commandfcButton;
 
+  @FXML
+  private Button manualMeasurementButton;
+
 
   /**
    * Constructor.
@@ -185,6 +189,9 @@ public class LiveViewController {
       liveDataParser.addCommandToQueue(new Commandfc(liveDataParser, model));
     });
 
+    manualMeasurementButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new CommandM(liveDataParser, model));
+    });
   }
 
 
