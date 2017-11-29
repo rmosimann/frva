@@ -79,8 +79,7 @@ public class SerialConnection {
   /**
    * sends a character to the flox via serial connection.
    *
-   * @param command The command to send via serial connection
-   * @throws IOException when send is not sucessful
+   * @param command The command to send via serial connection.
    */
   public void send(Character command) {
     try {

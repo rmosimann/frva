@@ -46,6 +46,7 @@ checkstyle {
     maxErrors = 0
     maxWarnings = 0
     showViolations = true
+    checkstyleTest.enabled = false
 }
 
 jacoco {
