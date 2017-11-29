@@ -2,9 +2,6 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-/**
- * Created by patrick.wigger on 28.11.17.
- */
 public class CommandC extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
