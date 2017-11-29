@@ -60,6 +60,30 @@ public class CalibrationFile {
     }
   }
 
+  /**
+   * Creates a Calibration from the LiveView.
+   *
+   * @param wlF1     Vector.
+   * @param upCoefF1 Vector.
+   * @param dwCoefF1 Vector.
+   * @param wlF2     Vector.
+   * @param upCoefF2 Vector.
+   * @param dwCoefF2 Vector.
+   * @param metadata List containig the Metadata from the calib-File.
+   */
+  public CalibrationFile(Vector<Double> wlF1, Vector<Double> upCoefF1, Vector<Double> dwCoefF1,
+                         Vector<Double> wlF2, Vector<Double> upCoefF2, Vector<Double> dwCoefF2,
+                         List<String> metadata) {
+    this.wlF1 = wlF1;
+    this.wlF2 = wlF2;
+    this.upCoefF1 = upCoefF1;
+    this.upCoefF2 = upCoefF2;
+    this.dwCoefF1 = dwCoefF1;
+    this.dwCoefF2 = dwCoefF2;
+    this.metadata = metadata;
+    originalFile = null;
+  }
+
 
   public File getCalibrationFile() {
     return this.originalFile;

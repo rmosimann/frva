@@ -12,6 +12,7 @@ import controller.util.liveviewparser.CommandC;
 import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandT;
 import controller.util.liveviewparser.Commandc;
+import controller.util.liveviewparser.Commandfc;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -115,6 +117,10 @@ public class LiveViewController {
   @FXML
   private Button commandManualModeButton;
 
+  @FXML
+  private Button commandfcButton;
+
+
   /**
    * Constructor.
    *
@@ -166,6 +172,10 @@ public class LiveViewController {
 
     commandManualModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandManualMode(liveDataParser, model));
+    });
+
+    commandfcButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new Commandfc(liveDataParser, model));
     });
 
   }
@@ -227,7 +237,9 @@ public class LiveViewController {
         serviceRecordButton.setPrefWidth(200);
         serviceRecordButton.setPrefHeight(50);
 
-        serviceRecordButton.setOnAction(event -> {
+        String finalDeviceName = deviceName;
+        serviceRecordButton.setOnAction((ActionEvent event) -> {
+          deviceStatus.setSystemname(finalDeviceName);
           setSelectedServiceRecord(serviceRecords);
           displayAvailableDevicesDialog(false);
           setState(new ConnectionStateConnecting(this));

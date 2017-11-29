@@ -9,29 +9,31 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import model.data.CalibrationFile;
 
 /**
  * Created by patrick.wigger on 28.11.17.
  */
 public class DeviceStatus {
 
-  StringProperty systemname = new SimpleStringProperty();
-  StringProperty gpsInformation = new SimpleStringProperty();
-  StringProperty fldPixels = new SimpleStringProperty();
-  DoubleProperty lat = new SimpleDoubleProperty();
-  DoubleProperty longitude = new SimpleDoubleProperty();
-  LongProperty gpsTime = new SimpleLongProperty();
-  LongProperty gpsDate = new SimpleLongProperty();
-  LongProperty integrationTime = new SimpleLongProperty();
-  LongProperty maxIntegrationTime = new SimpleLongProperty();
-  LongProperty intervalTime = new SimpleLongProperty();
-  LongProperty serialResolution = new SimpleLongProperty();
-  LongProperty ledOnEachCycle = new SimpleLongProperty();
-  LongProperty ledPower = new SimpleLongProperty();
-  LongProperty qeAverages = new SimpleLongProperty();
-  LongProperty flameAverages = new SimpleLongProperty();
-  BooleanProperty serialStream = new SimpleBooleanProperty();
-  BooleanProperty serialDataTransfer = new SimpleBooleanProperty();
+  private final StringProperty systemname = new SimpleStringProperty();
+  private final StringProperty gpsInformation = new SimpleStringProperty();
+  private final StringProperty fldPixels = new SimpleStringProperty();
+  private final DoubleProperty lat = new SimpleDoubleProperty();
+  private final DoubleProperty longitude = new SimpleDoubleProperty();
+  private final LongProperty gpsTime = new SimpleLongProperty();
+  private final LongProperty gpsDate = new SimpleLongProperty();
+  private final LongProperty integrationTime = new SimpleLongProperty();
+  private final LongProperty maxIntegrationTime = new SimpleLongProperty();
+  private final LongProperty intervalTime = new SimpleLongProperty();
+  private final LongProperty serialResolution = new SimpleLongProperty();
+  private final LongProperty ledOnEachCycle = new SimpleLongProperty();
+  private final LongProperty ledPower = new SimpleLongProperty();
+  private final LongProperty qeAverages = new SimpleLongProperty();
+  private final LongProperty flameAverages = new SimpleLongProperty();
+  private final BooleanProperty serialStream = new SimpleBooleanProperty();
+  private final BooleanProperty serialDataTransfer = new SimpleBooleanProperty();
+  private CalibrationFile calibrationFile;
 
 
   private void redoGpsInformationString() {
@@ -256,5 +258,13 @@ public class DeviceStatus {
 
   public void setFldPixels(String fldPixels) {
     this.fldPixels.set(fldPixels);
+  }
+
+  public void setCalibrationFile(CalibrationFile calibrationFile) {
+    this.calibrationFile = calibrationFile;
+  }
+
+  public CalibrationFile getCalibrationFile() {
+    return calibrationFile;
   }
 }

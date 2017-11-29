@@ -126,6 +126,7 @@
                 <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="215.0" text="Command-C"
                         VBox.vgrow="ALWAYS"/>
                 <Button fx:id="commandcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-c"/>
+                <Button fx:id="commandfcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-fc"/>
             </children>
         </VBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
