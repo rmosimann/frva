@@ -23,9 +23,9 @@ public class MeasureSequence {
     6 Time for one measurement miliseconds
     More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
   */
-  private final String[] metadata;
   private final String sequenceUuid;
-  private final DataFile dataFile;
+  private String[] metadata;
+  private DataFile dataFile;
   private ReflectionIndices reflectionIndices;
   private BooleanProperty deleted;
 
@@ -41,6 +41,9 @@ public class MeasureSequence {
     REFLECTANCE
   }
 
+  public MeasureSequence() {
+    sequenceUuid = UUID.randomUUID().toString();
+  }
 
   /**
    * Constructor for an empty MeasurementSequence. Only Metadata is stored
@@ -396,5 +399,9 @@ public class MeasureSequence {
 
   public BooleanProperty deletedProperty() {
     return deleted;
+  }
+
+  public void setMetadata(String[] metadata) {
+    this.metadata = metadata;
   }
 }
