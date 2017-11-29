@@ -17,9 +17,9 @@ public class LiveDataParserTest {
   @Before
 
   public void setUp() throws Exception {
-     fds = new FakeDataStream();
-     FrvaModel model = new FrvaModel();
-     ldp = new LiveDataParser(new LiveViewController(model), model);
+    fds = new FakeDataStream();
+    FrvaModel model = new FrvaModel();
+    ldp = new LiveDataParser(new LiveViewController(model), model);
   }
 
   @After
