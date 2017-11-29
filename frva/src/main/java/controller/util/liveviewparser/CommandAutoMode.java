@@ -46,7 +46,7 @@ public class CommandAutoMode extends AbstractCommand {
     }
 
 
-    if (lineInCycle == 23 && nextCommandSent) {
+    if (lineInCycle == 19 && nextCommandSent) {
       //do something with the line
       if (nextCommandSent) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));

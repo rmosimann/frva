@@ -2,20 +2,21 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-public class CommandI extends AbstractCommand {
+public class Commandix extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
-  private int integrationTime;
+  private int intervalTime;
 
 
-  public CommandI(LiveDataParser liveDataParser, FrvaModel model, int integrationTime) {
+  public Commandix(LiveDataParser liveDataParser, FrvaModel model, int intervalTime) {
     super(liveDataParser, model);
-    this.integrationTime = integrationTime;
+    this.intervalTime = intervalTime;
   }
 
 
   @Override
   public void sendCommand() {
-    liveDataParser.executeCommand(Commands.I.toString() + " " + String.valueOf(integrationTime));
+    liveDataParser.executeCommand(Commands.i.toString() + " "
+        + String.valueOf(intervalTime));
   }
 
 
@@ -31,8 +32,10 @@ public class CommandI extends AbstractCommand {
 
 
   private void handleLine(StringBuilder stringBuilder) {
-    if (stringBuilder.toString().contains("IT = ")) {
-      liveDataParser.getDeviceStatus().setIntegrationTime(parseNumber(stringBuilder.toString()));
+    if (stringBuilder.toString().contains("Interval[s] = ")) {
+      liveDataParser.getDeviceStatus().setIntervalTime(parseNumber(stringBuilder.toString()));
+    }
+    if (stringBuilder.toString().contains("config.txt written")) {
       liveDataParser.runNextCommand();
     }
   }
