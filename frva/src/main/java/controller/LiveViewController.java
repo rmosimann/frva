@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -90,6 +91,8 @@ public class LiveViewController {
   @FXML
   private Button commandCButton;
 
+  @FXML
+  private Label currentCommandLabel;
 
   /**
    * Constructor.
@@ -264,5 +267,9 @@ public class LiveViewController {
 
   public DeviceStatus getDeviceStatus() {
     return deviceStatus;
+  }
+
+  public void setCurrentCommandLabel(String text) {
+    Platform.runLater(() -> this.currentCommandLabel.setText(text));
   }
 }

@@ -36,14 +36,15 @@ public class LiveDataParser {
    */
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
     this.outputStream = outputStream;
+    currentCommand.addListener(observable -> {
+      liveViewController.setCurrentCommandLabel(
+          currentCommand.getValue().getClass().getSimpleName());
+    });
+
     currentCommand.setValue(new CommandInitialize(this, model));
     currentCommand.getValue().sendCommand();
 
     startInputParsing(inputStream);
-
-    currentCommand.addListener(observable -> {
-      logger.info("CurrentCommand: " + currentCommand.getValue().getClass().getSimpleName());
-    });
   }
 
   /**
@@ -127,4 +128,6 @@ public class LiveDataParser {
   public void setCurrentCommand(CommandInterface currentCommand) {
     this.currentCommand.set(currentCommand);
   }
+
+
 }

@@ -52,26 +52,6 @@
         <TextArea fx:id="miniTerminalTextArea" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
                   styleClass="terminalMiniView" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"
                   AnchorPane.topAnchor="444.0"/>
-        <HBox layoutX="1050.0" layoutY="330.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
-            <children>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="AutoMode"
-                                VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
-                        <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="126.0" text="Command-C"
-                                VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change IT" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Shutter" VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
         <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
               AnchorPane.topAnchor="59.0">
             <children>
@@ -137,12 +117,45 @@
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
+                <Label text="Command Executing:">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label fx:id="currentCommandLabel" text="currentCommand">
+                    <padding>
+                        <Insets left="20.0"/>
+                    </padding>
+                </Label>
             </children>
         </VBox>
-        <HBox layoutX="1049.0" layoutY="280.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+        <HBox layoutX="1049.0" layoutY="310.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
             <children>
                 <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
                 <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
+            </children>
+        </HBox>
+        <HBox layoutX="1050.0" layoutY="350.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+            <children>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="AutoMode"
+                                VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
+                        <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="126.0" text="Command-C"
+                                VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change IT" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" prefWidth="126.0" text="Shutter" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
             </children>
         </HBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
