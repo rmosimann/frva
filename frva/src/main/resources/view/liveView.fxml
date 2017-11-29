@@ -59,7 +59,8 @@
                         <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="Change Mode"
                                 VBox.vgrow="ALWAYS"/>
                         <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
+                        <Button fx:id="CommandCButton" mnemonicParsing="false" prefWidth="126.0" text="Command-C"
+                                VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" HBox.hgrow="ALWAYS">

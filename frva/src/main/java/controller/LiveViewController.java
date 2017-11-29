@@ -7,6 +7,7 @@ import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
+import controller.util.liveviewparser.CommandC;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
@@ -85,6 +86,9 @@ public class LiveViewController {
   @FXML
   private Button sendAnyCommandButton;
 
+  @FXML
+  private Button CommandCButton;
+
 
   /**
    * Constructor.
@@ -111,8 +115,10 @@ public class LiveViewController {
       String command = sendAnyCommandField.getText();
       sendAnyCommandField.setText("");
       liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
-      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
-      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+    });
+
+    CommandCButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new CommandC(liveDataParser, model));
     });
   }
 
