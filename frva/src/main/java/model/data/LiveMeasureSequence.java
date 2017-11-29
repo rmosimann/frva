@@ -17,6 +17,14 @@ public class LiveMeasureSequence extends MeasureSequence {
   }
 
   @Override
+  public String toString() {
+    if (getMetadata() != null) {
+      return getId();
+    }
+    return getSequenceUuid();
+  }
+
+  @Override
   public Map<SequenceKeyName, double[]> getData() {
     return data;
   }

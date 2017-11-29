@@ -28,6 +28,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -35,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
+import model.data.MeasureSequence;
 
 
 public class LiveViewController {
@@ -50,6 +52,9 @@ public class LiveViewController {
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
   private LiveDataParser liveDataParser;
+
+  @FXML
+  private ListView<MeasureSequence> measurementListView;
 
   @FXML
   private LineChart<?, ?> datachart;
@@ -143,6 +148,8 @@ public class LiveViewController {
   private void addBindings() {
     systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
     gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
+
+    measurementListView.setItems(model.getLiveSequences());
 
   }
 
