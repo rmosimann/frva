@@ -60,20 +60,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <Label text="D-Flox V0.7 JB-006-BM">
-                    <padding>
-                        <Insets left="20.0"/>
-                    </padding>
-                </Label>
-                <Label text="Connection Status">
-                    <font>
-                        <Font name="System Bold" size="13.0"/>
-                    </font>
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
-                </Label>
-                <Label text="connected">
+                <Label fx:id="systemNameLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
@@ -86,12 +73,12 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label text="08:15:23 17.08.2016">
+                <Label fx:id="systemTimeLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
-                <Label text="System Mode">
+                <Label text="GPS - Information">
                     <font>
                         <Font name="System Bold" size="13.0"/>
                     </font>
@@ -99,20 +86,7 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label text="automatic">
-                    <padding>
-                        <Insets left="20.0"/>
-                    </padding>
-                </Label>
-                <Label text="GPS - Location">
-                    <font>
-                        <Font name="System Bold" size="13.0"/>
-                    </font>
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
-                </Label>
-                <Label text="47°22′N 8°33′E">
+                <Label fx:id="gpsPositionLabel" prefHeight="36.0">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
@@ -125,14 +99,14 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label fx:id="currentCommandLabel" text="currentCommand">
+                <Label fx:id="currentCommandLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
             </children>
         </VBox>
-        <HBox layoutX="1049.0" layoutY="310.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
+        <HBox layoutX="1049.0" layoutY="280.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
             <children>
                 <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
                 <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
@@ -144,7 +118,8 @@
                     <children>
                         <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="126.0" text="AutoMode"
                                 VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
+                        <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="126.0" text="Set time"
+                                VBox.vgrow="ALWAYS"/>
                         <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="126.0" text="Command-C"
                                 VBox.vgrow="ALWAYS"/>
                     </children>

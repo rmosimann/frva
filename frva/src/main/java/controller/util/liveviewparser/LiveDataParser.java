@@ -1,6 +1,7 @@
 package controller.util.liveviewparser;
 
 import controller.LiveViewController;
+import controller.util.DeviceStatus;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -129,5 +130,7 @@ public class LiveDataParser {
     this.currentCommand.set(currentCommand);
   }
 
-
+  public DeviceStatus getDeviceStatus() {
+    return liveViewController.getDeviceStatus();
+  }
 }

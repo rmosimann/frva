@@ -9,6 +9,7 @@ import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
 import controller.util.liveviewparser.CommandC;
+import controller.util.liveviewparser.CommandT;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
@@ -59,7 +60,31 @@ public class LiveViewController {
   private TextArea miniTerminalTextArea;
 
   @FXML
+  private Label systemNameLabel;
+
+  @FXML
+  private Label systemTimeLabel;
+
+  @FXML
+  private Label gpsPositionLabel;
+
+  @FXML
+  private Label currentCommandLabel;
+
+  @FXML
+  private TextField sendAnyCommandField;
+
+  @FXML
+  private Button sendAnyCommandButton;
+
+  @FXML
   private Button changeModeButton;
+
+  @FXML
+  private Button setTimeButton;
+
+  @FXML
+  private Button commandCButton;
 
   @FXML
   private HBox msgBoxBltOff;
@@ -82,18 +107,6 @@ public class LiveViewController {
   @FXML
   private Button bltDisconnectButton;
 
-  @FXML
-  private TextField sendAnyCommandField;
-
-  @FXML
-  private Button sendAnyCommandButton;
-
-  @FXML
-  private Button commandCButton;
-
-  @FXML
-  private Label currentCommandLabel;
-
   /**
    * Constructor.
    *
@@ -105,12 +118,18 @@ public class LiveViewController {
     this.model = model;
     liveDataParser = new LiveDataParser(this, model);
     addListeners();
-
   }
 
   @FXML
   private void initialize() {
     defineButtonActions();
+    addBindings();
+  }
+
+  private void addBindings() {
+    systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
+    gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
+
   }
 
 
@@ -127,6 +146,10 @@ public class LiveViewController {
 
     changeModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+    });
+
+    setTimeButton.setOnAction(event -> {
+      liveDataParser.addCommandToQueue(new CommandT(liveDataParser, model, null));
     });
   }
 

@@ -21,7 +21,7 @@ public class CommandT extends AbstractCommand {
   public void receive(char read) {
     stringBuilder.append((char) read);
 
-    if (stringBuilder.toString().contains("say Year")) {
+    if (stringBuilder.toString().contains("Enter year(0 - 99)")) {
       String yeartouse;
       if (dateTime == null) {
         yeartouse = String.valueOf(LocalDateTime.now().getYear());
@@ -31,5 +31,66 @@ public class CommandT extends AbstractCommand {
       liveDataParser.executeCommand(yeartouse);
       stringBuilder = new StringBuilder();
     }
+
+    if (stringBuilder.toString().contains("Enter month(1 - 12)")) {
+      String stringToSend;
+      if (dateTime == null) {
+        stringToSend = String.valueOf(LocalDateTime.now().getMonthValue());
+      } else {
+        stringToSend = String.valueOf(dateTime.getMonthValue());
+      }
+      liveDataParser.executeCommand(stringToSend);
+      stringBuilder = new StringBuilder();
+    }
+
+    if (stringBuilder.toString().contains("Enter day(1 - 31)")) {
+      String stringToSend;
+      if (dateTime == null) {
+        stringToSend = String.valueOf(LocalDateTime.now().getDayOfMonth());
+      } else {
+        stringToSend = String.valueOf(dateTime.getDayOfMonth());
+      }
+      liveDataParser.executeCommand(stringToSend);
+      stringBuilder = new StringBuilder();
+    }
+
+    if (stringBuilder.toString().contains("Enter hour(0 - 23)")) {
+      String stringToSend;
+      if (dateTime == null) {
+        stringToSend = String.valueOf(LocalDateTime.now().getHour());
+      } else {
+        stringToSend = String.valueOf(dateTime.getHour());
+      }
+      liveDataParser.executeCommand(stringToSend);
+      stringBuilder = new StringBuilder();
+    }
+
+    if (stringBuilder.toString().contains("Enter minute(0 - 59)")) {
+      String stringToSend;
+      if (dateTime == null) {
+        stringToSend = String.valueOf(LocalDateTime.now().getMinute());
+      } else {
+        stringToSend = String.valueOf(dateTime.getMinute());
+      }
+      liveDataParser.executeCommand(stringToSend);
+      stringBuilder = new StringBuilder();
+    }
+
+    if (stringBuilder.toString().contains("Enter second(0 - 59)")) {
+      String stringToSend;
+      if (dateTime == null) {
+        stringToSend = String.valueOf(LocalDateTime.now().getSecond());
+      } else {
+        stringToSend = String.valueOf(dateTime.getSecond());
+      }
+      liveDataParser.executeCommand(stringToSend);
+      stringBuilder = new StringBuilder();
+    }
+
+    if (stringBuilder.toString().contains("Send Y to set time now")) {
+      liveDataParser.executeCommand("Y");
+      liveDataParser.runNextCommand();
+    }
+
   }
 }
