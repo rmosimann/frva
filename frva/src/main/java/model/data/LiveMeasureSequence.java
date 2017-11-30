@@ -21,7 +21,7 @@ public class LiveMeasureSequence extends MeasureSequence {
     if (getMetadata() != null) {
       return getId();
     }
-    return getSequenceUuid();
+    return "Measuring...";
   }
 
   @Override

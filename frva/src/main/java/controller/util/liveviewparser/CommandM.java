@@ -69,15 +69,10 @@ public class CommandM extends AbstractCommand {
 
     }
 
-    double[] doubles = Arrays.stream(numbrs).filter(s -> isNumeric(s))
+    double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))
         .mapToDouble(Double::parseDouble)
         .toArray();
 
     measureSequence.addData(keyName, doubles);
-  }
-
-
-  private boolean isNumeric(String s) {
-    return s != null && s.matches("[-+]?\\d*\\.?\\d+");
   }
 }

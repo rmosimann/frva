@@ -7,7 +7,7 @@ import model.FrvaModel;
  * Created by patrick.wigger on 28.11.17.
  */
 public abstract class AbstractCommand implements CommandInterface {
-  private static final Logger logger = Logger.getLogger("FRVA");
+  static final Logger logger = Logger.getLogger("FRVA");
 
   protected LiveDataParser liveDataParser;
   protected FrvaModel model;
@@ -27,7 +27,7 @@ public abstract class AbstractCommand implements CommandInterface {
    * @param string the string containing the number.
    * @return the extracted number.
    */
-  protected long parseNumber(String string) {
+  long parseNumber(String string) {
     StringBuilder number = new StringBuilder();
     for (int i = 0; i < string.length(); i++) {
       if (Character.isDigit(string.charAt(i))) {
@@ -44,11 +44,16 @@ public abstract class AbstractCommand implements CommandInterface {
    * @param string the string containing On or Off.
    * @return true when on, false when off or nothing.
    */
-  protected boolean parseOnOff(String string) {
+  boolean parseOnOff(String string) {
     if (string.toLowerCase().contains("on")) {
       return true;
     }
     return false;
+  }
+
+
+  boolean isStringNumeric(String s) {
+    return s != null && s.matches("[-+]?\\d*\\.?\\d+");
   }
 
 }
