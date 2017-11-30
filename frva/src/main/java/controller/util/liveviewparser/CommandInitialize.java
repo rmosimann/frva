@@ -14,7 +14,7 @@ public class CommandInitialize extends AbstractCommand {
 
   @Override
   public void sendCommand() {
-    liveDataParser.executeCommand(Commands.C.toString());
+    liveDataParser.executeCommand(Commands.B.toString());
     liveDataParser.addCommandToQueue(new CommandG(liveDataParser, model));
   }
 
@@ -22,7 +22,8 @@ public class CommandInitialize extends AbstractCommand {
   public void receive(char read) {
     sb.append((char) read);
 
-    if (sb.toString().contains("awaiting commands...")) {
+    if (sb.toString().contains("App?")) {
+      liveDataParser.executeCommand("100");
       if (sb.toString().contains("; ;")) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
       } else {

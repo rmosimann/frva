@@ -30,6 +30,9 @@ public class CommandB extends AbstractCommand {
 
   private void handleLine(StringBuilder stringBuilder) {
     if (stringBuilder.toString().contains("App?")) {
+      liveDataParser.executeCommand("100");
+    }
+    if (stringBuilder.toString().contains("confirmed")) {
       liveDataParser.runNextCommand();
     }
   }
