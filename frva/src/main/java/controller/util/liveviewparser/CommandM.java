@@ -1,6 +1,5 @@
 package controller.util.liveviewparser;
 
-import java.util.Arrays;
 import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
@@ -58,10 +57,17 @@ public class CommandM extends AbstractCommand {
 
   private void addValuesToMs(MeasureSequence.SequenceKeyName keyName, String string,
                              LiveMeasureSequence measureSequence) {
-    double[] doubleValues = Arrays.stream(string.split(";"))
-        .skip(1)
-        .mapToDouble(Double::parseDouble)
-        .toArray();
+
+    String cleaned = string.replace(":", ";").replace(" ", "");
+    System.out.println(cleaned);
+    String[] splited = cleaned.split(";");
+
+    for (String s : splited) {
+      System.out.println(Double.parseDouble(s));
+
+    }
+
+    double[] doubleValues = null;
     measureSequence.addData(keyName, doubleValues);
   }
 
