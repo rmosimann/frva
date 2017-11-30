@@ -1,5 +1,6 @@
 package controller.util.liveviewparser;
 
+import java.util.Arrays;
 import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
@@ -32,7 +33,10 @@ public class CommandM extends AbstractCommand {
   }
 
   private void handleLine(String string) {
-    if (string.contains("WR") && string.contains("DC")) {
+    if (string.contains("manual_mode")) {
+      measureSequence.setMetadata(string.split(";"));
+
+    } else if (string.contains("WR") && string.contains("DC")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, string, measureSequence);
 
     } else if (string.contains("WR")) {
@@ -47,9 +51,6 @@ public class CommandM extends AbstractCommand {
     } else if (string.contains("VEG")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.VEG, string, measureSequence);
 
-    } else if (string.contains("manual_mode")) {
-      measureSequence.setMetadata(string.split(";"));
-
     } else if (string.contains("Voltage =")) {
       liveDataParser.runNextCommand();
     }
@@ -57,19 +58,26 @@ public class CommandM extends AbstractCommand {
 
   private void addValuesToMs(MeasureSequence.SequenceKeyName keyName, String string,
                              LiveMeasureSequence measureSequence) {
+    String[] numbrs;
+    if (Character.isDigit(string.charAt(0))) {
+      String[] split = string.split(":");
+      numbrs = split[3].replace(" ", "").split(";");
 
-    String cleaned = string.replace(":", ";").replace(" ", "");
-    System.out.println(cleaned);
-    String[] splited = cleaned.split(";");
-
-    for (String s : splited) {
-      System.out.println(Double.parseDouble(s));
+    } else {
+      String[] split = string.split(";");
+      numbrs = Arrays.copyOfRange(split, 1, split.length);
 
     }
 
-    double[] doubleValues = null;
-    measureSequence.addData(keyName, doubleValues);
+    double[] doubles = Arrays.stream(numbrs).filter(s -> isNumeric(s))
+        .mapToDouble(Double::parseDouble)
+        .toArray();
+
+    measureSequence.addData(keyName, doubles);
   }
 
 
+  private boolean isNumeric(String s) {
+    return s != null && s.matches("[-+]?\\d*\\.?\\d+");
+  }
 }
