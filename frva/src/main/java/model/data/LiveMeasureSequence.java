@@ -2,7 +2,7 @@ package model.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 public class LiveMeasureSequence extends MeasureSequence {
 
@@ -31,31 +31,31 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public Map<SequenceKeyName, double[]> getRadiance() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
   @Override
   public Map<SequenceKeyName, double[]> getReflectance() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
   @Override
   public ReflectionIndices getIndices() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
   @Override
   public double[] getWavlengthCalibration() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
   @Override
   public DataFile getDataFile() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
   @Override
   public SdCard getContainingSdCard() {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 }
