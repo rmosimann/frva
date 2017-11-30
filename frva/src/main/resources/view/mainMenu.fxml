@@ -36,16 +36,6 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="buttonSettings" mnemonicParsing="false" prefHeight="30.0"
-                                        prefWidth="120.0" styleClass="mainMenuButton" text="Settings">
-                                    <graphic>
-                                        <ImageView>
-                                            <image>
-                                                <Image url="@../icons/ic_settings_black_24dp/web/ic_settings_black_24dp_1x.png"/>
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
                             </children>
                         </HBox>
                     </children>

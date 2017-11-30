@@ -13,15 +13,11 @@ import model.FrvaModel;
 public class MainMenuController {
   private final FrvaModel model;
   private Node mainViewPane;
-  private Node settingsViewPane;
   private Node liveViewNode;
   EventHandler<ActionEvent> mainMenuHandler;
 
   @FXML
   private Button buttonLiveView;
-
-  @FXML
-  private Button buttonSettings;
 
   @FXML
   private Button buttonLibrary;
@@ -53,11 +49,6 @@ public class MainMenuController {
       liveViewController.setActiveView(liveViewNode);
 
 
-      loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
-          .getResource("view/settingsView.fxml"));
-      loader.setController(new SettingsController(model));
-      settingsViewPane = loader.load();
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -85,8 +76,6 @@ public class MainMenuController {
         nodetouse = mainViewPane;
       } else if (pressedButton == buttonLiveView) {
         nodetouse = liveViewNode;
-      } else if (pressedButton == buttonSettings) {
-        nodetouse = settingsViewPane;
       }
 
       if (contentVbox.getChildren().size() > 1) {
@@ -104,12 +93,10 @@ public class MainMenuController {
 
     buttonLibrary.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
     buttonLiveView.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
-    buttonSettings.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
   }
 
   private void setSelectedButton(Button button) {
     buttonLiveView.getStyleClass().remove("selected");
-    buttonSettings.getStyleClass().remove("selected");
     buttonLibrary.getStyleClass().remove("selected");
     button.getStyleClass().add("selected");
 
