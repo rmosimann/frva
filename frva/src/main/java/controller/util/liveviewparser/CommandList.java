@@ -2,10 +2,10 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-public class CommandC extends AbstractCommand {
+public class CommandList extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
-  public CommandC(LiveDataParser liveDataParser, FrvaModel model) {
+  public CommandList(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
   }
 

@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import model.FrvaModel;
 
@@ -22,6 +24,7 @@ public class LiveDataParser {
 
   private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
+  private final BooleanProperty acceptingCommands = new SimpleBooleanProperty();
 
   public LiveDataParser(LiveViewController liveViewController, FrvaModel model) {
     this.liveViewController = liveViewController;
@@ -40,6 +43,11 @@ public class LiveDataParser {
     currentCommand.addListener(observable -> {
       liveViewController.setCurrentCommandLabel(
           currentCommand.getValue().getClass().getSimpleName());
+      if (currentCommand.getValue() instanceof CommandIdle) {
+        acceptingCommands.setValue(true);
+      } else {
+        acceptingCommands.setValue(false);
+      }
     });
 
     currentCommand.setValue(new CommandInitialize(this, model));
@@ -54,7 +62,6 @@ public class LiveDataParser {
    * @param command the command to execute.
    */
   public void addCommandToQueue(CommandInterface command) {
-    System.out.println("---- added to queue: " + command.getClass().getSimpleName());
     commandQueue.add(command);
     currentCommand.getValue().onQueueUpdate();
   }
@@ -133,4 +140,13 @@ public class LiveDataParser {
   public DeviceStatus getDeviceStatus() {
     return liveViewController.getDeviceStatus();
   }
+
+  public boolean isAcceptingCommands() {
+    return acceptingCommands.get();
+  }
+
+  public BooleanProperty acceptingCommandsProperty() {
+    return acceptingCommands;
+  }
+
 }

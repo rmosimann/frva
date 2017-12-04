@@ -37,8 +37,7 @@ public class CommandAutoMode extends AbstractCommand {
   private void handleLine(String line) {
 
     if (line.contains("Start FLAME Cycle")) {
-      System.out.println("-------starting new measuresequence");
-      currentMeasureSequence = new LiveMeasureSequence();
+      currentMeasureSequence = new LiveMeasureSequence(liveDataParser.getLiveViewController());
       Platform.runLater(() -> {
         model.getLiveSequences().add(currentMeasureSequence);
       });
@@ -49,10 +48,13 @@ public class CommandAutoMode extends AbstractCommand {
     } else if (line.contains("WRIT") || line.contains("VEGIT")) {
       logger.fine("Do nothing on this input.");
 
-    } else if (line.contains("Voltage = ") && liveDataParser.getCommandQueue().size() > 0) {
-      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
-      liveDataParser.runNextCommand();
+    } else if (line.contains("Voltage = ")) {
+      currentMeasureSequence.setComplete(true);
 
+      if (liveDataParser.getCommandQueue().size() > 0) {
+        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+        liveDataParser.runNextCommand();
+      }
     } else if (line.contains("WR") && line.contains("DC")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, line, currentMeasureSequence);
 
@@ -69,6 +71,7 @@ public class CommandAutoMode extends AbstractCommand {
       addValuesToMs(MeasureSequence.SequenceKeyName.VEG, line, currentMeasureSequence);
 
     }
+
   }
 
   void addValuesToMs(MeasureSequence.SequenceKeyName keyName, String string,

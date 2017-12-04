@@ -3,11 +3,11 @@ package controller.util.liveviewparser;
 import java.time.LocalDateTime;
 import model.FrvaModel;
 
-public class CommandT extends AbstractCommand {
+public class CommandSetTime extends AbstractCommand {
   private final LocalDateTime dateTime;
   StringBuilder stringBuilder = new StringBuilder();
 
-  public CommandT(LiveDataParser liveDataParser, FrvaModel model, LocalDateTime dateTime) {
+  public CommandSetTime(LiveDataParser liveDataParser, FrvaModel model, LocalDateTime dateTime) {
     super(liveDataParser, model);
     this.dateTime = dateTime;
   }

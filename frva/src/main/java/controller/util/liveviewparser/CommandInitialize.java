@@ -15,7 +15,7 @@ public class CommandInitialize extends AbstractCommand {
   @Override
   public void sendCommand() {
     liveDataParser.executeCommand(Commands.B.toString());
-    liveDataParser.addCommandToQueue(new CommandG(liveDataParser, model));
+    liveDataParser.addCommandToQueue(new CommandGetGpsinfo(liveDataParser, model));
   }
 
   @Override

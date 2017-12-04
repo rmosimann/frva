@@ -8,28 +8,36 @@ import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
-import controller.util.liveviewparser.CommandC;
-import controller.util.liveviewparser.CommandM;
+import controller.util.liveviewparser.CommandGetCalibration;
+import controller.util.liveviewparser.CommandGetConfiguration;
+import controller.util.liveviewparser.CommandList;
+import controller.util.liveviewparser.CommandManualMeasurement;
 import controller.util.liveviewparser.CommandManualMode;
-import controller.util.liveviewparser.CommandT;
-import controller.util.liveviewparser.Commandc;
-import controller.util.liveviewparser.Commandfc;
+import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -49,6 +57,7 @@ public class LiveViewController {
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
   private StreamConnection openStreamConnection;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
@@ -58,7 +67,7 @@ public class LiveViewController {
   private ListView<MeasureSequence> measurementListView;
 
   @FXML
-  private LineChart<?, ?> datachart;
+  private LineChart<Double, Double> datachart;
 
   @FXML
   private NumberAxis xaxis;
@@ -129,6 +138,8 @@ public class LiveViewController {
   @FXML
   private Button manualMeasurementButton;
 
+  private MeasureSequence selectedMeasurement;
+
 
   /**
    * Constructor.
@@ -140,14 +151,27 @@ public class LiveViewController {
     state.setValue(connectionStateInit);
     this.model = model;
     liveDataParser = new LiveDataParser(this, model);
-    addListeners();
+    lineChartData = FXCollections.observableArrayList();
+
   }
 
   @FXML
   private void initialize() {
     defineButtonActions();
+    initializeLayout();
     addBindings();
+    addListeners();
   }
+
+
+  private void initializeLayout() {
+    datachart.setAnimated(false);
+    datachart.setCreateSymbols(false);
+    datachart.setAlternativeRowFillVisible(false);
+    datachart.setLegendVisible(false);
+    datachart.setData(lineChartData);
+  }
+
 
   private void addBindings() {
     systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
@@ -155,6 +179,11 @@ public class LiveViewController {
 
     measurementListView.setItems(model.getLiveSequences());
 
+    commandcButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    commandCButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    setTimeButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    commandfcButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    manualMeasurementButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
   }
 
 
@@ -166,7 +195,7 @@ public class LiveViewController {
     });
 
     commandCButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandC(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandList(liveDataParser, model));
     });
 
     changeModeButton.setOnAction(event -> {
@@ -174,11 +203,11 @@ public class LiveViewController {
     });
 
     setTimeButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandT(liveDataParser, model, null));
+      liveDataParser.addCommandToQueue(new CommandSetTime(liveDataParser, model, null));
     });
 
     commandcButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new Commandc(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandGetConfiguration(liveDataParser, model));
     });
 
     commandManualModeButton.setOnAction(event -> {
@@ -186,11 +215,11 @@ public class LiveViewController {
     });
 
     commandfcButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new Commandfc(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
     });
 
     manualMeasurementButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandM(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandManualMeasurement(liveDataParser, model));
     });
   }
 
@@ -205,6 +234,23 @@ public class LiveViewController {
     state.addListener(observable -> {
       logger.info("New state is: " + state.getValue().getClass().getSimpleName());
       state.getValue().handle();
+    });
+
+    measurementListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+    measurementListView.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
+      selectedMeasurement = newValue.getSelectedItem();
+      redrawGraph(selectedMeasurement);
+    });
+
+    model.getLiveSequences().addListener(new ListChangeListener<MeasureSequence>() {
+      @Override
+      public void onChanged(Change<? extends MeasureSequence> c) {
+        while (c.next()) {
+          measurementListView.selectionModelProperty()
+              .set((MultipleSelectionModel<MeasureSequence>) c.getAddedSubList());
+        }
+      }
     });
   }
 
@@ -290,6 +336,7 @@ public class LiveViewController {
     });
   }
 
+
   public void setActiveView(Node activeView) {
     this.activeView = activeView;
   }
@@ -337,5 +384,35 @@ public class LiveViewController {
 
   public void setCurrentCommandLabel(String text) {
     Platform.runLater(() -> this.currentCommandLabel.setText(text));
+  }
+
+  public void redrawGraph(MeasureSequence sequence) {
+    lineChartData.clear();
+
+    Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
+
+    entries = sequence.getData().entrySet();
+
+    for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
+      double[] data = entry.getValue();
+      LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
+      series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
+
+      for (int i = 0; i < data.length; i++) {
+        if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
+          double x = i;
+          double y = data[i];
+          series.getData().add(new XYChart.Data<>(x, y));
+        }
+      }
+
+      lineChartData.add(series);
+
+    }
+
+  }
+
+  public void refreshList() {
+    measurementListView.refresh();
   }
 }

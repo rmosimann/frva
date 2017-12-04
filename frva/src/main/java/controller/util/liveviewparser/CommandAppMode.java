@@ -2,20 +2,18 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-public class CommandIx extends AbstractCommand {
+public class CommandAppMode extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
-  private int integrationTime;
 
 
-  public CommandIx(LiveDataParser liveDataParser, FrvaModel model, int integrationTime) {
+  public CommandAppMode(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
-    this.integrationTime = integrationTime;
   }
 
 
   @Override
   public void sendCommand() {
-    liveDataParser.executeCommand(Commands.I.toString() + " " + String.valueOf(integrationTime));
+    liveDataParser.executeCommand(Commands.B.toString());
   }
 
 
@@ -31,8 +29,10 @@ public class CommandIx extends AbstractCommand {
 
 
   private void handleLine(StringBuilder stringBuilder) {
-    if (stringBuilder.toString().contains("IT = ")) {
-      liveDataParser.getDeviceStatus().setIntegrationTime(parseNumber(stringBuilder.toString()));
+    if (stringBuilder.toString().contains("App?")) {
+      liveDataParser.executeCommand("100");
+    }
+    if (stringBuilder.toString().contains("confirmed")) {
       liveDataParser.runNextCommand();
     }
   }

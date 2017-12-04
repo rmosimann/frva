@@ -2,10 +2,10 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-public class CommandG extends AbstractCommand {
+public class CommandGetGpsinfo extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
-  public CommandG(LiveDataParser liveDataParser, FrvaModel model) {
+  public CommandGetGpsinfo(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
   }
 

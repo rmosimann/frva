@@ -6,7 +6,7 @@ import java.util.Vector;
 import model.FrvaModel;
 import model.data.CalibrationFile;
 
-public class Commandfc extends AbstractCommand {
+public class CommandGetCalibration extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
   private Vector<Double> wlF1;
@@ -18,12 +18,12 @@ public class Commandfc extends AbstractCommand {
   private List<String> metadata;
 
   /**
-   * Creates a Commandfc instance that reads Calibrationfile from liveDevice.
+   * Creates a CommandGetCalibration instance that reads Calibrationfile from liveDevice.
    *
    * @param liveDataParser where all the datahandling with the LiveDevice happens.
    * @param model          the one and only Model.
    */
-  public Commandfc(LiveDataParser liveDataParser, FrvaModel model) {
+  public CommandGetCalibration(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
     this.wlF1 = new Vector<>();
     this.wlF2 = new Vector<>();

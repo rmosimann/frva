@@ -2,12 +2,12 @@ package controller.util.liveviewparser;
 
 import model.FrvaModel;
 
-public class CommandImx extends AbstractCommand {
+public class CommandSetMaxIntegrationTime extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private int maxIntegrationTime;
 
 
-  public CommandImx(LiveDataParser liveDataParser, FrvaModel model, int maxIntegrationTime) {
+  public CommandSetMaxIntegrationTime(LiveDataParser liveDataParser, FrvaModel model, int maxIntegrationTime) {
     super(liveDataParser, model);
     this.maxIntegrationTime = maxIntegrationTime;
   }

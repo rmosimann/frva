@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Vector;
 import model.FrvaModel;
 
-public class Commandc extends AbstractCommand {
+public class CommandGetConfiguration extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private boolean parsing3fldPixels = false;
   private Vector<Number> fldPixels = new Vector<>();
 
-  public Commandc(LiveDataParser liveDataParser, FrvaModel model) {
+  public CommandGetConfiguration(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
   }
 
