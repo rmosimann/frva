@@ -11,7 +11,8 @@ public class ConnectionStateInit implements ConnectionState {
 
   @Override
   public void handle() {
-    if (BluetoothConnection.isBluetoothOn()) {
+    //TODO evaluate how to do this on OSX
+    if (true) {
       liveViewController.setState(new ConnectionStateSearching(liveViewController));
     } else {
       liveViewController.setState(new ConnectionStateBltOff(liveViewController));

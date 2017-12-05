@@ -122,11 +122,7 @@ public class LiveViewController {
       availableServiceRecords.forEach(serviceRecords -> {
         String deviceAddress = serviceRecords[0].getHostDevice().getBluetoothAddress();
         String deviceName = deviceAddress;
-        try {
-          deviceName = serviceRecords[0].getHostDevice().getFriendlyName(true);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        deviceName = serviceRecords[0].getHostDevice().getBluetoothAddress();
 
         VBox buttonLabaleBox = new VBox();
         Label namelabel = new Label(deviceName);

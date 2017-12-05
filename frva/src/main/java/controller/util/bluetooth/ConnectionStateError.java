@@ -11,7 +11,9 @@ public class ConnectionStateError implements ConnectionState {
 
   @Override
   public void handle() {
-    if (!BluetoothConnection.isBluetoothOn()) {
+    //TODO evaluate how to do this on OSX
+
+    if (true) {
       liveViewController.setState(new ConnectionStateBltOff(liveViewController));
     } else if (liveViewController.getSelectedServiceRecord() != null) {
       liveViewController.setState(new ConnectionStateConnecting(liveViewController));

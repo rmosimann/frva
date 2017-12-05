@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryAgent;
@@ -66,11 +67,9 @@ public class BluetoothConnection {
       @Override
       public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         remotes.add(btDevice);
-        try {
-          logger.info("Bluetooth: discovered device - " + btDevice.getFriendlyName(true));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+
+          logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
+
       }
 
       @Override
@@ -135,15 +134,41 @@ public class BluetoothConnection {
    */
   public static StreamConnection connectToService(ServiceRecord[] serviceRecords)
       throws IOException {
-    StreamConnection connection = null;
+    final StreamConnection[] connection = {null};
     for (ServiceRecord serviceRecord : serviceRecords) {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-      connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+     // Platform.setImplicitExit(false);
+
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            System.out.println("im hheeeeere***********************************");
+            connection[0] = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+            System.out.println("back here");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      });
+      System.out.println("now try to run thread");
+
+
+
+      try {
+        Thread.sleep(1000);
+        System.out.println("slept now");
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+
     }
 
-    return connection;
+
+    return connection[0];
   }
 
 
@@ -165,6 +190,7 @@ public class BluetoothConnection {
    * @return true when enabled.
    */
   public static boolean isBluetoothOn() {
+    //TODO evaluate how to do this on OSX
     return LocalDevice.isPowerOn();
   }
 

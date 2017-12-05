@@ -13,7 +13,8 @@ public class ConnectionStateBltOff implements ConnectionState {
 
   @Override
   public void handle() {
-    if (BluetoothConnection.isBluetoothOn()) {
+    //TODO evaluate how to do this on OSX
+    if (true) {
       liveViewController.displayBluetoothOffDialog(false);
       liveViewController.setState(new ConnectionStateSearching(liveViewController));
     } else {
