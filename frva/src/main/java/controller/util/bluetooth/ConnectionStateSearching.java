@@ -1,7 +1,18 @@
 package controller.util.bluetooth;
 
 import controller.LiveViewController;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.concurrent.Task;
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.DeviceClass;
+import javax.bluetooth.DiscoveryAgent;
+import javax.bluetooth.DiscoveryListener;
+import javax.bluetooth.LocalDevice;
+import javax.bluetooth.RemoteDevice;
+import javax.bluetooth.ServiceRecord;
+import javax.bluetooth.UUID;
 
 public class ConnectionStateSearching implements ConnectionState {
   private final LiveViewController liveViewController;
@@ -46,4 +57,6 @@ public class ConnectionStateSearching implements ConnectionState {
     }
 
   }
+
+
 }

@@ -23,31 +23,6 @@ public class BluetoothConnection {
 
   private static final Logger logger = Logger.getLogger("FRVA");
 
-  /**
-   * TEST this.
-   *
-   * @param args empty.
-   * @throws IOException          some.
-   * @throws InterruptedException some.
-   */
-  public static void main(String[] args) throws IOException, InterruptedException {
-    List<ServiceRecord[]> devicesWithSerialService =
-        BluetoothConnection.getDevicesWithSerialService();
-    StreamConnection connection = connectToService(devicesWithSerialService.get(0));
-
-    OutputStream dos = connection.openOutputStream();
-    dos.write("A\n".getBytes());
-    dos.flush();
-    System.out.println("sent C");
-
-    InputStream dataIn = connection.openInputStream();
-    System.out.println("datain opened");
-    int read;
-    while ((read = dataIn.read()) != -1) {
-      System.out.print((char) read);
-    }
-  }
-
 
   /**
    * Discovers all available BluetoothDevices and then scans tham for SPP-Services.
@@ -68,7 +43,7 @@ public class BluetoothConnection {
       public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         remotes.add(btDevice);
 
-          logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
+        logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
 
       }
 
@@ -134,41 +109,24 @@ public class BluetoothConnection {
    */
   public static StreamConnection connectToService(ServiceRecord[] serviceRecords)
       throws IOException {
-    final StreamConnection[] connection = {null};
+    StreamConnection connection = null;
     for (ServiceRecord serviceRecord : serviceRecords) {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-     // Platform.setImplicitExit(false);
-
-      Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            System.out.println("im hheeeeere***********************************");
-            connection[0] = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
-            System.out.println("back here");
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      });
-      System.out.println("now try to run thread");
-
+      // Platform.setImplicitExit(false);
 
 
       try {
-        Thread.sleep(1000);
-        System.out.println("slept now");
-      } catch (InterruptedException e) {
+        connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+        logger.info("Connected to device");
+      } catch (IOException e) {
         e.printStackTrace();
       }
-
-
     }
 
 
-    return connection[0];
+    return connection;
   }
 
 

@@ -6,6 +6,7 @@ import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -95,6 +96,7 @@ public class LiveViewController {
       logger.info("New state is: " + state.getValue().getClass().getSimpleName());
       state.getValue().handle();
     });
+
   }
 
 
@@ -193,8 +195,26 @@ public class LiveViewController {
     return selectedServiceRecord;
   }
 
+  /**
+   * Just for testing reasons.
+   * @param openStreamConnection The Stream of the device
+   */
   public void setOpenStreamConnection(StreamConnection openStreamConnection) {
     this.openStreamConnection = openStreamConnection;
+    //TODO: Test impl
+    try {
+      InputStream is = openStreamConnection.openInputStream();
+      int i;
+      StringBuilder temp = new StringBuilder();
+      while (true) {
+        while ((i = is.read()) != -1) {
+          miniTerminalTextArea.setText(temp.append((char) i).toString());
+
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public StreamConnection getOpenStreamConnection() {
