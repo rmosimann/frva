@@ -16,7 +16,6 @@ import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -319,7 +317,7 @@ public class LiveViewController {
         serviceRecordButton.setPrefWidth(200);
         serviceRecordButton.setPrefHeight(50);
 
-        String finalDeviceName = deviceName;
+        String finalDeviceName = deviceName[0];
         serviceRecordButton.setOnAction((ActionEvent event) -> {
           deviceStatus.setSystemname(finalDeviceName);
           setSelectedServiceRecord(serviceRecords);
