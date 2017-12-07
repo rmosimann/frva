@@ -23,7 +23,7 @@ public class ConnectionStateSearching implements ConnectionState {
 
   @Override
   public void handle() {
-    Thread t= new Thread(new Runnable() {
+    Thread t = new Thread(new Runnable() {
       @Override
       public void run() {
         if (LocalDevice.isPowerOn()) {

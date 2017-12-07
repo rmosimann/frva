@@ -142,30 +142,19 @@ public class LiveViewController {
         Thread t = new Thread(r);
         t.start();
 
-
-
-
-        VBox buttonLabaleBox = new VBox();
-
-        Label namelabel=null;
-
+        Label namelabel = null;
         try {
           t.join();
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
         namelabel = new Label(deviceName[0]);
-
-
         namelabel.setStyle("-fx-font-weight: bold");
-
-
         String[] split = deviceAddress[0].split("(?<=\\G..)");
         Label addresslabel = new Label(Arrays.toString(split)
             .replace(", ", ":"));
+        VBox buttonLabaleBox = new VBox();
         buttonLabaleBox.getChildren().addAll(namelabel, addresslabel);
-
-
         Button serviceRecordButton = new Button();
         serviceRecordButton.setGraphic(buttonLabaleBox);
         serviceRecordButton.setPrefWidth(200);
