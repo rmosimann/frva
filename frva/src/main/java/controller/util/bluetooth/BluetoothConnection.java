@@ -111,8 +111,6 @@ public class BluetoothConnection {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-      // Platform.setImplicitExit(false);
-
 
       try {
         connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
