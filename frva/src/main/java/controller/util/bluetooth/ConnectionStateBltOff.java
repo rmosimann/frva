@@ -1,6 +1,7 @@
 package controller.util.bluetooth;
 
 import controller.LiveViewController;
+import javax.bluetooth.LocalDevice;
 
 public class ConnectionStateBltOff implements ConnectionState {
 
@@ -13,12 +14,18 @@ public class ConnectionStateBltOff implements ConnectionState {
 
   @Override
   public void handle() {
-    //TODO evaluate how to do this on OSX
-    if (true) {
-      liveViewController.displayBluetoothOffDialog(false);
-      liveViewController.setState(new ConnectionStateSearching(liveViewController));
-    } else {
-      liveViewController.displayBluetoothOffDialog(true);
-    }
+    Thread t= new Thread(new Runnable() {
+      @Override
+      public void run() {
+        if (LocalDevice.isPowerOn()) {
+          liveViewController.displayBluetoothOffDialog(false);
+          liveViewController.setState(new ConnectionStateSearching(liveViewController));
+        } else {
+          liveViewController.displayBluetoothOffDialog(true);
+        }
+      }
+    });
+    t.start();
+
   }
 }

@@ -235,20 +235,7 @@ public class LiveViewController {
    */
   public void setOpenStreamConnection(StreamConnection openStreamConnection) {
     this.openStreamConnection = openStreamConnection;
-    //TODO: Test impl
-    try {
-      InputStream is = openStreamConnection.openInputStream();
-      int i;
-      StringBuilder temp = new StringBuilder();
-      while (true) {
-        while ((i = is.read()) != -1) {
-          miniTerminalTextArea.setText(temp.append((char) i).toString());
 
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   public StreamConnection getOpenStreamConnection() {

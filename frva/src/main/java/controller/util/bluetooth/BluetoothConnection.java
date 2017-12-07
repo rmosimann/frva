@@ -1,6 +1,7 @@
 package controller.util.bluetooth;
 
 import com.intel.bluetooth.BlueCoveImpl;
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -141,15 +142,5 @@ public class BluetoothConnection {
     BlueCoveImpl.shutdown();
   }
 
-
-  /**
-   * Checks the powerstate of the systems bluetooth device.
-   *
-   * @return true when enabled.
-   */
-  public static boolean isBluetoothOn() {
-    //TODO evaluate how to do this on OSX
-    return LocalDevice.isPowerOn();
-  }
 
 }

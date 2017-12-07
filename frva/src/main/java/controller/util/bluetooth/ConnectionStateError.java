@@ -1,6 +1,7 @@
 package controller.util.bluetooth;
 
 import controller.LiveViewController;
+import javax.bluetooth.LocalDevice;
 
 public class ConnectionStateError implements ConnectionState {
   private final LiveViewController liveViewController;
@@ -11,13 +12,19 @@ public class ConnectionStateError implements ConnectionState {
 
   @Override
   public void handle() {
-    //TODO evaluate how to do this on OSX
+    Thread t= new Thread(new Runnable() {
+      @Override
+      public void run() {
+        if (!LocalDevice.isPowerOn()) {
+          liveViewController.setState(new ConnectionStateBltOff(liveViewController));
+        } else if (liveViewController.getSelectedServiceRecord() != null) {
+          liveViewController.setState(new ConnectionStateConnecting(liveViewController));
+        }
 
-    if (true) {
-      liveViewController.setState(new ConnectionStateBltOff(liveViewController));
-    } else if (liveViewController.getSelectedServiceRecord() != null) {
-      liveViewController.setState(new ConnectionStateConnecting(liveViewController));
-    }
+      }
+    });
+
+    t.start();
 
   }
 }

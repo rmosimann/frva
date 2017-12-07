@@ -23,40 +23,44 @@ public class ConnectionStateSearching implements ConnectionState {
 
   @Override
   public void handle() {
-    //TODO evaluate how to do this on OSX
+    Thread t= new Thread(new Runnable() {
+      @Override
+      public void run() {
+        if (LocalDevice.isPowerOn()) {
+          liveViewController.displaySearchingDialog(true);
+          try {
+            Task<Void> bltSearchingTask = new Task<Void>() {
+              @Override
+              protected Void call() throws Exception {
+                liveViewController.setAvailableServiceRecords(
+                    BluetoothConnection.getDevicesWithSerialService());
+                return null;
+              }
+            };
+            bltSearchingTask.setOnSucceeded(event -> {
+              liveViewController.displaySearchingDialog(false);
+              liveViewController.setState(new ConnectionStateAvailableDevices(liveViewController));
+            });
+            bltSearchingTask.setOnFailed(event -> {
+              liveViewController.displaySearchingDialog(false);
+              liveViewController.setState(new ConnectionStateError(liveViewController));
+            });
 
-    if (true) {
-      liveViewController.displaySearchingDialog(true);
-      try {
-        Task<Void> bltSearchingTask = new Task<Void>() {
-          @Override
-          protected Void call() throws Exception {
-            liveViewController.setAvailableServiceRecords(
-                BluetoothConnection.getDevicesWithSerialService());
-            return null;
+            Thread thread = new Thread(bltSearchingTask);
+            thread.setDaemon(true);
+            thread.start();
+
+          } catch (Exception e) {
+            liveViewController.setState(new ConnectionStateError(liveViewController));
           }
-        };
-        bltSearchingTask.setOnSucceeded(event -> {
-          liveViewController.displaySearchingDialog(false);
-          liveViewController.setState(new ConnectionStateAvailableDevices(liveViewController));
-        });
-        bltSearchingTask.setOnFailed(event -> {
-          liveViewController.displaySearchingDialog(false);
+        } else {
           liveViewController.setState(new ConnectionStateError(liveViewController));
-        });
-
-        Thread thread = new Thread(bltSearchingTask);
-        thread.setDaemon(true);
-        thread.start();
-
-      } catch (Exception e) {
-        liveViewController.setState(new ConnectionStateError(liveViewController));
+        }
       }
-    } else {
-      liveViewController.setState(new ConnectionStateError(liveViewController));
-    }
+    });
+    t.start();
+
 
   }
-
 
 }
