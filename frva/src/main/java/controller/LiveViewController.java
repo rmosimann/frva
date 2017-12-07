@@ -36,7 +36,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -247,8 +246,10 @@ public class LiveViewController {
       @Override
       public void onChanged(Change<? extends MeasureSequence> c) {
         while (c.next()) {
-          measurementListView.selectionModelProperty()
-              .set((MultipleSelectionModel<MeasureSequence>) c.getAddedSubList());
+          c.getAddedSubList().forEach(o -> {
+            measurementListView.getSelectionModel().select(o);
+          });
+
         }
       }
     });
@@ -386,8 +387,16 @@ public class LiveViewController {
     Platform.runLater(() -> this.currentCommandLabel.setText(text));
   }
 
+  /**
+   * Refreshes the graph with the give measureSequence.
+   *
+   * @param sequence the sequenc to draw.
+   */
   public void redrawGraph(MeasureSequence sequence) {
-    lineChartData.clear();
+    Platform.runLater(() -> {
+      lineChartData.clear();
+    });
+
 
     Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
 
@@ -406,7 +415,9 @@ public class LiveViewController {
         }
       }
 
-      lineChartData.add(series);
+      Platform.runLater(() -> {
+        lineChartData.add(series);
+      });
 
     }
 

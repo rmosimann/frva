@@ -1,6 +1,7 @@
 package model.data;
 
 import controller.LiveViewController;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +17,15 @@ public class LiveMeasureSequence extends MeasureSequence {
     this.listener = listener;
   }
 
+  /**
+   * Adds data to that measurement.
+   *
+   * @param keyName a SequenceKeyName
+   * @param content the array with the data.
+   */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
     data.put(keyName, content);
+    System.out.println(Arrays.toString(content));
     updated();
   }
 
