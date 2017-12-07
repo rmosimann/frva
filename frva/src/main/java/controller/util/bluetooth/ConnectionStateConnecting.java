@@ -18,9 +18,6 @@ public class ConnectionStateConnecting implements ConnectionState {
   @Override
   public void handle() {
 
-
-
-    final StreamConnection[] connection = {null};
     for (ServiceRecord serviceRecord : liveViewController.getSelectedServiceRecord()) {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
