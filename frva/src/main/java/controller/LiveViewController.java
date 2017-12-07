@@ -217,14 +217,8 @@ public class LiveViewController {
     return selectedServiceRecord;
   }
 
-  /**
-   * Just for testing reasons.
-   *
-   * @param openStreamConnection The Stream of the device
-   */
   public void setOpenStreamConnection(StreamConnection openStreamConnection) {
     this.openStreamConnection = openStreamConnection;
-
   }
 
   public StreamConnection getOpenStreamConnection() {
