@@ -1,14 +1,10 @@
 package controller.util.bluetooth;
 
 import com.intel.bluetooth.BlueCoveImpl;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryAgent;
