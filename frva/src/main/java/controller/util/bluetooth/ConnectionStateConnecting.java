@@ -9,7 +9,7 @@ import javax.microedition.io.StreamConnection;
 
 public class ConnectionStateConnecting implements ConnectionState {
   private final LiveViewController liveViewController;
-  StreamConnection streamConnection = null;
+  private StreamConnection streamConnection;
 
   public ConnectionStateConnecting(LiveViewController liveViewController) {
     this.liveViewController = liveViewController;
