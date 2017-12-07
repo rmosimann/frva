@@ -1,6 +1,7 @@
 package controller.util.bluetooth;
 
 import controller.LiveViewController;
+import javax.bluetooth.LocalDevice;
 
 public class ConnectionStateInit implements ConnectionState {
   private final LiveViewController liveViewController;
@@ -11,11 +12,18 @@ public class ConnectionStateInit implements ConnectionState {
 
   @Override
   public void handle() {
-    if (BluetoothConnection.isBluetoothOn()) {
-      liveViewController.setState(new ConnectionStateSearching(liveViewController));
-    } else {
-      liveViewController.setState(new ConnectionStateBltOff(liveViewController));
-    }
+    Thread t = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        if (LocalDevice.isPowerOn()) {
+          liveViewController.setState(new ConnectionStateSearching(liveViewController));
+        } else {
+          liveViewController.setState(new ConnectionStateBltOff(liveViewController));
+        }
 
+      }
+    });
+
+    t.start();
   }
 }

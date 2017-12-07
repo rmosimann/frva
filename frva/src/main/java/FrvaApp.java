@@ -1,4 +1,6 @@
 import controller.MainMenuController;
+import controller.util.bluetooth.BluetoothConnection;
+import controller.util.bluetooth.ConnectionStateSearching;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

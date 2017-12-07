@@ -16,6 +16,7 @@ import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -52,6 +54,8 @@ public class LiveViewController {
   private final FrvaModel model;
   private Node activeView;
   private ConnectionStateInit connectionStateInit;
+  private String deviceName;
+
   private DeviceStatus deviceStatus = new DeviceStatus();
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
@@ -235,6 +239,7 @@ public class LiveViewController {
       state.getValue().handle();
     });
 
+
     measurementListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
     measurementListView.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
@@ -278,20 +283,36 @@ public class LiveViewController {
         msgBoxDevicesList.getChildren().clear();
       }
       availableServiceRecords.forEach(serviceRecords -> {
-        String deviceAddress = serviceRecords[0].getHostDevice().getBluetoothAddress();
-        String deviceName = deviceAddress;
+        final String[] deviceAddress = {serviceRecords[0].getHostDevice().getBluetoothAddress()};
+        final String[] deviceName = {deviceAddress[0]};
+        Runnable r = new Runnable() {
+          @Override
+          public void run() {
+            try {
+              deviceName[0] = serviceRecords[0].getHostDevice().getFriendlyName(false);
+
+            } catch (IOException e) {
+
+              e.printStackTrace();
+            }
+          }
+        };
+
+        Thread t = new Thread(r);
+        t.start();
+
+        Label namelabel = null;
         try {
-          deviceName = serviceRecords[0].getHostDevice().getFriendlyName(true);
-        } catch (IOException e) {
+          t.join();
+        } catch (InterruptedException e) {
           e.printStackTrace();
         }
-
-        VBox buttonLabaleBox = new VBox();
-        Label namelabel = new Label(deviceName);
+        namelabel = new Label(deviceName[0]);
         namelabel.setStyle("-fx-font-weight: bold");
-        String[] split = deviceAddress.split("(?<=\\G..)");
+        String[] split = deviceAddress[0].split("(?<=\\G..)");
         Label addresslabel = new Label(Arrays.toString(split)
             .replace(", ", ":"));
+        VBox buttonLabaleBox = new VBox();
         buttonLabaleBox.getChildren().addAll(namelabel, addresslabel);
         Button serviceRecordButton = new Button();
         serviceRecordButton.setGraphic(buttonLabaleBox);

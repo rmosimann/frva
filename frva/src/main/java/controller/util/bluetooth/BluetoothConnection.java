@@ -2,8 +2,6 @@ package controller.util.bluetooth;
 
 import com.intel.bluetooth.BlueCoveImpl;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,31 +19,6 @@ import javax.microedition.io.StreamConnection;
 public class BluetoothConnection {
 
   private static final Logger logger = Logger.getLogger("FRVA");
-
-  /**
-   * TEST this.
-   *
-   * @param args empty.
-   * @throws IOException          some.
-   * @throws InterruptedException some.
-   */
-  public static void main(String[] args) throws IOException, InterruptedException {
-    List<ServiceRecord[]> devicesWithSerialService =
-        BluetoothConnection.getDevicesWithSerialService();
-    StreamConnection connection = connectToService(devicesWithSerialService.get(0));
-
-    OutputStream dos = connection.openOutputStream();
-    dos.write("A\n".getBytes());
-    dos.flush();
-    System.out.println("sent C");
-
-    InputStream dataIn = connection.openInputStream();
-    System.out.println("datain opened");
-    int read;
-    while ((read = dataIn.read()) != -1) {
-      System.out.print((char) read);
-    }
-  }
 
 
   /**
@@ -66,11 +39,9 @@ public class BluetoothConnection {
       @Override
       public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
         remotes.add(btDevice);
-        try {
-          logger.info("Bluetooth: discovered device - " + btDevice.getFriendlyName(true));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+
+        logger.info("Bluetooth: discovered device - " + btDevice.getBluetoothAddress());
+
       }
 
       @Override
@@ -141,8 +112,15 @@ public class BluetoothConnection {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-      connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+
+      try {
+        connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+        logger.info("Connected to device");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
+
 
     return connection;
   }
@@ -159,14 +137,5 @@ public class BluetoothConnection {
     BlueCoveImpl.shutdown();
   }
 
-
-  /**
-   * Checks the powerstate of the systems bluetooth device.
-   *
-   * @return true when enabled.
-   */
-  public static boolean isBluetoothOn() {
-    return LocalDevice.isPowerOn();
-  }
 
 }
