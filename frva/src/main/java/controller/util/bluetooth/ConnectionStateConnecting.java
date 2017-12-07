@@ -18,11 +18,6 @@ public class ConnectionStateConnecting implements ConnectionState {
   @Override
   public void handle() {
 
-    for (ServiceRecord serviceRecord : liveViewController.getSelectedServiceRecord()) {
-      String connectionUrl = serviceRecord
-          .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
-    }
-
     Thread t = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -32,11 +27,7 @@ public class ConnectionStateConnecting implements ConnectionState {
         } catch (IOException e) {
           liveViewController.setState(new ConnectionStateError(liveViewController));
         }
-
-
         liveViewController.setOpenStreamConnection(streamConnection);
-
-
         liveViewController.displayAvailableDevicesDialog(false);
         liveViewController.setState(new ConnectionStateConnected(liveViewController));
       }
