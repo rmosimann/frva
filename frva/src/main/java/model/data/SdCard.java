@@ -142,5 +142,9 @@ public class SdCard {
     logger.info("Deleted File:" + file);
   }
 
+  protected void setCalibrationFile(CalibrationFile calibrationFile) {
+    this.calibrationFile = calibrationFile;
+  }
+
 }
 

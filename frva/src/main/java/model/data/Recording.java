@@ -16,6 +16,19 @@ public class Recording extends SdCard {
     super(sdCardPath, name);
   }
 
+  @Override
+  public String getName() {
+    return "Rec: " + super.getName();
+  }
+
+  public void addMeasurementSequence(MeasureSequence ms) {
+    if(ms.)
+  }
+
+
+  public void setCalibrationFile(CalibrationFile calibrationFile) {
+    super.setCalibrationFile(calibrationFile);
+  }
 
 
 }
