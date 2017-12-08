@@ -89,7 +89,7 @@ public class MainController {
     List<SdCard> importedSdCards = model
         .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
     for (SdCard sdCard : importedSdCards) {
-      FileInOut.writeDB(sdCard);
+      FileInOut.writeDatabaseFile(sdCard);
       model.getLibrary().add(sdCard);
     }
     ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
@@ -120,7 +120,7 @@ public class MainController {
   private void deleteSelectedItems() {
     List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
     System.out.println(list.size());
-    if (confirmDelete(list.stream().filter(p->p instanceof FrvaTreeMeasurementItem).count())) {
+    if (confirmDelete(list.stream().filter(p -> p instanceof FrvaTreeMeasurementItem).count())) {
       List<MeasureSequence> measurements = new ArrayList<>();
       for (FrvaTreeItem item : list) {
         if (item instanceof FrvaTreeMeasurementItem) {

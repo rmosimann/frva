@@ -124,7 +124,7 @@ public class FrvaModel {
     });
 
     changedSdcards.forEach(sdCard -> {
-      FileInOut.writeDB(sdCard);
+      FileInOut.writeDatabaseFile(sdCard);
     });
 
     for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {

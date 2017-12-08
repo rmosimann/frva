@@ -20,14 +20,16 @@ import model.FrvaModel;
  * Created by patrick.wigger on 07.12.17.
  */
 public class FileInOut {
+  private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("FRVA");
 
   /**
    * Creates a file with the metadatas of all measurements called db.csv
    *
    * @param sdCard of which the db.csv should be created.
    */
-  public static void writeDB(SdCard sdCard) {
-    File file = new File(FrvaModel.LIBRARYPATH + File.separator + sdCard.getName() + File.separator + "db.csv");
+  public static void writeDatabaseFile(SdCard sdCard) {
+    File file = new File(FrvaModel.LIBRARYPATH + File.separator + sdCard.getName()
+        + File.separator + "db.csv");
     if (file.getParentFile() != null) {
       file.getParentFile().mkdirs();
     }
@@ -36,7 +38,8 @@ public class FileInOut {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    System.out.println("writing " + sdCard.getMeasureSequences().size() + " Measurements to db.csv");
+    logger.info("writing " + sdCard.getMeasureSequences().size()
+        + " Measurements to db.csv");
 
     try (Writer writer = new FileWriter(file)) {
       for (MeasureSequence ms : sdCard.getMeasureSequences()) {
@@ -55,7 +58,9 @@ public class FileInOut {
    * Reads all the Datafiles belonging to this SDCARD in a lazy manner.
    *
    * @param sdCard which should be read in.
+   * @return List of dataFiles.
    * @throws FileNotFoundException when path is not found.
+   *
    */
   public static List<DataFile> readDatafilesLazy(SdCard sdCard) throws FileNotFoundException {
     File sdCardFile = sdCard.getSdCardFile();
@@ -71,7 +76,7 @@ public class FileInOut {
         sdCard.getDataFiles().add(df);
       }
       if (sdCard.isPathInLibrary()) {
-        FileInOut.writeDB(sdCard);
+        FileInOut.writeDatabaseFile(sdCard);
       }
     } else {
       try (BufferedReader reader = new BufferedReader(
@@ -106,6 +111,7 @@ public class FileInOut {
    * Puts all DataFiles in a SDCARD Folder into a list.
    *
    * @param sdCard the List with all DataFiles.
+   * @return List of DataFiles.
    */
   public static List<DataFile> getDataFiles(SdCard sdCard) {
     List<DataFile> returnList = new ArrayList<>();
@@ -165,8 +171,14 @@ public class FileInOut {
     return measureSequences;
   }
 
-
-  public static void removeMeasureSequences(DataFile dataFile, List<MeasureSequence> measureSequences) {
+  /**
+   * Removes the measuresequence from the file on the Disk.
+   *
+   * @param dataFile         containing the measurement.
+   * @param measureSequences to remove from file.
+   */
+  public static void removeMeasureSequences(DataFile dataFile, List<MeasureSequence>
+      measureSequences) {
     File updatedFile = new File(dataFile.getOriginalFile().getAbsolutePath() + ".bak");
 
     try (Writer writer = new BufferedWriter(new FileWriter(updatedFile));
@@ -199,8 +211,14 @@ public class FileInOut {
     }
   }
 
-  public static Map<MeasureSequence.SequenceKeyName, double[]> readInMeasurement
-      (MeasureSequence measureSequence) {
+  /**
+   * Reads in the data of the measurement.
+   *
+   * @param measureSequence to read in.
+   * @return the measureSequence.
+   */
+  public static Map<MeasureSequence.SequenceKeyName, double[]> readInMeasurement(
+      MeasureSequence measureSequence) {
 
     Map<MeasureSequence.SequenceKeyName, double[]> measurements = new HashMap<>();
     String line = "";
@@ -220,7 +238,8 @@ public class FileInOut {
                 done = true;
               } else {
                 String[] temp = line.split(";");
-                MeasureSequence.SequenceKeyName key = MeasureSequence.SequenceKeyName.valueOf(temp[0].toUpperCase());
+                MeasureSequence.SequenceKeyName key = MeasureSequence.SequenceKeyName
+                    .valueOf(temp[0].toUpperCase());
 
                 measurements.put(key, Arrays.stream(Arrays.copyOfRange(temp, 1, temp.length))
                     .mapToDouble(Double::parseDouble)

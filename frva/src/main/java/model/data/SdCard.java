@@ -36,7 +36,7 @@ public class SdCard {
     if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
       dataFiles = FileInOut.getDataFiles(this);
       if (isPathInLibrary()) {
-        FileInOut.writeDB(this);
+        FileInOut.writeDatabaseFile(this);
       }
     } else {
       try {

@@ -60,6 +60,10 @@ public class DataFile {
     return sdCard;
   }
 
+  /**
+   * returns true if Datafile has no measuresequences (all deleted).
+   * @return a boolean.
+   */
   public boolean isEmpty() {
     if (measureSequences.isEmpty()) {
       this.sdCard.deleteFile(originalFile);

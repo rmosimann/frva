@@ -103,6 +103,7 @@ public class BluetoothConnection {
    *
    * @param serviceRecords The service to connect to.
    * @return a connection where the stream can be opened.
+   * @throws IOException if something goes wrong.
    */
   public static StreamConnection connectToService(ServiceRecord[] serviceRecords)
       throws IOException {
@@ -111,16 +112,9 @@ public class BluetoothConnection {
       String connectionUrl = serviceRecord
           .getConnectionURL(ServiceRecord.AUTHENTICATE_NOENCRYPT, false);
       logger.info("Connecting to: " + connectionUrl);
-
-      try {
-        connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
-        logger.info("Connected to device");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      connection = (StreamConnection) Connector.open(connectionUrl, Connector.READ_WRITE);
+      logger.info("Connected to device");
     }
-
-
     return connection;
   }
 

@@ -17,11 +17,10 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     super(name);
   }
 
-
   /**
    * Creates children as part of the LazyLoading procedure.
-   *
-   * @param list of which the treeview should be created from
+   * @param list of which the treeview should be created from.
+   * @param createFull if treeview should not be created lazy.
    */
   public void createChildren(List<SdCard> list, boolean createFull) {
 
@@ -44,10 +43,12 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
       deviceItem.createChildren(list, createFull);
     }
   }
+
   @Override
   public void removeMeasureSequence() {
   }
+
   @Override
   public void addMeasureSequence() {
   }
-  }
+}

@@ -34,6 +34,9 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
     setValue(name + " (" + this.containingMeasureSequences + ")");
   }
 
+  /**
+   * Adjusts counter to minus 1.
+   */
   public void removeMeasureSequence() {
     if (getParent() != null) {
       ((FrvaTreeItem) getParent()).removeMeasureSequence();
