@@ -75,41 +75,8 @@ public class MeasureSequence {
    */
 
   public Map<SequenceKeyName, double[]> getData() {
-    Map<SequenceKeyName, double[]> measurements = new HashMap<>();
-    String line = "";
-    boolean found = false;
-    boolean done = false;
-    try (BufferedReader br = new BufferedReader(new FileReader(dataFile.getOriginalFile()))) {
-      while ((line = br.readLine()) != null && !found) {
+    Map<SequenceKeyName, double[]> measurements = FileInOut.readInMeasurement(this);
 
-        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0]
-            .equals(this.getId()))) {
-          found = true;
-
-
-          while ((line = br.readLine()) != null && !done) {
-            if (line.length() > 0) {
-              if (Character.isDigit(line.charAt(0))) {
-                done = true;
-              } else {
-                String[] temp = line.split(";");
-                SequenceKeyName key = SequenceKeyName.valueOf(temp[0].toUpperCase());
-
-                measurements.put(key, Arrays.stream(Arrays.copyOfRange(temp, 1, temp.length))
-                    .mapToDouble(Double::parseDouble)
-                    .toArray());
-              }
-            }
-          }
-        }
-
-      }
-      //TODO: better skip
-
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
     return measurements.isEmpty() ? null : measurements;
   }
 

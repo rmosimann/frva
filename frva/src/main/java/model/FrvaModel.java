@@ -28,6 +28,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javax.bluetooth.RemoteDevice;
 import model.data.DataFile;
+import model.data.FileInOut;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -55,22 +56,6 @@ public class FrvaModel {
    * Constructor for a new Model.
    */
   public FrvaModel() {
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          try {
-            Thread.sleep(1000);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-          System.out.println("hello");
-
-        }
-      }
-    });
-
-    t.start();
     loadLibrary();
   }
 
@@ -129,7 +114,7 @@ public class FrvaModel {
     }
 
     changedDataFiles.forEach(dataFile -> {
-      dataFile.removeMeasureSequences(
+      FileInOut.removeMeasureSequences(dataFile,
           measureSequences.stream()
               .filter(measureSequence -> {
                 return measureSequence.getDataFile().equals(dataFile);
@@ -139,10 +124,7 @@ public class FrvaModel {
     });
 
     changedSdcards.forEach(sdCard -> {
-      sdCard.serialize();
-      if (sdCard.isEmpty()) {
-        library.remove(sdCard);
-      }
+      FileInOut.writeDB(sdCard);
     });
 
     for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {

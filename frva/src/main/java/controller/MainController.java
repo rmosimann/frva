@@ -26,6 +26,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
+import model.data.FileInOut;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 import org.controlsfx.control.CheckTreeView;
@@ -88,7 +89,7 @@ public class MainController {
     List<SdCard> importedSdCards = model
         .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
     for (SdCard sdCard : importedSdCards) {
-      sdCard.serialize();
+      FileInOut.writeDB(sdCard);
       model.getLibrary().add(sdCard);
     }
     ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);

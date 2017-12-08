@@ -22,9 +22,8 @@ public class CalibrationFile {
    * Constructor.
    *
    * @param input     Array of strings containing the calibration.
-   * @param skipLines Amount of lines to skip in the beginning.
    */
-  public CalibrationFile(File input, int skipLines) {
+  public CalibrationFile(File input) {
     this.originalFile = input;
     this.wlF1 = new Vector<>();
     this.wlF2 = new Vector<>();
