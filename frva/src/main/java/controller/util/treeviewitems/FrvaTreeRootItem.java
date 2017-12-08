@@ -44,4 +44,10 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
       deviceItem.createChildren(list, createFull);
     }
   }
-}
+  @Override
+  public void removeMeasureSequence() {
+  }
+  @Override
+  public void addMeasureSequence() {
+  }
+  }

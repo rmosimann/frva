@@ -53,7 +53,6 @@ public class DataFile {
           if (Character.isDigit(line.charAt(0))) {
             //   System.out.println("added measuresequence"+ line.substring(0,20));
             measureSequences.add(new MeasureSequence(line, this));
-            //TODO: Evaluate length of measurements so no magic number occures
             int i = 0;
 
             //skip empty lines
@@ -124,7 +123,6 @@ public class DataFile {
       String line;
       while ((line = reader.readLine()) != null) {
         if (ids.contains(line.split(";")[0])) {
-          //TODO: Magic Numbers
           for (int i = 0; i < measurementLength; i++) {
             line = reader.readLine();
           }
@@ -171,7 +169,12 @@ public class DataFile {
   }
 
   public boolean isEmpty() {
-    return measureSequences.isEmpty();
+    if(measureSequences.isEmpty()){
+      this.sdCard.deleteFile(originalFile);
+      System.out.println("delete "+ originalFile+ " because it is empty");
+      return true;
+    }
+    return false;
   }
 
   public File getOriginalFile() {

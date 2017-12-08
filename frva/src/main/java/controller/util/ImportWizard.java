@@ -48,6 +48,7 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
+  private Wizard wizard;
 
   private File chosenDirectory;
   private BooleanProperty validDir;
@@ -93,7 +94,7 @@ public class ImportWizard {
    */
   public List<MeasureSequence> startImport() {
 
-    Wizard wizard = new Wizard(owner);
+    wizard = new Wizard(owner);
     wizard.invalidProperty().bind(validDir.not());
 
     //First Page

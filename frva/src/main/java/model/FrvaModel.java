@@ -55,6 +55,22 @@ public class FrvaModel {
    * Constructor for a new Model.
    */
   public FrvaModel() {
+    Thread t = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while (true) {
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.out.println("hello");
+
+        }
+      }
+    });
+
+    t.start();
     loadLibrary();
   }
 
@@ -124,11 +140,15 @@ public class FrvaModel {
 
     changedSdcards.forEach(sdCard -> {
       sdCard.serialize();
+      if (sdCard.isEmpty()) {
+        library.remove(sdCard);
+      }
     });
 
     for (List<MeasureSequence> measureSequenceList : selectionMap.values()) {
       measureSequenceList.removeAll(measureSequences);
     }
+
   }
 
 
