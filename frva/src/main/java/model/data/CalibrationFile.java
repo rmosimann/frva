@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Vector;
 
 public class CalibrationFile {
-  private final File originalFile;
+  private File originalFile;
+  private List<String> rawData;
   private Vector<Double> wlF1;
   private Vector<Double> wlF2;
   private Vector<Double> upCoefF1;
@@ -21,10 +22,49 @@ public class CalibrationFile {
   /**
    * Constructor.
    *
-   * @param input     Array of strings containing the calibration.
+   * @param input Array of strings containing the calibration.
    */
   public CalibrationFile(File input) {
+
     this.originalFile = input;
+
+    List<String> fileContent = new ArrayList<>();
+    String line = "";
+    try (BufferedReader br = new BufferedReader(new FileReader(input))) {
+      br.readLine();
+      while ((line = br.readLine()) != null) {
+        if (!"".equals(line)) {
+          fileContent.add(line);
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    System.out.println("orig");
+    for (String str: fileContent){
+      System.out.println(str);
+    }
+    initialize(fileContent);
+  }
+
+  /**
+   * Creates a Calibration File for LiveView.
+   *
+   * @param data Splitted lines of Calibration
+   */
+  public CalibrationFile(List<String> data) {
+    initialize(data);
+  }
+
+  public void initialize(List<String> data) {
+
+    rawData = data;
+
+    List<String[]> temp = new ArrayList<>();
+    for (String str : data) {
+      temp.add(str.split(";"));
+    }
+
     this.wlF1 = new Vector<>();
     this.wlF2 = new Vector<>();
     this.upCoefF1 = new Vector<>();
@@ -33,20 +73,7 @@ public class CalibrationFile {
     this.dwCoefF2 = new Vector<>();
     this.metadata = new ArrayList<>();
 
-    List<String[]> fileContent = new ArrayList<>();
-    String line = "";
-    try (BufferedReader br = new BufferedReader(new FileReader(input));) {
-      br.readLine();
-      while ((line = br.readLine()) != null) {
-        if (!"".equals(line)) {
-          fileContent.add(line.split(";"));
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    for (String[] splitLine : fileContent) {
+    for (String[] splitLine : temp) {
       wlF1.add(Double.parseDouble(splitLine[0]));
       upCoefF1.add(Double.parseDouble(splitLine[1]));
       dwCoefF1.add(Double.parseDouble(splitLine[2]));
@@ -57,6 +84,16 @@ public class CalibrationFile {
         metadata.add(splitLine[6]);
       }
     }
+    calibrationAsString();
+  }
+
+  public String calibrationAsString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (String str : rawData) {
+      stringBuilder.append(str+"\n");
+    }
+    System.out.println(stringBuilder.toString());
+    return stringBuilder.toString();
   }
 
 

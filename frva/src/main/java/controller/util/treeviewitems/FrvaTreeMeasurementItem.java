@@ -1,11 +1,7 @@
 package controller.util.treeviewitems;
 
 import java.io.File;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import model.data.MeasureSequence;
-import model.data.SdCard;
 
 /**
  * Created by patrick.wigger on 03.11.17.

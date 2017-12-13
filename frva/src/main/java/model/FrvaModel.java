@@ -134,98 +134,10 @@ public class FrvaModel {
   }
 
 
-  /**
-   * Writes Data from SDCARDs to Files, in original format.
-   *
-   * @param list       List of MeasurementSequences to save.
-   * @param exportPath the path where the SDCARDs are exported to.
-   * @return a list of the written SDCARDS.
-   */
-  public List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath) {
-    List<SdCard> returnList = new ArrayList<>();
-    SdCard sdCard = null;
-    String currentFolder = null;
-    String sdCardPath = null;
-    String dayFolderPath = null;
-    List<File> sdCardFolderList = new ArrayList<>();
-    for (MeasureSequence measureSequence : list) {
-      try {
-        if (!measureSequence.getContainingSdCard().equals(sdCard)) {
-          sdCard = measureSequence.getContainingSdCard();
-          sdCardPath = exportPath.toString() + File.separator + sdCard.getName();
-          File card = new File(sdCardPath);
-          sdCardFolderList.add(card);
-
-          if (card.exists()) {
-            if (confirmOverriding(sdCardPath)) {
-              deleteFile(card);
-            } else {
-              logger.info("Export cancelled");
-              return returnList;
-            }
-          }
-          //Create SD Card Folder
-          if (card.mkdirs()) {
-            logger.info("Created SD-Card: " + sdCardPath);
-            writeCalibrationFiles(sdCard, sdCardPath);
-            currentFolder = null;
-          }
-        }
-
-        //create DataFileFolder
-        if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
-          dayFolderPath = sdCardPath + File.separator
-              + measureSequence.getDataFile().getFolderName();
-          File dayFolder = new File(dayFolderPath);
-          if (!dayFolder.exists()) {
-            dayFolder.mkdirs();
-          }
-          currentFolder = measureSequence.getDataFile().getFolderName();
-          logger.info("Created day-folder: " + dayFolderPath);
-        }
-
-        File dataFile = new File(dayFolderPath + File.separator
-            + measureSequence.getDataFile().getDataFileName());
-        Writer writer;
-
-        if (!dataFile.exists()) {
-          writer = Files.newBufferedWriter(Paths.get(dataFile.toURI()));
-          logger.info("Created dataFile: " + sdCardPath + File.separator
-              + measureSequence.getDataFile().getDataFileName());
-        } else {
-          writer = new FileWriter(dataFile, true);
-        }
-        writer.write(measureSequence.getCsv());
-        writer.flush();
-        writer.close();
-      } catch (IOException e) {
-        logger.info(e.getStackTrace().toString());
-      }
-
-    }
-    for (File f : sdCardFolderList) {
-      returnList.add(new SdCard(f, null));
-    }
-    return returnList;
-  }
 
 
-  private void writeCalibrationFiles(SdCard sdCard, String path) throws IOException {
-    Files.copy(Paths.get(sdCard.getCalibrationFile().getCalibrationFile().toURI()),
-        Paths.get(new File(path + File.separator
-            + sdCard.getCalibrationFile().getCalibrationFile().getName()).toURI()));
-    logger.info("Created Calibration Files");
-  }
 
-  private boolean confirmOverriding(String path) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("Warning");
-    alert.setHeaderText("Directory already exists");
-    alert.setContentText("The chosen directory " + path
-        + " already exists. All containing data will be overridden. \nDo you want to continue?");
-    Optional<ButtonType> result = alert.showAndWait();
-    return result.get() == ButtonType.OK;
-  }
+
 
 
   private boolean setUpLibrary(File path) {
@@ -248,20 +160,7 @@ public class FrvaModel {
   }
 
 
-  /**
-   * Deletes a specific file.
-   *
-   * @param file The File to delete.
-   */
-  public void deleteFile(File file) {
-    if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
-      for (File f : file.listFiles()) {
-        deleteFile(f);
-      }
-    }
-    file.delete();
-    logger.info("Deleted File:" + file);
-  }
+
 
   /**
    * Getter to read all MeasurementSequences in the Library.

@@ -8,12 +8,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import model.FrvaModel;
 
 /**
@@ -60,7 +66,6 @@ public class FileInOut {
    * @param sdCard which should be read in.
    * @return List of dataFiles.
    * @throws FileNotFoundException when path is not found.
-   *
    */
   public static List<DataFile> readDatafilesLazy(SdCard sdCard) throws FileNotFoundException {
     File sdCardFile = sdCard.getSdCardFile();
@@ -258,4 +263,152 @@ public class FileInOut {
     }
     return measurements;
   }
+
+
+  /**
+   * Writes Data from SDCARDs to Files, in original format.
+   *
+   * @param list       List of MeasurementSequences to save.
+   * @param exportPath the path where the SDCARDs are exported to.
+   * @return a list of the written SDCARDS.
+   */
+  public static List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath) {
+    List<SdCard> returnList = new ArrayList<>();
+    SdCard sdCard = null;
+    String currentFolder = null;
+    String sdCardPath = null;
+    String dayFolderPath = null;
+    List<File> sdCardFolderList = new ArrayList<>();
+    for (MeasureSequence measureSequence : list) {
+      try {
+        if (!measureSequence.getContainingSdCard().equals(sdCard)) {
+          sdCard = measureSequence.getContainingSdCard();
+          sdCardPath = exportPath.toString() + File.separator + sdCard.getName();
+          File card = new File(sdCardPath);
+          sdCardFolderList.add(card);
+
+          if (card.exists()) {
+            if (confirmOverriding(sdCardPath)) {
+              deleteFile(card);
+            } else {
+              logger.info("Export cancelled");
+              return returnList;
+            }
+          }
+          //Create SD Card Folder
+          if (card.mkdirs()) {
+            logger.info("Created SD-Card: " + sdCardPath);
+            writeCalibrationFile(sdCard, sdCardPath);
+            currentFolder = null;
+          }
+        }
+
+        //create DataFileFolder
+        if (!measureSequence.getDataFile().getFolderName().equals(currentFolder)) {
+          dayFolderPath = sdCardPath + File.separator
+              + measureSequence.getDataFile().getFolderName();
+          File dayFolder = new File(dayFolderPath);
+          if (!dayFolder.exists()) {
+            dayFolder.mkdirs();
+          }
+          currentFolder = measureSequence.getDataFile().getFolderName();
+          logger.info("Created day-folder: " + dayFolderPath);
+        }
+
+        File dataFile = new File(dayFolderPath + File.separator
+            + measureSequence.getDataFile().getDataFileName());
+        Writer writer;
+
+        if (!dataFile.exists()) {
+          writer = Files.newBufferedWriter(Paths.get(dataFile.toURI()));
+          logger.info("Created dataFile: " + sdCardPath + File.separator
+              + measureSequence.getDataFile().getDataFileName());
+        } else {
+          writer = new FileWriter(dataFile, true);
+        }
+        writer.write(measureSequence.getCsv());
+        writer.flush();
+        writer.close();
+      } catch (IOException e) {
+        logger.info(e.getStackTrace().toString());
+      }
+
+    }
+    for (File f : sdCardFolderList) {
+      returnList.add(new SdCard(f, null));
+    }
+    return returnList;
+  }
+
+
+  private static void writeCalibrationFile(SdCard sdCard, String path) throws IOException {
+    Files.copy(Paths.get(sdCard.getCalibrationFile().getCalibrationFile().toURI()),
+        Paths.get(new File(path + File.separator
+            + sdCard.getCalibrationFile().getCalibrationFile().getName()).toURI()));
+    logger.info("Created Calibration Files");
+  }
+
+  private static boolean confirmOverriding(String path) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle("Warning");
+    alert.setHeaderText("Directory already exists");
+    alert.setContentText("The chosen directory " + path
+        + " already exists. All containing data will be overridden. \nDo you want to continue?");
+    Optional<ButtonType> result = alert.showAndWait();
+    return result.get() == ButtonType.OK;
+  }
+
+  /**
+   * Deletes a specific file.
+   *
+   * @param file The File to delete.
+   */
+  public static void deleteFile(File file) {
+    if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
+      for (File f : file.listFiles()) {
+        deleteFile(f);
+      }
+    }
+    file.delete();
+    logger.info("Deleted File:" + file);
+  }
+
+
+  /**
+   * Writes a new recording to the library.
+   *
+   * @param measureSequenceList of measureSequences to add.
+   * @param calibrationFile     of the attached device.
+   */
+  public static void writeLiveMeasurements(List<MeasureSequence> measureSequenceList, CalibrationFile calibrationFile, String sdCardName, String folderName, String dataFileName) {
+    File sdCard = new File(FrvaModel.LIBRARYPATH + File.separator + "Rec " + sdCardName);
+    File dataFileFolder = new File(sdCard.getAbsolutePath() + File.separator + folderName);
+    File dataFile = new File(dataFileFolder.getAbsolutePath() + File.separator + dataFileName + ".csv");
+
+
+    if (!sdCard.exists()) {
+      sdCard.mkdir();
+    }
+    if (!dataFileFolder.exists()) {
+      dataFileFolder.mkdir();
+    }
+
+    try (FileWriter fileWriter = new FileWriter(dataFile, true)) {
+
+      for (MeasureSequence ms :measureSequenceList
+          ) {
+        fileWriter.write(ms.getCsv());
+
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  public static void main(String[] args) {
+    //writeLiveMeasurements("newRec", "foldername", "DataFileName");
+  }
+
 }

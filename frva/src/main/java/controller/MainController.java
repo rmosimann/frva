@@ -86,7 +86,7 @@ public class MainController {
   private void importWizard() {
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
-    List<SdCard> importedSdCards = model
+    List<SdCard> importedSdCards = FileInOut
         .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
     for (SdCard sdCard : importedSdCards) {
       FileInOut.writeDatabaseFile(sdCard);
@@ -104,7 +104,7 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
+      FileInOut.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {

@@ -45,6 +45,12 @@ public class SdCard {
         e.printStackTrace();
       }
     }
+  }
+
+  /**
+   * Constructor for Recording: Empty SD Card
+   */
+  protected SdCard() {
 
   }
 
@@ -110,7 +116,6 @@ public class SdCard {
   }
 
 
-  @Override
   public int hashCode() {
     return calibrationFile.hashCode();
   }
