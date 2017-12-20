@@ -77,14 +77,13 @@ public class CommandAutoMode extends AbstractCommand {
   void addValuesToMs(MeasureSequence.SequenceKeyName keyName, String string,
                      LiveMeasureSequence measureSequence) {
     String[] numbrs;
+
     if (Character.isDigit(string.charAt(0))) {
       String[] split = string.split(":");
       numbrs = split[3].replace(" ", "").split(";");
-
     } else {
-      String[] split = string.split(";");
-      numbrs = Arrays.copyOfRange(split, 1, split.length);
-
+      String[] split = string.replace(" ", "").split(";");
+      numbrs = Arrays.copyOfRange(split, 1, split.length - 2);
     }
 
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))

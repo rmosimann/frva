@@ -240,10 +240,12 @@ public class LiveViewController {
 
     measurementListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-    measurementListView.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
-      selectedMeasurement = newValue.getSelectedItem();
-      redrawGraph(selectedMeasurement);
-    });
+    measurementListView.getSelectionModel().selectedItemProperty()
+        .addListener((observable, oldValue, newValue) -> {
+          selectedMeasurement = newValue;
+          redrawGraph(selectedMeasurement);
+        });
+
 
     model.getLiveSequences().addListener(new ListChangeListener<MeasureSequence>() {
       @Override
