@@ -119,7 +119,6 @@ public class MainController {
 
   private void deleteSelectedItems() {
     List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
-    System.out.println(list.size());
     if (confirmDelete(list.stream().filter(p -> p instanceof FrvaTreeMeasurementItem).count())) {
       List<MeasureSequence> measurements = new ArrayList<>();
       for (FrvaTreeItem item : list) {
