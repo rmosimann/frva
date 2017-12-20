@@ -7,7 +7,8 @@ public class CommandSetItegrationTime extends AbstractCommand {
   private int integrationTime;
 
 
-  public CommandSetItegrationTime(LiveDataParser liveDataParser, FrvaModel model, int integrationTime) {
+  public CommandSetItegrationTime(LiveDataParser liveDataParser,
+                                  FrvaModel model, int integrationTime) {
     super(liveDataParser, model);
     this.integrationTime = integrationTime;
   }

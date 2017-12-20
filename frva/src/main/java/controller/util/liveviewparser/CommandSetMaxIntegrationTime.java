@@ -7,7 +7,8 @@ public class CommandSetMaxIntegrationTime extends AbstractCommand {
   private int maxIntegrationTime;
 
 
-  public CommandSetMaxIntegrationTime(LiveDataParser liveDataParser, FrvaModel model, int maxIntegrationTime) {
+  public CommandSetMaxIntegrationTime(LiveDataParser liveDataParser,
+                                      FrvaModel model, int maxIntegrationTime) {
     super(liveDataParser, model);
     this.maxIntegrationTime = maxIntegrationTime;
   }

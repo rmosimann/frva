@@ -2,9 +2,6 @@ package controller.util.bluetooth;
 
 import controller.LiveViewController;
 import java.io.IOException;
-import java.io.InputStream;
-import javax.bluetooth.ServiceRecord;
-import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
 public class ConnectionStateConnecting implements ConnectionState {
@@ -34,7 +31,8 @@ public class ConnectionStateConnecting implements ConnectionState {
 
         try {
           liveViewController.getLiveDataParser()
-              .startParsing(streamConnection.openInputStream(), streamConnection.openOutputStream());
+              .startParsing(streamConnection.openInputStream(),
+                  streamConnection.openOutputStream());
         } catch (IOException e) {
           e.printStackTrace();
         }
