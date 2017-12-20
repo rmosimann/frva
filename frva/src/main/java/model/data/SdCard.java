@@ -117,7 +117,7 @@ public class SdCard {
     File folder = sdCardPath;
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv") && !name.equals("db.csv"));
-    return new CalibrationFile(listOfFiles[0], skipLines);
+    return new CalibrationFile(listOfFiles[0]);
   }
 
   /**

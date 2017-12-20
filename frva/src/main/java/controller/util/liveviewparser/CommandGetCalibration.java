@@ -2,20 +2,13 @@ package controller.util.liveviewparser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import model.FrvaModel;
 import model.data.CalibrationFile;
 
 public class CommandGetCalibration extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
-  private Vector<Double> wlF1;
-  private Vector<Double> wlF2;
-  private Vector<Double> upCoefF1;
-  private Vector<Double> upCoefF2;
-  private Vector<Double> dwCoefF1;
-  private Vector<Double> dwCoefF2;
-  private List<String> metadata;
+  List<String> data;
 
   /**
    * Creates a CommandGetCalibration instance that reads Calibrationfile from liveDevice.
@@ -25,13 +18,9 @@ public class CommandGetCalibration extends AbstractCommand {
    */
   public CommandGetCalibration(LiveDataParser liveDataParser, FrvaModel model) {
     super(liveDataParser, model);
-    this.wlF1 = new Vector<>();
-    this.wlF2 = new Vector<>();
-    this.upCoefF1 = new Vector<>();
-    this.upCoefF2 = new Vector<>();
-    this.dwCoefF1 = new Vector<>();
-    this.dwCoefF2 = new Vector<>();
-    this.metadata = new ArrayList<>();
+
+
+    data = new ArrayList<>();
   }
 
   @Override
@@ -53,22 +42,13 @@ public class CommandGetCalibration extends AbstractCommand {
 
     if (stringBuilder.toString().contains("FILE ENDS")) {
       liveDataParser.getDeviceStatus().setCalibrationFile(
-          new CalibrationFile(wlF1, upCoefF1, dwCoefF1, wlF2, upCoefF2, dwCoefF2, metadata));
+          new CalibrationFile(data));
       liveDataParser.runNextCommand();
     } else if (!(stringBuilder.toString().contains("cal.csv") || stringBuilder.toString()
         .contains("wl_F;up_coef_F;dw_coef_F;wl_F;up_coef_F;dw_coef_F;Device ID"))) {
 
-      String[] splitLine = stringBuilder.toString().split(";");
+      data.add(stringBuilder.toString());
 
-      wlF1.add(Double.parseDouble(splitLine[0]));
-      upCoefF1.add(Double.parseDouble(splitLine[1]));
-      dwCoefF1.add(Double.parseDouble(splitLine[2]));
-      wlF2.add(Double.parseDouble(splitLine[3]));
-      upCoefF2.add(Double.parseDouble(splitLine[4]));
-      dwCoefF2.add(Double.parseDouble(splitLine[5]));
-      if (splitLine.length > 6) {
-        metadata.add(splitLine[6]);
-      }
     }
   }
 }
