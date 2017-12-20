@@ -58,7 +58,6 @@ public class FrvaModel {
    */
   public FrvaModel() {
     loadLibrary();
-    //    FakeDataStream.startDataStream(System.out,10000);
   }
 
   /**

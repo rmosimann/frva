@@ -8,15 +8,10 @@ import org.junit.Test;
  * Created by patrick.wigger on 28.11.17.
  */
 public class LiveDataParserTest {
-  //  FakeDataStream fds;
-  //  LiveDataParser ldp;
 
   @Before
 
   public void setUp() throws Exception {
-//    fds = new FakeDataStream();
-//    FrvaModel model = new FrvaModel();
-//    ldp = new LiveDataParser(new LiveViewController(model), model);
   }
 
   @After
@@ -25,8 +20,6 @@ public class LiveDataParserTest {
 
   @Test
   public void startParsing() throws Exception {
-//    ldp.startParsing(fds, FakeDataStream.getOutputStream());
-//    Thread.sleep(10000);
 
   }
 
