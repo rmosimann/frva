@@ -16,8 +16,9 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
 
   /**
    * Creates children as part of the LazyLoading procedure.
-   * @param list of which the treeview should be created from.
-   * @param createFull if treeview should not be created lazy.
+   *
+   * @param list of which the treeview should be created from
+   * @param createFull true when the full tree has to be created.
    */
   public void createChildren(List<SdCard> list, boolean createFull) {
 

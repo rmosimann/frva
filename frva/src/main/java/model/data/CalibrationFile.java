@@ -40,15 +40,16 @@ public class CalibrationFile {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    System.out.println("orig");
+    //System.out.println("orig");
     for (String str : fileContent) {
-      System.out.println(str);
+      //System.out.println(str);
     }
     initialize(fileContent);
   }
 
   /**
    * Creates a Calibration File for LiveView.
+   *
    * @param data Splitted lines of Calibration
    */
   public CalibrationFile(List<String> data) {
@@ -57,6 +58,7 @@ public class CalibrationFile {
 
   /**
    * Initializes the Calibration file, Parses Calib file.
+   *
    * @param data Calib file as a List of lines.
    */
 

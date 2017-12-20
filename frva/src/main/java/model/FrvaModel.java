@@ -32,6 +32,7 @@ import model.data.FileInOut;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
+
 public class FrvaModel {
 
 
@@ -44,6 +45,7 @@ public class FrvaModel {
   private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
   private final ObjectProperty<Node> activeView = new SimpleObjectProperty<>();
   private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+  private final ObservableList<MeasureSequence> liveSequences = FXCollections.observableArrayList();
   private final ObservableList<RemoteDevice> bltDevices = FXCollections.observableArrayList();
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
     Thread t = new Thread(runnable);
@@ -219,5 +221,9 @@ public class FrvaModel {
 
   public void setActiveView(Node activeView) {
     this.activeView.set(activeView);
+  }
+
+  public ObservableList<MeasureSequence> getLiveSequences() {
+    return liveSequences;
   }
 }

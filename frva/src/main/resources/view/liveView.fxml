@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -28,8 +29,8 @@
                 </Label>
             </children>
         </Pane>
-        <ListView layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0" AnchorPane.bottomAnchor="0.0"
-                  AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
+        <ListView fx:id="measurementListView" layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0"
+                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
         <AnchorPane layoutX="343.0" layoutY="74.0" prefHeight="546.0" prefWidth="664.0" AnchorPane.bottomAnchor="41.0"
                     AnchorPane.leftAnchor="342.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="73.0">
             <children>
@@ -48,27 +49,9 @@
                 </LineChart>
             </children>
         </AnchorPane>
-        <TextArea fx:id="miniTerminalTextArea" layoutX="1050.0" layoutY="422.0" prefHeight="200.0" prefWidth="215.0"
-                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0"
-                  AnchorPane.topAnchor="444.0"/>
-        <HBox layoutX="1050.0" layoutY="330.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0">
-            <children>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Change Mode" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Set time" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
-                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
-                        <Button mnemonicParsing="false" prefWidth="126.0" text="Button" VBox.vgrow="ALWAYS"/>
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
+        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
+                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
+                  AnchorPane.topAnchor="563.0"/>
         <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
               AnchorPane.topAnchor="59.0">
             <children>
@@ -77,20 +60,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <Label text="D-Flox V0.7 JB-006-BM">
-                    <padding>
-                        <Insets left="20.0"/>
-                    </padding>
-                </Label>
-                <Label text="Connection Status">
-                    <font>
-                        <Font name="System Bold" size="13.0"/>
-                    </font>
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
-                </Label>
-                <Label text="connected">
+                <Label fx:id="systemNameLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
@@ -103,12 +73,12 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label text="08:15:23 17.08.2016">
+                <Label fx:id="systemTimeLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
-                <Label text="System Mode">
+                <Label text="GPS - Information">
                     <font>
                         <Font name="System Bold" size="13.0"/>
                     </font>
@@ -116,12 +86,12 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label text="automatic">
+                <Label fx:id="gpsPositionLabel" prefHeight="36.0">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
-                <Label text="GPS - Location">
+                <Label text="Command Executing:">
                     <font>
                         <Font name="System Bold" size="13.0"/>
                     </font>
@@ -129,11 +99,35 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label text="47°22′N 8°33′E">
+                <Label fx:id="currentCommandLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
+            </children>
+        </VBox>
+        <HBox layoutX="1049.0" layoutY="620.0" prefWidth="215.0" AnchorPane.bottomAnchor="10.0"
+              AnchorPane.rightAnchor="15.0">
+            <children>
+                <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
+                <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
+            </children>
+        </HBox>
+        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="250.0">
+            <children>
+                <Button fx:id="commandManualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode"/>
+                <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode"
+                        VBox.vgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" prefWidth="215.0" text="Change IT" VBox.vgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" prefWidth="215.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefWidth="215.0"
+                        text="Manual Measurement" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
+                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="215.0" text="Command-C"
+                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="commandcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-c"/>
+                <Button fx:id="commandfcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-fc"/>
             </children>
         </VBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
