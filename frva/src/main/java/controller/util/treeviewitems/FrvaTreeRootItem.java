@@ -14,7 +14,6 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     super(name);
   }
 
-
   /**
    * Creates children as part of the LazyLoading procedure.
    *
@@ -41,5 +40,13 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
       }
       deviceItem.createChildren(list, createFull);
     }
+  }
+
+  @Override
+  public void removeMeasureSequence() {
+  }
+
+  @Override
+  public void addMeasureSequence() {
   }
 }

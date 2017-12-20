@@ -3,7 +3,6 @@ package controller.util;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
-import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.DateFormat;
@@ -13,9 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -48,6 +45,7 @@ public class ImportWizard {
   private StringProperty chosenDirectoryPath;
   private StringProperty chosenSdCardName;
   private List<SdCard> sdCardList;
+  private Wizard wizard;
 
   private File chosenDirectory;
   private BooleanProperty validDir;
@@ -93,7 +91,7 @@ public class ImportWizard {
    */
   public List<MeasureSequence> startImport() {
 
-    Wizard wizard = new Wizard(owner);
+    wizard = new Wizard(owner);
     wizard.invalidProperty().bind(validDir.not());
 
     //First Page
@@ -187,7 +185,7 @@ public class ImportWizard {
         sdCardList.add(sdCard);
 
         logger.info("set SD-Cardname " + chosenSdCardName.get()
-            + " at location" + sdCard.getPath());
+            + " at location" + sdCard.getSdCardFile());
 
         ((FrvaTreeRootItem) previewTreeView.getRoot()).createChildren(sdCardList, true);
         ((FrvaTreeRootItem) previewTreeView.getRoot()).setSelected(true);

@@ -1,7 +1,6 @@
 package controller;
 
 import controller.util.ImportWizard;
-import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
@@ -27,6 +26,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
+import model.data.FileInOut;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 import org.controlsfx.control.CheckTreeView;
@@ -86,10 +86,10 @@ public class MainController {
   private void importWizard() {
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
-    List<SdCard> importedSdCards = model
+    List<SdCard> importedSdCards = FileInOut
         .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
     for (SdCard sdCard : importedSdCards) {
-      sdCard.serialize();
+      FileInOut.writeDatabaseFile(sdCard);
       model.getLibrary().add(sdCard);
     }
     ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
@@ -104,7 +104,7 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      model.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
+      FileInOut.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -119,16 +119,20 @@ public class MainController {
 
   private void deleteSelectedItems() {
     List<FrvaTreeItem> list = treeView.getCheckModel().getCheckedItems();
-    if (confirmDelete(list.size())) {
+    if (confirmDelete(list.stream().filter(p -> p instanceof FrvaTreeMeasurementItem).count())) {
       List<MeasureSequence> measurements = new ArrayList<>();
       for (FrvaTreeItem item : list) {
         if (item instanceof FrvaTreeMeasurementItem) {
           measurements.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
+          item.removeMeasureSequence();
         }
+
       }
-      treeView.getCheckModel().clearChecks();
+      unselectTickedItems(treeView.getRoot());
       model.deleteMeasureSequences(measurements);
     }
+
+
   }
 
 

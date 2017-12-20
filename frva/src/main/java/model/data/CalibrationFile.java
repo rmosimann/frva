@@ -1,5 +1,3 @@
-
-
 package model.data;
 
 import java.io.BufferedReader;
@@ -157,4 +155,3 @@ public class CalibrationFile {
   }
 
 }
-
