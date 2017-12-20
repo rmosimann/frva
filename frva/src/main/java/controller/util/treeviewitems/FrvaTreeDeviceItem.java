@@ -2,10 +2,6 @@ package controller.util.treeviewitems;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import model.data.SdCard;
 
 /**

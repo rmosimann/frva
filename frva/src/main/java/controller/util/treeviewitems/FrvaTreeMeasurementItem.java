@@ -1,11 +1,7 @@
 package controller.util.treeviewitems;
 
 import java.io.File;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import model.data.MeasureSequence;
-import model.data.SdCard;
 
 /**
  * Created by patrick.wigger on 03.11.17.
@@ -21,30 +17,15 @@ public class FrvaTreeMeasurementItem extends FrvaTreeItem {
    *
    * @param name      name.
    * @param ms        measurementSequence.
-   * @param isPreview true when only used for preview.
    */
-  public FrvaTreeMeasurementItem(String name, MeasureSequence ms,
-                                 boolean isPreview) {
+  public FrvaTreeMeasurementItem(String name, MeasureSequence ms) {
     super(name);
     this.measureSequence = ms;
     this.id = ms.getId();
     this.file = ms.getDataFile().getOriginalFile();
-    if (!isPreview) {
-      addListener();
-    }
+
   }
 
-  private void addListener() {
-    measureSequence.deletedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable,
-                          Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          getParent().getChildren().remove(FrvaTreeMeasurementItem.this);
-        }
-      }
-    });
-  }
 
 
   /**
