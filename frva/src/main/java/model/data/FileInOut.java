@@ -380,10 +380,14 @@ public class FileInOut {
    * @param measureSequenceList of measureSequences to add.
    * @param calibrationFile     of the attached device.
    */
-  public static void writeLiveMeasurements(List<MeasureSequence> measureSequenceList, CalibrationFile calibrationFile, String sdCardName, String folderName, String dataFileName) {
+  public static void writeLiveMeasurements(List<MeasureSequence> measureSequenceList,
+                                           CalibrationFile calibrationFile, String sdCardName,
+                                           String folderName, String dataFileName) {
     File sdCard = new File(FrvaModel.LIBRARYPATH + File.separator + "Rec " + sdCardName);
-    File dataFileFolder = new File(sdCard.getAbsolutePath() + File.separator + folderName);
-    File dataFile = new File(dataFileFolder.getAbsolutePath() + File.separator + dataFileName + ".csv");
+    File dataFileFolder = new File(sdCard.getAbsolutePath()
+        + File.separator + folderName);
+    File dataFile = new File(dataFileFolder.getAbsolutePath() + File.separator
+        + dataFileName + ".csv");
 
 
     if (!sdCard.exists()) {
@@ -395,8 +399,7 @@ public class FileInOut {
 
     try (FileWriter fileWriter = new FileWriter(dataFile, true)) {
 
-      for (MeasureSequence ms :measureSequenceList
-          ) {
+      for (MeasureSequence ms : measureSequenceList) {
         fileWriter.write(ms.getCsv());
 
       }

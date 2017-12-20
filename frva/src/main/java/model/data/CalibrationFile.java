@@ -41,7 +41,7 @@ public class CalibrationFile {
       e.printStackTrace();
     }
     System.out.println("orig");
-    for (String str: fileContent){
+    for (String str : fileContent) {
       System.out.println(str);
     }
     initialize(fileContent);
@@ -49,12 +49,16 @@ public class CalibrationFile {
 
   /**
    * Creates a Calibration File for LiveView.
-   *
    * @param data Splitted lines of Calibration
    */
   public CalibrationFile(List<String> data) {
     initialize(data);
   }
+
+  /**
+   * Initializes the Calibration file, Parses Calib file.
+   * @param data Calib file as a List of lines.
+   */
 
   public void initialize(List<String> data) {
 
@@ -87,10 +91,14 @@ public class CalibrationFile {
     calibrationAsString();
   }
 
+  /**
+   * Rebuilds Calibration File and returns it as a String.
+   * @return Calibration file as String.
+   */
   public String calibrationAsString() {
     StringBuilder stringBuilder = new StringBuilder();
     for (String str : rawData) {
-      stringBuilder.append(str+"\n");
+      stringBuilder.append(str + "\n");
     }
     System.out.println(stringBuilder.toString());
     return stringBuilder.toString();

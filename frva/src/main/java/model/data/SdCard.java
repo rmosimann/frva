@@ -48,7 +48,7 @@ public class SdCard {
   }
 
   /**
-   * Constructor for Recording: Empty SD Card
+   * Constructor for Recording: Empty SD Card.
    */
   protected SdCard() {
 
