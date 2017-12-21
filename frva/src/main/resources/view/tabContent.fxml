@@ -145,6 +145,11 @@
                         <Insets left="35.0"/>
                     </VBox.margin>
                 </CheckBox>
+                <CheckBox fx:id="checkBoxRawWr2" mnemonicParsing="false" selected="true" text="WR2">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
                 <CheckBox fx:id="checkBoxRawDcVeg" mnemonicParsing="false" selected="true" text="DC_VEG">
                     <VBox.margin>
                         <Insets left="35.0"/>
