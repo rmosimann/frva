@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
@@ -57,7 +58,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <Label fx:id="systemNameLabel">
+                <Label fx:id="systemNameLabel" styleClass="systemNameLabel">
                     <padding>
                         <Insets left="20.0"/>
                     </padding>
@@ -77,7 +78,7 @@
                                 <Insets left="20.0"/>
                             </padding>
                         </Label>
-                        <Label fx:id="itWrLabel">
+                        <Label fx:id="integrationTimeWrLabel">
                             <padding>
                                 <Insets left="20.0"/>
                             </padding>
@@ -87,7 +88,7 @@
                                 <Insets left="20.0"/>
                             </padding>
                         </Label>
-                        <Label fx:id="itVegLabel">
+                        <Label fx:id="integrationTimeVegLabel">
                             <padding>
                                 <Insets left="20.0"/>
                             </padding>
@@ -130,14 +131,17 @@
                         VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
-        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
-              AnchorPane.topAnchor="320.0">
+        <AnchorPane prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="320.0">
             <children>
-                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefWidth="215.0"
-                        text="Manual Measurement" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefHeight="59.0" prefWidth="115.0"
+                        text="Manual Measurement" wrapText="true"/>
+                <CheckBox fx:id="manualMeasOptimiseCheckBox" layoutX="123.0" layoutY="33.0" mnemonicParsing="false"
+                          selected="true" text="Optimise" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="9.0"/>
+                <TextField fx:id="manualMeasurementCountField" layoutX="122.0" layoutY="2.0" prefHeight="26.0"
+                           prefWidth="83.0" promptText="count" text="1"/>
             </children>
-        </VBox>
-        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="365.0">
+        </AnchorPane>
+        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="390.0">
             <children>
                 <Button fx:id="setIntegrationTimeButton" mnemonicParsing="false" prefWidth="215.0"
                         text="Set Integration Time" VBox.vgrow="ALWAYS"/>
