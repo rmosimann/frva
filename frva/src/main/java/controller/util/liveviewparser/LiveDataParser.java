@@ -118,7 +118,7 @@ public class LiveDataParser {
       public void run() {
 
         try {
-          System.out.println("send command");
+         // System.out.println("send command");
           outputStream.write(command.getBytes());
           outputStream.write(10);
           outputStream.flush();

@@ -49,7 +49,8 @@ public class CommandAutoMode extends AbstractCommand {
       logger.fine("Do nothing on this input.");
 
     } else if (line.contains("Voltage = ")) {
-      currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus().getCalibrationFile());
+      currentMeasureSequence.setComplete(true,
+          liveDataParser.getDeviceStatus().getCalibrationFile(), model.getCurrentLiveSdCardPath());
 
       if (liveDataParser.getCommandQueue().size() > 0) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
@@ -89,7 +90,7 @@ public class CommandAutoMode extends AbstractCommand {
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))
         .mapToDouble(Double::parseDouble)
         .toArray();
-    System.out.println("added "+ keyName.name());
+    //System.out.println("added " + keyName.name());
 
     measureSequence.addData(keyName, doubles);
   }

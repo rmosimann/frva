@@ -4,6 +4,7 @@ import controller.util.ImportWizard;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
+import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -319,19 +320,6 @@ public class MainController {
     });
   }
 
-  private List<FrvaTreeItem> removeTickedMeasurements(TreeItem item,
-                                                      List<FrvaTreeItem> list) {
-    if (!item.isLeaf()) {
-      for (Object o : item.getChildren()) {
-        FrvaTreeItem element = (FrvaTreeItem) o;
-        removeTickedMeasurements(element, list);
-        if (element.isSelected()) {
-          list.add(element);
-        }
-      }
-    }
-    return list;
-  }
 
   private void checkTreeItemWithMeasurement(FrvaTreeItem item, MeasureSequence ms) {
     if (item instanceof FrvaTreeMeasurementItem) {
@@ -345,5 +333,31 @@ public class MainController {
       }
     }
 
+  }
+
+  public void refreshTreeView() {
+    if (model.getCurrentLiveSdCardPath() != null) {
+
+      SdCard sdCard = new SdCard(model.getCurrentLiveSdCardPath(), null);
+      List<SdCard> list = new ArrayList<>();
+      list.add(sdCard);
+      FrvaTreeSdCardItem sdCardItem=find(treeView.getRoot());
+      sdCardItem.getParent().getChildren().remove(sdCardItem);
+      unselectTickedItems();
+      ((FrvaTreeRootItem) treeView.getRoot()).createChildren(list, true);
+    }
+  }
+
+  public FrvaTreeSdCardItem find(TreeItem item) {
+    if (item instanceof FrvaTreeSdCardItem && (((FrvaTreeSdCardItem) item)
+        .getSdCard().getSdCardFile().getPath()
+        .equals(model.getCurrentLiveSdCardPath().getPath()))) {
+      return (FrvaTreeSdCardItem) item;
+    } else {
+      for (Object child : item.getChildren()) {
+       return find((TreeItem) child);
+      }
+    }
+    return null;
   }
 }

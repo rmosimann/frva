@@ -38,7 +38,8 @@ public class FrvaModel {
 
   public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator
       + "FRVA" + File.separator;
-
+  private final ObservableList liveMeasurements = FXCollections.observableArrayList();
+  private File currentLiveSdCardPath;
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
@@ -135,13 +136,6 @@ public class FrvaModel {
 
   }
 
-
-
-
-
-
-
-
   private boolean setUpLibrary(File path) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("No Library");
@@ -160,8 +154,6 @@ public class FrvaModel {
     }
     return false;
   }
-
-
 
 
   /**
@@ -225,5 +217,14 @@ public class FrvaModel {
 
   public ObservableList<MeasureSequence> getLiveSequences() {
     return liveSequences;
+  }
+
+  public File getCurrentLiveSdCardPath() {
+    return currentLiveSdCardPath;
+  }
+
+  public void setCurrentLiveSdCardPath(String sdCardName) {
+    this.currentLiveSdCardPath = new File(LIBRARYPATH + File.separator
+        + "Rec " + sdCardName);
   }
 }

@@ -55,7 +55,8 @@ public class CommandManualMeasurement extends AbstractCommand {
       addValuesToMs(MeasureSequence.SequenceKeyName.VEG, string, currentMeasureSequence);
 
     } else if (string.contains("Voltage =")) {
-      currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus().getCalibrationFile());
+      currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus()
+          .getCalibrationFile(), model.getCurrentLiveSdCardPath());
       liveDataParser.getLiveViewController().refreshList();
       liveDataParser.runNextCommand();
     }

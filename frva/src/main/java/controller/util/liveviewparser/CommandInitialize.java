@@ -16,6 +16,8 @@ public class CommandInitialize extends AbstractCommand {
   public void sendCommand() {
     liveDataParser.executeCommand(Commands.B.toString());
     liveDataParser.addCommandToQueue(new CommandGetGpsinfo(liveDataParser, model));
+    liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
+
   }
 
   @Override
@@ -23,8 +25,8 @@ public class CommandInitialize extends AbstractCommand {
     sb.append((char) read);
 
     if (sb.toString().contains("App?")) {
+
       liveDataParser.executeCommand("100");
-      liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
       if (sb.toString().contains("; ;")) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
       } else {

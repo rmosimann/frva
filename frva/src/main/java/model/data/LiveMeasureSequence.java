@@ -1,6 +1,8 @@
 package model.data;
 
 import controller.LiveViewController;
+import controller.util.treeviewitems.FrvaTreeRootItem;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
     data.put(keyName, content);
-    System.out.println(Arrays.toString(content));
+    //System.out.println(Arrays.toString(content));
     updated();
   }
 
@@ -80,7 +82,9 @@ public class LiveMeasureSequence extends MeasureSequence {
     sb.append(";");
 
     sb.append("\n");
-    return sb.toString();
+
+    return  sb.toString().replaceAll(" ","").toString();
+
   }
 
   @Override
@@ -119,11 +123,11 @@ public class LiveMeasureSequence extends MeasureSequence {
   }
 
 
-  public void setComplete(boolean complete, CalibrationFile calibrationFile) {
+  public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
     listener = null;
     logger.info("measurement complete");
-    FileInOut.writeLiveMeasurements(this, calibrationFile, "LiveSDCard", "FolderName", "DataFileName");
+    FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);
 
   }
 

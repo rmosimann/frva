@@ -11,6 +11,7 @@ import java.util.Vector;
 public class CalibrationFile {
   private File originalFile;
   private List<String> rawData;
+  private String header;
   private Vector<Double> wlF1;
   private Vector<Double> wlF2;
   private Vector<Double> upCoefF1;
@@ -31,7 +32,7 @@ public class CalibrationFile {
     List<String> fileContent = new ArrayList<>();
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(input))) {
-      br.readLine();
+      header=br.readLine();
       while ((line = br.readLine()) != null) {
         if (!"".equals(line)) {
           fileContent.add(line);
@@ -53,6 +54,7 @@ public class CalibrationFile {
    * @param data Splitted lines of Calibration
    */
   public CalibrationFile(List<String> data) {
+    header = data.remove(0);
     initialize(data);
   }
 
@@ -80,21 +82,15 @@ public class CalibrationFile {
     this.metadata = new ArrayList<>();
 
     for (String[] splitLine : temp) {
-      System.out.println(splitLine[0]);
       wlF1.add(Double.parseDouble(splitLine[0]));
-      System.out.println(splitLine[1]);
 
       upCoefF1.add(Double.parseDouble(splitLine[1]));
-      System.out.println(splitLine[2]);
 
       dwCoefF1.add(Double.parseDouble(splitLine[2]));
-      System.out.println(splitLine[3]);
 
       wlF2.add(Double.parseDouble(splitLine[3]));
-      System.out.println(splitLine[4]);
 
       upCoefF2.add(Double.parseDouble(splitLine[4]));
-      System.out.println(splitLine[5]);
 
       dwCoefF2.add(Double.parseDouble(splitLine[5]));
       if (splitLine.length > 6) {
@@ -106,14 +102,16 @@ public class CalibrationFile {
 
   /**
    * Rebuilds Calibration File and returns it as a String.
+   *
    * @return Calibration file as String.
    */
   public String calibrationAsString() {
     StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(header);
     for (String str : rawData) {
       stringBuilder.append(str + "\n");
     }
-   // System.out.println(stringBuilder.toString());
+    // System.out.println(stringBuilder.toString());
     return stringBuilder.toString();
   }
 

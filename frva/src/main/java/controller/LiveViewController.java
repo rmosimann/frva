@@ -15,8 +15,12 @@ import controller.util.liveviewparser.CommandManualMeasurement;
 import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +57,6 @@ public class LiveViewController {
   private Node activeView;
   private ConnectionStateInit connectionStateInit;
   private String deviceName;
-
   private DeviceStatus deviceStatus = new DeviceStatus();
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
@@ -449,5 +452,11 @@ public class LiveViewController {
 
   public void refreshList() {
     measurementListView.refresh();
+  }
+
+  public void createLiveSdCard() {
+    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    Date date = new Date();
+    model.setCurrentLiveSdCardPath(dateFormat.format(date));
   }
 }

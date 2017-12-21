@@ -7,6 +7,7 @@ public class ConnectionStateConnected implements ConnectionState {
 
   public ConnectionStateConnected(LiveViewController liveViewController) {
     this.liveViewController = liveViewController;
+    this.liveViewController.createLiveSdCard();
   }
 
   @Override
