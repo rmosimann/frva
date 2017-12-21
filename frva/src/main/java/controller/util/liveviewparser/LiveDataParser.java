@@ -29,6 +29,12 @@ public class LiveDataParser {
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
   private final BooleanProperty acceptingCommands = new SimpleBooleanProperty();
 
+  private final Executor singleExecutor = Executors.newSingleThreadExecutor(runnable -> {
+    Thread t = new Thread(runnable);
+    t.setDaemon(true);
+    return t;
+  });
+
   public LiveDataParser(LiveViewController liveViewController, FrvaModel model) {
     this.liveViewController = liveViewController;
     this.model = model;
@@ -100,11 +106,6 @@ public class LiveDataParser {
   }
 
 
-  private final Executor executor = Executors.newSingleThreadExecutor(runnable -> {
-    Thread t = new Thread(runnable);
-    t.setDaemon(true);
-    return t;
-  });
 
   /**
    * Sends a String to the OutputStream.
@@ -129,7 +130,7 @@ public class LiveDataParser {
       }
     };
 
-    executor.execute(task);
+    singleExecutor.execute(task);
 
   }
 
