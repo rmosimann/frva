@@ -341,7 +341,8 @@ public class MainController {
   public void refreshTreeView() {
     if (model.getCurrentLiveSdCardPath() != null) {
       model.getCurrentLiveSdCardPath();
-      File dbFile = new File(model.getCurrentLiveSdCardPath().getPath() + File.separator + "db.csv");
+      File dbFile = new File(model
+          .getCurrentLiveSdCardPath().getPath() + File.separator + "db.csv");
       if (dbFile.exists()) {
         dbFile.delete();
       }
@@ -350,28 +351,35 @@ public class MainController {
       List<SdCard> list = new ArrayList<>();
       list.add(sdCard);
 
-      FrvaTreeDeviceItem item = (FrvaTreeDeviceItem) treeView.getRoot().getChildren().filtered(new Predicate() {
-        @Override
-        public boolean test(Object o) {
-          return ((FrvaTreeDeviceItem) o).getDeviceSerialNr().equals(sdCard.getDeviceSerialNr());
-        }
-      }).get(0);
-      if (item != null) {
-        FrvaTreeSdCardItem sdCardItem = (FrvaTreeSdCardItem) item.getChildren().filtered(new Predicate() {
-          @Override
-          public boolean test(Object o) {
-            return ((FrvaTreeSdCardItem) o).getSdCard().getSdCardFile().getPath().equals(sdCard.getSdCardFile().getPath());
-
-          }
-        }).get(0);
-        if(sdCardItem!=null){
-          sdCardItem.getParent().getChildren().remove(sdCardItem);
-        }
-      }
+      removeTreeItem(treeView.getRoot());
 
       ((FrvaTreeRootItem) treeView.getRoot()).createChildren(list, true);
     }
   }
+
+  public void removeTreeItem(TreeItem item) {
+    final FrvaTreeSdCardItem[] returnValue = {null};
+    item.getChildren().forEach(new Consumer() {
+      @Override
+      public void accept(Object device) {
+        ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
+          @Override
+          public void accept(Object sdCard) {
+            System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
+                );
+            System.out.println(model.getCurrentLiveSdCardPath().getPath());
+            if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
+                .equals(model.getCurrentLiveSdCardPath().getPath())) {
+              returnValue[0] = (FrvaTreeSdCardItem) sdCard;
+            }
+          }
+        });
+      }
+    });
+    if(returnValue[0]!=null){
+    returnValue[0].setSelected(false);
+   returnValue[0].getParent().getChildren().remove(returnValue[0]);
+  }}
 
 
 }
