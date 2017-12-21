@@ -113,9 +113,7 @@ public class LiveDataParser {
    * @param command the string without linebreak.
    */
   void executeCommand(String command) {
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
+
 
         try {
          // System.out.println("send command");
@@ -126,9 +124,8 @@ public class LiveDataParser {
         } catch (IOException e) {
           e.printStackTrace();
         }
-      }
-    });
-    t.start();
+
+
   }
 
   /**

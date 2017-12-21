@@ -9,6 +9,8 @@ import model.data.SdCard;
  */
 public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
+
+
   private String deviceSerialNr;
 
   public FrvaTreeDeviceItem(String name, String deviceSerialNr) {
@@ -51,5 +53,8 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
     return o instanceof FrvaTreeDeviceItem
         && this.deviceSerialNr.equals(((FrvaTreeDeviceItem) o).deviceSerialNr);
 
+  }
+  public String getDeviceSerialNr() {
+    return deviceSerialNr;
   }
 }
