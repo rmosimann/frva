@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -192,7 +193,10 @@ public class LiveViewController {
   private void addBindings() {
     systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
     gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
-    // integrationTimeWrLabel.textProperty().bind(deviceStatus. int);
+    integrationTimeWrLabel.textProperty().bind(
+        Bindings.convert(deviceStatus.integrationTimeWrProperty()));
+    integrationTimeVegLabel.textProperty().bind(
+        Bindings.convert(deviceStatus.integrationTimeVegProperty()));
 
 
     measurementListView.setItems(model.getLiveSequences());
