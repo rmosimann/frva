@@ -53,7 +53,7 @@ public class LiveMeasureSequence extends MeasureSequence {
    *
    * @return a string containing the data.
    */
-   @Override
+  @Override
   public String getCsv() {
     StringBuilder sb = new StringBuilder();
     Arrays.stream(getMetadata()).forEach(a -> sb.append(a + ";"));
