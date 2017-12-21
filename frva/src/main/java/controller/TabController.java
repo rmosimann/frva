@@ -143,10 +143,14 @@ public class TabController {
   private CheckBox checkBoxRawWr;
 
   @FXML
+  private CheckBox checkBoxRawWr2;
+
+  @FXML
   private CheckBox checkBoxRawDcVeg;
 
   @FXML
   private CheckBox checkBoxRawDcWr;
+
 
   @FXML
   private CheckBox checkBoxRadianceVeg;
@@ -435,6 +439,16 @@ public class TabController {
       filter();
     });
 
+    checkBoxRawWr2.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
+        filterThoseSeries.add(MeasureSequence.SequenceKeyName.WR2);
+      } else {
+        filterThoseSeries.remove(MeasureSequence.SequenceKeyName.WR2);
+      }
+      filter();
+    });
+
+
     checkBoxRawDcVeg.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (!newValue) {
         filterThoseSeries.add(MeasureSequence.SequenceKeyName.DC_VEG);
@@ -452,6 +466,7 @@ public class TabController {
       }
       filter();
     });
+
 
     checkBoxRadianceVeg.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (!newValue) {
