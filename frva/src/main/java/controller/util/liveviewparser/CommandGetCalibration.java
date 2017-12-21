@@ -45,8 +45,7 @@ public class CommandGetCalibration extends AbstractCommand {
       liveDataParser.getDeviceStatus().setCalibrationFile(
           new CalibrationFile(data));
       liveDataParser.runNextCommand();
-    } else if (!(stringBuilder.toString().contains("cal.csv") || stringBuilder.toString()
-        .contains("wl_F;up_coef_F;dw_coef_F;wl_F;up_coef_F;dw_coef_F;Device ID"))) {
+    } else if (!(stringBuilder.toString().contains("cal.csv"))) {
 
       data.add(stringBuilder.toString());
 
