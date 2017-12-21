@@ -190,9 +190,12 @@ public class LiveViewController {
 
   private void defineButtonActions() {
     sendAnyCommandButton.setOnAction(event -> {
+
       String command = sendAnyCommandField.getText();
       sendAnyCommandField.setText("");
+
       liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+
     });
 
     commandCButton.setOnAction(event -> {

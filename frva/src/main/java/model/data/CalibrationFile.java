@@ -80,11 +80,22 @@ public class CalibrationFile {
     this.metadata = new ArrayList<>();
 
     for (String[] splitLine : temp) {
+      System.out.println(splitLine[0]);
       wlF1.add(Double.parseDouble(splitLine[0]));
+      System.out.println(splitLine[1]);
+
       upCoefF1.add(Double.parseDouble(splitLine[1]));
+      System.out.println(splitLine[2]);
+
       dwCoefF1.add(Double.parseDouble(splitLine[2]));
+      System.out.println(splitLine[3]);
+
       wlF2.add(Double.parseDouble(splitLine[3]));
+      System.out.println(splitLine[4]);
+
       upCoefF2.add(Double.parseDouble(splitLine[4]));
+      System.out.println(splitLine[5]);
+
       dwCoefF2.add(Double.parseDouble(splitLine[5]));
       if (splitLine.length > 6) {
         metadata.add(splitLine[6]);
@@ -102,7 +113,7 @@ public class CalibrationFile {
     for (String str : rawData) {
       stringBuilder.append(str + "\n");
     }
-    System.out.println(stringBuilder.toString());
+   // System.out.println(stringBuilder.toString());
     return stringBuilder.toString();
   }
 

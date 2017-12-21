@@ -377,13 +377,14 @@ public class FileInOut {
   /**
    * Writes a new recording to the library.
    *
-   * @param measureSequenceList of measureSequences to add.
-   * @param calibrationFile     of the attached device.
+   * @param measureSequence of measureSequences to add.
+   * @param calibrationFile of the attached device.
    */
-  public static void writeLiveMeasurements(List<MeasureSequence> measureSequenceList,
+  public static void writeLiveMeasurements(MeasureSequence measureSequence,
                                            CalibrationFile calibrationFile, String sdCardName,
                                            String folderName, String dataFileName) {
     File sdCard = new File(FrvaModel.LIBRARYPATH + File.separator + "Rec " + sdCardName);
+    File calibFile = new File(sdCard.getAbsolutePath() + File.separator + "cal.csv");
     File dataFileFolder = new File(sdCard.getAbsolutePath()
         + File.separator + folderName);
     File dataFile = new File(dataFileFolder.getAbsolutePath() + File.separator
@@ -393,25 +394,30 @@ public class FileInOut {
     if (!sdCard.exists()) {
       sdCard.mkdir();
     }
+
+    if (!calibFile.exists()) {
+      try (FileWriter fileWriter = new FileWriter(calibFile, false)) {
+        if (calibrationFile != null) {
+          fileWriter.write(calibrationFile.calibrationAsString());
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+    }
+
     if (!dataFileFolder.exists()) {
       dataFileFolder.mkdir();
     }
 
     try (FileWriter fileWriter = new FileWriter(dataFile, true)) {
-
-      for (MeasureSequence ms : measureSequenceList) {
-        fileWriter.write(ms.getCsv());
-
+      if (measureSequence != null) {
+        if (measureSequence instanceof LiveMeasureSequence) {
+          fileWriter.write(measureSequence.getCsv());
+        }
       }
-
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-  }
-
-  public static void main(String[] args) {
-    //writeLiveMeasurements("newRec", "foldername", "DataFileName");
   }
 
 }

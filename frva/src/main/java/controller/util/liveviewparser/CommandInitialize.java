@@ -24,9 +24,11 @@ public class CommandInitialize extends AbstractCommand {
 
     if (sb.toString().contains("App?")) {
       liveDataParser.executeCommand("100");
+      liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
       if (sb.toString().contains("; ;")) {
         liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
       } else {
+
         liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser, model));
       }
       liveDataParser.runNextCommand();

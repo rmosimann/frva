@@ -41,6 +41,7 @@ public class CommandGetCalibration extends AbstractCommand {
   private void handleLine(StringBuilder stringBuilder) {
 
     if (stringBuilder.toString().contains("FILE ENDS")) {
+      System.out.println("got Calib File");
       liveDataParser.getDeviceStatus().setCalibrationFile(
           new CalibrationFile(data));
       liveDataParser.runNextCommand();

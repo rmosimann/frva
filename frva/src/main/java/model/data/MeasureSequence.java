@@ -366,6 +366,7 @@ public class MeasureSequence {
   }
 
   public void setMetadata(String[] metadata) {
+    System.out.println("set metadata");
     this.metadata = metadata;
   }
 
