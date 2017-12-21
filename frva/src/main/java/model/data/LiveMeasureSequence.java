@@ -59,7 +59,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
 
     Map<SequenceKeyName, double[]> measurements = data;
-    sb.deleteCharAt(sb.length()-1);
+    sb.deleteCharAt(sb.length() - 1);
     sb.append("WR" + ";");
     Arrays.stream(measurements.get(SequenceKeyName.WR)).forEach(a -> sb.append((int) a + ";"));
     sb.append(";");
@@ -83,7 +83,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
     sb.append("\n");
 
-    return  sb.toString().replaceAll(" ","").toString();
+    return sb.toString().replaceAll(" ", "").toString();
 
   }
 
@@ -123,6 +123,13 @@ public class LiveMeasureSequence extends MeasureSequence {
   }
 
 
+  /**
+   * Sets the LiveMeasureSequcence to complete and writes Data to File.
+   *
+   * @param complete        if true.
+   * @param calibrationFile The calibration file which belongs to this measurement.
+   * @param liveSdCardPath  The path where the Measurement should be written.
+   */
   public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
     listener = null;

@@ -338,6 +338,10 @@ public class MainController {
 
   }
 
+  /**
+   * Reads in new LiveMeasurement in Treeview.
+   */
+
   public void refreshTreeView() {
     if (model.getCurrentLiveSdCardPath() != null) {
       model.getCurrentLiveSdCardPath();
@@ -357,7 +361,8 @@ public class MainController {
     }
   }
 
-  public void removeTreeItem(TreeItem item) {
+
+  private void removeTreeItem(TreeItem item) {
     final FrvaTreeSdCardItem[] returnValue = {null};
     item.getChildren().forEach(new Consumer() {
       @Override
@@ -366,7 +371,7 @@ public class MainController {
           @Override
           public void accept(Object sdCard) {
             System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
-                );
+            );
             System.out.println(model.getCurrentLiveSdCardPath().getPath());
             if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
                 .equals(model.getCurrentLiveSdCardPath().getPath())) {
@@ -376,10 +381,11 @@ public class MainController {
         });
       }
     });
-    if(returnValue[0]!=null){
-    returnValue[0].setSelected(false);
-   returnValue[0].getParent().getChildren().remove(returnValue[0]);
-  }}
+    if (returnValue[0] != null) {
+      returnValue[0].setSelected(false);
+      returnValue[0].getParent().getChildren().remove(returnValue[0]);
+    }
+  }
 
 
 }

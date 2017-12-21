@@ -41,7 +41,7 @@ public class MainMenuController {
       //Load MainView
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/mainView.fxml"));
-      mainController= new MainController(model);
+      mainController = new MainController(model);
       loader.setController(mainController);
       mainViewPane = loader.load();
 
@@ -79,7 +79,7 @@ public class MainMenuController {
       if (pressedButton == buttonLibrary) {
         nodetouse = mainViewPane;
 
-       mainController.refreshTreeView();
+        mainController.refreshTreeView();
 
       } else if (pressedButton == buttonLiveView) {
         nodetouse = liveViewNode;

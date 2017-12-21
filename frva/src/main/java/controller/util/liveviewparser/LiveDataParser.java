@@ -79,21 +79,12 @@ public class LiveDataParser {
       @Override
       public void run() {
 
-        FileWriter fw= null;
-        try {
-          fw = new FileWriter(new File(getClass().getClassLoader().getResource("out.csv").getFile()));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
         InputStream dataIn = null;
         dataIn = inputStream;
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
             System.out.print((char) read);
-            fw.append((char)read);
-            fw.flush();
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
@@ -115,15 +106,15 @@ public class LiveDataParser {
   void executeCommand(String command) {
 
 
-        try {
-         // System.out.println("send command");
-          outputStream.write(command.getBytes());
-          outputStream.write(10);
-          outputStream.flush();
-          logger.info("Sent Command: " + command);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+    try {
+      // System.out.println("send command");
+      outputStream.write(command.getBytes());
+      outputStream.write(10);
+      outputStream.flush();
+      logger.info("Sent Command: " + command);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
 
   }

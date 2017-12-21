@@ -32,7 +32,7 @@ public class CalibrationFile {
     List<String> fileContent = new ArrayList<>();
     String line = "";
     try (BufferedReader br = new BufferedReader(new FileReader(input))) {
-      header=br.readLine();
+      header = br.readLine();
       while ((line = br.readLine()) != null) {
         if (!"".equals(line)) {
           fileContent.add(line);

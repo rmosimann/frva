@@ -194,7 +194,7 @@ public class LiveViewController {
   private void defineButtonActions() {
     sendAnyCommandButton.setOnAction(event -> {
 
-      Thread t= new Thread(new Runnable() {
+      Thread t = new Thread(new Runnable() {
         @Override
         public void run() {
           String command = sendAnyCommandField.getText();
@@ -461,6 +461,9 @@ public class LiveViewController {
     measurementListView.refresh();
   }
 
+  /**
+   * Sets the current LiveSdCard to a new SdCard on reconnect.
+   */
   public void createLiveSdCard() {
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     Date date = new Date();

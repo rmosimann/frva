@@ -380,6 +380,7 @@ public class FileInOut {
    *
    * @param measureSequence of measureSequences to add.
    * @param calibrationFile of the attached device.
+   * @param currentSdCard Path of the SDCard where the Data should be written to.
    */
   public static void writeLiveMeasurements(MeasureSequence measureSequence,
                                            CalibrationFile calibrationFile, File currentSdCard) {
