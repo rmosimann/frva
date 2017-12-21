@@ -1,5 +1,6 @@
 package controller;
 
+import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -9,11 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import model.FrvaModel;
+import model.data.FileInOut;
 
 public class MainMenuController {
   private final FrvaModel model;
   private Node mainViewPane;
   private Node liveViewNode;
+  private MainController mainController;
   EventHandler<ActionEvent> mainMenuHandler;
 
   @FXML
@@ -38,7 +41,8 @@ public class MainMenuController {
       //Load MainView
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/mainView.fxml"));
-      loader.setController(new MainController(model));
+      mainController = new MainController(model);
+      loader.setController(mainController);
       mainViewPane = loader.load();
 
       loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
@@ -74,6 +78,9 @@ public class MainMenuController {
 
       if (pressedButton == buttonLibrary) {
         nodetouse = mainViewPane;
+
+        mainController.refreshTreeView();
+
       } else if (pressedButton == buttonLiveView) {
         nodetouse = liveViewNode;
       }

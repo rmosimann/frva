@@ -148,6 +148,7 @@ public class MeasureSequence {
    */
   public int getHour() {
     String timestamp = metadata[2];
+    System.out.println(timestamp + " " + timestamp.length());
 
     if (timestamp.length() == 5) {
       return Integer.parseInt(timestamp.substring(0, 1));
@@ -366,6 +367,7 @@ public class MeasureSequence {
   }
 
   public void setMetadata(String[] metadata) {
+    //  System.out.println("set metadata");
     this.metadata = metadata;
   }
 

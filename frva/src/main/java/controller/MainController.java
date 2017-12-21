@@ -1,15 +1,19 @@
 package controller;
 
 import controller.util.ImportWizard;
+import controller.util.treeviewitems.FrvaTreeDeviceItem;
 import controller.util.treeviewitems.FrvaTreeItem;
 import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
+import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -319,19 +323,6 @@ public class MainController {
     });
   }
 
-  private List<FrvaTreeItem> removeTickedMeasurements(TreeItem item,
-                                                      List<FrvaTreeItem> list) {
-    if (!item.isLeaf()) {
-      for (Object o : item.getChildren()) {
-        FrvaTreeItem element = (FrvaTreeItem) o;
-        removeTickedMeasurements(element, list);
-        if (element.isSelected()) {
-          list.add(element);
-        }
-      }
-    }
-    return list;
-  }
 
   private void checkTreeItemWithMeasurement(FrvaTreeItem item, MeasureSequence ms) {
     if (item instanceof FrvaTreeMeasurementItem) {
@@ -346,4 +337,55 @@ public class MainController {
     }
 
   }
+
+  /**
+   * Reads in new LiveMeasurement in Treeview.
+   */
+
+  public void refreshTreeView() {
+    if (model.getCurrentLiveSdCardPath() != null) {
+      model.getCurrentLiveSdCardPath();
+      File dbFile = new File(model
+          .getCurrentLiveSdCardPath().getPath() + File.separator + "db.csv");
+      if (dbFile.exists()) {
+        dbFile.delete();
+      }
+
+      SdCard sdCard = new SdCard(model.getCurrentLiveSdCardPath(), null);
+      List<SdCard> list = new ArrayList<>();
+      list.add(sdCard);
+
+      removeTreeItem(treeView.getRoot());
+
+      ((FrvaTreeRootItem) treeView.getRoot()).createChildren(list, true);
+    }
+  }
+
+
+  private void removeTreeItem(TreeItem item) {
+    final FrvaTreeSdCardItem[] returnValue = {null};
+    item.getChildren().forEach(new Consumer() {
+      @Override
+      public void accept(Object device) {
+        ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
+          @Override
+          public void accept(Object sdCard) {
+            System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
+            );
+            System.out.println(model.getCurrentLiveSdCardPath().getPath());
+            if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
+                .equals(model.getCurrentLiveSdCardPath().getPath())) {
+              returnValue[0] = (FrvaTreeSdCardItem) sdCard;
+            }
+          }
+        });
+      }
+    });
+    if (returnValue[0] != null) {
+      returnValue[0].setSelected(false);
+      returnValue[0].getParent().getChildren().remove(returnValue[0]);
+    }
+  }
+
+
 }

@@ -1,5 +1,6 @@
 package model.data;
 
+import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,6 +28,7 @@ import model.FrvaModel;
  */
 public class FileInOut {
   private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("FRVA");
+
 
   /**
    * Creates a file with the metadatas of all measurements called db.csv
@@ -134,12 +136,11 @@ public class FileInOut {
   /**
    * Reads in the calibration File of an SD-Card.
    *
-   * @param sdCard    which is parent of the calib-file.
-   * @param filter    name of the calib file (normally cal.csv)
-   * @param skipLines how many lines should be skipped (header).
+   * @param sdCard which is parent of the calib-file.
+   * @param filter name of the calib file (normally cal.csv)
    * @return created calibration file.
    */
-  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter, int skipLines) {
+  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter) {
     File folder = sdCard.getSdCardFile();
     File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
         && name.endsWith(".csv") && !name.equals("db.csv"));
@@ -377,41 +378,48 @@ public class FileInOut {
   /**
    * Writes a new recording to the library.
    *
-   * @param measureSequenceList of measureSequences to add.
-   * @param calibrationFile     of the attached device.
+   * @param measureSequence of measureSequences to add.
+   * @param calibrationFile of the attached device.
+   * @param currentSdCard Path of the SDCard where the Data should be written to.
    */
-  public static void writeLiveMeasurements(List<MeasureSequence> measureSequenceList,
-                                           CalibrationFile calibrationFile, String sdCardName,
-                                           String folderName, String dataFileName) {
-    File sdCard = new File(FrvaModel.LIBRARYPATH + File.separator + "Rec " + sdCardName);
-    File dataFileFolder = new File(sdCard.getAbsolutePath()
-        + File.separator + folderName);
+  public static void writeLiveMeasurements(MeasureSequence measureSequence,
+                                           CalibrationFile calibrationFile, File currentSdCard) {
+
+    File calibFile = new File(currentSdCard.getAbsolutePath() + File.separator
+        + "cal.csv");
+    File dataFileFolder = new File(currentSdCard.getAbsolutePath()
+        + File.separator + "LiveSDFolder");
     File dataFile = new File(dataFileFolder.getAbsolutePath() + File.separator
-        + dataFileName + ".csv");
+        + "liveSDFile" + ".csv");
 
 
-    if (!sdCard.exists()) {
-      sdCard.mkdir();
+    if (!currentSdCard.exists()) {
+      currentSdCard.mkdir();
     }
+
+    if (!calibFile.exists()) {
+      try (FileWriter fileWriter = new FileWriter(calibFile, false)) {
+        if (calibrationFile != null) {
+          fileWriter.write(calibrationFile.calibrationAsString());
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+    }
+
     if (!dataFileFolder.exists()) {
       dataFileFolder.mkdir();
     }
 
     try (FileWriter fileWriter = new FileWriter(dataFile, true)) {
-
-      for (MeasureSequence ms : measureSequenceList) {
-        fileWriter.write(ms.getCsv());
-
+      if (measureSequence != null) {
+        if (measureSequence instanceof LiveMeasureSequence) {
+          fileWriter.write(measureSequence.getCsv());
+        }
       }
-
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-  }
-
-  public static void main(String[] args) {
-    //writeLiveMeasurements("newRec", "foldername", "DataFileName");
   }
 
 }

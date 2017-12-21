@@ -31,7 +31,7 @@ public class SdCard {
       this.name = name;
     }
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal", 1);
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
 
     if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
       dataFiles = FileInOut.getDataFiles(this);

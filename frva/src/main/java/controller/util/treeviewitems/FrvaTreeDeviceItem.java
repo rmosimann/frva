@@ -9,6 +9,7 @@ import model.data.SdCard;
  */
 public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
+
   private String deviceSerialNr;
 
   public FrvaTreeDeviceItem(String name, String deviceSerialNr) {
@@ -18,7 +19,8 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
   /**
    * Creates its children depending on list.
-   * @param list of SdCards which should be created
+   *
+   * @param list      of SdCards which should be created
    * @param isPreview true if import scenario (Fully loaded then)
    */
   public void createChildren(List<SdCard> list, boolean isPreview) {
@@ -50,6 +52,9 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
   public boolean equals(Object o) {
     return o instanceof FrvaTreeDeviceItem
         && this.deviceSerialNr.equals(((FrvaTreeDeviceItem) o).deviceSerialNr);
+  }
 
+  public String getDeviceSerialNr() {
+    return deviceSerialNr;
   }
 }

@@ -34,7 +34,6 @@ public class DataFile {
    * @param sdCard   The SDCARD the datafile belongs to
    */
   public DataFile(SdCard sdCard, File filename) {
-    System.out.println("db.csv does not exist");
     this.originalFile = filename;
     this.sdCard = sdCard;
     measureSequences = FileInOut.readInMetadataOfMeasureSequences(this);
