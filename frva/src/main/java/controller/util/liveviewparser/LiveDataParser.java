@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Task;
 import model.FrvaModel;
 
 public class LiveDataParser {
@@ -25,6 +28,12 @@ public class LiveDataParser {
   private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
   private final BooleanProperty acceptingCommands = new SimpleBooleanProperty();
+
+  private final Executor singleExecutor = Executors.newSingleThreadExecutor(runnable -> {
+    Thread t = new Thread(runnable);
+    t.setDaemon(true);
+    return t;
+  });
 
   public LiveDataParser(LiveViewController liveViewController, FrvaModel model) {
     this.liveViewController = liveViewController;
@@ -96,20 +105,33 @@ public class LiveDataParser {
     thread.start();
   }
 
+
+
   /**
    * Sends a String to the OutputStream.
    *
    * @param command the string wthout linebreak.
    */
   void executeCommand(String command) {
-    try {
-      outputStream.write(command.getBytes());
-      outputStream.write(10);
-      outputStream.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    logger.info("Sent Command: " + command);
+    Task<Integer> task = new Task<Integer>() {
+      @Override
+      protected Integer call() throws Exception {
+
+        try {
+          outputStream.write(command.getBytes());
+          outputStream.write(10);
+          outputStream.flush();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        logger.info("Sent Command: " + command);
+
+        return null;
+      }
+    };
+
+    singleExecutor.execute(task);
+
   }
 
   /**
