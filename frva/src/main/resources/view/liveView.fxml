@@ -49,9 +49,6 @@
                 </LineChart>
             </children>
         </AnchorPane>
-        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
-                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
-                  AnchorPane.topAnchor="563.0"/>
         <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
               AnchorPane.topAnchor="59.0">
             <children>
@@ -65,7 +62,7 @@
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
-                <Label text="SystemTime">
+                <Label text="Current Integtration Time">
                     <font>
                         <Font name="System Bold" size="13.0"/>
                     </font>
@@ -73,11 +70,30 @@
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </Label>
-                <Label fx:id="systemTimeLabel">
-                    <padding>
-                        <Insets left="20.0"/>
-                    </padding>
-                </Label>
+                <HBox>
+                    <children>
+                        <Label text="WR:">
+                            <padding>
+                                <Insets left="20.0"/>
+                            </padding>
+                        </Label>
+                        <Label fx:id="itWrLabel">
+                            <padding>
+                                <Insets left="20.0"/>
+                            </padding>
+                        </Label>
+                        <Label text="VEG:">
+                            <padding>
+                                <Insets left="20.0"/>
+                            </padding>
+                        </Label>
+                        <Label fx:id="itVegLabel">
+                            <padding>
+                                <Insets left="20.0"/>
+                            </padding>
+                        </Label>
+                    </children>
+                </HBox>
                 <Label text="GPS - Information">
                     <font>
                         <Font name="System Bold" size="13.0"/>
@@ -106,6 +122,34 @@
                 </Label>
             </children>
         </VBox>
+        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
+              AnchorPane.topAnchor="250.0">
+            <children>
+                <Button fx:id="manualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode"/>
+                <Button fx:id="autoModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode"
+                        VBox.vgrow="ALWAYS"/>
+            </children>
+        </VBox>
+        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
+              AnchorPane.topAnchor="320.0">
+            <children>
+                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefWidth="215.0"
+                        text="Manual Measurement" VBox.vgrow="ALWAYS"/>
+            </children>
+        </VBox>
+        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="365.0">
+            <children>
+                <Button fx:id="setIntegrationTimeButton" mnemonicParsing="false" prefWidth="215.0"
+                        text="Set Integration Time" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="setIntervalButton" mnemonicParsing="false" prefWidth="215.0"
+                        text="Set interval between MS" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
+                        VBox.vgrow="ALWAYS"/>
+            </children>
+        </VBox>
+        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
+                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
+                  AnchorPane.topAnchor="563.0"/>
         <HBox layoutX="1049.0" layoutY="620.0" prefWidth="215.0" AnchorPane.bottomAnchor="10.0"
               AnchorPane.rightAnchor="15.0">
             <children>
@@ -113,23 +157,6 @@
                 <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
             </children>
         </HBox>
-        <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="250.0">
-            <children>
-                <Button fx:id="commandManualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode"/>
-                <Button fx:id="changeModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode"
-                        VBox.vgrow="ALWAYS"/>
-                <Button mnemonicParsing="false" prefWidth="215.0" text="Change IT" VBox.vgrow="ALWAYS"/>
-                <Button mnemonicParsing="false" prefWidth="215.0" text="MS-Delay" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefWidth="215.0"
-                        text="Manual Measurement" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
-                        VBox.vgrow="ALWAYS"/>
-                <Button fx:id="commandCButton" mnemonicParsing="false" prefWidth="215.0" text="Command-C"
-                        VBox.vgrow="ALWAYS"/>
-                <Button fx:id="commandcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-c"/>
-                <Button fx:id="commandfcButton" mnemonicParsing="false" prefWidth="215.0" text="Command-fc"/>
-            </children>
-        </VBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
               prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
