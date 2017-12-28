@@ -15,7 +15,6 @@ import controller.util.liveviewparser.CommandManualMeasurement;
 import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +66,8 @@ public class LiveViewController {
 
   private LiveDataParser liveDataParser;
 
+  private MeasureSequence selectedMeasurement;
+
   @FXML
   private ListView<MeasureSequence> measurementListView;
 
@@ -92,7 +93,7 @@ public class LiveViewController {
   private Label gpsPositionLabel;
 
   @FXML
-  private Label currentCommandLabel;
+  private Label currentCommandLabel1;
 
   @FXML
   private TextField sendAnyCommandField;
@@ -142,7 +143,12 @@ public class LiveViewController {
   @FXML
   private Button manualMeasurementButton;
 
-  private MeasureSequence selectedMeasurement;
+  @FXML
+  private HBox msgBoxInitializing;
+
+  @FXML
+  private Label currentCommandLabel2;
+
 
 
   /**
@@ -261,6 +267,11 @@ public class LiveViewController {
         }
       }
     });
+
+
+    liveDataParser.initializingProperty().addListener((observable, oldValue, newValue) -> {
+      displayInitializingDialog(newValue);
+    });
   }
 
 
@@ -272,6 +283,11 @@ public class LiveViewController {
   public void displayBluetoothOffDialog(boolean active) {
     msgBoxBltOff.setVisible(active);
     msgBoxBltOffRefreshButton.setOnAction(event -> state.getValue().handle());
+  }
+
+
+  public void displayInitializingDialog(boolean active) {
+    msgBoxInitializing.setVisible(active);
   }
 
 
@@ -407,8 +423,16 @@ public class LiveViewController {
     return deviceStatus;
   }
 
-  public void setCurrentCommandLabel(String text) {
-    Platform.runLater(() -> this.currentCommandLabel.setText(text));
+  /**
+   * Setter for all CurrentCommend Labels.
+   *
+   * @param text the text to display.
+   */
+  public void setCurrentCommandLabels(String text) {
+    Platform.runLater(() -> {
+      this.currentCommandLabel1.setText(text);
+      this.currentCommandLabel2.setText(text);
+    });
   }
 
   /**
