@@ -18,16 +18,21 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
 import model.data.FileInOut;
@@ -184,7 +189,7 @@ public class MainController {
    */
   private void addTab() {
     //Create Tab and set defaults
-    Tab newtab = new Tab("Untitled " + (newTabId));
+    Tab newtab = createEditableTab("Untitled " + (newTabId));
     newtab.closableProperty().setValue(true);
     newtab.setOnCloseRequest(event -> {
       model.removeSelectionMapping(newTabId);
@@ -385,6 +390,45 @@ public class MainController {
       returnValue[0].setSelected(false);
       returnValue[0].getParent().getChildren().remove(returnValue[0]);
     }
+  }
+
+
+  private Tab createEditableTab(String text) {
+    final Label label = new Label(text);
+    final Tab tab = new Tab();
+    tab.setGraphic(label);
+    final TextField textField = new TextField();
+    label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        if (event.getClickCount()==2) {
+          textField.setText(label.getText());
+          tab.setGraphic(textField);
+          textField.selectAll();
+          textField.requestFocus();
+        }
+      }
+    });
+
+    textField.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        label.setText(textField.getText());
+        tab.setGraphic(label);
+      }
+    });
+
+    textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable,
+                          Boolean oldValue, Boolean newValue) {
+        if (! newValue) {
+          label.setText(textField.getText());
+          tab.setGraphic(label);
+        }
+      }
+    });
+    return tab ;
   }
 
 
