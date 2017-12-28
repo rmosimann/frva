@@ -15,6 +15,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -31,7 +32,7 @@ import javafx.util.StringConverter;
  * - chart has Padding 0 (in CSS)
  * - chart-content has Padding 0 (in CSS)
  */
-public class ZoomWithRectangle implements ZoomLineChart {
+public class LineChartZoom {
 
   private final Logger logger = Logger.getLogger("FRVA");
 
@@ -90,8 +91,8 @@ public class ZoomWithRectangle implements ZoomLineChart {
    * @param xaxis        xAxis contained in the linechart.
    * @param yaxis        yAxis ontained in the linechart.
    */
-  public ZoomWithRectangle(LineChart<Double, Double> zommableNode,
-                           NumberAxis xaxis, NumberAxis yaxis) {
+  public LineChartZoom(LineChart<Double, Double> zommableNode,
+                       NumberAxis xaxis, NumberAxis yaxis) {
     this.lineChart = zommableNode;
     this.xaxis = xaxis;
     this.yaxis = yaxis;
@@ -103,7 +104,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
   /**
    * Enables Zoom-Functionlity on the registered LineChart.
    */
-  @Override
   public void activateZoomHandler() {
     if (!isActive) {
       addZoomMenu(anchorPane);
@@ -117,7 +117,6 @@ public class ZoomWithRectangle implements ZoomLineChart {
   /**
    * Disables Zoom-Functionlity on the registered LineChart.
    */
-  @Override
   public void deactivateZoomHandler() {
     if (isActive) {
       lineChart.removeEventHandler(MouseEvent.MOUSE_RELEASED, eventHandlerMouseReleased);
@@ -157,13 +156,16 @@ public class ZoomWithRectangle implements ZoomLineChart {
     };
 
     eventHandlerMouseMoved = event -> {
-      if (isInChartRange(event) && Mode.MOVE.equals(currentMouseMode.getValue())) {
+      if (isInChartRange(event.getX(), event.getY())
+          && Mode.MOVE.equals(currentMouseMode.getValue())) {
         lineChart.setCursor(new ImageCursor(zoomMoveImg, zoomMoveImg.getWidth() / 2,
             zoomMoveImg.getHeight() / 2));
-      } else if (isInChartRange(event) && Mode.ZOOMOUT.equals(currentMouseMode.getValue())) {
+      } else if (isInChartRange(event.getX(), event.getY())
+          && Mode.ZOOMOUT.equals(currentMouseMode.getValue())) {
         lineChart.setCursor(new ImageCursor(zoomOutImg, zoomOutImg.getWidth() / 2,
             zoomOutImg.getHeight() / 2));
-      } else if (isInChartRange(event) && Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
+      } else if (isInChartRange(event.getX(), event.getY())
+          && Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
         lineChart.setCursor(new ImageCursor(zoomInImg, zoomInImg.getWidth() / 2,
             zoomInImg.getHeight() / 2));
       } else {
@@ -172,7 +174,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
     };
 
     eventHandlerMousePressed = event -> {
-      if (isInChartRange(event)) {
+      if (isInChartRange(event.getX(), event.getY())) {
         if (Mode.MOVE.equals(currentMouseMode.getValue())) {
           moveStartX = event.getX();
           moveStartY = event.getY();
@@ -188,7 +190,7 @@ public class ZoomWithRectangle implements ZoomLineChart {
     };
 
     eventHandlerMouseDragged = event -> {
-      if (isInChartRange(event)) {
+      if (isInChartRange(event.getX(), event.getY())) {
         if (Mode.MOVE.equals(currentMouseMode.getValue())) {
           Point2D moveDelta = calculateAxisFromPoint(new Point2D(event.getX() - moveStartX,
               event.getY() - moveStartY + yaxis.getHeight()));
@@ -238,11 +240,13 @@ public class ZoomWithRectangle implements ZoomLineChart {
     };
 
     eventHandlerMouseReleased = event -> {
-      if (isInChartRange(event) && Mode.ZOOMOUT.equals(currentMouseMode.getValue())) {
+      if (isInChartRange(event.getX(), event.getY())
+          && Mode.ZOOMOUT.equals(currentMouseMode.getValue())) {
         zoomOut(new Point2D(event.getX(), event.getY()));
       }
 
-      if (isInChartRange(event) && Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
+      if (isInChartRange(event.getX(), event.getY())
+          && Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
         Point2D upperLeft = new Point2D(zoomRect.getX() - borderLeft,
             zoomRect.getY() - borderTop);
         Point2D lowerRight = new Point2D(zoomRect.getX() - borderLeft + zoomRect.getWidth(),
@@ -272,6 +276,14 @@ public class ZoomWithRectangle implements ZoomLineChart {
     lineChart.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandlerMousePressed);
     lineChart.addEventHandler(MouseEvent.MOUSE_MOVED, eventHandlerMouseMoved);
     lineChart.addEventHandler(MouseEvent.MOUSE_ENTERED, eventHandlerMouseEntered);
+
+    lineChart.setOnScroll(event -> {
+      if (event.getDeltaY() < 0) {
+        zoomOut(new Point2D(event.getX(), event.getY()));
+      } else {
+        zoomInScroll(event);
+      }
+    });
 
   }
 
@@ -361,14 +373,12 @@ public class ZoomWithRectangle implements ZoomLineChart {
   /**
    * Checks if the given MouseEvent is locatet on the Chart element, and not only on the LineChart.
    *
-   * @param event Mousevent containing the mouse-position.
    * @return True when mouse is in Chart, otherwise false.
    */
-  private boolean isInChartRange(MouseEvent event) {
-    return event.getX() > borderLeft && event.getX() < borderRight
-        && event.getY() > borderTop && event.getY() < borderBottom;
+  private boolean isInChartRange(double xpos, double ypos) {
+    return xpos > borderLeft && ypos < borderRight
+        && xpos > borderTop && ypos < borderBottom;
   }
-
 
   /**
    * Calculates the axis values of a Point on the chart.
@@ -470,10 +480,34 @@ public class ZoomWithRectangle implements ZoomLineChart {
 
 
   private void zoomReset() {
-    currentMouseMode.setValue(null);
-    zoomMenuBox.setCursor(Cursor.DEFAULT);
-    setSelectedZoomButton(zoomMenuButtons, null);
     xaxis.setAutoRanging(true);
     yaxis.setAutoRanging(true);
+    zoomInButton.fire();
   }
+
+  private void zoomInScroll(ScrollEvent event) {
+    logger.info("Zooming in: " + event.getX() + " " + event.getY());
+
+    if (isInChartRange(event.getX(), event.getY())) {
+      Point2D upleft;
+      Point2D lowright;
+
+      double zoomfactor = 2;
+
+      double disttop = event.getY();
+      double distleft = (event.getX() - borderLeft);
+      double distbottom = borderBottom - event.getY();
+      double distright = borderRight - event.getX();
+
+      upleft = new Point2D(distleft / zoomfactor, disttop / zoomfactor);
+
+      lowright = new Point2D((distright / zoomfactor) + event.getX(),
+          (distbottom / zoomfactor) + event.getY());
+
+      zoomIn(upleft, lowright);
+
+    }
+  }
+
+
 }

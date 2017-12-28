@@ -1,7 +1,6 @@
 package controller;
 
-import controller.util.ZoomLineChart;
-import controller.util.ZoomWithRectangle;
+import controller.util.LineChartZoom;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,7 +150,6 @@ public class TabController {
   @FXML
   private CheckBox checkBoxRawDcWr;
 
-
   @FXML
   private CheckBox checkBoxRadianceVeg;
 
@@ -233,8 +231,8 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
-    zoom.activateZoomHandler();
+    LineChartZoom lineChartZoom = new LineChartZoom(datachart, xaxis, yaxis);
+    lineChartZoom.activateZoomHandler();
   }
 
 
