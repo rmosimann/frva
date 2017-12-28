@@ -1,5 +1,4 @@
 .terminalMiniView {
-
     -fx-background-color: black;
     -fx-text-fill: lime;
     -fx-font-size: 6pt;
@@ -7,4 +6,9 @@
 
 .text-area .scroll-pane .content {
     -fx-background-color: black;
+}
+
+.systemNameLabel {
+    -fx-text-fill: #60cd00;
+    -fx-font-weight: bold;
 }

@@ -7,16 +7,23 @@ import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
 public class CommandManualMeasurement extends AbstractCommand {
+  private final boolean optimize;
   private StringBuilder stringBuilder;
   private LiveMeasureSequence currentMeasureSequence;
 
-  public CommandManualMeasurement(LiveDataParser liveDataParser, FrvaModel model) {
+  public CommandManualMeasurement(
+      LiveDataParser liveDataParser, FrvaModel model, boolean optimize) {
     super(liveDataParser, model);
+    this.optimize = optimize;
   }
 
   @Override
   public void sendCommand() {
-    liveDataParser.executeCommand(Commands.M.toString());
+    if (optimize) {
+      liveDataParser.executeCommand(Commands.m.toString());
+    } else {
+      liveDataParser.executeCommand(Commands.M.toString());
+    }
     stringBuilder = new StringBuilder();
 
     currentMeasureSequence = new LiveMeasureSequence(liveDataParser.getLiveViewController());

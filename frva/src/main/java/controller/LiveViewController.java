@@ -8,11 +8,11 @@ import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
 import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
-import controller.util.liveviewparser.CommandGetCalibration;
 import controller.util.liveviewparser.CommandGetConfiguration;
-import controller.util.liveviewparser.CommandList;
 import controller.util.liveviewparser.CommandManualMeasurement;
 import controller.util.liveviewparser.CommandManualMode;
+import controller.util.liveviewparser.CommandSetInterval;
+import controller.util.liveviewparser.CommandSetItegrationTime;
 import controller.util.liveviewparser.CommandSetTime;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -36,12 +38,16 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
@@ -102,16 +108,10 @@ public class LiveViewController {
   private Button sendAnyCommandButton;
 
   @FXML
-  private Button changeModeButton;
+  private Button autoModeButton;
 
   @FXML
   private Button setTimeButton;
-
-  @FXML
-  private Button commandCButton;
-
-  @FXML
-  private Button commandcButton;
 
   @FXML
   private HBox msgBoxBltOff;
@@ -135,13 +135,29 @@ public class LiveViewController {
   private Button bltDisconnectButton;
 
   @FXML
-  private Button commandManualModeButton;
-
-  @FXML
-  private Button commandfcButton;
+  private Button manualModeButton;
 
   @FXML
   private Button manualMeasurementButton;
+
+  @FXML
+  private Button setIntegrationTimeButton;
+
+  @FXML
+  private Button setIntervalButton;
+
+  @FXML
+  private CheckBox manualMeasOptimiseCheckBox;
+
+  @FXML
+  private TextField manualMeasurementCountField;
+
+  @FXML
+  private Label integrationTimeWrLabel;
+
+  @FXML
+  private Label integrationTimeVegLabel;
+
 
   @FXML
   private HBox msgBoxInitializing;
@@ -186,14 +202,28 @@ public class LiveViewController {
   private void addBindings() {
     systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
     gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
+    integrationTimeWrLabel.textProperty().bind(
+        Bindings.convert(deviceStatus.integrationTimeWrProperty()));
+    integrationTimeVegLabel.textProperty().bind(
+        Bindings.convert(deviceStatus.integrationTimeVegProperty()));
+
 
     measurementListView.setItems(model.getLiveSequences());
 
-    commandcButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
-    commandCButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
-    setTimeButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
-    commandfcButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
-    manualMeasurementButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    manualModeButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty());
+    autoModeButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty().not());
+
+    manualMeasurementButton.disableProperty().bind(
+        liveDataParser.acceptingCommandsProperty().not());
+    manualMeasOptimiseCheckBox.disableProperty().bind(
+        liveDataParser.acceptingCommandsProperty().not());
+    manualMeasurementCountField.disableProperty().bind(
+        liveDataParser.acceptingCommandsProperty().not());
+
+    setIntegrationTimeButton.disableProperty().bind(
+        liveDataParser.acceptingCommandsProperty().not());
+    setIntervalButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty().not());
+    setTimeButton.disableProperty().bind(liveDataParser.acceptingCommandsProperty().not());
   }
 
 
@@ -204,32 +234,64 @@ public class LiveViewController {
       liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
     });
 
-    commandCButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandList(liveDataParser, model));
-    });
-
-    changeModeButton.setOnAction(event -> {
+    autoModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
     });
 
-    setTimeButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandSetTime(liveDataParser, model, null));
-    });
-
-    commandcButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandGetConfiguration(liveDataParser, model));
-    });
-
-    commandManualModeButton.setOnAction(event -> {
+    manualModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandManualMode(liveDataParser, model));
     });
 
-    commandfcButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
+    manualMeasurementButton.setOnAction(event -> {
+      int countFieldText = Integer.parseInt(manualMeasurementCountField.getText());
+      for (int i = 0; i < countFieldText; i++) {
+        liveDataParser.addCommandToQueue(new CommandManualMeasurement(
+            liveDataParser, model, manualMeasOptimiseCheckBox.isSelected()));
+      }
     });
 
-    manualMeasurementButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandManualMeasurement(liveDataParser, model));
+
+    setTimeButton.setOnAction(event -> {
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      alert.setTitle("Set Time & Date");
+      alert.setHeaderText("Do you want to set time and date on the connected device \n "
+          + "to your current systemtime?");
+      alert.setContentText(null);
+
+      Optional<ButtonType> result = alert.showAndWait();
+      if (result.get() == ButtonType.OK) {
+        liveDataParser.addCommandToQueue(new CommandSetTime(liveDataParser, model, null));
+      }
+    });
+
+    setIntegrationTimeButton.setOnAction(event -> {
+      TextInputDialog dialog = new TextInputDialog();
+      dialog.setTitle("Set integration time");
+      dialog.setHeaderText(null);
+      dialog.setContentText("Set integration time to [ms]:");
+
+      Optional<String> result = dialog.showAndWait();
+      if (result.isPresent()) {
+        liveDataParser.addCommandToQueue(
+            new CommandSetItegrationTime(liveDataParser, model, Integer.valueOf(result.get())));
+        liveDataParser.addCommandToQueue(
+            new CommandGetConfiguration(liveDataParser, model));
+      }
+    });
+
+    setIntervalButton.setOnAction(event -> {
+      TextInputDialog dialog = new TextInputDialog();
+      dialog.setTitle("Set interval between measurements");
+      dialog.setHeaderText(null);
+      dialog.setContentText("Set the interval between measurements to [s]:");
+
+      Optional<String> result = dialog.showAndWait();
+      if (result.isPresent()) {
+        liveDataParser.addCommandToQueue(
+            new CommandSetInterval(liveDataParser, model, Integer.valueOf(result.get())));
+        liveDataParser.addCommandToQueue(
+            new CommandGetConfiguration(liveDataParser, model));
+      }
     });
   }
 

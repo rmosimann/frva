@@ -33,7 +33,8 @@ public class CommandSetItegrationTime extends AbstractCommand {
 
   private void handleLine(StringBuilder stringBuilder) {
     if (stringBuilder.toString().contains("IT = ")) {
-      liveDataParser.getDeviceStatus().setIntegrationTime(parseNumber(stringBuilder.toString()));
+      liveDataParser.getDeviceStatus().setIntegrationTimeConfigured(
+          parseNumber(stringBuilder.toString()));
       liveDataParser.runNextCommand();
     }
   }
