@@ -401,7 +401,7 @@ public class MainController {
     label.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
-        if (event.getClickCount()==2) {
+        if (event.getClickCount() == 2) {
           textField.setText(label.getText());
           tab.setGraphic(textField);
           textField.selectAll();
@@ -422,14 +422,12 @@ public class MainController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable,
                           Boolean oldValue, Boolean newValue) {
-        if (! newValue) {
+        if (!newValue) {
           label.setText(textField.getText());
           tab.setGraphic(label);
         }
       }
     });
-    return tab ;
+    return tab;
   }
-
-
 }
