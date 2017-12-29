@@ -1,9 +1,11 @@
 package model.data;
 
 import controller.util.treeviewitems.FrvaTreeRootItem;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -380,7 +382,7 @@ public class FileInOut {
    *
    * @param measureSequence of measureSequences to add.
    * @param calibrationFile of the attached device.
-   * @param currentSdCard Path of the SDCard where the Data should be written to.
+   * @param currentSdCard   Path of the SDCard where the Data should be written to.
    */
   public static void writeLiveMeasurements(MeasureSequence measureSequence,
                                            CalibrationFile calibrationFile, File currentSdCard) {
@@ -420,6 +422,47 @@ public class FileInOut {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Count file rows.
+   *
+   * @param file to count lines.
+   * @return file row count.
+   */
+  public static long getLineCount(File file) {
+
+    long count = 0;
+    try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file), 1024)) {
+
+      byte[] c = new byte[1024];
+      boolean empty = true;
+      boolean lastEmpty = false;
+
+      int read;
+      while ((read = is.read(c)) != -1) {
+        for (int i = 0; i < read; i++) {
+          if (c[i] == '\n') {
+            count++;
+            lastEmpty = true;
+          } else if (lastEmpty) {
+            lastEmpty = false;
+          }
+        }
+        empty = false;
+      }
+
+      if (!empty) {
+        if (count == 0) {
+          count = 1;
+        } else if (!lastEmpty) {
+          count++;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return count;
   }
 
 }

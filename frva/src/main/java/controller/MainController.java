@@ -219,45 +219,39 @@ public class MainController {
 
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
-    treeViewListener = new ListChangeListener() {
-      @Override
-      public void onChanged(Change c) {
-        while (c.next()) {
-          if (c.wasAdded()) {
-            c.getAddedSubList().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
+    treeViewListener = c -> {
+      while (c.next()) {
+        if (c.wasAdded()) {
+          c.getAddedSubList().forEach(new Consumer() {
+            @Override
+            public void accept(Object o) {
+              if (o instanceof FrvaTreeMeasurementItem) {
+                model.getCurrentSelectionList()
+                    .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
               }
-            });
-          } else {
-            c.getRemoved().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
+            }
+          });
+        } else {
+          c.getRemoved().forEach(new Consumer() {
+            @Override
+            public void accept(Object o) {
+              if (o instanceof FrvaTreeMeasurementItem) {
+                model.getCurrentSelectionList()
+                    .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
               }
-            });
-          }
+            }
+          });
         }
       }
     };
     //TODO Deregister Listener?
     treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
-    treeView.getRoot().getChildren().addListener(new ListChangeListener() {
-      @Override
-      public void onChanged(Change c) {
-        c.next();
-        if (c.getList().size() == 0) {
-          treeView.setShowRoot(true);
-        } else {
-          treeView.setShowRoot(false);
-        }
+    treeView.getRoot().getChildren().addListener((ListChangeListener) c -> {
+      c.next();
+      if (c.getList().size() == 0) {
+        treeView.setShowRoot(true);
+      } else {
+        treeView.setShowRoot(false);
       }
     });
     if (treeView.getRoot().getChildren().size() != 0) {

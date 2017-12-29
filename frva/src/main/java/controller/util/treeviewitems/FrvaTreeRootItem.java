@@ -42,11 +42,4 @@ public class FrvaTreeRootItem extends FrvaTreeItem {
     }
   }
 
-  @Override
-  public void removeMeasureSequence() {
-  }
-
-  @Override
-  public void addMeasureSequence() {
-  }
 }

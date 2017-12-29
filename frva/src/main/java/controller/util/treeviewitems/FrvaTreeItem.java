@@ -9,8 +9,9 @@ import javafx.scene.control.CheckBoxTreeItem;
 public abstract class FrvaTreeItem extends CheckBoxTreeItem {
 
   private final Logger logger = Logger.getLogger("FRVA");
-  private int containingMeasureSequences;
-  private String name;
+  protected int containingMeasureSequences;
+  protected String name;
+  protected int pseudoCounter;
 
   /**
    * Constructor.
@@ -19,6 +20,7 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
    */
   public FrvaTreeItem(String name) {
     containingMeasureSequences = 0;
+    pseudoCounter = 0;
     this.name = name;
     setValue(name);
   }
@@ -50,11 +52,14 @@ public abstract class FrvaTreeItem extends CheckBoxTreeItem {
   }
 
   /**
-   * Checks if contains children.
-   *
-   * @return a boolean with the anwser
+   * Initially called to have the no of Measurements when lazyLoaded.
+   * @param amount of measurements.
    */
-  public boolean checkIfEmpty() {
-    return this.getChildren().isEmpty();
+  public void setPseudoCounter(int amount) {
+    if (getParent() != null) {
+      ((FrvaTreeItem) getParent()).setPseudoCounter(amount);
+      this.pseudoCounter += amount;
+      setValue(name + " (" + pseudoCounter + ")");
+    }
   }
 }
