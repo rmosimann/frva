@@ -23,7 +23,7 @@ public class LiveDataParser {
   private final FrvaModel model;
   private OutputStream outputStream;
 
-  private Runnable inputStremReader;
+  private Runnable inputStreamReader;
 
   private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
@@ -88,7 +88,7 @@ public class LiveDataParser {
    * @param inputStream inputStran to handle.
    */
   private void startInputParsing(InputStream inputStream) {
-    inputStremReader = new Runnable() {
+    inputStreamReader = new Runnable() {
       @Override
       public void run() {
 
@@ -97,6 +97,7 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
+            liveViewController.printToConsole((char) read);
             System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
@@ -106,11 +107,10 @@ public class LiveDataParser {
       }
     };
 
-    Thread thread = new Thread(inputStremReader);
+    Thread thread = new Thread(inputStreamReader);
     thread.setDaemon(true);
     thread.start();
   }
-
 
 
   /**

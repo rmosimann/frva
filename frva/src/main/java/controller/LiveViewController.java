@@ -14,6 +14,7 @@ import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetInterval;
 import controller.util.liveviewparser.CommandSetItegrationTime;
 import controller.util.liveviewparser.CommandSetTime;
+import controller.util.liveviewparser.Console;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -35,6 +36,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -50,6 +52,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
@@ -67,12 +70,14 @@ public class LiveViewController {
   private ServiceRecord[] selectedServiceRecord;
   private StreamConnection openStreamConnection;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
+  private Stage stage;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
   private LiveDataParser liveDataParser;
 
   private MeasureSequence selectedMeasurement;
+  private Console console;
 
   @FXML
   private ListView<MeasureSequence> measurementListView;
@@ -166,13 +171,13 @@ public class LiveViewController {
   private Label currentCommandLabel2;
 
 
-
   /**
    * Constructor.
    *
    * @param model the one and only model.
    */
   public LiveViewController(FrvaModel model) {
+
     connectionStateInit = new ConnectionStateInit(this);
     state.setValue(connectionStateInit);
     this.model = model;
@@ -187,6 +192,16 @@ public class LiveViewController {
     initializeLayout();
     addBindings();
     addListeners();
+    setupConsoleWindow();
+  }
+
+  private void setupConsoleWindow() {
+    stage = new Stage();
+    console = new Console();
+    Scene scene = new Scene(console, 800, 600);
+    stage.setScene(scene);
+    //TODO: Remove when on Real Device -> Start with sucessful connection
+    stage.show();
   }
 
 
@@ -544,5 +559,14 @@ public class LiveViewController {
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     Date date = new Date();
     model.setCurrentLiveSdCardPath(dateFormat.format(date));
+  }
+
+  public void showConsole() {
+    stage.show();
+    stage.toFront();
+  }
+
+  public void printToConsole(char c) {
+    this.console.print(Character.toString(c));
   }
 }
