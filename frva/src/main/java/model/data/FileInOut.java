@@ -1,12 +1,15 @@
 package model.data;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -140,10 +143,11 @@ public class FileInOut {
    * @param filter name of the calib file (normally cal.csv)
    * @return created calibration file.
    */
-  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter) {
+  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter)
+     {
+
     File folder = sdCard.getSdCardFile();
-    File[] listOfFiles = folder.listFiles((dir, name) -> name.contains(filter)
-        && name.endsWith(".csv") && !name.equals("db.csv"));
+    File[] listOfFiles = folder.listFiles((dir, name) -> name.equals(filter));
     return new CalibrationFile(listOfFiles[0]);
   }
 
@@ -380,7 +384,7 @@ public class FileInOut {
    *
    * @param measureSequence of measureSequences to add.
    * @param calibrationFile of the attached device.
-   * @param currentSdCard Path of the SDCard where the Data should be written to.
+   * @param currentSdCard   Path of the SDCard where the Data should be written to.
    */
   public static void writeLiveMeasurements(MeasureSequence measureSequence,
                                            CalibrationFile calibrationFile, File currentSdCard) {
@@ -422,4 +426,62 @@ public class FileInOut {
     }
   }
 
+  /**
+   * Tries to find empty folders and files in library and deletes them.
+   */
+  public static void checkForEmptyFiles() {
+    File lib = new File(FrvaModel.LIBRARYPATH);
+    for (File sdCard : lib.listFiles()) {
+
+      if (sdCard.isDirectory()) {
+        for (File dataFolder : sdCard.listFiles()) {
+
+          //Checks if the dataFile contains no measurements.
+          if (dataFolder.isDirectory()) {
+            for (File dataFile : dataFolder.listFiles()) {
+              if (dataFile.getName().toLowerCase().endsWith(".csv") && dataFile.length() == 0) {
+                dataFile.delete();
+              }
+            }
+
+            //Checks if a File is in the Datafolder, deletes Folder if no File is present.
+
+            if (dataFolder.listFiles(new FilenameFilter() {
+              @Override
+              public boolean accept(File dir, String name) {
+                return name.endsWith(".CSV") || name.endsWith(".csv");
+              }
+            }).length < 1) {
+              logger.info("delete " + dataFolder.getPath());
+              for (File file : dataFolder.listFiles()) {
+                file.delete();
+              }
+              dataFolder.delete();
+            }
+
+          }
+        }
+
+        //Checks if SD card contains no DataFolders and deletes cal-File and db File.
+
+        if (sdCard.listFiles(new FileFilter() {
+          @Override
+          public boolean accept(File pathname) {
+            return pathname.isDirectory();
+          }
+        }).length == 0) {
+          for (File file : sdCard.listFiles()) {
+            logger.info("delete File: " + file.getPath());
+            file.delete();
+          }
+          logger.info("delete Folder: " + sdCard.getPath());
+          sdCard.delete();
+        }
+
+      }
+
+
+    }
+
+  }
 }

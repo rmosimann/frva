@@ -1,7 +1,9 @@
 package model.data;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -31,7 +33,9 @@ public class SdCard {
       this.name = name;
     }
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
+
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
+
 
     if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
       dataFiles = FileInOut.getDataFiles(this);

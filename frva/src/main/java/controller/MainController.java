@@ -7,13 +7,11 @@ import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -135,6 +133,7 @@ public class MainController {
       unselectTickedItems(treeView.getRoot());
       model.deleteMeasureSequences(measurements);
     }
+    FileInOut.checkForEmptyFiles();
 
 
   }
