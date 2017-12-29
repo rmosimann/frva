@@ -63,10 +63,6 @@ public class FrvaModel {
    */
   public FrvaModel() {
     LIBRARYPATH = readInProperties();
-    if (LIBRARYPATH == null) {
-      LIBRARYPATH = System.getProperty("user.home") + File.separator
-          + "FRVA" + File.separator;
-    }
     loadLibrary();
   }
 
@@ -96,7 +92,10 @@ public class FrvaModel {
     }
 
     //System.out.println(prop.getProperty("librarypath"));
-    return prop.getProperty("librarypath");
+    String libPath = prop.getProperty("librarypath");
+
+    return libPath == null ? System.getProperty("user.home") + File.separator + "FRVA"
+        + File.separator : libPath;
   }
 
   /**
