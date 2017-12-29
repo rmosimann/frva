@@ -73,7 +73,6 @@ public class FakeDataStream extends InputStream {
   @Override
   public int read() throws IOException {
     index = index % measurement.length();
-    // System.out.println(measurement.charAt(index+1));
     return measurement.charAt(index++);
   }
 
