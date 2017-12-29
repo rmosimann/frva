@@ -59,33 +59,6 @@ public class SdCard {
   }
 
   /**
-   * Checks if SDCARD is empty, empty DataFiles are removed before.
-   *
-   * @return true when empty.
-   */
-  public boolean isEmpty() {
-    if (dataFiles.isEmpty()) {
-      deleteFile(sdCardFile);
-      System.out.println("delete " + sdCardFile + " because it is empty");
-
-      return true;
-    }
-    boolean isEmpty = true;
-    for (DataFile dfile : dataFiles) {
-      System.out.println("dataFile");
-      if (!dfile.isEmpty()) {
-        isEmpty = false;
-      }
-    }
-    if (isEmpty) {
-      deleteFile(sdCardFile);
-      System.out.println("delete " + sdCardFile + " because it is empty");
-    }
-    return isEmpty;
-  }
-
-
-  /**
    * Getter for the devices Serial-Number.
    *
    * @return SerialNumber as String.
