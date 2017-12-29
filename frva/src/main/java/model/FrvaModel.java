@@ -1,11 +1,8 @@
 package model;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -40,7 +36,8 @@ import model.data.SdCard;
 public class FrvaModel {
 
 
-  public static String LIBRARYPATH;
+  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator
+      + "FRVA" + File.separator;
   private final ObservableList liveMeasurements = FXCollections.observableArrayList();
   private File currentLiveSdCardPath;
   private final Logger logger = Logger.getLogger("FRVA");
@@ -62,46 +59,12 @@ public class FrvaModel {
    * Constructor for a new Model.
    */
   public FrvaModel() {
-    LIBRARYPATH = readInProperties();
     loadLibrary();
-  }
-
-  private String readInProperties() {
-    Properties prop = new Properties();
-    String filename = "config.properties";
-    InputStream input = getClass().getClassLoader().getResourceAsStream(filename);
-    if (input == null) {
-      File configFile = new File("src" + File.separator + "main"
-          + File.separator + "resources" + File.separator + "config.properties");
-      try (OutputStream output = new FileOutputStream(configFile)) {
-        prop.setProperty("librarypath", System.getProperty("user.home") + File.separator
-            + "FRVA" + File.separator);
-        prop.store(output, null);
-        logger.info("Created new properties.config file: " + configFile.getPath());
-        return System.getProperty("user.home") + File.separator + "FRVA" + File.separator;
-      } catch (IOException io) {
-        io.printStackTrace();
-      }
-    }
-
-    try {
-      input = getClass().getClassLoader().getResourceAsStream(filename);
-      prop.load(input);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    //System.out.println(prop.getProperty("librarypath"));
-    String libPath = prop.getProperty("librarypath");
-
-    return libPath == null ? System.getProperty("user.home") + File.separator + "FRVA"
-        + File.separator : libPath;
   }
 
   /**
    * Loads existing Library or creates new one, when LibraryPath is empty.
    */
-
   private void loadLibrary() {
     logger.info("Library path is set to " + LIBRARYPATH);
 
