@@ -43,7 +43,6 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
         } else {
           FrvaTreeYearItem pseudoElement = new FrvaTreeYearItem("pseudo-Element");
           sdCardItem.getChildren().add(pseudoElement);
-          System.out.println("setting psuedocounter +" + sdCard.getPseudoCounter());
           pseudoElement.setPseudoCounter(sdCard.getPseudoCounter());
         }
       }
