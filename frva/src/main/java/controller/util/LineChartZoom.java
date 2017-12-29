@@ -57,7 +57,7 @@ public class LineChartZoom {
   private double yaxisUpperBoundBegin;
   private double moveStartX;
   private double moveStartY;
-  private final int minZoomRectangelSize = 30;
+  private final int minZoomRectangelSize = 50;
   private boolean isActive = false;
 
   private Point2D zoomStartPoint;
@@ -212,6 +212,13 @@ public class LineChartZoom {
 
         if (Mode.ZOOMIN.equals(currentMouseMode.getValue())) {
           //Right
+          if (zoomRect.getWidth() < minZoomRectangelSize
+              || zoomRect.getHeight() < minZoomRectangelSize) {
+            zoomRect.getStyleClass().add("zoomRectToSmall");
+          } else {
+            zoomRect.getStyleClass().remove("zoomRectToSmall");
+          }
+
           if (event.getX() > zoomStartPoint.getX()) {
             zoomRect.setWidth(event.getX() - zoomRect.getX());
           } else {
@@ -224,13 +231,6 @@ public class LineChartZoom {
           } else {
             zoomRect.setHeight(zoomStartPoint.getY() - event.getY());
             zoomRect.setY(event.getY());
-          }
-
-          if (zoomRect.getWidth() < minZoomRectangelSize
-              || zoomRect.getHeight() < minZoomRectangelSize) {
-            zoomRect.getStyleClass().add("zoomRectToSmall");
-          } else {
-            zoomRect.getStyleClass().remove("zoomRectToSmall");
           }
 
         }
@@ -253,7 +253,7 @@ public class LineChartZoom {
             zoomRect.getY() - borderTop + zoomRect.getHeight());
         if (anchorPane.getChildren().remove(zoomRect)
             && ((lowerRight.getX() - upperLeft.getX()) > minZoomRectangelSize
-            || (lowerRight.getY() - upperLeft.getY()) > minZoomRectangelSize)) {
+            && (lowerRight.getY() - upperLeft.getY()) > minZoomRectangelSize)) {
           zoomIn(upperLeft, lowerRight);
 
         }
@@ -486,7 +486,6 @@ public class LineChartZoom {
   }
 
   private void zoomInScroll(ScrollEvent event) {
-    logger.info("Zooming in: " + event.getX() + " " + event.getY());
 
     if (isInChartRange(event.getX(), event.getY())) {
       Point2D upleft;
