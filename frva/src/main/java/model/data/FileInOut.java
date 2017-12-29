@@ -143,8 +143,7 @@ public class FileInOut {
    * @param filter name of the calib file (normally cal.csv)
    * @return created calibration file.
    */
-  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter)
-     {
+  public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter) {
 
     File folder = sdCard.getSdCardFile();
     File[] listOfFiles = folder.listFiles((dir, name) -> name.equals(filter));
