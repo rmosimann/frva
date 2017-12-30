@@ -148,7 +148,6 @@ public class MeasureSequence {
    */
   public int getHour() {
     String timestamp = metadata[2];
-    System.out.println(timestamp + " " + timestamp.length());
 
     if (timestamp.length() == 5) {
       return Integer.parseInt(timestamp.substring(0, 1));
@@ -367,11 +366,16 @@ public class MeasureSequence {
   }
 
   public void setMetadata(String[] metadata) {
-    //  System.out.println("set metadata");
     this.metadata = metadata;
   }
 
   public String[] getMetadata() {
     return metadata;
+  }
+
+  @Override
+  public int hashCode() {
+    return (((Integer.parseInt(metadata[0])) + Integer.parseInt(metadata[1]) * 31)
+        + Integer.parseInt(metadata[2]) * 31);
   }
 }

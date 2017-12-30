@@ -30,7 +30,6 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
     data.put(keyName, content);
-    //System.out.println(Arrays.toString(content));
     updated();
   }
 
