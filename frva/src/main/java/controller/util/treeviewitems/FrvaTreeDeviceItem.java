@@ -70,7 +70,6 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
       ((FrvaTreeItem) getParent()).addMeasureSequence();
     }
     this.containingMeasureSequences++;
-    System.out.println("called");
 
     setValue(name + " (" + containingMeasureSequences + "/" + pseudoCounter + ")");
   }

@@ -90,7 +90,6 @@ public class CommandAutoMode extends AbstractCommand {
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))
         .mapToDouble(Double::parseDouble)
         .toArray();
-    //System.out.println("added " + keyName.name());
 
     measureSequence.addData(keyName, doubles);
   }

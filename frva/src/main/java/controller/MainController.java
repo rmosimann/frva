@@ -7,13 +7,11 @@ import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -364,9 +362,6 @@ public class MainController {
         ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
           @Override
           public void accept(Object sdCard) {
-            System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
-            );
-            System.out.println(model.getCurrentLiveSdCardPath().getPath());
             if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
                 .equals(model.getCurrentLiveSdCardPath().getPath())) {
               returnValue[0] = (FrvaTreeSdCardItem) sdCard;
