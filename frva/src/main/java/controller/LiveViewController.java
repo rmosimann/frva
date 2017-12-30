@@ -78,7 +78,10 @@ public class LiveViewController {
   private ListView<MeasureSequence> measurementListView;
 
   @FXML
-  private LineChart<Double, Double> datachart;
+  private LineChart<Double, Double> datachartRaw;
+
+  @FXML
+  private LineChart<Double, Double> datachartReflectance;
 
   @FXML
   private NumberAxis xaxis;
@@ -191,11 +194,11 @@ public class LiveViewController {
 
 
   private void initializeLayout() {
-    datachart.setAnimated(false);
-    datachart.setCreateSymbols(false);
-    datachart.setAlternativeRowFillVisible(false);
-    datachart.setLegendVisible(false);
-    datachart.setData(lineChartData);
+    datachartRaw.setAnimated(false);
+    datachartRaw.setCreateSymbols(false);
+    datachartRaw.setAlternativeRowFillVisible(false);
+    datachartRaw.setLegendVisible(false);
+    datachartRaw.setData(lineChartData);
   }
 
 
