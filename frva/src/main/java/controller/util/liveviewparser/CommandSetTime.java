@@ -88,6 +88,7 @@ public class CommandSetTime extends AbstractCommand {
     }
 
     if (stringBuilder.toString().contains("Send Y to set time now")) {
+      stringBuilder = new StringBuilder();
       liveDataParser.executeCommand("Y");
       liveDataParser.runNextCommand();
     }

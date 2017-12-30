@@ -32,7 +32,7 @@ public class CommandSetInterval extends AbstractCommand {
 
 
   private void handleLine(StringBuilder stringBuilder) {
-    if (stringBuilder.toString().contains("Interval[s] = ")) {
+    if (stringBuilder.toString().contains("Interval[s] =")) {
       liveDataParser.getDeviceStatus().setIntervalTime(parseNumber(stringBuilder.toString()));
     }
     if (stringBuilder.toString().contains("config.txt written")) {

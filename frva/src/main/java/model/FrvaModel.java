@@ -1,12 +1,6 @@
 package model;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +11,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -29,6 +24,7 @@ import javafx.scene.control.ButtonType;
 import javax.bluetooth.RemoteDevice;
 import model.data.DataFile;
 import model.data.FileInOut;
+import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 import model.data.SdCard;
 
@@ -217,6 +213,17 @@ public class FrvaModel {
 
   public ObservableList<MeasureSequence> getLiveSequences() {
     return liveSequences;
+  }
+
+  /**
+   * Adds a LiveMeasurementSequence to the list.
+   *
+   * @param measureSequence the MeasurementSequence to add.
+   */
+  public void addLiveSequence(LiveMeasureSequence measureSequence) {
+    Platform.runLater(() -> {
+      liveSequences.add(measureSequence);
+    });
   }
 
   public File getCurrentLiveSdCardPath() {

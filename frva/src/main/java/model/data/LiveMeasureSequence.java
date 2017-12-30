@@ -131,6 +131,7 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
+    listener.refreshList();
     listener = null;
     logger.info("measurement complete");
     FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);

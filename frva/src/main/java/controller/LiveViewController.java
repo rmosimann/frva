@@ -201,7 +201,7 @@ public class LiveViewController {
 
   private void addBindings() {
     systemNameLabel.textProperty().bind(deviceStatus.systemnameProperty());
-    gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
+    //    gpsPositionLabel.textProperty().bind(deviceStatus.gpsInformationProperty());
     integrationTimeWrLabel.textProperty().bind(
         Bindings.convert(deviceStatus.integrationTimeWrProperty()));
     integrationTimeVegLabel.textProperty().bind(
@@ -297,6 +297,11 @@ public class LiveViewController {
 
 
   private void addListeners() {
+    deviceStatus.gpsInformationProperty().addListener((observable, oldValue, newValue) -> {
+      //TODO:
+      gpsPositionLabel.setText(newValue);
+    });
+
     model.activeViewProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.equals(activeView) && state.getValue().equals(connectionStateInit)) {
         state.getValue().handle();

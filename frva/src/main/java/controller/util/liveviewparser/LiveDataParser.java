@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import model.FrvaModel;
+import model.data.LiveMeasureSequence;
 
 public class LiveDataParser {
   private static final Logger logger = Logger.getLogger("FRVA");
@@ -151,6 +152,18 @@ public class LiveDataParser {
       currentCommand.setValue(new CommandIdle(this, model));
     }
   }
+
+  /**
+   * Creates a LiveMeasurementSequence and adds it to the Model.
+   *
+   * @return the newly created MeasureSequence.
+   */
+  public LiveMeasureSequence createLiveMeasasurementSequence() {
+    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController);
+    model.addLiveSequence(liveMeasureSequence);
+    return liveMeasureSequence;
+  }
+
 
   public ArrayDeque<CommandInterface> getCommandQueue() {
     return commandQueue;

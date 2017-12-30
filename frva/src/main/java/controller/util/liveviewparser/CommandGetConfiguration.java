@@ -50,16 +50,16 @@ public class CommandGetConfiguration extends AbstractCommand {
     if (stringBuilder.toString().contains("LED power:")) {
       liveDataParser.getDeviceStatus().setLedPower(parseNumber(stringBuilder.toString()));
     }
-    if (stringBuilder.toString().contains("3FLD pixels")) {
-      parsing3fldPixels = true;
-      liveDataParser.getDeviceStatus().setLedPower(parseNumber(stringBuilder.toString()));
-    }
     if (parsing3fldPixels) {
       fldPixels.add(parseNumber(stringBuilder.toString()));
       if (fldPixels.size() == 5) {
         parsing3fldPixels = false;
         liveDataParser.getDeviceStatus().setFldPixels(Arrays.toString(fldPixels.toArray()));
       }
+    }
+    if (stringBuilder.toString().contains("3FLD pixels")) {
+      parsing3fldPixels = true;
+      stringBuilder.delete(0, stringBuilder.length());
     }
     if (stringBuilder.toString().contains("QE averages = ")) {
       liveDataParser.getDeviceStatus().setQeAverages(parseNumber(stringBuilder.toString()));
