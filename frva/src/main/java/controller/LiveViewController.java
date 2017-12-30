@@ -536,6 +536,11 @@ public class LiveViewController {
 
   }
 
+  /**
+   * Refreshes the List of LiveMeasurements.
+   *
+   * @param currentMeasureSequence the current Measurement that has been updated.
+   */
   public void refreshList(LiveMeasureSequence currentMeasureSequence) {
     if (currentMeasureSequence == measurementListView.getSelectionModel().getSelectedItem()) {
       redrawGraph(currentMeasureSequence);
