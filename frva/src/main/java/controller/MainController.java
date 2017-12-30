@@ -383,7 +383,6 @@ public class MainController {
         ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
           @Override
           public void accept(Object sdCard) {
-            // System.out.println(model.getCurrentLiveSdCardPath().getPath());
             if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
                 .equals(model.getCurrentLiveSdCardPath().getPath())) {
               returnValue[0] = (FrvaTreeSdCardItem) sdCard;
