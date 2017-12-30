@@ -1,12 +1,10 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 public class CommandGetGpsinfo extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
 
-  public CommandGetGpsinfo(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandGetGpsinfo(LiveDataParser liveDataParser) {
+    super(liveDataParser);
   }
 
   @Override

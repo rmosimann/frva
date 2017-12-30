@@ -231,22 +231,22 @@ public class LiveViewController {
     sendAnyCommandButton.setOnAction(event -> {
       String command = sendAnyCommandField.getText();
       sendAnyCommandField.setText("");
-      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, model, command));
+      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, command));
     });
 
     autoModeButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
     });
 
     manualModeButton.setOnAction(event -> {
-      liveDataParser.addCommandToQueue(new CommandManualMode(liveDataParser, model));
+      liveDataParser.addCommandToQueue(new CommandManualMode(liveDataParser));
     });
 
     manualMeasurementButton.setOnAction(event -> {
       int countFieldText = Integer.parseInt(manualMeasurementCountField.getText());
       for (int i = 0; i < countFieldText; i++) {
         liveDataParser.addCommandToQueue(new CommandManualMeasurement(
-            liveDataParser, model, manualMeasOptimiseCheckBox.isSelected()));
+            liveDataParser, manualMeasOptimiseCheckBox.isSelected()));
       }
     });
 
@@ -260,7 +260,7 @@ public class LiveViewController {
 
       Optional<ButtonType> result = alert.showAndWait();
       if (result.get() == ButtonType.OK) {
-        liveDataParser.addCommandToQueue(new CommandSetTime(liveDataParser, model, null));
+        liveDataParser.addCommandToQueue(new CommandSetTime(liveDataParser, null));
       }
     });
 
@@ -273,9 +273,9 @@ public class LiveViewController {
       Optional<String> result = dialog.showAndWait();
       if (result.isPresent()) {
         liveDataParser.addCommandToQueue(
-            new CommandSetItegrationTime(liveDataParser, model, Integer.valueOf(result.get())));
+            new CommandSetItegrationTime(liveDataParser, Integer.valueOf(result.get())));
         liveDataParser.addCommandToQueue(
-            new CommandGetConfiguration(liveDataParser, model));
+            new CommandGetConfiguration(liveDataParser));
       }
     });
 
@@ -288,9 +288,9 @@ public class LiveViewController {
       Optional<String> result = dialog.showAndWait();
       if (result.isPresent()) {
         liveDataParser.addCommandToQueue(
-            new CommandSetInterval(liveDataParser, model, Integer.valueOf(result.get())));
+            new CommandSetInterval(liveDataParser, Integer.valueOf(result.get())));
         liveDataParser.addCommandToQueue(
-            new CommandGetConfiguration(liveDataParser, model));
+            new CommandGetConfiguration(liveDataParser));
       }
     });
   }

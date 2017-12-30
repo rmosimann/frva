@@ -1,7 +1,6 @@
 package controller.util.liveviewparser;
 
 import java.util.logging.Logger;
-import model.FrvaModel;
 
 /**
  * Created by patrick.wigger on 28.11.17.
@@ -10,11 +9,9 @@ public abstract class AbstractCommand implements CommandInterface {
   static final Logger logger = Logger.getLogger("FRVA");
 
   protected LiveDataParser liveDataParser;
-  protected FrvaModel model;
 
-  protected AbstractCommand(LiveDataParser liveDataParser, FrvaModel model) {
+  protected AbstractCommand(LiveDataParser liveDataParser) {
     this.liveDataParser = liveDataParser;
-    this.model = model;
   }
 
   public void onQueueUpdate() {

@@ -12,20 +12,17 @@ import controller.util.DeviceStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import org.junit.Before;
 import org.junit.Test;
 
 public class CommandTest {
 
-  FrvaModel mockModel;
   LiveDataParser mockLiveDataParser;
   DeviceStatus deviceStatus;
 
   @Before
   public void setUp() throws Exception {
-    mockModel = mock(FrvaModel.class);
     mockLiveDataParser = mock(LiveDataParser.class);
     deviceStatus = new DeviceStatus();
 
@@ -36,7 +33,7 @@ public class CommandTest {
   @Test
   public void commandGetCalibration() {
 
-    CommandGetCalibration command = new CommandGetCalibration(mockLiveDataParser, mockModel);
+    CommandGetCalibration command = new CommandGetCalibration(mockLiveDataParser);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.fc.toString());
 
@@ -76,7 +73,7 @@ public class CommandTest {
     long lon = 789;
     long lat = 123;
 
-    CommandGetGpsinfo command = new CommandGetGpsinfo(mockLiveDataParser, mockModel);
+    CommandGetGpsinfo command = new CommandGetGpsinfo(mockLiveDataParser);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.G.toString());
 
@@ -98,7 +95,7 @@ public class CommandTest {
 
   @Test
   public void commandInizializeToAutommode() {
-    CommandInitialize command = new CommandInitialize(mockLiveDataParser, mockModel);
+    CommandInitialize command = new CommandInitialize(mockLiveDataParser);
 
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.B.toString());
@@ -120,7 +117,7 @@ public class CommandTest {
 
   @Test
   public void commandInizializeToIdle() {
-    CommandInitialize command = new CommandInitialize(mockLiveDataParser, mockModel);
+    CommandInitialize command = new CommandInitialize(mockLiveDataParser);
 
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.B.toString());
@@ -142,7 +139,7 @@ public class CommandTest {
   public void commandAny() {
     String commandString = "testcommand";
 
-    CommandAny command = new CommandAny(mockLiveDataParser, mockModel, commandString);
+    CommandAny command = new CommandAny(mockLiveDataParser, commandString);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(commandString);
   }
@@ -150,7 +147,7 @@ public class CommandTest {
 
   @Test
   public void commandAutoMode() {
-    CommandAutoMode command = new CommandAutoMode(mockLiveDataParser, mockModel);
+    CommandAutoMode command = new CommandAutoMode(mockLiveDataParser);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.A.toString());
 
@@ -183,7 +180,7 @@ public class CommandTest {
 
     for (int i = 0; i < 10; i++) {
       if (i == 9) {
-        queue.add(new CommandIdle(mockLiveDataParser, mockModel));
+        queue.add(new CommandIdle(mockLiveDataParser));
       }
       for (char c : testString.toCharArray()) {
         command.receive(c);
@@ -201,7 +198,7 @@ public class CommandTest {
     String off = "off";
     String[] fldPixels = {"4444", "4444", "4444", "4444", "4444"};
 
-    CommandGetConfiguration command = new CommandGetConfiguration(mockLiveDataParser, mockModel);
+    CommandGetConfiguration command = new CommandGetConfiguration(mockLiveDataParser);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.c.toString());
 
@@ -244,7 +241,7 @@ public class CommandTest {
 
   @Test
   public void commandIdle() {
-    CommandIdle command = new CommandIdle(mockLiveDataParser, mockModel);
+    CommandIdle command = new CommandIdle(mockLiveDataParser);
 
     command.onQueueUpdate();
 
@@ -259,7 +256,7 @@ public class CommandTest {
 
     when(mockLiveDataParser.createLiveMeasasurementSequence()).thenReturn(current);
 
-    CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, mockModel, optimize);
+    CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, optimize);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.m.toString());
 
@@ -301,7 +298,7 @@ public class CommandTest {
 
     when(mockLiveDataParser.createLiveMeasasurementSequence()).thenReturn(current);
 
-    CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, mockModel, optimize);
+    CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, optimize);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.M.toString());
 
@@ -335,7 +332,7 @@ public class CommandTest {
 
   @Test
   public void commandManualMode() {
-    CommandManualMode command = new CommandManualMode(mockLiveDataParser, mockModel);
+    CommandManualMode command = new CommandManualMode(mockLiveDataParser);
     command.sendCommand();
     verify(mockLiveDataParser).executeCommand(Commands.C.toString());
 
@@ -355,7 +352,7 @@ public class CommandTest {
   public void commandSetInterval() {
     int interval = 30;
 
-    CommandSetInterval command = new CommandSetInterval(mockLiveDataParser, mockModel, interval);
+    CommandSetInterval command = new CommandSetInterval(mockLiveDataParser, interval);
     command.sendCommand();
 
     verify(mockLiveDataParser).executeCommand(Commands.i.toString() + " " + interval);
@@ -377,7 +374,7 @@ public class CommandTest {
   public void commandSetIntegrationTime() {
     int integrationtime = 30;
 
-    CommandSetItegrationTime command = new CommandSetItegrationTime(mockLiveDataParser, mockModel, integrationtime);
+    CommandSetItegrationTime command = new CommandSetItegrationTime(mockLiveDataParser, integrationtime);
     command.sendCommand();
 
     verify(mockLiveDataParser).executeCommand(Commands.I.toString() + " " + integrationtime);
@@ -399,7 +396,7 @@ public class CommandTest {
   public void commandSetMaxIntegrationTime() {
     int integrationTimeMax = 1000;
 
-    CommandSetMaxIntegrationTime command = new CommandSetMaxIntegrationTime(mockLiveDataParser, mockModel, integrationTimeMax);
+    CommandSetMaxIntegrationTime command = new CommandSetMaxIntegrationTime(mockLiveDataParser, integrationTimeMax);
     command.sendCommand();
 
     verify(mockLiveDataParser).executeCommand(Commands.IM.toString() + " " + integrationTimeMax);
@@ -419,7 +416,7 @@ public class CommandTest {
   @Test
   public void commandSetTime() {
 
-    CommandSetTime command = new CommandSetTime(mockLiveDataParser, mockModel, null);
+    CommandSetTime command = new CommandSetTime(mockLiveDataParser, null);
     command.sendCommand();
 
     verify(mockLiveDataParser).executeCommand(Commands.T.toString());
@@ -445,7 +442,7 @@ public class CommandTest {
 
     LocalDateTime now = LocalDateTime.now();
 
-    CommandSetTime command = new CommandSetTime(mockLiveDataParser, mockModel, now);
+    CommandSetTime command = new CommandSetTime(mockLiveDataParser, now);
     command.sendCommand();
 
     verify(mockLiveDataParser).executeCommand(Commands.T.toString());

@@ -1,7 +1,6 @@
 package controller.util.liveviewparser;
 
 import java.util.Arrays;
-import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
@@ -13,8 +12,8 @@ public class CommandAutoMode extends AbstractCommand {
   private LiveMeasureSequence currentMeasureSequence;
 
 
-  public CommandAutoMode(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandAutoMode(LiveDataParser liveDataParser) {
+    super(liveDataParser);
   }
 
   @Override
@@ -46,10 +45,11 @@ public class CommandAutoMode extends AbstractCommand {
 
     } else if (line.contains("Voltage = ")) {
       currentMeasureSequence.setComplete(true,
-          liveDataParser.getDeviceStatus().getCalibrationFile(), model.getCurrentLiveSdCardPath());
+          liveDataParser.getDeviceStatus().getCalibrationFile(),
+          liveDataParser.getCurrentLiveSdCardPath());
 
       if (liveDataParser.getCommandQueue().size() > 0) {
-        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
         liveDataParser.runNextCommand();
       }
     } else if (line.contains("WR") && line.contains("DC")) {

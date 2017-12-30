@@ -2,7 +2,6 @@ package controller.util.liveviewparser;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.FrvaModel;
 import model.data.CalibrationFile;
 
 public class CommandGetCalibration extends AbstractCommand {
@@ -14,10 +13,9 @@ public class CommandGetCalibration extends AbstractCommand {
    * Creates a CommandGetCalibration instance that reads Calibrationfile from liveDevice.
    *
    * @param liveDataParser where all the datahandling with the LiveDevice happens.
-   * @param model          the one and only Model.
    */
-  public CommandGetCalibration(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandGetCalibration(LiveDataParser liveDataParser) {
+    super(liveDataParser);
 
 
     data = new ArrayList<>();

@@ -1,7 +1,6 @@
 package controller.util.liveviewparser;
 
 import java.util.Arrays;
-import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
@@ -11,8 +10,8 @@ public class CommandManualMeasurement extends AbstractCommand {
   private LiveMeasureSequence currentMeasureSequence;
 
   public CommandManualMeasurement(
-      LiveDataParser liveDataParser, FrvaModel model, boolean optimize) {
-    super(liveDataParser, model);
+      LiveDataParser liveDataParser, boolean optimize) {
+    super(liveDataParser);
     this.optimize = optimize;
   }
 
@@ -62,7 +61,7 @@ public class CommandManualMeasurement extends AbstractCommand {
 
     } else if (string.contains("Voltage =")) {
       currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus()
-          .getCalibrationFile(), model.getCurrentLiveSdCardPath());
+          .getCalibrationFile(), liveDataParser.getCurrentLiveSdCardPath());
       liveDataParser.runNextCommand();
     }
   }

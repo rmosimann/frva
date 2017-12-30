@@ -1,14 +1,12 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 public class CommandSetInterval extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private int intervalTime;
 
 
-  public CommandSetInterval(LiveDataParser liveDataParser, FrvaModel model, int intervalTime) {
-    super(liveDataParser, model);
+  public CommandSetInterval(LiveDataParser liveDataParser, int intervalTime) {
+    super(liveDataParser);
     this.intervalTime = intervalTime;
   }
 

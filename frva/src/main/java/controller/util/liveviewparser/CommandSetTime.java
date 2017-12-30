@@ -1,14 +1,13 @@
 package controller.util.liveviewparser;
 
 import java.time.LocalDateTime;
-import model.FrvaModel;
 
 public class CommandSetTime extends AbstractCommand {
   private final LocalDateTime dateTime;
   StringBuilder stringBuilder = new StringBuilder();
 
-  public CommandSetTime(LiveDataParser liveDataParser, FrvaModel model, LocalDateTime dateTime) {
-    super(liveDataParser, model);
+  public CommandSetTime(LiveDataParser liveDataParser, LocalDateTime dateTime) {
+    super(liveDataParser);
     this.dateTime = dateTime;
   }
 

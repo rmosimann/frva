@@ -2,6 +2,7 @@ package controller.util.liveviewparser;
 
 import controller.LiveViewController;
 import controller.util.DeviceStatus;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +66,7 @@ public class LiveDataParser {
       }
     });
 
-    currentCommand.setValue(new CommandInitialize(this, model));
+    currentCommand.setValue(new CommandInitialize(this));
     currentCommand.getValue().sendCommand();
     initializing.setValue(true);
 
@@ -149,7 +150,7 @@ public class LiveDataParser {
       currentCommand.setValue(commandQueue.poll());
       currentCommand.getValue().sendCommand();
     } else {
-      currentCommand.setValue(new CommandIdle(this, model));
+      currentCommand.setValue(new CommandIdle(this));
     }
   }
 
@@ -195,5 +196,9 @@ public class LiveDataParser {
 
   public BooleanProperty initializingProperty() {
     return initializing;
+  }
+
+  public File getCurrentLiveSdCardPath() {
+    return model.getCurrentLiveSdCardPath();
   }
 }
