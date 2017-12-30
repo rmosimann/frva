@@ -13,12 +13,17 @@ public class LiveMeasureSequence extends MeasureSequence {
 
 
   private final Map<MeasureSequence.SequenceKeyName, double[]> data = new HashMap<>();
-  private LiveViewController listener;
+  private final CalibrationFile calibrationFile;
   private boolean complete = false;
 
-  public LiveMeasureSequence(LiveViewController listener) {
+  /**
+   * Constructor.
+   *
+   * @param calibrationFile The CalibrationFile read from the device.
+   */
+  public LiveMeasureSequence(LiveViewController listener, CalibrationFile calibrationFile) {
     super();
-    this.listener = listener;
+    this.calibrationFile = calibrationFile;
   }
 
   /**
@@ -29,14 +34,8 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
     data.put(keyName, content);
-    updated();
   }
 
-  private void updated() {
-    if (listener != null) {
-      listener.redrawGraph(this);
-    }
-  }
 
   @Override
   public String toString() {
@@ -83,8 +82,24 @@ public class LiveMeasureSequence extends MeasureSequence {
     sb.append("\n");
 
     return sb.toString().replaceAll(" ", "").toString();
-
   }
+
+
+  @Override
+  public double[] getDwCoefF1Calibration() {
+    return calibrationFile.getWlF1();
+  }
+
+  @Override
+  public double[] getUpCoefF1Calibration() {
+    return calibrationFile.getUpCoefF1();
+  }
+
+  @Override
+  public double[] getWlF1Calibration() {
+    return calibrationFile.getDwCoefF1();
+  }
+
 
   @Override
   public Map<SequenceKeyName, double[]> getData() {
@@ -103,11 +118,6 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public ReflectionIndices getIndices() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
-  }
-
-  @Override
-  public double[] getWavlengthCalibration() {
     throw new UnsupportedOperationException("Not Implemented in the live view!");
   }
 
@@ -131,11 +141,8 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
-    listener.refreshList();
-    listener = null;
     logger.info("measurement complete");
     FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);
-
   }
 
   public boolean isComplete() {

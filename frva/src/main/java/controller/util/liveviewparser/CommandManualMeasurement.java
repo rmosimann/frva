@@ -62,6 +62,7 @@ public class CommandManualMeasurement extends AbstractCommand {
     } else if (string.contains("Voltage =")) {
       currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus()
           .getCalibrationFile(), liveDataParser.getCurrentLiveSdCardPath());
+
       liveDataParser.runNextCommand();
     }
   }
@@ -84,5 +85,7 @@ public class CommandManualMeasurement extends AbstractCommand {
         .toArray();
 
     measureSequence.addData(keyName, doubles);
+
+    liveDataParser.currentMeasurementUpdated(currentMeasureSequence);
   }
 }

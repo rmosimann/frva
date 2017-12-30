@@ -162,7 +162,8 @@ public class LiveDataParser {
    * @return the newly created MeasureSequence.
    */
   public LiveMeasureSequence createLiveMeasurementSequence() {
-    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController);
+    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController,
+        getDeviceStatus().getCalibrationFile());
     model.addLiveSequence(liveMeasureSequence);
     return liveMeasureSequence;
   }
@@ -202,5 +203,9 @@ public class LiveDataParser {
 
   public File getCurrentLiveSdCardPath() {
     return model.getCurrentLiveSdCardPath();
+  }
+
+  public void currentMeasurementUpdated(LiveMeasureSequence currentMeasureSequence) {
+    liveViewController.refreshList(currentMeasureSequence);
   }
 }

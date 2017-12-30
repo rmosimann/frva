@@ -87,6 +87,8 @@ public class CommandAutoMode extends AbstractCommand {
         .toArray();
 
     measureSequence.addData(keyName, doubles);
+
+    liveDataParser.currentMeasurementUpdated(currentMeasureSequence);
   }
 
 }

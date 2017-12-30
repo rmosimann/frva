@@ -53,6 +53,7 @@ import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
+import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
 
@@ -508,10 +509,6 @@ public class LiveViewController {
    * @param sequence the sequenc to draw.
    */
   public void redrawGraph(MeasureSequence sequence) {
-    Platform.runLater(() -> {
-      lineChartData.clear();
-    });
-
 
     Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
 
@@ -531,6 +528,7 @@ public class LiveViewController {
       }
 
       Platform.runLater(() -> {
+        lineChartData.clear();
         lineChartData.add(series);
       });
 
@@ -538,7 +536,10 @@ public class LiveViewController {
 
   }
 
-  public void refreshList() {
+  public void refreshList(LiveMeasureSequence currentMeasureSequence) {
+    if (currentMeasureSequence == measurementListView.getSelectionModel().getSelectedItem()) {
+      redrawGraph(currentMeasureSequence);
+    }
     measurementListView.refresh();
   }
 

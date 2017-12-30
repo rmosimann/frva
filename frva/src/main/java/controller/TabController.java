@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
@@ -584,7 +583,7 @@ public class TabController {
         entries = sequence.getReflectance().entrySet();
       }
 
-      double[] calibration = sequence.getWavlengthCalibration();
+      double[] calibration = sequence.getWlF1Calibration();
 
       for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
         double[] data = entry.getValue();
