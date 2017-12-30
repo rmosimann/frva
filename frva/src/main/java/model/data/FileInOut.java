@@ -1,7 +1,5 @@
 package model.data;
 
-import com.sun.media.jfxmedia.logging.Logger;
-import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -194,13 +192,10 @@ public class FileInOut {
          BufferedReader reader = new BufferedReader(
              new FileReader(dataFile.getOriginalFile()))) {
 
-      List<String> ids = measureSequences.stream()
-          .map(measureSequence -> measureSequence.getId())
-          .collect(Collectors.toList());
 
       String line;
       while ((line = reader.readLine()) != null) {
-        if (ids.contains(line.split(";")[0])) {
+        if (isMeasureSeqInList(line, measureSequences)) {
           for (int i = 0; i < dataFile.getMeasurementLength(); i++) {
             line = reader.readLine();
           }
@@ -237,8 +232,8 @@ public class FileInOut {
         .getOriginalFile()))) {
       while ((line = br.readLine()) != null && !found) {
 
-        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && (line.split(";")[0]
-            .equals(measureSequence.getId()))) {
+        if (line.length() > 1 && Character.isDigit(line.charAt(0)) && isCorrectMeasureSeq(line,
+            measureSequence)) {
           found = true;
 
           while ((line = br.readLine()) != null && !done) {
@@ -266,6 +261,20 @@ public class FileInOut {
       e.printStackTrace();
     }
     return measurements;
+  }
+
+  private static boolean isMeasureSeqInList(String line, List<MeasureSequence> measureSequences) {
+    for (MeasureSequence ms : measureSequences) {
+      if (isCorrectMeasureSeq(line, ms)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isCorrectMeasureSeq(String line, MeasureSequence measureSequence) {
+    String[] metadata = line.split(";");
+    return Arrays.equals(metadata, measureSequence.getMetadata());
   }
 
 
