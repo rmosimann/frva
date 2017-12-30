@@ -41,7 +41,9 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
         if (isPreview) {
           sdCardItem.createChildren(list);
         } else {
-          sdCardItem.getChildren().add(new FrvaTreeYearItem("pseudo-Element"));
+          FrvaTreeYearItem pseudoElement = new FrvaTreeYearItem("pseudo-Element");
+          sdCardItem.getChildren().add(pseudoElement);
+          pseudoElement.setPseudoCounter(sdCard.getPseudoCounter());
         }
       }
 
@@ -56,5 +58,35 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
 
   public String getDeviceSerialNr() {
     return deviceSerialNr;
+  }
+
+
+  /**
+   * Raises the counter of containing MeasureSequences.
+   */
+  @Override
+  public void addMeasureSequence() {
+    if (getParent() != null) {
+      ((FrvaTreeItem) getParent()).addMeasureSequence();
+    }
+    this.containingMeasureSequences++;
+
+    setValue(name + " (" + containingMeasureSequences + "/" + pseudoCounter + ")");
+  }
+
+  /**
+   * Adjusts counter to minus 1.
+   */
+  @Override
+  public void removeMeasureSequence() {
+    if (getParent() != null) {
+      ((FrvaTreeItem) getParent()).removeMeasureSequence();
+      this.containingMeasureSequences--;
+      if (containingMeasureSequences < 1) {
+        getParent().getChildren().remove(this);
+      }
+    }
+
+    setValue(name + " (" + (pseudoCounter - 1) + "/" + pseudoCounter + ")");
   }
 }

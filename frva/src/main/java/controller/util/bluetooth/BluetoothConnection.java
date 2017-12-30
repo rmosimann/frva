@@ -80,7 +80,6 @@ public class BluetoothConnection {
 
     remotes.forEach(remoteDevice -> {
       synchronized (inquiryCompletedEvent) {
-        System.out.println(remoteDevice.getBluetoothAddress());
         try {
           LocalDevice.getLocalDevice().getDiscoveryAgent()
               .searchServices(null, searchUuidSet, remoteDevice, dscListener);

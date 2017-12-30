@@ -2,6 +2,7 @@ package model.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import model.FrvaModel;
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
+  private int pseudoCounter;
 
   private File sdCardFile;
   private CalibrationFile calibrationFile;
@@ -22,7 +24,7 @@ public class SdCard {
    * @param name       the Name of that SDCARD.
    */
   public SdCard(File sdCardFile, String name) {
-
+    pseudoCounter = 0;
     this.sdCardFile = sdCardFile;
     if (name == null) {
       String[] arr = sdCardFile.getPath().split(File.separator);
@@ -33,7 +35,9 @@ public class SdCard {
 
     calibrationFile = FileInOut.readCalibrationFile(this, "cal");
 
-    if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
+    File dbFile = new File(sdCardFile + File.separator + "db.csv");
+
+    if (!dbFile.exists()) {
       dataFiles = FileInOut.getDataFiles(this);
       if (isPathInLibrary()) {
         FileInOut.writeDatabaseFile(this);
@@ -45,18 +49,18 @@ public class SdCard {
         e.printStackTrace();
       }
     }
-  }
 
-  /**
-   * Constructor for Recording: Empty SD Card.
-   */
-  protected SdCard() {
+    if (isPathInLibrary()) {
+      pseudoCounter += FileInOut.getLineCount(dbFile);
+    }
 
   }
+
 
   public boolean isPathInLibrary() {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);
   }
+
 
   /**
    * Getter for the devices Serial-Number.
@@ -70,6 +74,10 @@ public class SdCard {
 
   public String getName() {
     return this.name;
+  }
+
+  public int getPseudoCounter() {
+    return this.pseudoCounter;
   }
 
 
@@ -120,9 +128,6 @@ public class SdCard {
     logger.info("Deleted File:" + file);
   }
 
-  protected void setCalibrationFile(CalibrationFile calibrationFile) {
-    this.calibrationFile = calibrationFile;
-  }
 
 }
 
