@@ -50,7 +50,9 @@ public class SdCard {
       }
     }
 
-    pseudoCounter += FileInOut.getLineCount(dbFile);
+    if (isPathInLibrary()) {
+      pseudoCounter += FileInOut.getLineCount(dbFile);
+    }
 
   }
 
