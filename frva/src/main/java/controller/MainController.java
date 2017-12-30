@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -113,7 +114,14 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      FileInOut.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
+      List<MeasureSequence> exportList = model.getCurrentSelectionList().sorted(
+          new Comparator<MeasureSequence>() {
+            @Override
+            public int compare(MeasureSequence o1, MeasureSequence o2) {
+              return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+            }
+          });
+      FileInOut.createFiles(exportList, selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -375,9 +383,6 @@ public class MainController {
         ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
           @Override
           public void accept(Object sdCard) {
-            System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
-            );
-            System.out.println(model.getCurrentLiveSdCardPath().getPath());
             if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
                 .equals(model.getCurrentLiveSdCardPath().getPath())) {
               returnValue[0] = (FrvaTreeSdCardItem) sdCard;
