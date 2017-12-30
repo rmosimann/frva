@@ -35,7 +35,7 @@ public class CommandAutoMode extends AbstractCommand {
   private void handleLine(String line) {
 
     if (line.contains("Start FLAME Cycle")) {
-      currentMeasureSequence = liveDataParser.createLiveMeasasurementSequence();
+      currentMeasureSequence = liveDataParser.createLiveMeasurementSequence();
 
     } else if (line.contains("auto_mode")) {
       currentMeasureSequence.setMetadata(line.split(";"));

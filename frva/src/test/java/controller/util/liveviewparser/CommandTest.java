@@ -152,7 +152,7 @@ public class CommandTest {
     verify(mockLiveDataParser).executeCommand(Commands.A.toString());
 
     LiveMeasureSequence current = mock(LiveMeasureSequence.class);
-    when(mockLiveDataParser.createLiveMeasasurementSequence()).thenReturn(current);
+    when(mockLiveDataParser.createLiveMeasurementSequence()).thenReturn(current);
     ArrayDeque<CommandInterface> queue = new ArrayDeque();
     when(mockLiveDataParser.getCommandQueue()).thenReturn(queue);
 
@@ -254,7 +254,7 @@ public class CommandTest {
     boolean optimize = true;
     LiveMeasureSequence current = mock(LiveMeasureSequence.class);
 
-    when(mockLiveDataParser.createLiveMeasasurementSequence()).thenReturn(current);
+    when(mockLiveDataParser.createLiveMeasurementSequence()).thenReturn(current);
 
     CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, optimize);
     command.sendCommand();
@@ -296,7 +296,7 @@ public class CommandTest {
     boolean optimize = false;
     LiveMeasureSequence current = mock(LiveMeasureSequence.class);
 
-    when(mockLiveDataParser.createLiveMeasasurementSequence()).thenReturn(current);
+    when(mockLiveDataParser.createLiveMeasurementSequence()).thenReturn(current);
 
     CommandManualMeasurement command = new CommandManualMeasurement(mockLiveDataParser, optimize);
     command.sendCommand();

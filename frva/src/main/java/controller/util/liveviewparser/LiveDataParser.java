@@ -74,7 +74,7 @@ public class LiveDataParser {
   }
 
   /**
-   * Add command to execute to the que whitch is processed when in ManualMode.
+   * Add command to execute to the queue. Informs currentCommand.
    *
    * @param command the command to execute.
    */
@@ -117,12 +117,14 @@ public class LiveDataParser {
   /**
    * Sends a String to the OutputStream.
    *
-   * @param command the string wthout linebreak.
+   * @param command the string without linebreak.
    */
   void executeCommand(String command) {
+
     Task<Integer> task = new Task<Integer>() {
       @Override
       protected Integer call() throws Exception {
+
 
         try {
           outputStream.write(command.getBytes());
@@ -159,7 +161,7 @@ public class LiveDataParser {
    *
    * @return the newly created MeasureSequence.
    */
-  public LiveMeasureSequence createLiveMeasasurementSequence() {
+  public LiveMeasureSequence createLiveMeasurementSequence() {
     LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController);
     model.addLiveSequence(liveMeasureSequence);
     return liveMeasureSequence;

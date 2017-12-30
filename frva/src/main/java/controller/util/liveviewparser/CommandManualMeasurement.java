@@ -24,7 +24,7 @@ public class CommandManualMeasurement extends AbstractCommand {
     }
     stringBuilder = new StringBuilder();
 
-    currentMeasureSequence = liveDataParser.createLiveMeasasurementSequence();
+    currentMeasureSequence = liveDataParser.createLiveMeasurementSequence();
   }
 
   @Override
