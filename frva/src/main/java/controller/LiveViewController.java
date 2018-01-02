@@ -298,8 +298,9 @@ public class LiveViewController {
 
   private void addListeners() {
     deviceStatus.gpsInformationProperty().addListener((observable, oldValue, newValue) -> {
-      //TODO:
-      gpsPositionLabel.setText(newValue);
+      Platform.runLater(() -> {
+        gpsPositionLabel.setText(newValue);
+      });
     });
 
     model.activeViewProperty().addListener((observable, oldValue, newValue) -> {
