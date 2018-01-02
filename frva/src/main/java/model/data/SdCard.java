@@ -2,7 +2,6 @@ package model.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -33,7 +32,9 @@ public class SdCard {
       this.name = name;
     }
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
+
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
+
 
     File dbFile = new File(sdCardFile + File.separator + "db.csv");
 
