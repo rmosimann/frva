@@ -162,8 +162,7 @@ public class MainController {
         }
       }
 
-      //unselectTickedItems(treeView.getRoot());
-      treeView.getCheckModel().clearChecks();
+      unselectTickedItems(treeView.getRoot());
 
       model.deleteMeasureSequences(measurements);
     }
