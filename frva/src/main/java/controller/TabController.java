@@ -1,13 +1,13 @@
 package controller;
 
-import controller.util.ZoomLineChart;
-import controller.util.ZoomWithRectangle;
+import controller.util.LineChartZoom;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
@@ -151,7 +151,6 @@ public class TabController {
   @FXML
   private CheckBox checkBoxRawDcWr;
 
-
   @FXML
   private CheckBox checkBoxRadianceVeg;
 
@@ -172,9 +171,10 @@ public class TabController {
 
   /**
    * Constructor for new TabController.
-   * @param model     The one and only Model.
-   * @param thisTabId the ID of this Tab.
-   * @param mainController  The MainController containing this tab.
+   *
+   * @param model          The one and only Model.
+   * @param thisTabId      the ID of this Tab.
+   * @param mainController The MainController containing this tab.
    */
   public TabController(FrvaModel model, int thisTabId, MainController mainController) {
     this.model = model;
@@ -233,8 +233,8 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
-    zoom.activateZoomHandler();
+    LineChartZoom lineChartZoom = new LineChartZoom(datachart, xaxis, yaxis);
+    lineChartZoom.activateZoomHandler();
   }
 
 
@@ -590,7 +590,8 @@ public class TabController {
         series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
 
         for (int i = 0; i < data.length; i++) {
-          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
+          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY
+              && Math.abs(data[i]) > Double.MIN_VALUE) {
             double x = asWavelength ? calibration[i] : i;
             double y = data[i];
             series.getData().add(new XYChart.Data<>(x, y));

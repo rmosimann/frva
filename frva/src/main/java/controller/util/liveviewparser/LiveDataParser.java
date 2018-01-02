@@ -2,8 +2,6 @@ package controller.util.liveviewparser;
 
 import controller.LiveViewController;
 import controller.util.DeviceStatus;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,6 +28,7 @@ public class LiveDataParser {
   private final ArrayDeque<CommandInterface> commandQueue = new ArrayDeque<>();
   private final ObjectProperty<CommandInterface> currentCommand = new SimpleObjectProperty<>();
   private final BooleanProperty acceptingCommands = new SimpleBooleanProperty();
+  private final BooleanProperty initializing = new SimpleBooleanProperty(false);
 
   private final Executor singleExecutor = Executors.newSingleThreadExecutor(runnable -> {
     Thread t = new Thread(runnable);
@@ -52,17 +51,22 @@ public class LiveDataParser {
   public void startParsing(InputStream inputStream, OutputStream outputStream) {
     this.outputStream = outputStream;
     currentCommand.addListener(observable -> {
-      liveViewController.setCurrentCommandLabel(
+      liveViewController.setCurrentCommandLabels(
           currentCommand.getValue().getClass().getSimpleName());
       if (currentCommand.getValue() instanceof CommandIdle) {
         acceptingCommands.setValue(true);
+        initializing.setValue(false);
       } else {
         acceptingCommands.setValue(false);
+      }
+      if (currentCommand.getValue() instanceof CommandAutoMode) {
+        initializing.setValue(false);
       }
     });
 
     currentCommand.setValue(new CommandInitialize(this, model));
     currentCommand.getValue().sendCommand();
+    initializing.setValue(true);
 
     startInputParsing(inputStream);
   }
@@ -93,7 +97,6 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
-            System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {
@@ -173,4 +176,11 @@ public class LiveDataParser {
     return acceptingCommands;
   }
 
+  public boolean isInitializing() {
+    return initializing.get();
+  }
+
+  public BooleanProperty initializingProperty() {
+    return initializing;
+  }
 }

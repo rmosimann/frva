@@ -10,6 +10,7 @@ import model.FrvaModel;
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
+  private int pseudoCounter;
 
   private File sdCardFile;
   private CalibrationFile calibrationFile;
@@ -22,7 +23,7 @@ public class SdCard {
    * @param name       the Name of that SDCARD.
    */
   public SdCard(File sdCardFile, String name) {
-
+    pseudoCounter = 0;
     this.sdCardFile = sdCardFile;
     if (name == null) {
       String[] arr = sdCardFile.getPath().split(File.separator);
@@ -31,9 +32,13 @@ public class SdCard {
       this.name = name;
     }
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
 
-    if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
+
+
+    File dbFile = new File(sdCardFile + File.separator + "db.csv");
+
+    if (!dbFile.exists()) {
       dataFiles = FileInOut.getDataFiles(this);
       if (isPathInLibrary()) {
         FileInOut.writeDatabaseFile(this);
@@ -45,14 +50,13 @@ public class SdCard {
         e.printStackTrace();
       }
     }
-  }
 
-  /**
-   * Constructor for Recording: Empty SD Card.
-   */
-  protected SdCard() {
+    if (isPathInLibrary()) {
+      pseudoCounter += FileInOut.getLineCount(dbFile);
+    }
 
   }
+
 
   public boolean isPathInLibrary() {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);
@@ -66,20 +70,17 @@ public class SdCard {
   public boolean isEmpty() {
     if (dataFiles.isEmpty()) {
       deleteFile(sdCardFile);
-      System.out.println("delete " + sdCardFile + " because it is empty");
 
       return true;
     }
     boolean isEmpty = true;
     for (DataFile dfile : dataFiles) {
-      System.out.println("dataFile");
       if (!dfile.isEmpty()) {
         isEmpty = false;
       }
     }
     if (isEmpty) {
       deleteFile(sdCardFile);
-      System.out.println("delete " + sdCardFile + " because it is empty");
     }
     return isEmpty;
   }
@@ -97,6 +98,10 @@ public class SdCard {
 
   public String getName() {
     return this.name;
+  }
+
+  public int getPseudoCounter() {
+    return this.pseudoCounter;
   }
 
 
@@ -147,9 +152,6 @@ public class SdCard {
     logger.info("Deleted File:" + file);
   }
 
-  protected void setCalibrationFile(CalibrationFile calibrationFile) {
-    this.calibrationFile = calibrationFile;
-  }
 
 }
 

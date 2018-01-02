@@ -7,27 +7,31 @@ import controller.util.treeviewitems.FrvaTreeMeasurementItem;
 import controller.util.treeviewitems.FrvaTreeRootItem;
 import controller.util.treeviewitems.FrvaTreeSdCardItem;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
 import model.data.FileInOut;
@@ -108,7 +112,14 @@ public class MainController {
     directoryChooser.setTitle("Select export path");
     File selectedFile = directoryChooser.showDialog(exportButton.getScene().getWindow());
     if (selectedFile != null) {
-      FileInOut.createFiles(model.getCurrentSelectionList(), selectedFile.toPath());
+      List<MeasureSequence> exportList = model.getCurrentSelectionList().sorted(
+          new Comparator<MeasureSequence>() {
+            @Override
+            public int compare(MeasureSequence o1, MeasureSequence o2) {
+              return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+            }
+          });
+      FileInOut.createFiles(exportList, selectedFile.toPath());
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -135,6 +146,7 @@ public class MainController {
       unselectTickedItems(treeView.getRoot());
       model.deleteMeasureSequences(measurements);
     }
+    FileInOut.checkForEmptyFiles();
 
 
   }
@@ -184,7 +196,7 @@ public class MainController {
    */
   private void addTab() {
     //Create Tab and set defaults
-    Tab newtab = new Tab("Untitled " + (newTabId));
+    Tab newtab = createEditableTab("Untitled " + (newTabId));
     newtab.closableProperty().setValue(true);
     newtab.setOnCloseRequest(event -> {
       model.removeSelectionMapping(newTabId);
@@ -219,45 +231,39 @@ public class MainController {
 
     model.getCurrentlySelectedTabProperty().addListener(
         (observable, oldValue, newValue) -> treeView.getSelectionModel().clearSelection());
-    treeViewListener = new ListChangeListener() {
-      @Override
-      public void onChanged(Change c) {
-        while (c.next()) {
-          if (c.wasAdded()) {
-            c.getAddedSubList().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
+    treeViewListener = c -> {
+      while (c.next()) {
+        if (c.wasAdded()) {
+          c.getAddedSubList().forEach(new Consumer() {
+            @Override
+            public void accept(Object o) {
+              if (o instanceof FrvaTreeMeasurementItem) {
+                model.getCurrentSelectionList()
+                    .add(((FrvaTreeMeasurementItem) o).getMeasureSequence());
               }
-            });
-          } else {
-            c.getRemoved().forEach(new Consumer() {
-              @Override
-              public void accept(Object o) {
-                if (o instanceof FrvaTreeMeasurementItem) {
-                  model.getCurrentSelectionList()
-                      .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
-                }
+            }
+          });
+        } else {
+          c.getRemoved().forEach(new Consumer() {
+            @Override
+            public void accept(Object o) {
+              if (o instanceof FrvaTreeMeasurementItem) {
+                model.getCurrentSelectionList()
+                    .remove(((FrvaTreeMeasurementItem) o).getMeasureSequence());
               }
-            });
-          }
+            }
+          });
         }
       }
     };
     //TODO Deregister Listener?
     treeView.getCheckModel().getCheckedItems().addListener(treeViewListener);
-    treeView.getRoot().getChildren().addListener(new ListChangeListener() {
-      @Override
-      public void onChanged(Change c) {
-        c.next();
-        if (c.getList().size() == 0) {
-          treeView.setShowRoot(true);
-        } else {
-          treeView.setShowRoot(false);
-        }
+    treeView.getRoot().getChildren().addListener((ListChangeListener) c -> {
+      c.next();
+      if (c.getList().size() == 0) {
+        treeView.setShowRoot(true);
+      } else {
+        treeView.setShowRoot(false);
       }
     });
     if (treeView.getRoot().getChildren().size() != 0) {
@@ -370,9 +376,6 @@ public class MainController {
         ((FrvaTreeDeviceItem) device).getChildren().forEach(new Consumer() {
           @Override
           public void accept(Object sdCard) {
-            System.out.println(((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
-            );
-            System.out.println(model.getCurrentLiveSdCardPath().getPath());
             if (((FrvaTreeSdCardItem) sdCard).getSdCard().getSdCardFile().getPath()
                 .equals(model.getCurrentLiveSdCardPath().getPath())) {
               returnValue[0] = (FrvaTreeSdCardItem) sdCard;
@@ -388,4 +391,41 @@ public class MainController {
   }
 
 
+  private Tab createEditableTab(String text) {
+    final Label label = new Label(text);
+    final Tab tab = new Tab();
+    tab.setGraphic(label);
+    final TextField textField = new TextField();
+    label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+          textField.setText(label.getText());
+          tab.setGraphic(textField);
+          textField.selectAll();
+          textField.requestFocus();
+        }
+      }
+    });
+
+    textField.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        label.setText(textField.getText());
+        tab.setGraphic(label);
+      }
+    });
+
+    textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable,
+                          Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+          label.setText(textField.getText());
+          tab.setGraphic(label);
+        }
+      }
+    });
+    return tab;
+  }
 }

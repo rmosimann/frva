@@ -66,7 +66,6 @@ public class DataFile {
   public boolean isEmpty() {
     if (measureSequences.isEmpty()) {
       this.sdCard.deleteFile(originalFile);
-      System.out.println("delete " + originalFile + " because it is empty");
       return true;
     }
     return false;

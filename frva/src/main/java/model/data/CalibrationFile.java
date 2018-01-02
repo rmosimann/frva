@@ -41,9 +41,7 @@ public class CalibrationFile {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    //System.out.println("orig");
     for (String str : fileContent) {
-      //System.out.println(str);
     }
     initialize(fileContent);
   }
@@ -111,7 +109,6 @@ public class CalibrationFile {
     for (String str : rawData) {
       stringBuilder.append(str + "\n");
     }
-    // System.out.println(stringBuilder.toString());
     return stringBuilder.toString();
   }
 

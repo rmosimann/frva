@@ -336,4 +336,10 @@ public class MeasureSequence {
   public String[] getMetadata() {
     return metadata;
   }
+
+  @Override
+  public int hashCode() {
+    return (((Integer.parseInt(metadata[0])) + Integer.parseInt(metadata[1]) * 31)
+        + Integer.parseInt(metadata[2]) * 31);
+  }
 }
