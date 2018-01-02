@@ -2,6 +2,7 @@ package controller.util.liveviewparser;
 
 import controller.LiveViewController;
 import controller.util.DeviceStatus;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +16,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import model.FrvaModel;
+import model.data.LiveMeasureSequence;
 
 public class LiveDataParser {
   private static final Logger logger = Logger.getLogger("FRVA");
@@ -64,7 +66,7 @@ public class LiveDataParser {
       }
     });
 
-    currentCommand.setValue(new CommandInitialize(this, model));
+    currentCommand.setValue(new CommandInitialize(this));
     currentCommand.getValue().sendCommand();
     initializing.setValue(true);
 
@@ -72,7 +74,7 @@ public class LiveDataParser {
   }
 
   /**
-   * Add command to execute to the que whitch is processed when in ManualMode.
+   * Add command to execute to the queue. Informs currentCommand.
    *
    * @param command the command to execute.
    */
@@ -115,12 +117,14 @@ public class LiveDataParser {
   /**
    * Sends a String to the OutputStream.
    *
-   * @param command the string wthout linebreak.
+   * @param command the string without linebreak.
    */
   void executeCommand(String command) {
+
     Task<Integer> task = new Task<Integer>() {
       @Override
       protected Integer call() throws Exception {
+
 
         try {
           outputStream.write(command.getBytes());
@@ -148,9 +152,22 @@ public class LiveDataParser {
       currentCommand.setValue(commandQueue.poll());
       currentCommand.getValue().sendCommand();
     } else {
-      currentCommand.setValue(new CommandIdle(this, model));
+      currentCommand.setValue(new CommandIdle(this));
     }
   }
+
+  /**
+   * Creates a LiveMeasurementSequence and adds it to the Model.
+   *
+   * @return the newly created MeasureSequence.
+   */
+  public LiveMeasureSequence createLiveMeasurementSequence() {
+    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController,
+        getDeviceStatus().getCalibrationFile());
+    model.addLiveSequence(liveMeasureSequence);
+    return liveMeasureSequence;
+  }
+
 
   public ArrayDeque<CommandInterface> getCommandQueue() {
     return commandQueue;
@@ -182,5 +199,13 @@ public class LiveDataParser {
 
   public BooleanProperty initializingProperty() {
     return initializing;
+  }
+
+  public File getCurrentLiveSdCardPath() {
+    return model.getCurrentLiveSdCardPath();
+  }
+
+  public void currentMeasurementUpdated(LiveMeasureSequence currentMeasureSequence) {
+    liveViewController.refreshList(currentMeasureSequence);
   }
 }

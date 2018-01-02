@@ -2,7 +2,6 @@ package model.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -33,6 +32,7 @@ public class SdCard {
       this.name = name;
     }
 
+
     calibrationFile = FileInOut.readCalibrationFile(this, "cal");
 
     File dbFile = new File(sdCardFile + File.separator + "db.csv");
@@ -53,9 +53,11 @@ public class SdCard {
     if (isPathInLibrary()) {
       pseudoCounter += FileInOut.getLineCount(dbFile);
     }
-
   }
 
+  public void initialize() {
+
+  }
 
   public boolean isPathInLibrary() {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);

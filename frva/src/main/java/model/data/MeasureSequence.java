@@ -194,9 +194,9 @@ public class MeasureSequence {
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */
 
-    double[] waveCalibration = dataFile.getSdCard().getCalibrationFile().getWlF1();
-    double[] vegCalibration = dataFile.getSdCard().getCalibrationFile().getDwCoefF1();
-    double[] wrCalibration = dataFile.getSdCard().getCalibrationFile().getUpCoefF1();
+    double[] waveCalibration = getWlF1Calibration();
+    double[] vegCalibration = getDwCoefF1Calibration();
+    double[] wrCalibration = getUpCoefF1Calibration();
 
     Map<SequenceKeyName, double[]> measurements = getData();
 
@@ -250,7 +250,7 @@ public class MeasureSequence {
     Map<SequenceKeyName, double[]> reflectionMap = new HashMap<>();
     reflectionMap.put(SequenceKeyName.REFLECTANCE, reflection);
 
-    reflectionIndices = new ReflectionIndices(reflection, getWavlengthCalibration());
+    reflectionIndices = new ReflectionIndices(reflection, getWlF1Calibration());
 
     return reflectionMap;
 
@@ -270,15 +270,23 @@ public class MeasureSequence {
       Map<SequenceKeyName, double[]> reflectance = getReflectance();
 
       reflectionIndices = new ReflectionIndices(reflectance.get(SequenceKeyName.REFLECTANCE),
-          getWavlengthCalibration());
+          getWlF1Calibration());
 
     }
     return reflectionIndices;
   }
 
 
-  public double[] getWavlengthCalibration() {
+  public double[] getWlF1Calibration() {
     return dataFile.getSdCard().getCalibrationFile().getWlF1();
+  }
+
+  public double[] getDwCoefF1Calibration() {
+    return dataFile.getSdCard().getCalibrationFile().getDwCoefF1();
+  }
+
+  public double[] getUpCoefF1Calibration() {
+    return dataFile.getSdCard().getCalibrationFile().getUpCoefF1();
   }
 
   public String getSequenceUuid() {

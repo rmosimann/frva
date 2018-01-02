@@ -2,15 +2,14 @@ package controller.util.liveviewparser;
 
 import java.util.Arrays;
 import java.util.Vector;
-import model.FrvaModel;
 
 public class CommandGetConfiguration extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private boolean parsing3fldPixels = false;
   private Vector<Number> fldPixels = new Vector<>();
 
-  public CommandGetConfiguration(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandGetConfiguration(LiveDataParser liveDataParser) {
+    super(liveDataParser);
   }
 
   @Override
@@ -50,16 +49,16 @@ public class CommandGetConfiguration extends AbstractCommand {
     if (stringBuilder.toString().contains("LED power:")) {
       liveDataParser.getDeviceStatus().setLedPower(parseNumber(stringBuilder.toString()));
     }
-    if (stringBuilder.toString().contains("3FLD pixels")) {
-      parsing3fldPixels = true;
-      liveDataParser.getDeviceStatus().setLedPower(parseNumber(stringBuilder.toString()));
-    }
     if (parsing3fldPixels) {
       fldPixels.add(parseNumber(stringBuilder.toString()));
       if (fldPixels.size() == 5) {
         parsing3fldPixels = false;
         liveDataParser.getDeviceStatus().setFldPixels(Arrays.toString(fldPixels.toArray()));
       }
+    }
+    if (stringBuilder.toString().contains("3FLD pixels")) {
+      parsing3fldPixels = true;
+      stringBuilder.delete(0, stringBuilder.length());
     }
     if (stringBuilder.toString().contains("QE averages = ")) {
       liveDataParser.getDeviceStatus().setQeAverages(parseNumber(stringBuilder.toString()));
