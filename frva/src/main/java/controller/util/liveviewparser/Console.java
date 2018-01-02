@@ -38,6 +38,7 @@ public class Console {
 
   /**
    * Creates a Console.
+   * @param liveDataParser the liveDataParser
    */
   public Console(LiveDataParser liveDataParser) {
     stringBuilder = new StringBuilder();
@@ -94,7 +95,7 @@ public class Console {
   }
 
   /**
-   * Caches the input until the end of Line
+   * Caches the input until the end of Line.
    * @param c input
    */
   public void print(final char c) {
