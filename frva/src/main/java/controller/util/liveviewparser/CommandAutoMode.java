@@ -40,8 +40,11 @@ public class CommandAutoMode extends AbstractCommand {
     } else if (line.contains("auto_mode")) {
       currentMeasureSequence.setMetadata(line.split(";"));
 
-    } else if (line.contains("WRIT") || line.contains("VEGIT")) {
-      logger.fine("Do nothing on this input.");
+    } else if (line.contains("VEGIT")) {
+      currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
+
+    } else if (line.contains("WRIT")) {
+      currentMeasureSequence.setIntegrationTimeWr(line.split("=")[1].replace(" ", ""));
 
     } else if (line.contains("Voltage = ")) {
       currentMeasureSequence.setComplete(true,

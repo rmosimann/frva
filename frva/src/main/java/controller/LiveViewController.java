@@ -67,7 +67,12 @@ public class LiveViewController {
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
   private StreamConnection openStreamConnection;
-  private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartRawData;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartRadianceData;
+
+  private final String axisLabelWaveLength = "Wavelength [nanometer]";
+  private final String axisLabelDigitalNumber = "DN (digital number)";
+  private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
@@ -82,13 +87,19 @@ public class LiveViewController {
   private LineChart<Double, Double> datachartRaw;
 
   @FXML
-  private LineChart<Double, Double> datachartReflectance;
+  private LineChart<Double, Double> datachartRadiance;
 
   @FXML
-  private NumberAxis xaxis;
+  private NumberAxis xaxisRaw;
 
   @FXML
-  private NumberAxis yaxis;
+  private NumberAxis yaxisRaw;
+
+  @FXML
+  private NumberAxis xaxisRadiance;
+
+  @FXML
+  private NumberAxis yaxisRadiance;
 
   @FXML
   private TextArea miniTerminalTextArea;
@@ -181,7 +192,8 @@ public class LiveViewController {
     state.setValue(connectionStateInit);
     this.model = model;
     liveDataParser = new LiveDataParser(this, model);
-    lineChartData = FXCollections.observableArrayList();
+    lineChartRawData = FXCollections.observableArrayList();
+    lineChartRadianceData = FXCollections.observableArrayList();
 
   }
 
@@ -199,7 +211,25 @@ public class LiveViewController {
     datachartRaw.setCreateSymbols(false);
     datachartRaw.setAlternativeRowFillVisible(false);
     datachartRaw.setLegendVisible(false);
-    datachartRaw.setData(lineChartData);
+    datachartRaw.setData(lineChartRawData);
+
+    datachartRadiance.setAnimated(false);
+    datachartRadiance.setCreateSymbols(false);
+    datachartRadiance.setAlternativeRowFillVisible(false);
+    datachartRadiance.setLegendVisible(false);
+    datachartRadiance.setData(lineChartRadianceData);
+
+    xaxisRaw.setLabel(axisLabelWaveLength);
+    yaxisRaw.setLabel(axisLabelDigitalNumber);
+
+    xaxisRadiance.setLabel(axisLabelWaveLength);
+    yaxisRadiance.setLabel(axisLabelRadiance);
+
+    xaxisRaw.setAutoRanging(true);
+    xaxisRadiance.setAutoRanging(true);
+
+    xaxisRaw.setForceZeroInRange(false);
+    xaxisRadiance.setForceZeroInRange(false);
   }
 
 
@@ -515,32 +545,48 @@ public class LiveViewController {
   public void redrawGraph(MeasureSequence sequence) {
 
     Platform.runLater(() -> {
-      lineChartData.clear();
+      lineChartRawData.clear();
+      lineChartRadianceData.clear();
     });
 
     Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
 
     entries = sequence.getData().entrySet();
 
+    addMapToGraph(entries, sequence, lineChartRawData);
+
+    if (sequence.getRadiance() != null) {
+      entries = sequence.getRadiance().entrySet();
+      addMapToGraph(entries, sequence, lineChartRadianceData);
+    }
+  }
+
+
+  private void addMapToGraph(Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries,
+                             MeasureSequence sequence,
+                             ObservableList<XYChart.Series<Double, Double>> linechartdata) {
+
+
     for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
       double[] data = entry.getValue();
+      double[] wlF1Calibration = sequence.getWlF1Calibration();
+
       LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
       series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
 
       for (int i = 0; i < data.length; i++) {
         if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
-          double x = i;
+          double x = wlF1Calibration[i];
           double y = data[i];
           series.getData().add(new XYChart.Data<>(x, y));
         }
       }
 
       Platform.runLater(() -> {
-        lineChartData.add(series);
+        linechartdata.add(series);
       });
 
     }
-
   }
 
   /**

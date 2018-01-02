@@ -79,7 +79,6 @@ public class MeasureSequence {
     StringBuilder sb = new StringBuilder();
     Arrays.stream(metadata).forEach(a -> sb.append(a + ";"));
 
-
     Map<SequenceKeyName, double[]> measurements = getData();
 
     sb.append("\n" + "WR" + ";");
@@ -199,9 +198,9 @@ public class MeasureSequence {
 
     for (int i = 0; i < waveCalibration.length; i++) {
       wrRadiance[i] = (
-          (wrs[i] - dcWrs[i]) * wrCalibration[i]) / Double.parseDouble(metadata[5]);
+          (wrs[i] - dcWrs[i]) * wrCalibration[i]) / (Double.parseDouble(metadata[5]) / 1000);
       vegRadiance[i] = (
-          (vegs[i] - dcVegs[i]) * vegCalibration[i]) / Double.parseDouble(metadata[7]);
+          (vegs[i] - dcVegs[i]) * vegCalibration[i]) / (Double.parseDouble(metadata[7]) / 1000);
     }
 
     Map<SequenceKeyName, double[]> radianceMap = new HashMap<>();

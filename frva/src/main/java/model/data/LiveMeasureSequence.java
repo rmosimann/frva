@@ -20,16 +20,52 @@ public class LiveMeasureSequence extends MeasureSequence {
    * Constructor.
    *
    * @param calibrationFile The CalibrationFile read from the device.
+   * @param maxIntegrationTime integrationTime to use when no other is set.
    */
-  public LiveMeasureSequence(LiveViewController listener, CalibrationFile calibrationFile) {
+  public LiveMeasureSequence(LiveViewController listener, CalibrationFile calibrationFile,
+                             long maxIntegrationTime) {
     super();
     this.calibrationFile = calibrationFile;
+    setIntegrationTimeVeg(String.valueOf(maxIntegrationTime));
+    setIntegrationTimeWr(String.valueOf(maxIntegrationTime));
   }
 
 
-  public static void main(String[] args) {
-    System.out.println(51 * 19 + 10);
+  /**
+   * Sets integrationtime in the metadata, even when they are not jet available.
+   *
+   * @param itVeg integrationTime to set.
+   */
+  public void setIntegrationTimeWr(String itVeg) {
+
+    String[] metadata = super.getMetadata();
+
+    if (metadata == null) {
+      metadata = new String[10];
+    }
+
+    metadata[5] = itVeg;
+
+    super.setMetadata(metadata);
   }
+
+  /**
+   * Sets integrationtime in the metadata, even when they are not jet available.
+   *
+   * @param itWr integrationTime to set.
+   */
+  public void setIntegrationTimeVeg(String itWr) {
+    String[] metadata = super.getMetadata();
+
+    if (metadata == null) {
+      metadata = new String[10];
+    }
+
+    metadata[7] = itWr;
+
+    super.setMetadata(metadata);
+  }
+
 
 
   /**
@@ -90,7 +126,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public String toString() {
-    if (getMetadata() != null) {
+    if (getMetadata()[0] != null) {
       return getId();
     }
     return "Measuring...";
@@ -138,7 +174,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public double[] getDwCoefF1Calibration() {
-    return calibrationFile.getWlF1();
+    return calibrationFile.getDwCoefF1();
   }
 
   @Override
@@ -148,7 +184,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public double[] getWlF1Calibration() {
-    return calibrationFile.getDwCoefF1();
+    return calibrationFile.getWlF1();
   }
 
 

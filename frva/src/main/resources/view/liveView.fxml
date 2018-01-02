@@ -36,30 +36,30 @@
         <AnchorPane layoutX="345.0" layoutY="76.0" prefHeight="545.0" prefWidth="660.0" AnchorPane.bottomAnchor="40.0"
                     AnchorPane.leftAnchor="344.0" AnchorPane.rightAnchor="276.0" AnchorPane.topAnchor="75.0">
             <children>
-                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                      AnchorPane.topAnchor="0.0">
+                <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Raw"/>
                         <LineChart fx:id="datachartRaw" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
                                    VBox.vgrow="ALWAYS">
                             <xAxis>
-                                <NumberAxis tickUnit="100" fx:id="xaxis"/>
+                                <NumberAxis tickUnit="100" fx:id="xaxisRaw"/>
                             </xAxis>
                             <yAxis>
-                                <NumberAxis fx:id="yaxis" tickUnit="1"/>
+                                <NumberAxis fx:id="yaxisRaw" tickUnit="1"/>
                             </yAxis>
                             <opaqueInsets>
                                 <Insets/>
                             </opaqueInsets>
                         </LineChart>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Reflectance"/>
-                        <LineChart fx:id="datachartReflectance" alternativeColumnFillVisible="true"
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Radiance"/>
+                        <LineChart fx:id="datachartRadiance" alternativeColumnFillVisible="true"
                                    axisSortingPolicy="NONE" VBox.vgrow="ALWAYS">
                             <xAxis>
-                                <NumberAxis tickUnit="100" fx:id="xaxis1"/>
+                                <NumberAxis tickUnit="100" fx:id="xaxisRadiance"/>
                             </xAxis>
                             <yAxis>
-                                <NumberAxis fx:id="yaxis1" tickUnit="1"/>
+                                <NumberAxis fx:id="yaxisRadiance" tickUnit="1"/>
                             </yAxis>
                             <opaqueInsets>
                                 <Insets/>
