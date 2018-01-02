@@ -172,6 +172,7 @@ public class TabController {
   /**
    * Constructor for new TabController.
    *
+   * @param tab            tab linked to this controller.
    * @param model          The one and only Model.
    * @param mainController The MainController containing this tab.
    */
