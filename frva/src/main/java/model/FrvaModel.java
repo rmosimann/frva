@@ -101,7 +101,6 @@ public class FrvaModel {
    */
   public void removeSelectionMapping(Tab tab) {
     selectionMap.remove(tab);
-    System.out.println("remove Tab with id " + tab + "from model");
   }
 
 
@@ -198,7 +197,6 @@ public class FrvaModel {
 
   public void setCurrentlySelectedTab(Tab currentlySelectedTab) {
     this.currentlySelectedTab.set(currentlySelectedTab);
-    System.out.println(this.selectionMap.size());
   }
 
 
