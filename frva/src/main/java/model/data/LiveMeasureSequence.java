@@ -30,6 +30,8 @@ public class LiveMeasureSequence extends MeasureSequence {
   public static void main(String[] args) {
     System.out.println(51 * 19 + 10);
   }
+
+
   /**
    * Adds data to that measurement.
    *
