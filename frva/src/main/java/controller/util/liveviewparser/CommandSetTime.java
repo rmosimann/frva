@@ -1,6 +1,7 @@
 package controller.util.liveviewparser;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CommandSetTime extends AbstractCommand {
   private final LocalDateTime dateTime;
@@ -23,7 +24,7 @@ public class CommandSetTime extends AbstractCommand {
     if (stringBuilder.toString().contains("Enter year(0 - 99)")) {
       String yeartouse;
       if (dateTime == null) {
-        yeartouse = String.valueOf(LocalDateTime.now().getYear());
+        yeartouse = String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("u")));
       } else {
         yeartouse = String.valueOf(dateTime.getYear());
       }

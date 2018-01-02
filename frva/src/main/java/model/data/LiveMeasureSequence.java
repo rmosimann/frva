@@ -26,6 +26,10 @@ public class LiveMeasureSequence extends MeasureSequence {
     this.calibrationFile = calibrationFile;
   }
 
+
+  public static void main(String[] args) {
+    System.out.println(51 * 19 + 10);
+  }
   /**
    * Adds data to that measurement.
    *
@@ -33,6 +37,51 @@ public class LiveMeasureSequence extends MeasureSequence {
    * @param content the array with the data.
    */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
+    int targetlength = calibrationFile.getWlF1().length;
+
+    if (content.length < targetlength) {
+
+      double[] target = new double[targetlength];
+
+      int stepBetween = targetlength / content.length;
+
+      int firstIndex = 10;
+      int lastindex = stepBetween * (content.length - 1) + firstIndex;
+
+      int indexOnContent = 0;
+
+      for (int i = 0; i < firstIndex; i++) {
+        target[i] = content[0];
+      }
+
+      for (int i = 10; i < lastindex; i++) {
+        double value = 0.0;
+
+        if ((i - firstIndex) % stepBetween == 0) {
+          value = content[indexOnContent];
+          indexOnContent++;
+        } else {
+
+          int pointleft = ((stepBetween * (indexOnContent - 1)) + firstIndex);
+          int pointright = ((stepBetween * (indexOnContent)) + firstIndex);
+
+          int pointtocalc = i - pointleft;
+
+          double deltaX = pointright - pointleft;
+          double deltaY = content[(indexOnContent - 1)] - content[indexOnContent];
+
+          double deltaCalculated = (deltaY / deltaX) * pointtocalc;
+
+          value = content[indexOnContent - 1] - deltaCalculated;
+        }
+        target[i] = value;
+      }
+
+      for (int j = lastindex; j < targetlength; j++) {
+        target[j] = target[lastindex - 1];
+      }
+      content = target;
+    }
     data.put(keyName, content);
   }
 
@@ -108,17 +157,26 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public Map<SequenceKeyName, double[]> getRadiance() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getRadiance();
   }
 
   @Override
   public Map<SequenceKeyName, double[]> getReflectance() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getReflectance();
   }
 
   @Override
   public ReflectionIndices getIndices() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getIndices();
   }
 
   @Override
@@ -142,6 +200,7 @@ public class LiveMeasureSequence extends MeasureSequence {
   public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
     logger.info("measurement complete");
+
     FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);
   }
 

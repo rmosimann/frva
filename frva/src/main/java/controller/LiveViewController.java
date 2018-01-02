@@ -514,6 +514,10 @@ public class LiveViewController {
    */
   public void redrawGraph(MeasureSequence sequence) {
 
+    Platform.runLater(() -> {
+      lineChartData.clear();
+    });
+
     Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
 
     entries = sequence.getData().entrySet();
@@ -532,7 +536,6 @@ public class LiveViewController {
       }
 
       Platform.runLater(() -> {
-        lineChartData.clear();
         lineChartData.add(series);
       });
 
