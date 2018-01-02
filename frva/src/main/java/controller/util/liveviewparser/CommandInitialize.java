@@ -1,24 +1,22 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 /**
  * Created by patrick.wigger on 28.11.17.
  */
 public class CommandInitialize extends AbstractCommand {
   StringBuilder sb = new StringBuilder();
 
-  public CommandInitialize(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandInitialize(LiveDataParser liveDataParser) {
+    super(liveDataParser);
   }
 
   @Override
   public void sendCommand() {
     liveDataParser.executeCommand(Commands.B.toString());
 
-    liveDataParser.addCommandToQueue(new CommandGetGpsinfo(liveDataParser, model));
+    liveDataParser.addCommandToQueue(new CommandGetGpsinfo(liveDataParser));
 
-    liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser, model));
+    liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser));
 
   }
 
@@ -30,10 +28,10 @@ public class CommandInitialize extends AbstractCommand {
 
       liveDataParser.executeCommand("100");
       if (sb.toString().contains("; ;")) {
-        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
       } else {
 
-        liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser, model));
+        liveDataParser.addCommandToQueue(new CommandIdle(liveDataParser));
       }
       liveDataParser.runNextCommand();
     }

@@ -1,15 +1,12 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 public class CommandSetItegrationTime extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private int integrationTime;
 
 
-  public CommandSetItegrationTime(LiveDataParser liveDataParser,
-                                  FrvaModel model, int integrationTime) {
-    super(liveDataParser, model);
+  public CommandSetItegrationTime(LiveDataParser liveDataParser, int integrationTime) {
+    super(liveDataParser);
     this.integrationTime = integrationTime;
   }
 
