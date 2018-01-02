@@ -75,9 +75,8 @@ public class CommandManualMeasurement extends AbstractCommand {
       numbrs = split[3].replace(" ", "").split(";");
 
     } else {
-      String[] split = string.split(";");
-      numbrs = Arrays.copyOfRange(split, 1, split.length);
-
+      String[] split = string.replace(" ", "").split(";");
+      numbrs = Arrays.copyOfRange(split, 1, split.length - 2);
     }
 
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))

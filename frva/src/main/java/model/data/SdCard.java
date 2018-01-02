@@ -33,7 +33,8 @@ public class SdCard {
     }
 
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
+
 
     File dbFile = new File(sdCardFile + File.separator + "db.csv");
 
@@ -53,14 +54,34 @@ public class SdCard {
     if (isPathInLibrary()) {
       pseudoCounter += FileInOut.getLineCount(dbFile);
     }
-  }
-
-  public void initialize() {
 
   }
 
   public boolean isPathInLibrary() {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);
+  }
+
+  /**
+   * Checks if SDCARD is empty, empty DataFiles are removed before.
+   *
+   * @return true when empty.
+   */
+  public boolean isEmpty() {
+    if (dataFiles.isEmpty()) {
+      deleteFile(sdCardFile);
+
+      return true;
+    }
+    boolean isEmpty = true;
+    for (DataFile dfile : dataFiles) {
+      if (!dfile.isEmpty()) {
+        isEmpty = false;
+      }
+    }
+    if (isEmpty) {
+      deleteFile(sdCardFile);
+    }
+    return isEmpty;
   }
 
 

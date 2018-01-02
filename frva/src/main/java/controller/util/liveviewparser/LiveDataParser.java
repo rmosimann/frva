@@ -99,6 +99,7 @@ public class LiveDataParser {
         int read;
         try {
           while ((read = dataIn.read()) != -1) {
+            System.out.print((char) read);
             currentCommand.getValue().receive((char) read);
           }
         } catch (IOException e) {

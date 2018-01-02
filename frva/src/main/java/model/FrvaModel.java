@@ -1,6 +1,13 @@
 package model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Tab;
 import javax.bluetooth.RemoteDevice;
 import model.data.DataFile;
 import model.data.FileInOut;
@@ -39,9 +47,9 @@ public class FrvaModel {
   private final Logger logger = Logger.getLogger("FRVA");
   private final String applicationName = "FRVA";
   private final List<SdCard> library = new ArrayList<>();
-  private final IntegerProperty currentlySelectedTab = new SimpleIntegerProperty();
+  private final ObjectProperty<Tab> currentlySelectedTab = new SimpleObjectProperty<>();
   private final ObjectProperty<Node> activeView = new SimpleObjectProperty<>();
-  private final Map<Integer, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
+  private final Map<Tab, ObservableList<MeasureSequence>> selectionMap = new HashMap<>();
   private final ObservableList<MeasureSequence> liveSequences = FXCollections.observableArrayList();
   private final ObservableList<RemoteDevice> bltDevices = FXCollections.observableArrayList();
   private final Executor executor = Executors.newCachedThreadPool(runnable -> {
@@ -70,28 +78,31 @@ public class FrvaModel {
     }
 
     for (File sdfolder : folder.listFiles()) {
-      if (sdfolder.isDirectory()) {
+      File calibFile = new File(sdfolder.getPath() + File.separator + "cal.csv");
+      if (sdfolder.isDirectory() && calibFile.exists()) {
         library.add(new SdCard(sdfolder, sdfolder.getName()));
       }
     }
+    FileInOut.checkForEmptyFiles();
+
   }
 
   /**
    * Adds entry for a new tab to selection List.
    *
-   * @param tabId ID that is specified in the created tab.
+   * @param tab that is specified in the created tab.
    */
-  public void addSelectionMapping(int tabId) {
-    selectionMap.put(tabId, FXCollections.observableArrayList());
+  public void addSelectionMapping(Tab tab) {
+    selectionMap.put(tab, FXCollections.observableArrayList());
   }
 
   /**
    * Removes entry for a closed tab in the selection List.
    *
-   * @param tabId ID that is specified in the tab.
+   * @param tab ID that is specified in the tab.
    */
-  public void removeSelectionMapping(int tabId) {
-    selectionMap.remove(tabId);
+  public void removeSelectionMapping(Tab tab) {
+    selectionMap.remove(tab);
   }
 
 
@@ -182,16 +193,17 @@ public class FrvaModel {
     return selectionMap.get(currentlySelectedTab.get());
   }
 
-  public IntegerProperty getCurrentlySelectedTabProperty() {
+  public ObjectProperty<Tab> getCurrentlySelectedTabProperty() {
     return currentlySelectedTab;
   }
 
-  public void setCurrentlySelectedTab(int currentlySelectedTab) {
+  public void setCurrentlySelectedTab(Tab currentlySelectedTab) {
     this.currentlySelectedTab.set(currentlySelectedTab);
   }
 
-  public ObservableList<MeasureSequence> getObservableList(int mapKey) {
-    return selectionMap.get(mapKey);
+
+  public ObservableList<MeasureSequence> getObservableList(Tab tab) {
+    return selectionMap.get(tab);
   }
 
 
