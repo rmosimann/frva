@@ -1,5 +1,7 @@
 package model.data;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,26 +45,13 @@ public class MeasureSequence {
   }
 
   /**
-   * Constructor for an empty MeasurementSequence. Only Metadata is stored
-   *
-   * @param metadata String containing the metadata
-   * @param dataFile contains the path to the datafiles.
-   */
-  public MeasureSequence(String metadata, DataFile dataFile) {
-    sequenceUuid = UUID.randomUUID().toString();
-    this.metadata = metadata.split(";");
-    this.dataFile = dataFile;
-    this.deleted = new SimpleBooleanProperty(false);
-  }
-
-  /**
    * Constructor, same as above.
    *
    * @param metadata String containing the metadata.
    * @param dataFile contains the path to the datafiles.
    */
   public MeasureSequence(String[] metadata, DataFile dataFile) {
-    sequenceUuid = UUID.randomUUID().toString();
+    this();
     this.metadata = metadata;
     this.dataFile = dataFile;
     this.deleted = new SimpleBooleanProperty(false);
@@ -165,7 +154,7 @@ public class MeasureSequence {
    */
 
   public String getSerial() {
-    return metadata[18];
+    return metadata[14];
   }
 
   /**
@@ -304,41 +293,16 @@ public class MeasureSequence {
    * @return month as String.
    */
   public String getMonth() {
-    switch (this.getDate().substring(3, 5)) {
-      case "01":
-        return "JAN";
-      case "02":
-        return "FEB";
-      case "03":
-        return "MAR";
-      case "04":
-        return "APR";
-      case "05":
-        return "MAY";
-      case "06":
-        return "JUN";
-      case "07":
-        return "JUL";
-      case "08":
-        return "AUG";
-      case "09":
-        return "SEP";
-      case "10":
-        return "OCT";
-      case "11":
-        return "NOV";
-      case "12":
-        return "DEC";
-      default:
-        return "ERROR";
-    }
+    LocalDate localDate = LocalDate.parse(getDate(), DateTimeFormatter.ofPattern("yy-MM-dd"));
+
+    return localDate.format(DateTimeFormatter.ofPattern("MMM")).toUpperCase();
   }
 
 
   /**
    * Getter for the metadata.
    *
-   * @return metadaa as String.
+   * @return metadata as String.
    */
   public String getMetadataAsString() {
     StringBuilder sb = new StringBuilder();

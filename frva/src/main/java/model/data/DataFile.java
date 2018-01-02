@@ -34,8 +34,8 @@ public class DataFile {
    * @param sdCard   The SDCARD the datafile belongs to
    */
   public DataFile(SdCard sdCard, File filename) {
-    this.originalFile = filename;
     this.sdCard = sdCard;
+    this.originalFile = filename;
     measureSequences = FileInOut.readInMetadataOfMeasureSequences(this);
   }
 
