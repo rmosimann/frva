@@ -1,5 +1,6 @@
 package model.data;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -435,6 +436,48 @@ public class FileInOut {
   }
 
   /**
+   * Count file rows.
+   *
+   * @param file to count lines.
+   * @return file row count.
+   */
+  public static long getLineCount(File file) {
+
+    long count = 0;
+    try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file), 1024)) {
+
+      byte[] c = new byte[1024];
+      boolean empty = true;
+      boolean lastEmpty = false;
+
+      int read;
+      while ((read = is.read(c)) != -1) {
+        for (int i = 0; i < read; i++) {
+          if (c[i] == '\n') {
+            count++;
+            lastEmpty = true;
+          } else if (lastEmpty) {
+            lastEmpty = false;
+          }
+        }
+        empty = false;
+      }
+
+      if (!empty) {
+        if (count == 0) {
+          count = 1;
+        } else if (!lastEmpty) {
+          count++;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return count;
+  }
+
+
+  /**
    * Tries to find empty folders and files in library and deletes them.
    */
   public static void checkForEmptyFiles() {
@@ -492,4 +535,5 @@ public class FileInOut {
     }
 
   }
+
 }

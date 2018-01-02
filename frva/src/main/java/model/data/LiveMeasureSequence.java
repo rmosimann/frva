@@ -1,7 +1,6 @@
 package model.data;
 
 import controller.LiveViewController;
-import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
