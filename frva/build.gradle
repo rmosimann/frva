@@ -17,8 +17,10 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'org.controlsfx:controlsfx:8.40.11'
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 
+    compile 'org.controlsfx:controlsfx:8.40.11'
 
     switch(System.getProperty('os.name').toLowerCase().split()[0]) {
         case 'windows':

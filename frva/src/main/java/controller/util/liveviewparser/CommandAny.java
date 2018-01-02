@@ -1,13 +1,11 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 public class CommandAny extends AbstractCommand {
 
   private final String command;
 
-  public CommandAny(LiveDataParser liveDataParser, FrvaModel model, String command) {
-    super(liveDataParser, model);
+  public CommandAny(LiveDataParser liveDataParser, String command) {
+    super(liveDataParser);
     this.command = command;
   }
 

@@ -1,34 +1,44 @@
 package controller.util.liveviewparser;
 
-import org.junit.After;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import controller.LiveViewController;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import model.FrvaModel;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Created by patrick.wigger on 28.11.17.
- */
 public class LiveDataParserTest {
 
+  LiveDataParser liveDataParser;
+  FrvaModel model;
+  LiveViewController mockLiveViewController;
+
   @Before
-
   public void setUp() throws Exception {
-  }
-
-  @After
-  public void tearDown() throws Exception {
-  }
-
-  @Test
-  public void startParsing() throws Exception {
+    model = mock(FrvaModel.class);
+    mockLiveViewController = mock(LiveViewController.class);
+    liveDataParser = new LiveDataParser(mockLiveViewController, model);
 
   }
 
   @Test
-  public void addComandToQueue() throws Exception {
-  }
+  public void startParsing() throws InterruptedException {
 
-  @Test
-  public void sendCommand() throws Exception {
-  }
+    InputStream input = new ByteArrayInputStream("; ; App?".getBytes());
+    OutputStream output = new ByteArrayOutputStream();
 
+    liveDataParser.startParsing(input, output);
+
+    Thread.sleep(50);
+
+    assertTrue(liveDataParser.getCommandQueue().removeIf(commandInterface -> {
+          return commandInterface instanceof CommandAutoMode;
+        }
+    ));
+  }
 }

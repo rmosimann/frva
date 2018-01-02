@@ -1,8 +1,6 @@
 package controller.util.liveviewparser;
 
 import java.util.Arrays;
-import javafx.application.Platform;
-import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
@@ -14,8 +12,8 @@ public class CommandAutoMode extends AbstractCommand {
   private LiveMeasureSequence currentMeasureSequence;
 
 
-  public CommandAutoMode(LiveDataParser liveDataParser, FrvaModel model) {
-    super(liveDataParser, model);
+  public CommandAutoMode(LiveDataParser liveDataParser) {
+    super(liveDataParser);
   }
 
   @Override
@@ -37,10 +35,7 @@ public class CommandAutoMode extends AbstractCommand {
   private void handleLine(String line) {
 
     if (line.contains("Start FLAME Cycle")) {
-      currentMeasureSequence = new LiveMeasureSequence(liveDataParser.getLiveViewController());
-      Platform.runLater(() -> {
-        model.getLiveSequences().add(currentMeasureSequence);
-      });
+      currentMeasureSequence = liveDataParser.createLiveMeasurementSequence();
 
     } else if (line.contains("auto_mode")) {
       currentMeasureSequence.setMetadata(line.split(";"));
@@ -50,10 +45,11 @@ public class CommandAutoMode extends AbstractCommand {
 
     } else if (line.contains("Voltage = ")) {
       currentMeasureSequence.setComplete(true,
-          liveDataParser.getDeviceStatus().getCalibrationFile(), model.getCurrentLiveSdCardPath());
+          liveDataParser.getDeviceStatus().getCalibrationFile(),
+          liveDataParser.getCurrentLiveSdCardPath());
 
       if (liveDataParser.getCommandQueue().size() > 0) {
-        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser, model));
+        liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
         liveDataParser.runNextCommand();
       }
     } else if (line.contains("WR") && line.contains("DC")) {
@@ -70,7 +66,6 @@ public class CommandAutoMode extends AbstractCommand {
 
     } else if (line.contains("VEG")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.VEG, line, currentMeasureSequence);
-
     }
 
   }
@@ -90,7 +85,6 @@ public class CommandAutoMode extends AbstractCommand {
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))
         .mapToDouble(Double::parseDouble)
         .toArray();
-    //System.out.println("added " + keyName.name());
 
     measureSequence.addData(keyName, doubles);
   }

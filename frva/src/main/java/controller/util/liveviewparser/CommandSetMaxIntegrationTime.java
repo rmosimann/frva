@@ -1,15 +1,12 @@
 package controller.util.liveviewparser;
 
-import model.FrvaModel;
-
 public class CommandSetMaxIntegrationTime extends AbstractCommand {
   StringBuilder stringBuilder = new StringBuilder();
   private int maxIntegrationTime;
 
 
-  public CommandSetMaxIntegrationTime(LiveDataParser liveDataParser,
-                                      FrvaModel model, int maxIntegrationTime) {
-    super(liveDataParser, model);
+  public CommandSetMaxIntegrationTime(LiveDataParser liveDataParser, int maxIntegrationTime) {
+    super(liveDataParser);
     this.maxIntegrationTime = maxIntegrationTime;
   }
 

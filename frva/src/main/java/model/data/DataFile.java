@@ -34,8 +34,8 @@ public class DataFile {
    * @param sdCard   The SDCARD the datafile belongs to
    */
   public DataFile(SdCard sdCard, File filename) {
-    this.originalFile = filename;
     this.sdCard = sdCard;
+    this.originalFile = filename;
     measureSequences = FileInOut.readInMetadataOfMeasureSequences(this);
   }
 
@@ -66,7 +66,6 @@ public class DataFile {
   public boolean isEmpty() {
     if (measureSequences.isEmpty()) {
       this.sdCard.deleteFile(originalFile);
-      System.out.println("delete " + originalFile + " because it is empty");
       return true;
     }
     return false;

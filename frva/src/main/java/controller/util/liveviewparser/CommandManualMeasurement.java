@@ -1,8 +1,6 @@
 package controller.util.liveviewparser;
 
 import java.util.Arrays;
-import javafx.application.Platform;
-import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
@@ -12,8 +10,8 @@ public class CommandManualMeasurement extends AbstractCommand {
   private LiveMeasureSequence currentMeasureSequence;
 
   public CommandManualMeasurement(
-      LiveDataParser liveDataParser, FrvaModel model, boolean optimize) {
-    super(liveDataParser, model);
+      LiveDataParser liveDataParser, boolean optimize) {
+    super(liveDataParser);
     this.optimize = optimize;
   }
 
@@ -26,10 +24,7 @@ public class CommandManualMeasurement extends AbstractCommand {
     }
     stringBuilder = new StringBuilder();
 
-    currentMeasureSequence = new LiveMeasureSequence(liveDataParser.getLiveViewController());
-    Platform.runLater(() -> {
-      model.getLiveSequences().add(currentMeasureSequence);
-    });
+    currentMeasureSequence = liveDataParser.createLiveMeasurementSequence();
   }
 
   @Override
@@ -43,17 +38,20 @@ public class CommandManualMeasurement extends AbstractCommand {
   }
 
   private void handleLine(String string) {
-    if (string.contains("manual_mode")) {
+    if (string.contains("WRIT") || string.contains("VEGIT")) {
+      logger.fine("Do nothing on this input.");
+
+    } else if (string.contains("manual_mode")) {
       currentMeasureSequence.setMetadata(string.split(";"));
 
     } else if (string.contains("WR") && string.contains("DC")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, string, currentMeasureSequence);
 
-    } else if (string.contains("WR")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.WR, string, currentMeasureSequence);
-
     } else if (string.contains("WR2")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.WR2, string, currentMeasureSequence);
+
+    } else if (string.contains("WR")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.WR, string, currentMeasureSequence);
 
     } else if (string.contains("VEG") && string.contains("DC")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.DC_VEG, string, currentMeasureSequence);
@@ -63,8 +61,7 @@ public class CommandManualMeasurement extends AbstractCommand {
 
     } else if (string.contains("Voltage =")) {
       currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus()
-          .getCalibrationFile(), model.getCurrentLiveSdCardPath());
-      liveDataParser.getLiveViewController().refreshList();
+          .getCalibrationFile(), liveDataParser.getCurrentLiveSdCardPath());
       liveDataParser.runNextCommand();
     }
   }
@@ -77,9 +74,8 @@ public class CommandManualMeasurement extends AbstractCommand {
       numbrs = split[3].replace(" ", "").split(";");
 
     } else {
-      String[] split = string.split(";");
-      numbrs = Arrays.copyOfRange(split, 1, split.length);
-
+      String[] split = string.replace(" ", "").split(";");
+      numbrs = Arrays.copyOfRange(split, 1, split.length - 2);
     }
 
     double[] doubles = Arrays.stream(numbrs).filter(s -> isStringNumeric(s))

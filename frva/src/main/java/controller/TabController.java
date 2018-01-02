@@ -1,13 +1,13 @@
 package controller;
 
-import controller.util.ZoomLineChart;
-import controller.util.ZoomWithRectangle;
+import controller.util.LineChartZoom;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
@@ -32,6 +32,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -46,7 +47,6 @@ public class TabController {
   private final FrvaModel model;
   private final MainController mainController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
-  private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
   private ToggleGroup togglGroupYaxis;
   private ToggleGroup togglGroupXaxis;
@@ -151,7 +151,6 @@ public class TabController {
   @FXML
   private CheckBox checkBoxRawDcWr;
 
-
   @FXML
   private CheckBox checkBoxRadianceVeg;
 
@@ -172,16 +171,16 @@ public class TabController {
 
   /**
    * Constructor for new TabController.
-   * @param model     The one and only Model.
-   * @param thisTabId the ID of this Tab.
-   * @param mainController  The MainController containing this tab.
+   *
+   * @param tab            tab linked to this controller.
+   * @param model          The one and only Model.
+   * @param mainController The MainController containing this tab.
    */
-  public TabController(FrvaModel model, int thisTabId, MainController mainController) {
+  public TabController(Tab tab, FrvaModel model, MainController mainController) {
     this.model = model;
     this.mainController = mainController;
     lineChartData = FXCollections.observableArrayList();
-    tabId = thisTabId;
-    listToWatch = model.getObservableList(thisTabId);
+    listToWatch = model.getObservableList(tab);
 
   }
 
@@ -233,8 +232,8 @@ public class TabController {
     datachart.setLegendVisible(false);
     datachart.setData(lineChartData);
 
-    ZoomLineChart zoom = new ZoomWithRectangle(datachart, xaxis, yaxis);
-    zoom.activateZoomHandler();
+    LineChartZoom lineChartZoom = new LineChartZoom(datachart, xaxis, yaxis);
+    lineChartZoom.activateZoomHandler();
   }
 
 
@@ -590,7 +589,8 @@ public class TabController {
         series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
 
         for (int i = 0; i < data.length; i++) {
-          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
+          if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY
+              && Math.abs(data[i]) > Double.MIN_VALUE) {
             double x = asWavelength ? calibration[i] : i;
             double y = data[i];
             series.getData().add(new XYChart.Data<>(x, y));

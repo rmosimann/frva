@@ -1,6 +1,5 @@
 package controller.util;
 
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
@@ -46,9 +45,7 @@ public class DeviceStatus {
     stringBuilder.append(longitude.getValue() + "°E \n");
     stringBuilder.append("(" + gpsTime.getValue() + " - " + gpsDate.getValue() + ")");
 
-    Platform.runLater(() -> {
-      gpsInformation.setValue(stringBuilder.toString());
-    });
+    gpsInformation.setValue(stringBuilder.toString());
 
   }
 
