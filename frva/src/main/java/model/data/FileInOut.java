@@ -164,7 +164,7 @@ public class FileInOut {
       while ((line = br.readLine()) != null) {
         if (!"".equals(line)) {
           if (Character.isDigit(line.charAt(0))) {
-            measureSequences.add(new MeasureSequence(line, dataFile));
+            measureSequences.add(new MeasureSequence(line.split(";"), dataFile));
             int i = 0;
             while ((line = br.readLine()) != null && i < dataFile.getMeasurementLength() - 1) {
               i++;
