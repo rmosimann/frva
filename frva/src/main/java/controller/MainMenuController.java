@@ -1,16 +1,24 @@
 package controller;
 
 import controller.util.treeviewitems.FrvaTreeRootItem;
+import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
 import model.data.FileInOut;
+import model.data.MeasureSequence;
 
 public class MainMenuController {
   private final FrvaModel model;
@@ -27,6 +35,9 @@ public class MainMenuController {
 
   @FXML
   private VBox contentVbox;
+
+  @FXML
+  private Button settingsButton;
 
 
   /**
@@ -100,12 +111,40 @@ public class MainMenuController {
 
     buttonLibrary.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
     buttonLiveView.addEventHandler(ActionEvent.ACTION, mainMenuHandler);
+
+    settingsButton.setOnAction(event -> model.changeLibraryPath(choseLibraryPath()));
+
+
   }
 
   private void setSelectedButton(Button button) {
     buttonLiveView.getStyleClass().remove("selected");
     buttonLibrary.getStyleClass().remove("selected");
     button.getStyleClass().add("selected");
+  }
+
+  private String choseLibraryPath() {
+    String selectedPath = null;
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.getDialogPane().setMinHeight(200);
+    alert.setTitle("Warning");
+    alert.setHeaderText("You are going to change the path of your library");
+    alert.setContentText("No files are going to be moved to the new location. "
+        + "If you want to move files from your old library to the new library, import them with "
+        + "the import-wizard, after the restart of the application.");
+
+    Optional<ButtonType> result = alert.showAndWait();
+    boolean ok = result.isPresent() && result.get() == ButtonType.OK;
+    if (ok) {
+      DirectoryChooser directoryChooser = new DirectoryChooser();
+      directoryChooser.setTitle("Select path for library");
+
+      while (selectedPath == null) {
+        selectedPath = directoryChooser.showDialog(settingsButton.getScene().getWindow())
+            .toString();
+      }
+    }
+    return selectedPath;
 
   }
 }

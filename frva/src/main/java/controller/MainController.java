@@ -65,6 +65,7 @@ public class MainController {
   @FXML
   private Button exportButton;
 
+
   public MainController(FrvaModel model) {
     this.model = model;
     logger.info("Created MainController");
@@ -79,6 +80,8 @@ public class MainController {
   }
 
 
+
+
   private void addEventHandlers() {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
@@ -88,7 +91,6 @@ public class MainController {
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
     exportButton.setOnAction(event -> exportData());
     importSdCardButton.setOnAction(event -> importWizard());
-
   }
 
   private void importWizard() {
