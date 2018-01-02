@@ -7,7 +7,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -16,224 +15,180 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="660.0" prefWidth="1280.0" style="-fx-border-color: darkgrey;" VBox.vgrow="ALWAYS"
-            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane prefHeight="660.0" prefWidth="1280.0" style="-fx-border-color: darkgrey;" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Pane layoutX="14.0" layoutY="115.0" prefHeight="44.0" prefWidth="1175.0"
-              style="-fx-background-color: gainsboro;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <Pane layoutX="14.0" layoutY="115.0" prefHeight="44.0" prefWidth="1175.0" style="-fx-background-color: gainsboro;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Label layoutX="14.0" layoutY="4.0" text="LiveView">
                     <font>
-                        <Font name="System Bold" size="30.0"/>
+                        <Font name="System Bold" size="30.0" />
                     </font>
                 </Label>
             </children>
         </Pane>
-        <ListView fx:id="measurementListView" layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0"
-                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
-        <AnchorPane layoutX="343.0" layoutY="74.0" prefHeight="546.0" prefWidth="664.0" AnchorPane.bottomAnchor="41.0"
-                    AnchorPane.leftAnchor="342.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="73.0">
+        <ListView fx:id="measurementListView" layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0" />
+        <AnchorPane layoutX="343.0" layoutY="74.0" prefHeight="546.0" prefWidth="664.0" AnchorPane.bottomAnchor="41.0" AnchorPane.leftAnchor="342.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="73.0">
             <children>
-                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0">
+                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <xAxis>
-                        <NumberAxis tickUnit="100" fx:id="xaxis"/>
+                        <NumberAxis tickUnit="100" fx:id="xaxis" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis fx:id="yaxis" tickUnit="1"/>
+                        <NumberAxis fx:id="yaxis" tickUnit="1" />
                     </yAxis>
                     <opaqueInsets>
-                        <Insets/>
+                        <Insets />
                     </opaqueInsets>
                 </LineChart>
             </children>
         </AnchorPane>
-        <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
-              AnchorPane.topAnchor="59.0">
+        <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="59.0">
             <children>
                 <Label text="Connected to">
                     <font>
-                        <Font name="System Bold" size="13.0"/>
+                        <Font name="System Bold" size="13.0" />
                     </font>
                 </Label>
                 <Label fx:id="systemNameLabel" styleClass="systemNameLabel">
                     <padding>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </padding>
                 </Label>
                 <Label text="Current Integtration Time">
                     <font>
-                        <Font name="System Bold" size="13.0"/>
+                        <Font name="System Bold" size="13.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
                 <HBox>
                     <children>
                         <Label text="WR:">
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                         <Label fx:id="integrationTimeWrLabel">
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                         <Label text="VEG:">
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                         <Label fx:id="integrationTimeVegLabel">
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                     </children>
                 </HBox>
                 <Label text="GPS - Information">
                     <font>
-                        <Font name="System Bold" size="13.0"/>
+                        <Font name="System Bold" size="13.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
                 <Label fx:id="gpsPositionLabel" prefHeight="36.0">
                     <padding>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </padding>
                 </Label>
                 <Label text="Command Executing:">
                     <font>
-                        <Font name="System Bold" size="13.0"/>
+                        <Font name="System Bold" size="13.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
                 <Label fx:id="currentCommandLabel1">
                     <padding>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </padding>
                 </Label>
             </children>
         </VBox>
-        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"
-              AnchorPane.topAnchor="250.0">
+        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="250.0">
             <children>
-                <Button fx:id="manualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode"/>
-                <Button fx:id="autoModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode"
-                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="manualModeButton" mnemonicParsing="false" prefWidth="215.0" text="Manual Mode" />
+                <Button fx:id="autoModeButton" mnemonicParsing="false" prefWidth="215.0" text="Auto Mode" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
         <AnchorPane prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="320.0">
             <children>
-                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefHeight="59.0" prefWidth="115.0"
-                        text="Manual Measurement" wrapText="true"/>
-                <CheckBox fx:id="manualMeasOptimiseCheckBox" layoutX="123.0" layoutY="33.0" mnemonicParsing="false"
-                          selected="true" text="Optimise" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="9.0"/>
-                <TextField fx:id="manualMeasurementCountField" layoutX="122.0" layoutY="2.0" prefHeight="26.0"
-                           prefWidth="83.0" promptText="count" text="1"/>
+                <Button fx:id="manualMeasurementButton" mnemonicParsing="false" prefHeight="59.0" prefWidth="115.0" text="Manual Measurement" wrapText="true" />
+                <CheckBox fx:id="manualMeasOptimiseCheckBox" layoutX="123.0" layoutY="33.0" mnemonicParsing="false" selected="true" text="Optimise" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="9.0" />
+                <TextField fx:id="manualMeasurementCountField" layoutX="122.0" layoutY="2.0" prefHeight="26.0" prefWidth="83.0" promptText="count" text="1" />
             </children>
         </AnchorPane>
         <VBox alignment="CENTER" prefWidth="215.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="390.0">
             <children>
-                <Button fx:id="setIntegrationTimeButton" mnemonicParsing="false" prefWidth="215.0"
-                        text="Set Integration Time" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="setIntervalButton" mnemonicParsing="false" prefWidth="215.0"
-                        text="Set interval between MS" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time"
-                        VBox.vgrow="ALWAYS"/>
+                <Button fx:id="setIntegrationTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set Integration Time" VBox.vgrow="ALWAYS" />
+                <Button fx:id="setIntervalButton" mnemonicParsing="false" prefWidth="215.0" text="Set interval between MS" VBox.vgrow="ALWAYS" />
+                <Button fx:id="setTimeButton" mnemonicParsing="false" prefWidth="215.0" text="Set time" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
-        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
-                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
-                  AnchorPane.topAnchor="563.0"/>
-        <HBox layoutX="1049.0" layoutY="620.0" prefWidth="215.0" AnchorPane.bottomAnchor="10.0"
-              AnchorPane.rightAnchor="15.0">
-            <children>
-                <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
-                <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
-            </children>
-        </HBox>
-        <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
-              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
                     <children>
-                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle"
-                               text="Bluetooth is off/unavailable"/>
-                        <Label layoutX="14.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0"
-                               text="Bluetooth activate you must."/>
-                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
-                        <Button fx:id="msgBoxBltOffRefreshButton" layoutX="418.0" layoutY="160.0"
-                                mnemonicParsing="false" text="Refresh"/>
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Bluetooth is off/unavailable" />
+                        <Label layoutX="14.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0" text="Bluetooth activate you must." />
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader" />
+                        <Button fx:id="msgBoxBltOffRefreshButton" layoutX="418.0" layoutY="160.0" mnemonicParsing="false" text="Refresh" />
                     </children>
                 </Pane>
             </children>
         </HBox>
-        <HBox fx:id="msgBoxSearching" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
-              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox fx:id="msgBoxSearching" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
                     <children>
-                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle"
-                               text="Searching for devices..."/>
-                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Searching for devices..." />
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader" />
                         <ImageView fitHeight="104.0" fitWidth="106.0" layoutX="197.0" layoutY="63.0">
                             <image>
-                                <Image url="@../images/loading2.gif"/>
+                                <Image url="@../images/loading2.gif" />
                             </image>
                         </ImageView>
                     </children>
                 </Pane>
             </children>
         </HBox>
-        <HBox fx:id="msgBoxDevices" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
-              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox fx:id="msgBoxDevices" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
                     <children>
-                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Connect to:"/>
-                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
-                        <VBox fx:id="msgBoxDevicesList" alignment="TOP_CENTER" layoutX="96.0" layoutY="73.0"
-                              prefHeight="89.0" prefWidth="300.0">
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Connect to:" />
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader" />
+                        <VBox fx:id="msgBoxDevicesList" alignment="TOP_CENTER" layoutX="96.0" layoutY="73.0" prefHeight="89.0" prefWidth="300.0">
                             <children>
-                                <Label text="No device found"/>
+                                <Label text="No device found" />
                             </children>
                         </VBox>
-                        <Button fx:id="msgBoxDevicesRefreshButton" layoutX="418.0" layoutY="160.0"
-                                mnemonicParsing="false" text="Refresh"/>
+                        <Button fx:id="msgBoxDevicesRefreshButton" layoutX="418.0" layoutY="160.0" mnemonicParsing="false" text="Refresh" />
                     </children>
                 </Pane>
             </children>
         </HBox>
 
-        <Button fx:id="bltDisconnectButton" disable="true" mnemonicParsing="false" text="Disconnect"
-                AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"/>
-        <HBox fx:id="msgBoxInitializing" alignment="CENTER" fillHeight="false" layoutX="53.0" layoutY="280.0"
-              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
-              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <Button fx:id="bltDisconnectButton" disable="true" mnemonicParsing="false" text="Disconnect" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+        <HBox fx:id="msgBoxInitializing" alignment="CENTER" fillHeight="false" layoutX="53.0" layoutY="280.0" prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
                     <children>
-                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
-                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Inintializing..."/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader" />
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle" text="Inintializing..." />
                         <Label fx:id="currentCommandLabel2" layoutX="240.0" layoutY="92.0">
                             <padding>
-                                <Insets left="20.0"/>
+                                <Insets left="20.0" />
                             </padding>
                         </Label>
                     </children>

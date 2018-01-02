@@ -135,6 +135,9 @@ public class LiveDataParser {
           e.printStackTrace();
         }
         logger.info("Sent Command: " + command);
+        liveViewController.printToConsole('\n');
+        liveViewController.printToConsole("Sent command: " + command);
+        liveViewController.printToConsole('\n');
 
         return null;
       }

@@ -26,6 +26,7 @@ public class ConnectionStateDisconnecting implements ConnectionState {
       }
 
     });
+    t.start();
 
   }
 }

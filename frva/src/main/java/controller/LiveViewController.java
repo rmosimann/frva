@@ -35,6 +35,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -90,9 +91,6 @@ public class LiveViewController {
 
   @FXML
   private NumberAxis yaxis;
-
-  @FXML
-  private TextArea miniTerminalTextArea;
 
   @FXML
   private Label systemNameLabel;
@@ -188,18 +186,26 @@ public class LiveViewController {
 
   @FXML
   private void initialize() {
+    setupConsoleWindow();
     defineButtonActions();
     initializeLayout();
     addBindings();
     addListeners();
-    setupConsoleWindow();
+
   }
 
   private void setupConsoleWindow() {
+    FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
+        .getResource("view/console.fxml"));
+    console = new Console(liveDataParser);
+    loader.setController(console);
     stage = new Stage();
-    console = new Console();
-    Scene scene = new Scene(console, 800, 600);
-    stage.setScene(scene);
+    try {
+      stage.setScene(new Scene(loader.load()));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    stage.setResizable(false);
   }
 
 
@@ -241,11 +247,7 @@ public class LiveViewController {
 
 
   private void defineButtonActions() {
-    sendAnyCommandButton.setOnAction(event -> {
-      String command = sendAnyCommandField.getText();
-      sendAnyCommandField.setText("");
-      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, command));
-    });
+
 
     autoModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
@@ -487,10 +489,6 @@ public class LiveViewController {
     return openStreamConnection;
   }
 
-  public TextArea getMiniTerminalTextArea() {
-    return miniTerminalTextArea;
-  }
-
   public void setLiveDataParser(LiveDataParser liveDataParser) {
     this.liveDataParser = liveDataParser;
   }
@@ -572,5 +570,9 @@ public class LiveViewController {
 
   public void printToConsole(char c) {
     this.console.print(c);
+  }
+
+  public void printToConsole(String str) {
+    this.console.println(str);
   }
 }

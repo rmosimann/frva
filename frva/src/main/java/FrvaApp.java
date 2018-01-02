@@ -2,6 +2,7 @@ import controller.MainMenuController;
 import controller.util.bluetooth.BluetoothConnection;
 import controller.util.bluetooth.ConnectionStateSearching;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -25,5 +26,6 @@ public class FrvaApp extends Application {
     primaryStage.getScene().getStylesheets().add(getClass()
         .getResource("css/master.css").toExternalForm());
     primaryStage.show();
+    primaryStage.setOnCloseRequest(event -> Platform.exit());
   }
 }
