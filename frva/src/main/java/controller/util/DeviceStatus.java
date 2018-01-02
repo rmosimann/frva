@@ -23,7 +23,9 @@ public class DeviceStatus {
   private final DoubleProperty longitude = new SimpleDoubleProperty();
   private final LongProperty gpsTime = new SimpleLongProperty();
   private final LongProperty gpsDate = new SimpleLongProperty();
-  private final LongProperty integrationTime = new SimpleLongProperty();
+  private final LongProperty integrationTimeWr = new SimpleLongProperty();
+  private final LongProperty integrationTimeVeg = new SimpleLongProperty();
+  private final LongProperty integrationTimeConfigured = new SimpleLongProperty();
   private final LongProperty maxIntegrationTime = new SimpleLongProperty();
   private final LongProperty intervalTime = new SimpleLongProperty();
   private final LongProperty serialResolution = new SimpleLongProperty();
@@ -115,16 +117,16 @@ public class DeviceStatus {
     redoGpsInformationString();
   }
 
-  public long getIntegrationTime() {
-    return integrationTime.get();
+  public long getIntegrationTimeConfigured() {
+    return integrationTimeConfigured.get();
   }
 
-  public LongProperty integrationTimeProperty() {
-    return integrationTime;
+  public LongProperty integrationTimeConfiguredProperty() {
+    return integrationTimeConfigured;
   }
 
-  public void setIntegrationTime(long integrationTime) {
-    this.integrationTime.set(integrationTime);
+  public void setIntegrationTimeConfigured(long integrationTimeConfigured) {
+    this.integrationTimeConfigured.set(integrationTimeConfigured);
   }
 
   public long getMaxIntegrationTime() {
@@ -266,5 +268,30 @@ public class DeviceStatus {
 
   public CalibrationFile getCalibrationFile() {
     return calibrationFile;
+  }
+
+
+  public long getIntegrationTimeWr() {
+    return integrationTimeWr.get();
+  }
+
+  public LongProperty integrationTimeWrProperty() {
+    return integrationTimeWr;
+  }
+
+  public void setIntegrationTimeWr(long integrationTimeWr) {
+    this.integrationTimeWr.set(integrationTimeWr);
+  }
+
+  public long getIntegrationTimeVeg() {
+    return integrationTimeVeg.get();
+  }
+
+  public LongProperty integrationTimeVegProperty() {
+    return integrationTimeVeg;
+  }
+
+  public void setIntegrationTimeVeg(long integrationTimeVeg) {
+    this.integrationTimeVeg.set(integrationTimeVeg);
   }
 }
