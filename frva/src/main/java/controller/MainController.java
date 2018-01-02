@@ -168,18 +168,18 @@ public class MainController {
     tabPane.getTabs().add(tab);
     addTab();
 
-    tabPane.getSelectionModel().selectedIndexProperty()
+    tabPane.getSelectionModel().selectedItemProperty()
         .addListener((observable, oldValue, newValue) -> {
-          if (newValue.intValue() == tabPane.getTabs().size() - 1) {
+          if (newValue.tabPaneProperty().get().getSelectionModel().selectedIndexProperty().get()
+              == tabPane.getTabs().size() - 1) {
             addTab();
           } else {
-            model.setCurrentlySelectedTab((Integer) newValue);
+            model.setCurrentlySelectedTab(newValue);
           }
         });
-    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Number>() {
+    model.getCurrentlySelectedTabProperty().addListener(new ChangeListener<Tab>() {
       @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue,
-                          Number newValue) {
+      public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
         treeView.getCheckModel().getCheckedItems().removeListener(treeViewListener);
         unselectTickedItems(treeView.getRoot());
         for (MeasureSequence ms : model.getCurrentSelectionList()) {
@@ -191,35 +191,37 @@ public class MainController {
     });
   }
 
+
   /**
    * Adds a new Tab to the DataHandlingView.
    */
   private void addTab() {
     //Create Tab and set defaults
     Tab newtab = createEditableTab("Untitled " + (newTabId));
+
     newtab.closableProperty().setValue(true);
     newtab.setOnCloseRequest(event -> {
-      model.removeSelectionMapping(newTabId);
+      model.removeSelectionMapping(newtab);
       if (tabPane.getTabs().size() == 2) {
         addTab();
       }
     });
-    model.addSelectionMapping(newTabId);
+    model.addSelectionMapping(newtab);
     tabPane.getTabs().add(tabPane.getTabs().size() - 1, newtab);
+
 
     //load view and controller
     try {
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
           .getResource("view/tabContent.fxml"));
-      loader.setController(new TabController(model, newTabId, this));
+      loader.setController(new TabController(newtab, model, this));
       newtab.setContent(loader.load());
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     tabPane.getSelectionModel().select(tabPane.getTabs().size() - 2);
-    model.setCurrentlySelectedTab(tabPane.getTabs().size() - 2);
-
+    model.setCurrentlySelectedTab(tabPane.getTabs().get(tabPane.getTabs().size() - 2));
     newTabId++;
   }
 
