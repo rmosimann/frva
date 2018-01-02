@@ -16,6 +16,7 @@ public class Console extends Pane {
 
 
   protected final TextArea textArea = new TextArea();
+  private StringBuffer stringBuffer;
 
   /**
    * Creates a Console.
@@ -26,6 +27,7 @@ public class Console extends Pane {
     this.getChildren().add(textArea);
     this.textArea.setMinWidth(800);
     this.textArea.setMinHeight(600);
+    stringBuffer = new StringBuffer();
   }
 
 
@@ -33,9 +35,14 @@ public class Console extends Pane {
     runSafe(() -> textArea.clear());
   }
 
-  public void print(final String text) {
-    Objects.requireNonNull(text, "text");
-    runSafe(() -> textArea.appendText(text));
+  public void print(final char c) {
+    if (c == '\n') {
+      stringBuffer.append(c);
+      runSafe(() -> textArea.appendText(stringBuffer.toString()));
+      stringBuffer = new StringBuffer();
+    } else {
+      stringBuffer.append(c);
+    }
   }
 
   public void println(final String text) {
@@ -50,6 +57,7 @@ public class Console extends Pane {
   /**
    * No clue what this does. (Copied
    * from https://codereview.stackexchange.com/questions/52197/console-component-in-javafx)
+   *
    * @param runnable to be run.
    */
   public static void runSafe(final Runnable runnable) {

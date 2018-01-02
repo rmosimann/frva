@@ -565,6 +565,6 @@ public class LiveViewController {
   }
 
   public void printToConsole(char c) {
-    this.console.print(Character.toString(c));
+    this.console.print(c);
   }
 }
