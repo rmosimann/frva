@@ -32,6 +32,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -46,7 +47,6 @@ public class TabController {
   private final FrvaModel model;
   private final MainController mainController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
-  private final int tabId;
   private final ObservableList<MeasureSequence> listToWatch;
   private ToggleGroup togglGroupYaxis;
   private ToggleGroup togglGroupXaxis;
@@ -173,15 +173,13 @@ public class TabController {
    * Constructor for new TabController.
    *
    * @param model          The one and only Model.
-   * @param thisTabId      the ID of this Tab.
    * @param mainController The MainController containing this tab.
    */
-  public TabController(FrvaModel model, int thisTabId, MainController mainController) {
+  public TabController(Tab tab, FrvaModel model, MainController mainController) {
     this.model = model;
     this.mainController = mainController;
     lineChartData = FXCollections.observableArrayList();
-    tabId = thisTabId;
-    listToWatch = model.getObservableList(thisTabId);
+    listToWatch = model.getObservableList(tab);
 
   }
 
