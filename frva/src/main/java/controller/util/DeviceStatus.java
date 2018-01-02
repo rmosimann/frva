@@ -1,5 +1,8 @@
 package controller.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
@@ -9,6 +12,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import model.data.CalibrationFile;
+import model.data.FileInOut;
 
 /**
  * Created by patrick.wigger on 28.11.17.
@@ -259,7 +263,9 @@ public class DeviceStatus {
     this.fldPixels.set(fldPixels);
   }
 
+
   public void setCalibrationFile(CalibrationFile calibrationFile) {
+
     this.calibrationFile = calibrationFile;
   }
 

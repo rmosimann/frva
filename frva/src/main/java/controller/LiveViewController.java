@@ -53,6 +53,7 @@ import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
+import model.data.CalibrationFile;
 import model.data.MeasureSequence;
 
 
@@ -164,7 +165,6 @@ public class LiveViewController {
 
   @FXML
   private Label currentCommandLabel2;
-
 
 
   /**
@@ -550,5 +550,12 @@ public class LiveViewController {
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     Date date = new Date();
     model.setCurrentLiveSdCardPath(dateFormat.format(date));
+  }
+
+  /**
+   * Clears list of livesequences.
+   */
+  public void clearLiveViewList() {
+    model.getLiveSequences().clear();
   }
 }
