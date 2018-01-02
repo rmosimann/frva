@@ -1,6 +1,13 @@
 package model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,10 +77,13 @@ public class FrvaModel {
     }
 
     for (File sdfolder : folder.listFiles()) {
-      if (sdfolder.isDirectory()) {
+      File calibFile = new File(sdfolder.getPath() + File.separator + "cal.csv");
+      if (sdfolder.isDirectory() && calibFile.exists()) {
         library.add(new SdCard(sdfolder, sdfolder.getName()));
       }
     }
+    FileInOut.checkForEmptyFiles();
+
   }
 
   /**

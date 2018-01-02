@@ -146,6 +146,7 @@ public class MainController {
       unselectTickedItems(treeView.getRoot());
       model.deleteMeasureSequences(measurements);
     }
+    FileInOut.checkForEmptyFiles();
 
 
   }
