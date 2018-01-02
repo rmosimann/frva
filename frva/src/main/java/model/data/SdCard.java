@@ -62,6 +62,29 @@ public class SdCard {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);
   }
 
+  /**
+   * Checks if SDCARD is empty, empty DataFiles are removed before.
+   *
+   * @return true when empty.
+   */
+  public boolean isEmpty() {
+    if (dataFiles.isEmpty()) {
+      deleteFile(sdCardFile);
+
+      return true;
+    }
+    boolean isEmpty = true;
+    for (DataFile dfile : dataFiles) {
+      if (!dfile.isEmpty()) {
+        isEmpty = false;
+      }
+    }
+    if (isEmpty) {
+      deleteFile(sdCardFile);
+    }
+    return isEmpty;
+  }
+
 
   /**
    * Getter for the devices Serial-Number.

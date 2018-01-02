@@ -19,7 +19,6 @@ public class SdCardTest {
 
   @Test
   public void atest() {
-    //    System.out.println(getClass().getResource("/SDCARD"));
     //    sd = new SdCard(getClass().getResource("/SDCARD"),null);
     //    sd.getDataFiles().get(0).getMeasureSequences().get(2).print();
   }
