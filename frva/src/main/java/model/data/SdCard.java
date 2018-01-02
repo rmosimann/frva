@@ -33,6 +33,8 @@ public class SdCard {
     }
 
 
+    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
+
     File dbFile = new File(sdCardFile + File.separator + "db.csv");
 
     if (!dbFile.exists()) {
@@ -55,7 +57,6 @@ public class SdCard {
 
   public void initialize() {
 
-    calibrationFile = FileInOut.readCalibrationFile(this, "cal");
   }
 
   public boolean isPathInLibrary() {
