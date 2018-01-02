@@ -3,8 +3,8 @@ package controller.util.liveviewparser;
 /**
  * Created by patrick.wigger on 29.12.17.
  */
+
 import java.util.Objects;
-import java.util.Random;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
@@ -26,7 +26,6 @@ public class Console extends Pane {
     this.getChildren().add(textArea);
     this.textArea.setMinWidth(800);
     this.textArea.setMinHeight(600);
-    runPseudoOutput();
   }
 
 
@@ -62,28 +61,4 @@ public class Console extends Pane {
     }
   }
 
-  private void runPseudoOutput() {
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          try {
-            Thread.sleep(new Random().nextInt(200));
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-
-          StringBuilder randomText = new StringBuilder();
-          Random random = new Random();
-
-          for (int j = 0; j < 60; j++) {
-            randomText.append(random.nextInt(9));
-          }
-
-          println(randomText.toString());
-        }
-      }
-    });
-    t.start();
-  }
 }

@@ -200,8 +200,6 @@ public class LiveViewController {
     console = new Console();
     Scene scene = new Scene(console, 800, 600);
     stage.setScene(scene);
-    //TODO: Remove when on Real Device -> Start with sucessful connection
-    stage.show();
   }
 
 
