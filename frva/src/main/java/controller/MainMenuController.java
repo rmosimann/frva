@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import model.FrvaModel;
 import model.data.FileInOut;
+import model.data.LiveMeasureSequence;
+import model.data.MeasureSequence;
 
 public class MainMenuController {
   private final FrvaModel model;
@@ -78,8 +80,13 @@ public class MainMenuController {
 
       if (pressedButton == buttonLibrary) {
         nodetouse = mainViewPane;
-
-        mainController.refreshTreeView();
+        if (model.getLiveSequences().size() > 0) {
+          MeasureSequence liveMs = model.getLiveSequences().get(0);
+          if (liveMs instanceof LiveMeasureSequence
+              && ((LiveMeasureSequence) liveMs).isComplete()) {
+            mainController.refreshTreeView();
+          }
+        }
 
       } else if (pressedButton == buttonLiveView) {
         nodetouse = liveViewNode;
