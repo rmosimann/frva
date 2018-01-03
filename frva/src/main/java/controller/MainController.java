@@ -67,6 +67,7 @@ public class MainController {
   @FXML
   private Button exportButton;
 
+
   public MainController(FrvaModel model) {
     this.model = model;
     logger.info("Created MainController");
@@ -79,6 +80,8 @@ public class MainController {
     loadTreeStructure();
     addEventHandlers();
   }
+
+
 
 
   private void addEventHandlers() {
@@ -105,7 +108,6 @@ public class MainController {
       }
     });
     importSdCardButton.setOnAction(event -> importWizard());
-
   }
 
   private void importWizard() {
