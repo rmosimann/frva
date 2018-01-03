@@ -53,7 +53,6 @@ import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
-import model.data.CalibrationFile;
 import model.data.MeasureSequence;
 
 
@@ -320,7 +319,9 @@ public class LiveViewController {
     measurementListView.getSelectionModel().selectedItemProperty()
         .addListener((observable, oldValue, newValue) -> {
           selectedMeasurement = newValue;
-          redrawGraph(selectedMeasurement);
+          if (newValue != null) {
+            redrawGraph(selectedMeasurement);
+          }
         });
 
 
@@ -555,7 +556,12 @@ public class LiveViewController {
   /**
    * Clears list of livesequences.
    */
-  public void clearLiveViewList() {
-    model.getLiveSequences().clear();
+  public void clearLiveView() {
+    Platform.runLater(() -> {
+      model.getLiveSequences().clear();
+      deviceStatus.clear();
+      lineChartData.clear();
+      setCurrentCommandLabels("");
+    });
   }
 }

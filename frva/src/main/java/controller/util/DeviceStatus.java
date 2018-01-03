@@ -1,8 +1,5 @@
 package controller.util;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
@@ -12,7 +9,6 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import model.data.CalibrationFile;
-import model.data.FileInOut;
 
 /**
  * Created by patrick.wigger on 28.11.17.
@@ -296,5 +292,34 @@ public class DeviceStatus {
 
   public void setIntegrationTimeVeg(long integrationTimeVeg) {
     this.integrationTimeVeg.set(integrationTimeVeg);
+  }
+
+  /**
+   * Clears all fields of the object.
+   */
+  public void clear() {
+    systemname.set("");
+    gpsInformation.set("");
+    fldPixels.set("");
+    lat.set(0.0);
+    longitude.set(0.0);
+    gpsTime.set(0);
+    gpsDate.set(0);
+    integrationTimeConfigured.set(0);
+    integrationTimeVeg.set(0);
+    integrationTimeWr.set(0);
+    maxIntegrationTime.set(0);
+    intervalTime.set(0);
+    serialResolution.set(0);
+    ledOnEachCycle.set(0);
+    ledPower.set(0);
+    qeAverages.set(0);
+    flameAverages.set(0);
+
+    serialStream.set(false);
+    serialDataTransfer.set(false);
+
+    calibrationFile = null;
+
   }
 }
