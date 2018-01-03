@@ -127,7 +127,7 @@ public class LiveMeasureSequence extends MeasureSequence {
   @Override
   public String toString() {
     if (getMetadata()[0] != null) {
-      return getId();
+      return "ID" + getId() + " - " + getTime();
     }
     return "Measuring...";
   }
