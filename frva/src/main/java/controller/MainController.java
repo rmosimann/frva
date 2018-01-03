@@ -178,7 +178,28 @@ public class MainController {
               return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
             }
           });
-      FileInOut.createFiles(exportList, selectedFile.toPath(), null);
+
+      FloatProperty progressindicator = new SimpleFloatProperty(-1);
+      progressBarExport.progressProperty().bind(progressindicator);
+
+      displayExportingDialog(true);
+
+      Task task = new Task() {
+        @Override
+        protected Object call() throws Exception {
+
+          FileInOut.createFiles(exportList, selectedFile.toPath(), progressindicator);
+
+          Platform.runLater(() -> {
+
+            displayExportingDialog(false);
+          });
+          return null;
+        }
+      };
+
+      new Thread(task).start();
+
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
