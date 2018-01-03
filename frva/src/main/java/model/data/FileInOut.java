@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import model.FrvaModel;
@@ -285,9 +286,11 @@ public class FileInOut {
    *
    * @param list       List of MeasurementSequences to save.
    * @param exportPath the path where the SDCARDs are exported to.
+   * @param progressindicator float 0 - 1, displaying progress in GUI.
    * @return a list of the written SDCARDS.
    */
-  public static List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath) {
+  public static List<SdCard> createFiles(List<MeasureSequence> list, Path exportPath,
+                                         FloatProperty progressindicator) {
     List<SdCard> returnList = new ArrayList<>();
     SdCard sdCard = null;
     String currentFolder = null;
@@ -295,6 +298,9 @@ public class FileInOut {
     String dayFolderPath = null;
     List<File> sdCardFolderList = new ArrayList<>();
     for (MeasureSequence measureSequence : list) {
+      Platform.runLater(() -> {
+        progressindicator.set((float) list.indexOf(measureSequence) / (float) list.size());
+      });
       try {
         if (!measureSequence.getContainingSdCard().equals(sdCard)) {
           sdCard = measureSequence.getContainingSdCard();
