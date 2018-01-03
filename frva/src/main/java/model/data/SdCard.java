@@ -31,14 +31,10 @@ public class SdCard {
     } else {
       this.name = name;
     }
-
-
     calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
-
-
     File dbFile = new File(sdCardFile + File.separator + "db.csv");
 
-    if (!dbFile.exists()) {
+    if (!dbFile.exists() || dbFile.length() == 0) {
       dataFiles = FileInOut.getDataFiles(this);
       if (isPathInLibrary()) {
         FileInOut.writeDatabaseFile(this);
