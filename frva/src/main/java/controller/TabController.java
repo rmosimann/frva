@@ -644,13 +644,15 @@ public class TabController {
       DecimalFormat roundTwoDigits = new DecimalFormat("#.##");
       DecimalFormat roundFourDigits = new DecimalFormat("#.####");
 
-      tooltip.setText("SD-Card / Datatfile: " + sequence.getContainingSdCard().getName() + " / "
-          + sequence.getDataFile().getDataFileName() + "\n"
-          + "ID: " + sequence.getId() + " - " + sequence.getTime() + "\n"
-          + "Serial: " + sequence.getSerial() + "\n"
-          + "Type: " + key.name() + "\n"
-          + "x: " + String.valueOf(roundTwoDigits.format(xvalue)) + "\n"
-          + "y: " + String.valueOf(roundFourDigits.format(yvalue))
+      tooltip.setText(
+          "Location: " + sequence.getContainingSdCard().getName() + "/"
+              + sequence.getDataFile().getFolderName() + "/"
+              + sequence.getDataFile().getDataFileName() + "\n"
+              + "ID: " + sequence.getId() + " - " + sequence.getTime() + "\n"
+              + "Serial: " + sequence.getSerial() + "\n"
+              + "Type: " + key.name() + "\n"
+              + "x: " + String.valueOf(roundTwoDigits.format(xvalue)) + "\n"
+              + "y: " + String.valueOf(roundFourDigits.format(yvalue))
       );
     });
   }
