@@ -364,6 +364,7 @@ public class LiveViewController {
         while (c.next()) {
           c.getAddedSubList().forEach(o -> {
             measurementListView.getSelectionModel().select(o);
+            measurementListView.scrollTo(o);
           });
 
         }
