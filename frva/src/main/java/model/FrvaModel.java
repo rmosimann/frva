@@ -1,6 +1,8 @@
 package model;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +75,7 @@ public class FrvaModel {
    */
   public void changeLibraryPath(String newLibPath) {
     if (newLibPath != null) {
-      boolean isEmpty = true;
+      boolean isEmpty;
       if (new File(newLibPath).list().length > 0) {
         Alert notEmptyAlert = new Alert(Alert.AlertType.CONFIRMATION);
         notEmptyAlert.getDialogPane().setMinHeight(200);
@@ -82,6 +84,9 @@ public class FrvaModel {
         notEmptyAlert.setContentText("Non FloX/RoX data may be deleted if you chose to continue.");
         Optional<ButtonType> result2 = notEmptyAlert.showAndWait();
         isEmpty = result2.isPresent() && result2.get() == ButtonType.OK;
+        if (!isEmpty) {
+          return;
+        }
       }
 
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -94,7 +99,7 @@ public class FrvaModel {
       boolean restartOk = result.isPresent() && result.get() == ButtonType.OK;
 
 
-      if (restartOk && isEmpty) {
+      if (restartOk) {
         LIBRARYPATH = newLibPath;
         Preferences pref = Preferences.userNodeForPackage(FrvaModel.class);
         pref.put("librarypath", newLibPath);
@@ -286,4 +291,6 @@ public class FrvaModel {
     this.currentLiveSdCardPath = new File(LIBRARYPATH + File.separator
         + "Rec " + sdCardName);
   }
+
+
 }

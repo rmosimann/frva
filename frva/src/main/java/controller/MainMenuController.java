@@ -138,13 +138,13 @@ public class MainMenuController {
     if (ok) {
       DirectoryChooser directoryChooser = new DirectoryChooser();
       directoryChooser.setTitle("Select path for library");
+      directoryChooser.setInitialDirectory(new File(FrvaModel.LIBRARYPATH));
 
-      while (selectedPath == null) {
-        selectedPath = directoryChooser.showDialog(settingsButton.getScene().getWindow())
-            .toString();
+      File path = directoryChooser.showDialog(settingsButton.getScene().getWindow());
+      if (path != null) {
+        selectedPath = path.getPath();
       }
     }
     return selectedPath;
-
   }
 }
