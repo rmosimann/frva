@@ -39,6 +39,7 @@ public class CommandAutoMode extends AbstractCommand {
 
     } else if (line.contains("auto_mode")) {
       currentMeasureSequence.setMetadata(line.replace(" ", "").split(";"));
+      liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
     } else if (line.contains("VEGIT")) {
       currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));

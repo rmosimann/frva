@@ -28,6 +28,14 @@ public class MeasureSequence {
   private ReflectionIndices reflectionIndices;
   private BooleanProperty deleted;
 
+  public long getIntegrationTimeVeg() {
+    return Long.parseLong(metadata[7]) / 1000;
+  }
+
+  public long getIntegrationTimeWr() {
+    return Long.parseLong(metadata[5]) / 1000;
+  }
+
 
   public enum SequenceKeyName {
     VEG,

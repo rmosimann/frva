@@ -40,6 +40,7 @@ public class CommandManualMeasurement extends AbstractCommand {
   private void handleLine(String line) {
     if (line.contains("manual_mode")) {
       currentMeasureSequence.setMetadata(line.replace(" ", "").split(";"));
+      liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
     } else if (line.contains("VEGIT")) {
       currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
