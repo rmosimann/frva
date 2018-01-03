@@ -89,6 +89,12 @@ public class MainController {
   @FXML
   private ProgressBar progressBarDelete;
 
+  @FXML
+  private Button hideImportDialog;
+
+  @FXML
+  private Button hideExportDialog;
+
 
   public MainController(FrvaModel model) {
     this.model = model;
@@ -114,6 +120,9 @@ public class MainController {
     deleteSelectedItemsButton.setDisable(true);
     exportButton.setOnAction(event -> exportData());
     exportButton.setDisable(true);
+
+    hideExportDialog.setOnAction(event -> displayExportingDialog(false));
+    hideImportDialog.setOnAction(event -> displayImportingDialog(false));
 
     model.getCurrentSelectionList().addListener(new ListChangeListener<MeasureSequence>() {
       @Override

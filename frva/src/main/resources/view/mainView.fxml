@@ -137,6 +137,9 @@
                         <ProgressBar fx:id="progressBarImport" prefWidth="400" layoutX="50.0" layoutY="100.0">
 
                         </ProgressBar>
+
+                        <Button fx:id="hideImportDialog" layoutX="350.0" layoutY="150.0" mnemonicParsing="false"
+                                prefWidth="100.0" text="Hide dialog"/>
                     </children>
                 </Pane>
             </children>
@@ -154,6 +157,8 @@
                         <ProgressBar fx:id="progressBarExport" prefWidth="400" layoutX="50.0" layoutY="100.0">
 
                         </ProgressBar>
+                        <Button fx:id="hideExportDialog" layoutX="350.0" layoutY="150.0" mnemonicParsing="false"
+                                prefWidth="100.0" text="Hide dialog"/>
                     </children>
                 </Pane>
             </children>
@@ -171,6 +176,7 @@
                         <ProgressBar fx:id="progressBarDelete" prefWidth="400" layoutX="50.0" layoutY="100.0">
 
                         </ProgressBar>
+
                     </children>
                 </Pane>
             </children>
