@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -165,6 +163,7 @@ public class MainController {
       }
 
       unselectTickedItems(treeView.getRoot());
+      treeView.getCheckModel().clearChecks();
 
       model.deleteMeasureSequences(measurements);
     }
