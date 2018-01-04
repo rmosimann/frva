@@ -237,6 +237,7 @@ public class MainController {
       }
 
       unselectTickedItems(treeView.getRoot());
+      treeView.getCheckModel().clearChecks();
 
       model.deleteMeasureSequences(measurements);
     }
