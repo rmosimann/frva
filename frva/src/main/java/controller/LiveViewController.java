@@ -14,6 +14,7 @@ import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetInterval;
 import controller.util.liveviewparser.CommandSetItegrationTime;
 import controller.util.liveviewparser.CommandSetTime;
+import controller.util.liveviewparser.Console;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -34,7 +35,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -50,6 +53,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
@@ -73,12 +77,14 @@ public class LiveViewController {
   private final String axisLabelWaveLength = "Wavelength [nanometer]";
   private final String axisLabelDigitalNumber = "DN (digital number)";
   private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
+  private Stage stage;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
   private LiveDataParser liveDataParser;
 
   private MeasureSequence selectedMeasurement;
+  private Console console;
 
   @FXML
   private ListView<MeasureSequence> measurementListView;
@@ -100,9 +106,6 @@ public class LiveViewController {
 
   @FXML
   private NumberAxis yaxisRadiance;
-
-  @FXML
-  private TextArea miniTerminalTextArea;
 
   @FXML
   private Label systemNameLabel;
@@ -198,10 +201,28 @@ public class LiveViewController {
 
   @FXML
   private void initialize() {
+    setupConsoleWindow();
     defineButtonActions();
     initializeLayout();
     addBindings();
     addListeners();
+
+  }
+
+  private void setupConsoleWindow() {
+    FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
+        .getResource("view/console.fxml"));
+    console = new Console(liveDataParser);
+    loader.setController(console);
+    stage = new Stage();
+    try {
+      stage.setScene(new Scene(loader.load()));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    stage.setResizable(false);
+    stage.setX(50);
+    stage.setY(50);
   }
 
 
@@ -261,11 +282,7 @@ public class LiveViewController {
 
 
   private void defineButtonActions() {
-    sendAnyCommandButton.setOnAction(event -> {
-      String command = sendAnyCommandField.getText();
-      sendAnyCommandField.setText("");
-      liveDataParser.addCommandToQueue(new CommandAny(liveDataParser, command));
-    });
+
 
     autoModeButton.setOnAction(event -> {
       liveDataParser.addCommandToQueue(new CommandAutoMode(liveDataParser));
@@ -510,10 +527,6 @@ public class LiveViewController {
     return openStreamConnection;
   }
 
-  public TextArea getMiniTerminalTextArea() {
-    return miniTerminalTextArea;
-  }
-
   public void setLiveDataParser(LiveDataParser liveDataParser) {
     this.liveDataParser = liveDataParser;
   }
@@ -589,6 +602,7 @@ public class LiveViewController {
       });
 
     }
+
   }
 
   /**
@@ -623,5 +637,18 @@ public class LiveViewController {
       lineChartRadianceData.clear();
       setCurrentCommandLabels("");
     });
+  }
+
+  public void showConsole() {
+    stage.show();
+    stage.toFront();
+  }
+
+  public void printToConsole(char c) {
+    this.console.print(c);
+  }
+
+  public void printToConsole(String str) {
+    this.console.println(str);
   }
 }

@@ -7,7 +7,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -170,16 +169,6 @@
                         VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
-        <TextArea fx:id="miniTerminalTextArea" layoutX="1047.0" layoutY="558.0" prefHeight="60.0" prefWidth="215.0"
-                  styleClass="terminalMiniView" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="15.0"
-                  AnchorPane.topAnchor="563.0"/>
-        <HBox layoutX="1049.0" layoutY="620.0" prefWidth="215.0" AnchorPane.bottomAnchor="10.0"
-              AnchorPane.rightAnchor="15.0">
-            <children>
-                <TextField fx:id="sendAnyCommandField" prefHeight="26.0"/>
-                <Button fx:id="sendAnyCommandButton" mnemonicParsing="false" prefWidth="70.0" text="Send"/>
-            </children>
-        </HBox>
         <HBox fx:id="msgBoxBltOff" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
               prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

@@ -22,6 +22,7 @@ public class CommandManualMode extends AbstractCommand {
 
   @Override
   public void receive(char read) {
+
     stringBuilder.append((char) read);
 
     if (stringBuilder.toString().contains(System.lineSeparator())) {

@@ -23,6 +23,12 @@ public class CommandAutoMode extends AbstractCommand {
 
   @Override
   public void receive(char read) {
+    /*
+    //TODO: in Automode execute command immediately!
+    if (liveDataParser.getCommandQueue().size() > 0) {
+      liveDataParser.runNextCommand();
+    }
+    */
     stringBuilder.append((char) read);
 
     if (stringBuilder.toString().contains(System.lineSeparator())) {
