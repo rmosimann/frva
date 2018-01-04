@@ -89,5 +89,9 @@ public class CommandAutoMode extends AbstractCommand {
     measureSequence.addData(keyName, doubles);
   }
 
+  @Override
+  public void onQueueUpdate() {
+    liveDataParser.getCommandQueue().peek().sendCommand();
+  }
 }
 
