@@ -95,5 +95,9 @@ public class CommandAutoMode extends AbstractCommand {
     liveDataParser.currentMeasurementUpdated(currentMeasureSequence);
   }
 
+  @Override
+  public void onQueueUpdate() {
+    liveDataParser.getCommandQueue().peek().sendCommand();
+  }
 }
 

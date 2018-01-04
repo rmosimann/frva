@@ -259,7 +259,9 @@ public class DeviceStatus {
     this.fldPixels.set(fldPixels);
   }
 
+
   public void setCalibrationFile(CalibrationFile calibrationFile) {
+
     this.calibrationFile = calibrationFile;
   }
 
@@ -290,5 +292,34 @@ public class DeviceStatus {
 
   public void setIntegrationTimeVeg(long integrationTimeVeg) {
     this.integrationTimeVeg.set(integrationTimeVeg);
+  }
+
+  /**
+   * Clears all fields of the object.
+   */
+  public void clear() {
+    systemname.set("");
+    gpsInformation.set("");
+    fldPixels.set("");
+    lat.set(0.0);
+    longitude.set(0.0);
+    gpsTime.set(0);
+    gpsDate.set(0);
+    integrationTimeConfigured.set(0);
+    integrationTimeVeg.set(0);
+    integrationTimeWr.set(0);
+    maxIntegrationTime.set(0);
+    intervalTime.set(0);
+    serialResolution.set(0);
+    ledOnEachCycle.set(0);
+    ledPower.set(0);
+    qeAverages.set(0);
+    flameAverages.set(0);
+
+    serialStream.set(false);
+    serialDataTransfer.set(false);
+
+    calibrationFile = null;
+
   }
 }

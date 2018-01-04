@@ -181,7 +181,6 @@ public class LiveViewController {
   private Label currentCommandLabel2;
 
 
-
   /**
    * Constructor.
    *
@@ -354,7 +353,9 @@ public class LiveViewController {
     measurementListView.getSelectionModel().selectedItemProperty()
         .addListener((observable, oldValue, newValue) -> {
           selectedMeasurement = newValue;
-          redrawGraph(selectedMeasurement);
+          if (newValue != null) {
+            redrawGraph(selectedMeasurement);
+          }
         });
 
 
@@ -609,5 +610,17 @@ public class LiveViewController {
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     Date date = new Date();
     model.setCurrentLiveSdCardPath(dateFormat.format(date));
+  }
+
+  /**
+   * Clears list of livesequences.
+   */
+  public void clearLiveView() {
+    Platform.runLater(() -> {
+      model.getLiveSequences().clear();
+      deviceStatus.clear();
+      lineChartData.clear();
+      setCurrentCommandLabels("");
+    });
   }
 }
