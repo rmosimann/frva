@@ -581,7 +581,7 @@ public class TabController {
         entries = sequence.getReflectance().entrySet();
       }
 
-      double[] calibration = sequence.getWavlengthCalibration();
+      double[] calibration = sequence.getWlF1Calibration();
 
       for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
         double[] data = entry.getValue();

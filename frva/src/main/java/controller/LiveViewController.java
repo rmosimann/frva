@@ -53,6 +53,7 @@ import javafx.scene.layout.VBox;
 import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import model.FrvaModel;
+import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
 
@@ -66,7 +67,12 @@ public class LiveViewController {
   private List<ServiceRecord[]> availableServiceRecords;
   private ServiceRecord[] selectedServiceRecord;
   private StreamConnection openStreamConnection;
-  private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartRawData;
+  private final ObservableList<XYChart.Series<Double, Double>> lineChartRadianceData;
+
+  private final String axisLabelWaveLength = "Wavelength [nanometer]";
+  private final String axisLabelDigitalNumber = "DN (digital number)";
+  private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
 
@@ -78,13 +84,22 @@ public class LiveViewController {
   private ListView<MeasureSequence> measurementListView;
 
   @FXML
-  private LineChart<Double, Double> datachart;
+  private LineChart<Double, Double> datachartRaw;
 
   @FXML
-  private NumberAxis xaxis;
+  private LineChart<Double, Double> datachartRadiance;
 
   @FXML
-  private NumberAxis yaxis;
+  private NumberAxis xaxisRaw;
+
+  @FXML
+  private NumberAxis yaxisRaw;
+
+  @FXML
+  private NumberAxis xaxisRadiance;
+
+  @FXML
+  private NumberAxis yaxisRadiance;
 
   @FXML
   private TextArea miniTerminalTextArea;
@@ -176,7 +191,8 @@ public class LiveViewController {
     state.setValue(connectionStateInit);
     this.model = model;
     liveDataParser = new LiveDataParser(this, model);
-    lineChartData = FXCollections.observableArrayList();
+    lineChartRawData = FXCollections.observableArrayList();
+    lineChartRadianceData = FXCollections.observableArrayList();
 
   }
 
@@ -190,11 +206,29 @@ public class LiveViewController {
 
 
   private void initializeLayout() {
-    datachart.setAnimated(false);
-    datachart.setCreateSymbols(false);
-    datachart.setAlternativeRowFillVisible(false);
-    datachart.setLegendVisible(false);
-    datachart.setData(lineChartData);
+    datachartRaw.setAnimated(false);
+    datachartRaw.setCreateSymbols(false);
+    datachartRaw.setAlternativeRowFillVisible(false);
+    datachartRaw.setLegendVisible(false);
+    datachartRaw.setData(lineChartRawData);
+
+    datachartRadiance.setAnimated(false);
+    datachartRadiance.setCreateSymbols(false);
+    datachartRadiance.setAlternativeRowFillVisible(false);
+    datachartRadiance.setLegendVisible(false);
+    datachartRadiance.setData(lineChartRadianceData);
+
+    xaxisRaw.setLabel(axisLabelWaveLength);
+    yaxisRaw.setLabel(axisLabelDigitalNumber);
+
+    xaxisRadiance.setLabel(axisLabelWaveLength);
+    yaxisRadiance.setLabel(axisLabelRadiance);
+
+    xaxisRaw.setAutoRanging(true);
+    xaxisRadiance.setAutoRanging(true);
+
+    xaxisRaw.setForceZeroInRange(false);
+    xaxisRadiance.setForceZeroInRange(false);
   }
 
 
@@ -331,6 +365,7 @@ public class LiveViewController {
         while (c.next()) {
           c.getAddedSubList().forEach(o -> {
             measurementListView.getSelectionModel().select(o);
+            measurementListView.scrollTo(o);
           });
 
         }
@@ -510,37 +545,61 @@ public class LiveViewController {
    * @param sequence the sequenc to draw.
    */
   public void redrawGraph(MeasureSequence sequence) {
-    Platform.runLater(() -> {
-      lineChartData.clear();
-    });
 
+    Platform.runLater(() -> {
+      lineChartRawData.clear();
+      lineChartRadianceData.clear();
+    });
 
     Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries = null;
 
     entries = sequence.getData().entrySet();
 
+    addMapToGraph(entries, sequence, lineChartRawData);
+
+    if (sequence.getRadiance() != null) {
+      entries = sequence.getRadiance().entrySet();
+      addMapToGraph(entries, sequence, lineChartRadianceData);
+    }
+  }
+
+
+  private void addMapToGraph(Set<Map.Entry<MeasureSequence.SequenceKeyName, double[]>> entries,
+                             MeasureSequence sequence,
+                             ObservableList<XYChart.Series<Double, Double>> linechartdata) {
+
+
     for (Map.Entry<MeasureSequence.SequenceKeyName, double[]> entry : entries) {
       double[] data = entry.getValue();
+      double[] wlF1Calibration = sequence.getWlF1Calibration();
+
       LineChart.Series<Double, Double> series = new LineChart.Series<Double, Double>();
       series.setName(sequence.getSequenceUuid() + "/" + entry.getKey());
 
       for (int i = 0; i < data.length; i++) {
         if (data[i] != Double.POSITIVE_INFINITY && data[i] != Double.NEGATIVE_INFINITY) {
-          double x = i;
+          double x = wlF1Calibration[i];
           double y = data[i];
           series.getData().add(new XYChart.Data<>(x, y));
         }
       }
 
       Platform.runLater(() -> {
-        lineChartData.add(series);
+        linechartdata.add(series);
       });
 
     }
-
   }
 
-  public void refreshList() {
+  /**
+   * Refreshes the List of LiveMeasurements.
+   *
+   * @param currentMeasureSequence the current Measurement that has been updated.
+   */
+  public void refreshList(LiveMeasureSequence currentMeasureSequence) {
+    if (currentMeasureSequence == measurementListView.getSelectionModel().getSelectedItem()) {
+      redrawGraph(currentMeasureSequence);
+    }
     measurementListView.refresh();
   }
 
@@ -560,7 +619,8 @@ public class LiveViewController {
     Platform.runLater(() -> {
       model.getLiveSequences().clear();
       deviceStatus.clear();
-      lineChartData.clear();
+      lineChartRawData.clear();
+      lineChartRadianceData.clear();
       setCurrentCommandLabels("");
     });
   }

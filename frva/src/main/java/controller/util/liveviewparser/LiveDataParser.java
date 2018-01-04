@@ -10,6 +10,7 @@ import java.util.ArrayDeque;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -163,7 +164,8 @@ public class LiveDataParser {
    * @return the newly created MeasureSequence.
    */
   public LiveMeasureSequence createLiveMeasurementSequence() {
-    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController);
+    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController,
+        getDeviceStatus().getCalibrationFile(), getDeviceStatus().getMaxIntegrationTime());
     model.addLiveSequence(liveMeasureSequence);
     return liveMeasureSequence;
   }
@@ -203,5 +205,22 @@ public class LiveDataParser {
 
   public File getCurrentLiveSdCardPath() {
     return model.getCurrentLiveSdCardPath();
+  }
+
+  public void currentMeasurementUpdated(LiveMeasureSequence currentMeasureSequence) {
+    liveViewController.refreshList(currentMeasureSequence);
+  }
+
+  /**
+   * Sets the integrationTimes of a given measurement to display.
+   *
+   * @param currentMeasureSequence the measurement.
+   */
+  public void updateIntegrationTime(LiveMeasureSequence currentMeasureSequence) {
+    Platform.runLater(() -> {
+      getDeviceStatus().setIntegrationTimeVeg(currentMeasureSequence.getIntegrationTimeVeg());
+      getDeviceStatus().setIntegrationTimeWr(currentMeasureSequence.getIntegrationTimeWr());
+
+    });
   }
 }

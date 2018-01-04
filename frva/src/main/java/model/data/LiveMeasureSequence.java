@@ -13,13 +13,60 @@ public class LiveMeasureSequence extends MeasureSequence {
 
 
   private final Map<MeasureSequence.SequenceKeyName, double[]> data = new HashMap<>();
-  private LiveViewController listener;
+  private final CalibrationFile calibrationFile;
   private boolean complete = false;
 
-  public LiveMeasureSequence(LiveViewController listener) {
+  /**
+   * Constructor.
+   *
+   * @param calibrationFile The CalibrationFile read from the device.
+   * @param maxIntegrationTime integrationTime to use when no other is set.
+   */
+  public LiveMeasureSequence(LiveViewController listener, CalibrationFile calibrationFile,
+                             long maxIntegrationTime) {
     super();
-    this.listener = listener;
+    this.calibrationFile = calibrationFile;
+    setIntegrationTimeVeg(String.valueOf(maxIntegrationTime));
+    setIntegrationTimeWr(String.valueOf(maxIntegrationTime));
   }
+
+
+  /**
+   * Sets integrationtime in the metadata, even when they are not jet available.
+   *
+   * @param itVeg integrationTime to set.
+   */
+  public void setIntegrationTimeWr(String itVeg) {
+
+    String[] metadata = super.getMetadata();
+
+    if (metadata == null) {
+      metadata = new String[10];
+    }
+
+    metadata[5] = itVeg;
+
+    super.setMetadata(metadata);
+  }
+
+  /**
+   * Sets integrationtime in the metadata, even when they are not jet available.
+   *
+   * @param itWr integrationTime to set.
+   */
+  public void setIntegrationTimeVeg(String itWr) {
+    String[] metadata = super.getMetadata();
+
+    if (metadata == null) {
+      metadata = new String[10];
+    }
+
+    metadata[7] = itWr;
+
+    super.setMetadata(metadata);
+  }
+
+
 
   /**
    * Adds data to that measurement.
@@ -28,20 +75,59 @@ public class LiveMeasureSequence extends MeasureSequence {
    * @param content the array with the data.
    */
   public void addData(MeasureSequence.SequenceKeyName keyName, double[] content) {
+    int targetlength = calibrationFile.getWlF1().length;
+
+    if (content.length < targetlength) {
+
+      double[] target = new double[targetlength];
+
+      int stepBetween = targetlength / content.length;
+
+      int firstIndex = 10;
+      int lastindex = stepBetween * (content.length - 1) + firstIndex;
+
+      int indexOnContent = 0;
+
+      for (int i = 0; i < firstIndex; i++) {
+        target[i] = content[0];
+      }
+
+      for (int i = 10; i < lastindex; i++) {
+        double value = 0.0;
+
+        if ((i - firstIndex) % stepBetween == 0) {
+          value = content[indexOnContent];
+          indexOnContent++;
+        } else {
+
+          int pointleft = ((stepBetween * (indexOnContent - 1)) + firstIndex);
+          int pointright = ((stepBetween * (indexOnContent)) + firstIndex);
+
+          int pointtocalc = i - pointleft;
+
+          double deltaX = pointright - pointleft;
+          double deltaY = content[(indexOnContent - 1)] - content[indexOnContent];
+
+          double deltaCalculated = (deltaY / deltaX) * pointtocalc;
+
+          value = content[indexOnContent - 1] - deltaCalculated;
+        }
+        target[i] = value;
+      }
+
+      for (int j = lastindex; j < targetlength; j++) {
+        target[j] = target[lastindex - 1];
+      }
+      content = target;
+    }
     data.put(keyName, content);
-    updated();
   }
 
-  private void updated() {
-    if (listener != null) {
-      listener.redrawGraph(this);
-    }
-  }
 
   @Override
   public String toString() {
-    if (getMetadata() != null) {
-      return getId();
+    if (getMetadata()[0] != null) {
+      return "ID" + getId() + " - " + getTime();
     }
     return "Measuring...";
   }
@@ -83,8 +169,24 @@ public class LiveMeasureSequence extends MeasureSequence {
     sb.append("\n");
 
     return sb.toString().replaceAll(" ", "").toString();
-
   }
+
+
+  @Override
+  public double[] getDwCoefF1Calibration() {
+    return calibrationFile.getDwCoefF1();
+  }
+
+  @Override
+  public double[] getUpCoefF1Calibration() {
+    return calibrationFile.getUpCoefF1();
+  }
+
+  @Override
+  public double[] getWlF1Calibration() {
+    return calibrationFile.getWlF1();
+  }
+
 
   @Override
   public Map<SequenceKeyName, double[]> getData() {
@@ -93,22 +195,26 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public Map<SequenceKeyName, double[]> getRadiance() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getRadiance();
   }
 
   @Override
   public Map<SequenceKeyName, double[]> getReflectance() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getReflectance();
   }
 
   @Override
   public ReflectionIndices getIndices() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
-  }
-
-  @Override
-  public double[] getWavlengthCalibration() {
-    throw new UnsupportedOperationException("Not Implemented in the live view!");
+    if (calibrationFile == null || getData().size() < 5) {
+      return null;
+    }
+    return super.getIndices();
   }
 
   @Override
@@ -131,11 +237,9 @@ public class LiveMeasureSequence extends MeasureSequence {
    */
   public void setComplete(boolean complete, CalibrationFile calibrationFile, File liveSdCardPath) {
     this.complete = complete;
-    listener.refreshList();
-    listener = null;
     logger.info("measurement complete");
-    FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);
 
+    FileInOut.writeLiveMeasurements(this, calibrationFile, liveSdCardPath);
   }
 
   public boolean isComplete() {

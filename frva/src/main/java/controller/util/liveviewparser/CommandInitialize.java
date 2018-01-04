@@ -15,7 +15,7 @@ public class CommandInitialize extends AbstractCommand {
     liveDataParser.executeCommand(Commands.B.toString());
 
     liveDataParser.addCommandToQueue(new CommandGetGpsinfo(liveDataParser));
-
+    liveDataParser.addCommandToQueue(new CommandGetConfiguration(liveDataParser));
     liveDataParser.addCommandToQueue(new CommandGetCalibration(liveDataParser));
 
   }
