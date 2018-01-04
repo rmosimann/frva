@@ -24,9 +24,9 @@ public class CommandSetTime extends AbstractCommand {
     if (stringBuilder.toString().contains("Enter year(0 - 99)")) {
       String yeartouse;
       if (dateTime == null) {
-        yeartouse = String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("u")));
+        yeartouse = String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy")));
       } else {
-        yeartouse = String.valueOf(dateTime.getYear());
+        yeartouse = String.valueOf(dateTime.format(DateTimeFormatter.ofPattern("yy")));
       }
       liveDataParser.executeCommand(yeartouse);
       stringBuilder = new StringBuilder();
