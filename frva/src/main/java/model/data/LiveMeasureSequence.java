@@ -1,6 +1,5 @@
 package model.data;
 
-import controller.LiveViewController;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,51 +19,12 @@ public class LiveMeasureSequence extends MeasureSequence {
    * Constructor.
    *
    * @param calibrationFile The CalibrationFile read from the device.
-   * @param maxIntegrationTime integrationTime to use when no other is set.
    */
-  public LiveMeasureSequence(LiveViewController listener, CalibrationFile calibrationFile,
-                             long maxIntegrationTime) {
+  public LiveMeasureSequence(CalibrationFile calibrationFile) {
     super();
     this.calibrationFile = calibrationFile;
-    setIntegrationTimeVeg(String.valueOf(maxIntegrationTime));
-    setIntegrationTimeWr(String.valueOf(maxIntegrationTime));
   }
 
-
-  /**
-   * Sets integrationtime in the metadata, even when they are not jet available.
-   *
-   * @param itVeg integrationTime to set.
-   */
-  public void setIntegrationTimeWr(String itVeg) {
-
-    String[] metadata = super.getMetadata();
-
-    if (metadata == null) {
-      metadata = new String[10];
-    }
-
-    metadata[5] = itVeg;
-
-    super.setMetadata(metadata);
-  }
-
-  /**
-   * Sets integrationtime in the metadata, even when they are not jet available.
-   *
-   * @param itWr integrationTime to set.
-   */
-  public void setIntegrationTimeVeg(String itWr) {
-    String[] metadata = super.getMetadata();
-
-    if (metadata == null) {
-      metadata = new String[10];
-    }
-
-    metadata[7] = itWr;
-
-    super.setMetadata(metadata);
-  }
 
 
 
@@ -126,7 +86,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public String toString() {
-    if (getMetadata()[0] != null) {
+    if (getMetadata() != null) {
       return "ID" + getId() + " - " + getTime();
     }
     return "Measuring...";
@@ -195,7 +155,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public Map<SequenceKeyName, double[]> getRadiance() {
-    if (calibrationFile == null || getData().size() < 5) {
+    if (calibrationFile == null || getMetadata() == null || getData().size() < 5) {
       return null;
     }
     return super.getRadiance();
@@ -203,7 +163,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public Map<SequenceKeyName, double[]> getReflectance() {
-    if (calibrationFile == null || getData().size() < 5) {
+    if (calibrationFile == null || getMetadata() == null || getData().size() < 5) {
       return null;
     }
     return super.getReflectance();
@@ -211,7 +171,7 @@ public class LiveMeasureSequence extends MeasureSequence {
 
   @Override
   public ReflectionIndices getIndices() {
-    if (calibrationFile == null || getData().size() < 5) {
+    if (calibrationFile == null || getMetadata() == null || getData().size() < 5) {
       return null;
     }
     return super.getIndices();

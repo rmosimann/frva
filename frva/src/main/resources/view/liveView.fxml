@@ -81,7 +81,7 @@
                         <Insets left="20.0"/>
                     </padding>
                 </Label>
-                <Label text="Current Integration Time">
+                <Label text="Current IT [ms]">
                     <font>
                         <Font name="System Bold" size="13.0"/>
                     </font>

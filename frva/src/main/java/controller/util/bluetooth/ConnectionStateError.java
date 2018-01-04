@@ -18,7 +18,7 @@ public class ConnectionStateError implements ConnectionState {
         if (!LocalDevice.isPowerOn()) {
           liveViewController.setState(new ConnectionStateBltOff(liveViewController));
         } else if (liveViewController.getSelectedServiceRecord() != null) {
-          liveViewController.setState(new ConnectionStateConnecting(liveViewController));
+          liveViewController.setState(new ConnectionStateAvailableDevices(liveViewController));
         }
 
       }

@@ -23,12 +23,6 @@ public class CommandAutoMode extends AbstractCommand {
 
   @Override
   public void receive(char read) {
-    /*
-    //TODO: in Automode execute command immediately!
-    if (liveDataParser.getCommandQueue().size() > 0) {
-      liveDataParser.runNextCommand();
-    }
-    */
     stringBuilder.append((char) read);
 
     if (stringBuilder.toString().contains(System.lineSeparator())) {
@@ -48,10 +42,10 @@ public class CommandAutoMode extends AbstractCommand {
       liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
     } else if (line.contains("VEGIT")) {
-      currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
+      logger.fine("nothing to do here");
 
     } else if (line.contains("WRIT")) {
-      currentMeasureSequence.setIntegrationTimeWr(line.split("=")[1].replace(" ", ""));
+      logger.fine("nothing to do here");
 
     } else if (line.contains("Voltage = ")) {
       currentMeasureSequence.setComplete(true,
