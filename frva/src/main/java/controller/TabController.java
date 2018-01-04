@@ -2,12 +2,12 @@ package controller;
 
 import controller.util.LineChartZoom;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
@@ -640,11 +640,20 @@ public class TabController {
       double xvalue = (((xhighest - xlowest) / pxWidth) * event.getX()) + xlowest;
       double yvalue = (((yhighest - ylowest) / pxHeigth) * (pxHeigth - event.getY())) + ylowest;
 
-      tooltip.setText("ID: " + sequence.getId() + "\n"
-          + "Serial: " + sequence.getSerial() + "\n"
-          + "Type: " + key.name() + "\n"
-          + "x: " + String.valueOf(xvalue) + "\n"
-          + "y: " + String.valueOf(yvalue));
+
+      DecimalFormat roundTwoDigits = new DecimalFormat("#.##");
+      DecimalFormat roundFourDigits = new DecimalFormat("#.####");
+
+      tooltip.setText(
+          "Location: " + sequence.getContainingSdCard().getName() + "/"
+              + sequence.getDataFile().getFolderName() + "/"
+              + sequence.getDataFile().getDataFileName() + "\n"
+              + "ID: " + sequence.getId() + " - " + sequence.getTime() + "\n"
+              + "Serial: " + sequence.getSerial() + "\n"
+              + "Type: " + key.name() + "\n"
+              + "x: " + String.valueOf(roundTwoDigits.format(xvalue)) + "\n"
+              + "y: " + String.valueOf(roundFourDigits.format(yvalue))
+      );
     });
   }
 
