@@ -167,8 +167,8 @@ public class LiveDataParser {
    * @return the newly created MeasureSequence.
    */
   public LiveMeasureSequence createLiveMeasurementSequence() {
-    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(liveViewController,
-        getDeviceStatus().getCalibrationFile(), getDeviceStatus().getMaxIntegrationTime());
+    LiveMeasureSequence liveMeasureSequence = new LiveMeasureSequence(
+        getDeviceStatus().getCalibrationFile());
     model.addLiveSequence(liveMeasureSequence);
     return liveMeasureSequence;
   }

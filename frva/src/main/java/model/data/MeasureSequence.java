@@ -28,10 +28,21 @@ public class MeasureSequence {
   private ReflectionIndices reflectionIndices;
   private BooleanProperty deleted;
 
+
+  /**
+   * Returns IT Veg from metadata in [ms].
+   *
+   * @return long value in [ms]
+   */
   public long getIntegrationTimeVeg() {
     return Long.parseLong(metadata[7]) / 1000;
   }
 
+  /**
+   * Returns IT Wr from metadata in [ms].
+   *
+   * @return long value in [ms]
+   */
   public long getIntegrationTimeWr() {
     return Long.parseLong(metadata[5]) / 1000;
   }
@@ -206,9 +217,9 @@ public class MeasureSequence {
 
     for (int i = 0; i < waveCalibration.length; i++) {
       wrRadiance[i] = (
-          (wrs[i] - dcWrs[i]) * wrCalibration[i]) / (Double.parseDouble(metadata[5]) / 1000);
+          (wrs[i] - dcWrs[i]) / wrCalibration[i]) / (Double.parseDouble(metadata[5]));
       vegRadiance[i] = (
-          (vegs[i] - dcVegs[i]) * vegCalibration[i]) / (Double.parseDouble(metadata[7]) / 1000);
+          (vegs[i] - dcVegs[i]) / vegCalibration[i]) / (Double.parseDouble(metadata[7]));
     }
 
     Map<SequenceKeyName, double[]> radianceMap = new HashMap<>();

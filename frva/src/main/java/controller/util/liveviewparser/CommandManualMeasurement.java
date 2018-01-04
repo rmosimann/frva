@@ -43,10 +43,10 @@ public class CommandManualMeasurement extends AbstractCommand {
       liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
     } else if (line.contains("VEGIT")) {
-      currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
+      logger.fine("nothing to do here");
 
     } else if (line.contains("WRIT")) {
-      currentMeasureSequence.setIntegrationTimeWr(line.split("=")[1].replace(" ", ""));
+      logger.fine("nothing to do here");
 
     } else if (line.contains("WR") && line.contains("DC")) {
       addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, line, currentMeasureSequence);
