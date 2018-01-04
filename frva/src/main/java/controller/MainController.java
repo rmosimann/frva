@@ -14,11 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
+import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,6 +29,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -34,6 +37,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
 import model.data.FileInOut;
@@ -67,6 +71,31 @@ public class MainController {
   @FXML
   private Button exportButton;
 
+  @FXML
+  private HBox msgBoxImporting;
+
+  @FXML
+  private ProgressBar progressBarImport;
+
+  @FXML
+  private HBox msgBoxExporting;
+
+  @FXML
+  private ProgressBar progressBarExport;
+
+  @FXML
+  private HBox msgBoxDeleting;
+
+  @FXML
+  private ProgressBar progressBarDelete;
+
+  @FXML
+  private Button hideImportDialog;
+
+  @FXML
+  private Button hideExportDialog;
+
+
 
   public MainController(FrvaModel model) {
     this.model = model;
@@ -95,6 +124,9 @@ public class MainController {
     exportButton.setOnAction(event -> exportData());
     exportButton.setDisable(true);
 
+    hideExportDialog.setOnAction(event -> displayExportingDialog(false));
+    hideImportDialog.setOnAction(event -> displayImportingDialog(false));
+
     model.getCurrentSelectionList().addListener(new ListChangeListener<MeasureSequence>() {
       @Override
       public void onChanged(Change<? extends MeasureSequence> c) {
@@ -113,13 +145,32 @@ public class MainController {
   private void importWizard() {
     ImportWizard importWizard = new ImportWizard(importSdCardButton.getScene().getWindow(), model);
     List<MeasureSequence> list = importWizard.startImport();
-    List<SdCard> importedSdCards = FileInOut
-        .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath());
-    for (SdCard sdCard : importedSdCards) {
-      FileInOut.writeDatabaseFile(sdCard);
-      model.getLibrary().add(sdCard);
-    }
-    ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
+
+    FloatProperty progressindicator = new SimpleFloatProperty(-1);
+    progressBarImport.progressProperty().bind(progressindicator);
+
+    displayImportingDialog(true);
+
+    Task task = new Task<Void>() {
+
+      @Override
+      protected Void call() throws Exception {
+        List<SdCard> importedSdCards = FileInOut
+            .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath(), progressindicator);
+        for (SdCard sdCard : importedSdCards) {
+          FileInOut.writeDatabaseFile(sdCard);
+          model.getLibrary().add(sdCard);
+        }
+        ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
+
+        Platform.runLater(() -> displayImportingDialog(false));
+
+        return null;
+      }
+    };
+
+    new Thread(task).start();
+
   }
 
 
@@ -138,7 +189,28 @@ public class MainController {
               return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
             }
           });
-      FileInOut.createFiles(exportList, selectedFile.toPath());
+
+      FloatProperty progressindicator = new SimpleFloatProperty(-1);
+      progressBarExport.progressProperty().bind(progressindicator);
+
+      displayExportingDialog(true);
+
+      Task task = new Task() {
+        @Override
+        protected Object call() throws Exception {
+
+          FileInOut.createFiles(exportList, selectedFile.toPath(), progressindicator);
+
+          Platform.runLater(() -> {
+
+            displayExportingDialog(false);
+          });
+          return null;
+        }
+      };
+
+      new Thread(task).start();
+
     }
     //TODO get this working on Linux
     //    if (Desktop.isDesktopSupported()) {
@@ -165,6 +237,7 @@ public class MainController {
       }
 
       unselectTickedItems(treeView.getRoot());
+      treeView.getCheckModel().clearChecks();
 
       model.deleteMeasureSequences(measurements);
     }
@@ -449,4 +522,17 @@ public class MainController {
     });
     return tab;
   }
+
+  public void displayImportingDialog(boolean active) {
+    msgBoxImporting.setVisible(active);
+  }
+
+  public void displayExportingDialog(boolean active) {
+    msgBoxExporting.setVisible(active);
+  }
+
+  public void displayDeletingDialog(boolean active) {
+    msgBoxDeleting.setVisible(active);
+  }
+
 }

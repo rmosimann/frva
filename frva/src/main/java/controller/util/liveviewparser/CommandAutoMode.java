@@ -44,10 +44,14 @@ public class CommandAutoMode extends AbstractCommand {
       currentMeasureSequence = liveDataParser.createLiveMeasurementSequence();
 
     } else if (line.contains("auto_mode")) {
-      currentMeasureSequence.setMetadata(line.split(";"));
+      currentMeasureSequence.setMetadata(line.replace(" ", "").split(";"));
+      liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
-    } else if (line.contains("WRIT") || line.contains("VEGIT")) {
-      logger.fine("Do nothing on this input.");
+    } else if (line.contains("VEGIT")) {
+      currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
+
+    } else if (line.contains("WRIT")) {
+      currentMeasureSequence.setIntegrationTimeWr(line.split("=")[1].replace(" ", ""));
 
     } else if (line.contains("Voltage = ")) {
       currentMeasureSequence.setComplete(true,
@@ -93,7 +97,13 @@ public class CommandAutoMode extends AbstractCommand {
         .toArray();
 
     measureSequence.addData(keyName, doubles);
+
+    liveDataParser.currentMeasurementUpdated(currentMeasureSequence);
   }
 
+  @Override
+  public void onQueueUpdate() {
+    liveDataParser.getCommandQueue().peek().sendCommand();
+  }
 }
 

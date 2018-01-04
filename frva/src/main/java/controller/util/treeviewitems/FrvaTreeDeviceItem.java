@@ -82,7 +82,7 @@ public class FrvaTreeDeviceItem extends FrvaTreeItem {
     if (getParent() != null) {
       ((FrvaTreeItem) getParent()).removeMeasureSequence();
       this.containingMeasureSequences--;
-      if (containingMeasureSequences < 1) {
+      if (this.getChildren().isEmpty()) {
         getParent().getChildren().remove(this);
       }
     }

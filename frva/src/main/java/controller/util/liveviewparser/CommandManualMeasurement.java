@@ -37,31 +37,36 @@ public class CommandManualMeasurement extends AbstractCommand {
     }
   }
 
-  private void handleLine(String string) {
-    if (string.contains("WRIT") || string.contains("VEGIT")) {
-      logger.fine("Do nothing on this input.");
+  private void handleLine(String line) {
+    if (line.contains("manual_mode")) {
+      currentMeasureSequence.setMetadata(line.replace(" ", "").split(";"));
+      liveDataParser.updateIntegrationTime(currentMeasureSequence);
 
-    } else if (string.contains("manual_mode")) {
-      currentMeasureSequence.setMetadata(string.split(";"));
+    } else if (line.contains("VEGIT")) {
+      currentMeasureSequence.setIntegrationTimeVeg(line.split("=")[1].replace(" ", ""));
 
-    } else if (string.contains("WR") && string.contains("DC")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, string, currentMeasureSequence);
+    } else if (line.contains("WRIT")) {
+      currentMeasureSequence.setIntegrationTimeWr(line.split("=")[1].replace(" ", ""));
 
-    } else if (string.contains("WR2")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.WR2, string, currentMeasureSequence);
+    } else if (line.contains("WR") && line.contains("DC")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.DC_WR, line, currentMeasureSequence);
 
-    } else if (string.contains("WR")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.WR, string, currentMeasureSequence);
+    } else if (line.contains("WR2")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.WR2, line, currentMeasureSequence);
 
-    } else if (string.contains("VEG") && string.contains("DC")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.DC_VEG, string, currentMeasureSequence);
+    } else if (line.contains("WR")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.WR, line, currentMeasureSequence);
 
-    } else if (string.contains("VEG")) {
-      addValuesToMs(MeasureSequence.SequenceKeyName.VEG, string, currentMeasureSequence);
+    } else if (line.contains("VEG") && line.contains("DC")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.DC_VEG, line, currentMeasureSequence);
 
-    } else if (string.contains("Voltage =")) {
+    } else if (line.contains("VEG")) {
+      addValuesToMs(MeasureSequence.SequenceKeyName.VEG, line, currentMeasureSequence);
+
+    } else if (line.contains("Voltage =")) {
       currentMeasureSequence.setComplete(true, liveDataParser.getDeviceStatus()
           .getCalibrationFile(), liveDataParser.getCurrentLiveSdCardPath());
+
       liveDataParser.runNextCommand();
     }
   }
@@ -83,5 +88,7 @@ public class CommandManualMeasurement extends AbstractCommand {
         .toArray();
 
     measureSequence.addData(keyName, doubles);
+
+    liveDataParser.currentMeasurementUpdated(currentMeasureSequence);
   }
 }

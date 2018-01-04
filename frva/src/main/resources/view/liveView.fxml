@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 <AnchorPane prefHeight="660.0" prefWidth="1280.0" style="-fx-border-color: darkgrey;" VBox.vgrow="ALWAYS"
             xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -31,22 +32,40 @@
         </Pane>
         <ListView fx:id="measurementListView" layoutX="1.0" layoutY="45.0" prefHeight="200.0" prefWidth="310.0"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="44.0"/>
-        <AnchorPane layoutX="343.0" layoutY="74.0" prefHeight="546.0" prefWidth="664.0" AnchorPane.bottomAnchor="41.0"
-                    AnchorPane.leftAnchor="342.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="73.0">
+        <AnchorPane layoutX="345.0" layoutY="76.0" prefHeight="545.0" prefWidth="660.0" AnchorPane.bottomAnchor="40.0"
+                    AnchorPane.leftAnchor="344.0" AnchorPane.rightAnchor="276.0" AnchorPane.topAnchor="75.0">
             <children>
-                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0">
-                    <xAxis>
-                        <NumberAxis tickUnit="100" fx:id="xaxis"/>
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis fx:id="yaxis" tickUnit="1"/>
-                    </yAxis>
-                    <opaqueInsets>
-                        <Insets/>
-                    </opaqueInsets>
-                </LineChart>
+                <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Raw"/>
+                        <LineChart fx:id="datachartRaw" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
+                                   VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <NumberAxis tickUnit="100" fx:id="xaxisRaw"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="yaxisRaw" tickUnit="1"/>
+                            </yAxis>
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </LineChart>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Radiance"/>
+                        <LineChart fx:id="datachartRadiance" alternativeColumnFillVisible="true"
+                                   axisSortingPolicy="NONE" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <NumberAxis tickUnit="100" fx:id="xaxisRadiance"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="yaxisRadiance" tickUnit="1"/>
+                            </yAxis>
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </LineChart>
+                    </children>
+                </VBox>
             </children>
         </AnchorPane>
         <VBox layoutX="1157.0" layoutY="56.0" prefWidth="215.0" AnchorPane.rightAnchor="15.0"

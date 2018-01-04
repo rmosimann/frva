@@ -6,6 +6,7 @@ package controller.util.liveviewparser;
 public class CommandManualMode extends AbstractCommand {
 
   private StringBuilder stringBuilder = new StringBuilder();
+  private boolean commandSent = false;
 
   public CommandManualMode(LiveDataParser liveDataParser) {
     super(liveDataParser);
@@ -13,7 +14,10 @@ public class CommandManualMode extends AbstractCommand {
 
   @Override
   public void sendCommand() {
-    liveDataParser.executeCommand(Commands.C.toString());
+    if (!commandSent) {
+      liveDataParser.executeCommand(Commands.C.toString());
+      commandSent = true;
+    }
   }
 
   @Override

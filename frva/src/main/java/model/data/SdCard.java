@@ -52,7 +52,6 @@ public class SdCard {
     }
   }
 
-
   public boolean isPathInLibrary() {
     return this.sdCardFile.getPath().contains(FrvaModel.LIBRARYPATH);
   }
