@@ -77,7 +77,6 @@ public class LiveViewController {
   private final String axisLabelWaveLength = "Wavelength [nanometer]";
   private final String axisLabelDigitalNumber = "DN (digital number)";
   private final String axisLabelRadiance = "Radiance [W/( m²sr nm)]";
-  private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private Stage stage;
 
   private ObjectProperty<ConnectionState> state = new SimpleObjectProperty<>();
