@@ -619,7 +619,8 @@ public class LiveViewController {
     Platform.runLater(() -> {
       model.getLiveSequences().clear();
       deviceStatus.clear();
-      lineChartData.clear();
+      lineChartRawData.clear();
+      lineChartRadianceData.clear();
       setCurrentCommandLabels("");
     });
   }
