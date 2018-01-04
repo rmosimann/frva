@@ -175,7 +175,6 @@ public class LiveViewController {
    * @param model the one and only model.
    */
   public LiveViewController(FrvaModel model) {
-
     connectionStateInit = new ConnectionStateInit(this);
     state.setValue(connectionStateInit);
     this.model = model;
@@ -337,7 +336,9 @@ public class LiveViewController {
     measurementListView.getSelectionModel().selectedItemProperty()
         .addListener((observable, oldValue, newValue) -> {
           selectedMeasurement = newValue;
-          redrawGraph(selectedMeasurement);
+          if (newValue != null) {
+            redrawGraph(selectedMeasurement);
+          }
         });
 
 
@@ -563,6 +564,18 @@ public class LiveViewController {
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     Date date = new Date();
     model.setCurrentLiveSdCardPath(dateFormat.format(date));
+  }
+
+  /**
+   * Clears list of livesequences.
+   */
+  public void clearLiveView() {
+    Platform.runLater(() -> {
+      model.getLiveSequences().clear();
+      deviceStatus.clear();
+      lineChartData.clear();
+      setCurrentCommandLabels("");
+    });
   }
 
   public void showConsole() {

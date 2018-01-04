@@ -41,8 +41,7 @@ public class CalibrationFile {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    for (String str : fileContent) {
-    }
+
     initialize(fileContent);
   }
 
@@ -95,7 +94,7 @@ public class CalibrationFile {
         metadata.add(splitLine[6]);
       }
     }
-    calibrationAsString();
+
   }
 
   /**

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -65,6 +67,7 @@ public class MainController {
   @FXML
   private Button exportButton;
 
+
   public MainController(FrvaModel model) {
     this.model = model;
     logger.info("Created MainController");
@@ -79,6 +82,8 @@ public class MainController {
   }
 
 
+
+
   private void addEventHandlers() {
     expandAllButton.setOnAction(event -> expandAll(treeView.getRoot()));
     collapseAllButton.setOnAction(event -> collapseAll(treeView.getRoot()));
@@ -86,9 +91,23 @@ public class MainController {
     selectNoneButton.setOnAction(event -> unselectTickedItems());
     activateMultiSelect();
     deleteSelectedItemsButton.setOnAction(event -> deleteSelectedItems());
+    deleteSelectedItemsButton.setDisable(true);
     exportButton.setOnAction(event -> exportData());
-    importSdCardButton.setOnAction(event -> importWizard());
+    exportButton.setDisable(true);
 
+    model.getCurrentSelectionList().addListener(new ListChangeListener<MeasureSequence>() {
+      @Override
+      public void onChanged(Change<? extends MeasureSequence> c) {
+        if (c.getList().isEmpty()) {
+          deleteSelectedItemsButton.setDisable(true);
+          exportButton.setDisable(true);
+        } else {
+          deleteSelectedItemsButton.setDisable(false);
+          exportButton.setDisable(false);
+        }
+      }
+    });
+    importSdCardButton.setOnAction(event -> importWizard());
   }
 
   private void importWizard() {
@@ -139,18 +158,18 @@ public class MainController {
       for (FrvaTreeItem item : list) {
         if (item instanceof FrvaTreeMeasurementItem) {
           measurements.add(((FrvaTreeMeasurementItem) item).getMeasureSequence());
+          model.getCurrentSelectionList()
+              .remove(((FrvaTreeMeasurementItem) item).getMeasureSequence());
           item.removeMeasureSequence();
         }
-
       }
+
       unselectTickedItems(treeView.getRoot());
+
       model.deleteMeasureSequences(measurements);
     }
     FileInOut.checkForEmptyFiles();
-
-
   }
-
 
   private boolean confirmDelete(long amount) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
