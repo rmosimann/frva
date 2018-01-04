@@ -479,7 +479,7 @@ public class MainController {
       }
     });
     if (returnValue[0] != null) {
-      returnValue[0].setSelected(false);
+      unselectTickedItems(returnValue[0]);
       returnValue[0].getParent().getChildren().remove(returnValue[0]);
     }
   }
