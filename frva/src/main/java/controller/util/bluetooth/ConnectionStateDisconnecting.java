@@ -22,10 +22,12 @@ public class ConnectionStateDisconnecting implements ConnectionState {
         }
         liveViewController.setOpenStreamConnection(null);
         liveViewController.setSelectedServiceRecord(null);
+        liveViewController.clearLiveView();
         liveViewController.setState(new ConnectionStateSearching(liveViewController));
       }
 
     });
+    t.start();
 
   }
 }

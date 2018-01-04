@@ -416,7 +416,6 @@ public class FileInOut {
     if (!currentSdCard.exists()) {
       currentSdCard.mkdir();
     }
-
     if (!calibFile.exists()) {
       try (FileWriter fileWriter = new FileWriter(calibFile, false)) {
         if (calibrationFile != null) {

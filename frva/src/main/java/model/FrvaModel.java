@@ -1,6 +1,8 @@
 package model;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -30,8 +33,7 @@ import model.data.SdCard;
 
 public class FrvaModel {
 
-
-  public static final String LIBRARYPATH = System.getProperty("user.home") + File.separator
+  public static String LIBRARYPATH = System.getProperty("user.home") + File.separator
       + "FRVA" + File.separator;
   private final ObservableList liveMeasurements = FXCollections.observableArrayList();
   private File currentLiveSdCardPath;
@@ -54,13 +56,65 @@ public class FrvaModel {
    * Constructor for a new Model.
    */
   public FrvaModel() {
+    LIBRARYPATH = readInPreferences();
     loadLibrary();
   }
+
+  private String readInPreferences() {
+    Preferences pref = Preferences.userNodeForPackage(FrvaModel.class);
+    String defaultLibPath = System.getProperty("user.home") + File.separator
+        + "FRVA" + File.separator;
+    String libraryPath = pref.get("librarypath", defaultLibPath);
+    return libraryPath;
+  }
+
+  /**
+   * Sets Preferences to the specified Librarypath and sets Library to new Path.
+   *
+   * @param newLibPath path where the Library should be located at.
+   */
+  public void changeLibraryPath(String newLibPath) {
+    if (newLibPath != null) {
+      boolean isEmpty;
+      if (new File(newLibPath).list().length > 0) {
+        Alert notEmptyAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        notEmptyAlert.getDialogPane().setMinHeight(200);
+        notEmptyAlert.setTitle("Location not empty");
+        notEmptyAlert.setHeaderText("The chosen location is not empty");
+        notEmptyAlert.setContentText("Non FloX/RoX data may be deleted if you chose to continue.");
+        Optional<ButtonType> result2 = notEmptyAlert.showAndWait();
+        isEmpty = result2.isPresent() && result2.get() == ButtonType.OK;
+        if (!isEmpty) {
+          return;
+        }
+      }
+
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      alert.getDialogPane().setMinHeight(200);
+      alert.setTitle("Warning");
+      alert.setHeaderText("For the change to take effect you need to restart the application");
+      alert.setContentText("Press OK to quit the application now and set the Library path to \""
+          + newLibPath + "\"\n or press cancel to keep the library path \"" + LIBRARYPATH + "\"");
+      Optional<ButtonType> result = alert.showAndWait();
+      boolean restartOk = result.isPresent() && result.get() == ButtonType.OK;
+
+
+      if (restartOk) {
+        LIBRARYPATH = newLibPath;
+        Preferences pref = Preferences.userNodeForPackage(FrvaModel.class);
+        pref.put("librarypath", newLibPath);
+        System.exit(0);
+      }
+    }
+  }
+
 
   /**
    * Loads existing Library or creates new one, when LibraryPath is empty.
    */
+
   private void loadLibrary() {
+    library.clear();
     logger.info("Library path is set to " + LIBRARYPATH);
 
     File folder = new File(LIBRARYPATH);
@@ -107,7 +161,7 @@ public class FrvaModel {
     Vector<DataFile> changedDataFiles = new Vector<>();
 
     for (MeasureSequence ms : measureSequences) {
-      logger.info("Deleting MesureSequnce: " + ms.getId());
+      logger.info("Deleting MesureSequence: " + ms.getId());
       ms.getDataFile().getMeasureSequences().remove(ms);
       changedSdcards.add(ms.getDataFile().getSdCard());
       changedDataFiles.add(ms.getDataFile());
@@ -237,4 +291,6 @@ public class FrvaModel {
     this.currentLiveSdCardPath = new File(LIBRARYPATH + File.separator
         + "Rec " + sdCardName);
   }
+
+
 }
