@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="77.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="42.0" prefWidth="325.0">
+               <children>
+                  <ToggleButton layoutX="517.0" layoutY="19.0" mnemonicParsing="false" selected="true" text="Visualize" />
+                  <ToggleButton layoutX="590.0" layoutY="19.0" mnemonicParsing="false" text="Connect" />
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0">
+                     <image>
+                        <Image url="@../../../../../Downloads/ic_menu_black_24dp/android/drawable-xxxhdpi/ic_menu_black_24dp.png" />
+                     </image>
+                  </ImageView>
+                  <HBox />
+               </children>
+            </AnchorPane>
+            <HBox prefHeight="687.0" prefWidth="1280.0">
+               <children>
+                  <VBox prefHeight="646.0" prefWidth="252.0">
+                     <children>
+                        <HBox prefHeight="33.0" prefWidth="252.0">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </HBox>
+                        <ImageView fitHeight="401.0" fitWidth="252.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../Desktop/TreeView.png" />
+                           </image>
+                        </ImageView>
+                        <HBox layoutX="10.0" layoutY="10.0" prefHeight="33.0" prefWidth="252.0">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <TabPane prefHeight="691.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text=" 24.10.2017:12:15">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="690.0" prefWidth="1028.0">
+                                 <children>
+                                    <ImageView fitHeight="541.0" fitWidth="747.0" layoutX="27.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../../Desktop/alt/Bildschirmfoto%202017-09-28%20um%2015.48.23.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label layoutX="877.0" layoutY="109.0" text="Display as" />
+                                    <RadioButton layoutX="876.0" layoutY="134.0" mnemonicParsing="false" text="Raw" />
+                                    <RadioButton layoutX="876.0" layoutY="157.0" mnemonicParsing="false" text="Reflectance" />
+                                    <RadioButton layoutX="877.0" layoutY="178.0" mnemonicParsing="false" text="Radiance" />
+                                    <Label layoutX="877.0" layoutY="264.0" text="Vegetation Indices" />
+                                    <CheckBox layoutX="875.0" layoutY="293.0" mnemonicParsing="false" text="NDVI" />
+                                    <CheckBox layoutX="875.0" layoutY="314.0" mnemonicParsing="false" text="TCARI" />
+                                    <CheckBox layoutX="876.0" layoutY="335.0" mnemonicParsing="false" text="PRI" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                        <Tab text="25.12.2017:14:07">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                           </content>
+                        </Tab>
+                      <Tab text="+" />
+                    </tabs>
+                  </TabPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

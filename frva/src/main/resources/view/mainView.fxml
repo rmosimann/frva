@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckTreeView?>
+<AnchorPane VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <VBox minHeight="252.0" prefWidth="310.0" style="-fx-border-color: darkgrey;" HBox.hgrow="NEVER">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="44.0" minHeight="44.0"
+                              prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;"
+                              VBox.vgrow="NEVER">
+                            <children>
+                                <Button fx:id="expandAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_expand_more_black_24dp/web/ic_expand_more_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="collapseAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_expand_less_black_24dp/web/ic_expand_less_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="selectAllButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_check_black_24dp/web/ic_check_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="selectNoneButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_crop_square_black_24dp/web/ic_crop_square_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                            <padding>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                            </padding>
+                        </HBox>
+                        <CheckTreeView fx:id="treeView" prefWidth="310.0" VBox.vgrow="ALWAYS"/>
+                        <HBox alignment="BOTTOM_LEFT" fillHeight="false" layoutX="10.0" layoutY="10.0" maxHeight="44.0"
+                              minHeight="44.0" prefHeight="44.0" spacing="10.0" style="-fx-background-color: gainsboro;"
+                              VBox.vgrow="NEVER">
+                            <children>
+                                <Button fx:id="importSdCardButton" accessibleHelp="Import" accessibleText="Import"
+                                        mnemonicParsing="false" style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView accessibleHelp="Import" accessibleRole="BUTTON"
+                                                   accessibleText="Import">
+                                            <image>
+                                                <Image url="@../icons/ic_library_add_black_24dp/web/ic_library_add_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="deleteSelectedItemsButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_delete_black_24dp/web/ic_delete_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="exportButton" mnemonicParsing="false"
+                                        style="-fx-background-color: none;">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_file_upload_black_24dp/web/ic_file_upload_black_24dp_1x.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                            <padding>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                            </padding>
+                        </HBox>
+                    </children>
+                </VBox>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                         style="-fx-border-color: darkgrey;" tabMinHeight="35.0" HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+        <HBox fx:id="msgBoxImporting" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle"
+                               text="Importing selected data..."/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <ProgressBar fx:id="progressBarImport" prefWidth="400" layoutX="50.0" layoutY="100.0">
+
+                        </ProgressBar>
+
+                        <Button fx:id="hideImportDialog" layoutX="350.0" layoutY="150.0" mnemonicParsing="false"
+                                prefWidth="100.0" text="Hide dialog"/>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+        <HBox fx:id="msgBoxExporting" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle"
+                               text="Exporting selected data..."/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <ProgressBar fx:id="progressBarExport" prefWidth="400" layoutX="50.0" layoutY="100.0">
+
+                        </ProgressBar>
+                        <Button fx:id="hideExportDialog" layoutX="350.0" layoutY="150.0" mnemonicParsing="false"
+                                prefWidth="100.0" text="Hide dialog"/>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+        <HBox fx:id="msgBoxDeleting" alignment="CENTER" fillHeight="false" layoutX="43.0" layoutY="270.0"
+              prefHeight="100.0" prefWidth="200.0" styleClass="messageBoxOutgrey" visible="false"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label layoutX="14.0" layoutY="38.0" styleClass="messageBoxTitle"
+                               text="Deleting selected data..."/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <ProgressBar fx:id="progressBarDelete" prefWidth="400" layoutX="50.0" layoutY="100.0">
+
+                        </ProgressBar>
+
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+
+    </children>
+</AnchorPane>

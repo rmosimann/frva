@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="vegetationIndicesBox" alignment="CENTER_LEFT" layoutX="780.0" layoutY="350.0" prefWidth="215.0"
+              visible="false" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="300.0">
+            <children>
+                <Label text="Vegetation Indices">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </Label>
+                <Label text="NDVI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexNdviMinLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexNdviMaxLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexNdviAverageLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <Label text="TCARI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexTcariMinLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexTcariMaxLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexTcariAverageLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <Label text="PRI">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="min:"/>
+                        <Label fx:id="indexPriMinLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="max:"/>
+                        <Label fx:id="indexPriMaxLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+                <HBox fillHeight="false">
+                    <children>
+                        <Label prefWidth="50.0" text="avg:"/>
+                        <Label fx:id="indexPriAverageLabel" prefWidth="150.0" text="Label"/>
+                    </children>
+                    <padding>
+                        <Insets left="15.0"/>
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
+        <VBox layoutX="780.0" layoutY="27.0" prefWidth="215.0" spacing="5.0" AnchorPane.rightAnchor="15.0"
+              AnchorPane.topAnchor="15.0">
+            <children>
+                <Label text="Display as">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </Label>
+                <RadioButton fx:id="radioButtonRaw" mnemonicParsing="false" text="Raw"/>
+                <CheckBox fx:id="checkBoxRawVeg" mnemonicParsing="false" selected="true" text="VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox fx:id="checkBoxRawWr" mnemonicParsing="false" selected="true" text="WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox fx:id="checkBoxRawWr2" mnemonicParsing="false" selected="true" text="WR2">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox fx:id="checkBoxRawDcVeg" mnemonicParsing="false" selected="true" text="DC_VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox fx:id="checkBoxRawDcWr" mnemonicParsing="false" selected="true" text="DC_WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <RadioButton fx:id="radioButtonRadiance" mnemonicParsing="false" text="Radiance">
+                    <padding>
+                        <Insets top="10.0"/>
+                    </padding>
+                </RadioButton>
+                <CheckBox fx:id="checkBoxRadianceVeg" mnemonicParsing="false" selected="true" text="VEG">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <CheckBox fx:id="checkBoxRadianceWr" mnemonicParsing="false" selected="true" text="WR">
+                    <VBox.margin>
+                        <Insets left="35.0"/>
+                    </VBox.margin>
+                </CheckBox>
+                <RadioButton fx:id="radioButtonReflectance" mnemonicParsing="false" text="Reflectance">
+                    <padding>
+                        <Insets top="10.0"/>
+                    </padding>
+                </RadioButton>
+            </children>
+        </VBox>
+        <AnchorPane layoutX="15.0" layoutY="15.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="15.0"
+                    AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="15.0">
+            <children>
+                <LineChart fx:id="datachart" alternativeColumnFillVisible="true" axisSortingPolicy="NONE"
+                           prefHeight="553.0" prefWidth="732.0" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                        <NumberAxis tickUnit="100" fx:id="xaxis"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="yaxis" tickUnit="1"/>
+                    </yAxis>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                </LineChart>
+            </children>
+        </AnchorPane>
+        <RadioButton fx:id="radioButtonWavelength" layoutX="321.0" layoutY="568.0" mnemonicParsing="false"
+                     text="Wavelength" AnchorPane.bottomAnchor="20.0"/>
+        <RadioButton fx:id="radioButtonBands" layoutX="429.0" layoutY="575.0" mnemonicParsing="false" text="Bands"
+                     AnchorPane.bottomAnchor="20.0"/>
+        <VBox fx:id="calculatingLabelBox" alignment="CENTER" layoutX="236.0" layoutY="273.0" prefHeight="68.0"
+              prefWidth="272.0" visible="false" AnchorPane.bottomAnchor="272.0" AnchorPane.leftAnchor="236.0"
+              AnchorPane.rightAnchor="513.0" AnchorPane.topAnchor="273.0">
+            <children>
+                <Label style="-fx-background-color: grey; -fx-background-radius: 10; -fx-background-insets: -10;"
+                       text="computing...">
+                    <font>
+                        <Font size="20.0"/>
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+        <HBox fx:id="messageBox" alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0"
+              styleClass="messageBoxOutgrey" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="200.0" prefWidth="500.0" styleClass="messageBox">
+                    <children>
+                        <Label fx:id="messageBoxTitleLabel" layoutX="14.0" layoutY="38.0" text="Title">
+                            <font>
+                                <Font size="34.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="messageBoxTextLabel" layoutX="14.0" layoutY="79.0" prefHeight="68.0"
+                               prefWidth="467.0" text="text" wrapText="true"/>
+                        <Pane prefHeight="26.0" prefWidth="500.0" styleClass="messageBoxHeader"/>
+                        <HBox fx:id="messageBoxButtonHBox" alignment="BOTTOM_RIGHT" layoutX="127.0" layoutY="145.0"
+                              prefHeight="40.0" prefWidth="360.0" spacing="10.0">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </HBox>
+                    </children>
+                </Pane>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

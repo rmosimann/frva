@@ -1,21 +1,88 @@
 group 'ch.fhnw.frva'
-version '1.0-SNAPSHOT'
+version '1.1-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
-
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 
+
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    compile 'org.controlsfx:controlsfx:8.40.11'
+
+    switch(System.getProperty('os.name').toLowerCase().split()[0]) {
+        case 'windows':
+            compile 'org.ow2.chameleon.commons.bluecove:bluecove:2.1.1-63'
+            break
+        case 'linux':
+            compile 'net.sf.bluecove:bluecove-gpl:2.1.0'
+            compile 'net.sf.bluecove:bluecove:2.1.0'
+            break
+        case 'mac':
+            compile fileTree(dir: 'libs', include: '*.jar')
+            break
+        default:
+            throw new Exception('Unknown OS')
+    }
+
 }
 
+// Configure Plugins
 checkstyle {
     toolVersion = "8.2"
+    ignoreFailures = false
+    maxErrors = 0
+    maxWarnings = 0
+    showViolations = true
+    checkstyleTest.enabled = false
 }
 
+jacoco {
+    toolVersion = "0.7.6.201602180812"
+    reportsDir = file("$buildDir/reports/jacoco")
+}
+
+// Configure Jobs
+checkstyleMain {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
+    }
+    doLast {
+        String fileContents = new File("$buildDir/reports/jacoco/test/html/index.html").text;
+        project.logger.lifecycle(fileContents)
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport, javadoc
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'FrvaApp'
+        )
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}

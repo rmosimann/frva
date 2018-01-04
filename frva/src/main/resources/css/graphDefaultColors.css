@@ -1,0 +1,619 @@
+.chart-series-line.series0 {
+    -fx-stroke: #B31B1B;
+    -fx-background-color: #B31B1B;
+}
+
+.chart-series-line.series1 {
+    -fx-stroke: #CC0000;
+    -fx-background-color: #CC0000;
+}
+
+.chart-series-line.series2 {
+    -fx-stroke: #E60000;
+    -fx-background-color: #E60000;
+}
+
+.chart-series-line.series4 {
+    -fx-stroke: #08E8DE;
+    -fx-background-color: #08E8DE;
+}
+
+.chart-series-line.series5 {
+    -fx-stroke: #63775B;
+    -fx-background-color: #63775B;
+}
+
+.chart-series-line.series7 {
+    -fx-stroke: #FF3503;
+    -fx-background-color: #FF3503;
+}
+
+.chart-series-line.series8 {
+    -fx-stroke: #00FF00;
+    -fx-background-color: #00FF00;
+}
+
+.chart-series-line.series12 {
+    -fx-stroke: #FF3800;
+    -fx-background-color: #FF3800;
+}
+
+.chart-series-line.series13 {
+    -fx-stroke: #00CC99;
+    -fx-background-color: #00CC99;
+}
+
+.chart-series-line.series14 {
+    -fx-stroke: #E25822;
+    -fx-background-color: #E25822;
+}
+
+.chart-series-line.series15 {
+    -fx-stroke: #08E8DE;
+    -fx-background-color: #08E8DE;
+}
+
+.chart-series-line.series16 {
+    -fx-stroke: #15F4EE;
+    -fx-background-color: #15F4EE;
+}
+
+.chart-series-line.series18 {
+    -fx-stroke: #F2B400;
+    -fx-background-color: #F2B400;
+}
+
+.chart-series-line.series19 {
+    -fx-stroke: #00FFFF;
+    -fx-background-color: #00FFFF;
+}
+
+.chart-series-line.series21 {
+    -fx-stroke: #00CED1;
+    -fx-background-color: #00CED1;
+}
+
+.chart-series-line.series22 {
+    -fx-stroke: #E9692C;
+    -fx-background-color: #E9692C;
+}
+
+.chart-series-line.series24 {
+    -fx-stroke: #21ABCD;
+    -fx-background-color: #21ABCD;
+}
+
+.chart-series-line.series25 {
+    -fx-stroke: #00B7EB;
+    -fx-background-color: #00B7EB;
+}
+
+.chart-series-line.series27 {
+    -fx-stroke: #1DACD6;
+    -fx-background-color: #1DACD6;
+}
+
+.chart-series-line.series29 {
+    -fx-stroke: #00BFFF;
+    -fx-background-color: #00BFFF;
+}
+
+.chart-series-line.series30 {
+    -fx-stroke: #00B9FB;
+    -fx-background-color: #00B9FB;
+}
+
+.chart-series-line.series32 {
+    -fx-stroke: #93CCEA;
+    -fx-background-color: #93CCEA;
+}
+
+.chart-series-line.series33 {
+    -fx-stroke: #188BC2;
+    -fx-background-color: #188BC2;
+}
+
+.chart-series-line.series34 {
+    -fx-stroke: #FF0800;
+    -fx-background-color: #FF0800;
+}
+
+.chart-series-line.series37 {
+    -fx-stroke: #24A0ED;
+    -fx-background-color: #24A0ED;
+}
+
+.chart-series-line.series42 {
+    -fx-stroke: #0088DC;
+    -fx-background-color: #0088DC;
+}
+
+.chart-series-line.series43 {
+    -fx-stroke: #318CE7;
+    -fx-background-color: #318CE7;
+}
+
+.chart-series-line.series44 {
+    -fx-stroke: #1974D2;
+    -fx-background-color: #1974D2;
+}
+
+.chart-series-line.series45 {
+    -fx-stroke: #007FFF;
+    -fx-background-color: #007FFF;
+}
+
+.chart-series-line.series47 {
+    -fx-stroke: #3399FF;
+    -fx-background-color: #3399FF;
+}
+
+.chart-series-line.series48 {
+    -fx-stroke: #1E90FF;
+    -fx-background-color: #1E90FF;
+}
+
+.chart-series-line.series49 {
+    -fx-stroke: #1560BD;
+    -fx-background-color: #1560BD;
+}
+
+.chart-series-line.series52 {
+    -fx-stroke: #0070FF;
+    -fx-background-color: #0070FF;
+}
+
+.chart-series-line.series53 {
+    -fx-stroke: #1F75FE;
+    -fx-background-color: #1F75FE;
+}
+
+.chart-series-line.series54 {
+    -fx-stroke: #0247FE;
+    -fx-background-color: #0247FE;
+}
+
+.chart-series-line.series57 {
+    -fx-stroke: #FF6600;
+    -fx-background-color: #FF6600;
+}
+
+.chart-series-line.series58 {
+    -fx-stroke: #1C1CF0;
+    -fx-background-color: #1C1CF0;
+}
+
+.chart-series-line.series60 {
+    -fx-stroke: #0000FF;
+    -fx-background-color: #0000FF;
+}
+
+.chart-series-line.series62 {
+    -fx-stroke: #D2691E;
+    -fx-background-color: #D2691E;
+}
+
+.chart-series-line.series70 {
+    -fx-stroke: #CC5500;
+    -fx-background-color: #CC5500;
+}
+
+.chart-series-line.series74 {
+    -fx-stroke: #3F00FF;
+    -fx-background-color: #3F00FF;
+}
+
+.chart-series-line.series75 {
+    -fx-stroke: #6F00FF;
+    -fx-background-color: #6F00FF;
+}
+
+.chart-series-line.series81 {
+    -fx-stroke: #C46210;
+    -fx-background-color: #C46210;
+}
+
+.chart-series-line.series83 {
+    -fx-stroke: #8A2BE2;
+    -fx-background-color: #8A2BE2;
+}
+
+.chart-series-line.series85 {
+    -fx-stroke: #8F00FF;
+    -fx-background-color: #8F00FF;
+}
+
+.chart-series-line.series86 {
+    -fx-stroke: #8806CE;
+    -fx-background-color: #8806CE;
+}
+
+.chart-series-line.series87 {
+    -fx-stroke: #B5651E;
+    -fx-background-color: #B5651E;
+}
+
+.chart-series-line.series90 {
+    -fx-stroke: #ED872D;
+    -fx-background-color: #ED872D;
+}
+
+.chart-series-line.series91 {
+    -fx-stroke: #9400D3;
+    -fx-background-color: #9400D3;
+}
+
+.chart-series-line.series94 {
+    -fx-stroke: #BF00FF;
+    -fx-background-color: #BF00FF;
+}
+
+.chart-series-line.series95 {
+    -fx-stroke: #FF7E00;
+    -fx-background-color: #FF7E00;
+}
+
+.chart-series-line.series97 {
+    -fx-stroke: #FF9933;
+    -fx-background-color: #FF9933;
+}
+
+.chart-series-line.series110 {
+    -fx-stroke: #CC00CC;
+    -fx-background-color: #CC00CC;
+}
+
+.chart-series-line.series114 {
+    -fx-stroke: #FF00FF;
+    -fx-background-color: #FF00FF;
+}
+
+.chart-series-line.series115 {
+    -fx-stroke: #F28E1C;
+    -fx-background-color: #F28E1C;
+}
+
+.chart-series-line.series117 {
+    -fx-stroke: #F400A1;
+    -fx-background-color: #F400A1;
+}
+
+.chart-series-line.series124 {
+    -fx-stroke: #E936A7;
+    -fx-background-color: #E936A7;
+}
+
+.chart-series-line.series125 {
+    -fx-stroke: #E0218A;
+    -fx-background-color: #E0218A;
+}
+
+.chart-series-line.series126 {
+    -fx-stroke: #FF1493;
+    -fx-background-color: #FF1493;
+}
+
+.chart-series-line.series127 {
+    -fx-stroke: #ED9121;
+    -fx-background-color: #ED9121;
+}
+
+.chart-series-line.series128 {
+    -fx-stroke: #FF8B00;
+    -fx-background-color: #FF8B00;
+}
+
+.chart-series-line.series131 {
+    -fx-stroke: #FF8C00;
+    -fx-background-color: #FF8C00;
+}
+
+.chart-series-line.series133 {
+    -fx-stroke: #FF007F;
+    -fx-background-color: #FF007F;
+}
+
+.chart-series-line.series136 {
+    -fx-stroke: #F62681;
+    -fx-background-color: #F62681;
+}
+
+.chart-series-line.series137 {
+    -fx-stroke: #E34285;
+    -fx-background-color: #E34285;
+}
+
+.chart-series-line.series139 {
+    -fx-stroke: #D71868;
+    -fx-background-color: #D71868;
+}
+
+.chart-series-line.series141 {
+    -fx-stroke: #EC3B83;
+    -fx-background-color: #EC3B83;
+}
+
+.chart-series-line.series142 {
+    -fx-stroke: #D70A53;
+    -fx-background-color: #D70A53;
+}
+
+.chart-series-line.series144 {
+    -fx-stroke: #FF004F;
+    -fx-background-color: #FF004F;
+}
+
+.chart-series-line.series148 {
+    -fx-stroke: #D70040;
+    -fx-background-color: #D70040;
+}
+
+.chart-series-line.series149 {
+    -fx-stroke: #DE3163;
+    -fx-background-color: #DE3163;
+}
+
+.chart-series-line.series151 {
+    -fx-stroke: #FF003F;
+    -fx-background-color: #FF003F;
+}
+
+.chart-series-line.series152 {
+    -fx-stroke: #C32148;
+    -fx-background-color: #C32148;
+}
+
+.chart-series-line.series153 {
+    -fx-stroke: #FF033E;
+    -fx-background-color: #FF033E;
+}
+
+.chart-series-line.series154 {
+    -fx-stroke: #FF2052;
+    -fx-background-color: #FF2052;
+}
+
+.chart-series-line.series155 {
+    -fx-stroke: #FF0038;
+    -fx-background-color: #FF0038;
+}
+
+.chart-series-line.series156 {
+    -fx-stroke: #E52B50;
+    -fx-background-color: #E52B50;
+}
+
+.chart-series-line.series163 {
+    -fx-stroke: #DC143C;
+    -fx-background-color: #DC143C;
+}
+
+.chart-series-line.series165 {
+    -fx-stroke: #E48400;
+    -fx-background-color: #E48400;
+}
+
+.chart-series-line.series166 {
+    -fx-stroke: #C41E3A;
+    -fx-background-color: #C41E3A;
+}
+
+.chart-series-line.series167 {
+    -fx-stroke: #E30022;
+    -fx-background-color: #E30022;
+}
+
+.chart-series-line.series168 {
+    -fx-stroke: #B01B2E;
+    -fx-background-color: #B01B2E;
+}
+
+.chart-series-line.series170 {
+    -fx-stroke: #EA3C53;
+    -fx-background-color: #EA3C53;
+}
+
+.chart-series-line.series171 {
+    -fx-stroke: #D1001C;
+    -fx-background-color: #D1001C;
+}
+
+.chart-series-line.series173 {
+    -fx-stroke: #CD071E;
+    -fx-background-color: #CD071E;
+}
+
+.chart-series-line.series174 {
+    -fx-stroke: #E32636;
+    -fx-background-color: #E32636;
+}
+
+.chart-series-line.series179 {
+    -fx-stroke: #D3212D;
+    -fx-background-color: #D3212D;
+}
+
+.chart-series-line.series180 {
+    -fx-stroke: #CE2029;
+    -fx-background-color: #CE2029;
+}
+
+.chart-series-line.series181 {
+    -fx-stroke: #EF3038;
+    -fx-background-color: #EF3038;
+}
+
+.chart-series-line.series182 {
+    -fx-stroke: #FFAA1D;
+    -fx-background-color: #FFAA1D;
+}
+
+.chart-series-line.series183 {
+    -fx-stroke: #FFA812;
+    -fx-background-color: #FFA812;
+}
+
+.chart-series-line.series184 {
+    -fx-stroke: #FFA600;
+    -fx-background-color: #FFA600;
+}
+
+.chart-series-line.series196 {
+    -fx-stroke: #FFA700;
+    -fx-background-color: #FFA700;
+}
+
+.chart-series-line.series197 {
+    -fx-stroke: #E03C31;
+    -fx-background-color: #E03C31;
+}
+
+.chart-series-line.series198 {
+    -fx-stroke: #EB4C42;
+    -fx-background-color: #EB4C42;
+}
+
+.chart-series-line.series199 {
+    -fx-stroke: #FFB200;
+    -fx-background-color: #FFB200;
+}
+
+.chart-series-line.series207 {
+    -fx-stroke: #FFBF00;
+    -fx-background-color: #FFBF00;
+}
+
+.chart-series-line.series216 {
+    -fx-stroke: #CC9900;
+    -fx-background-color: #CC9900;
+}
+
+.chart-series-line.series217 {
+    -fx-stroke: #F5C71A;
+    -fx-background-color: #F5C71A;
+}
+
+.chart-series-line.series218 {
+    -fx-stroke: #FFCC00;
+    -fx-background-color: #FFCC00;
+}
+
+.chart-series-line.series253 {
+    -fx-stroke: #E34234;
+    -fx-background-color: #E34234;
+}
+
+.chart-series-line.series260 {
+    -fx-stroke: #CAA906;
+    -fx-background-color: #CAA906;
+}
+
+.chart-series-line.series261 {
+    -fx-stroke: #FFD300;
+    -fx-background-color: #FFD300;
+}
+
+.chart-series-line.series265 {
+    -fx-stroke: #FFE135;
+    -fx-background-color: #FFE135;
+}
+
+.chart-series-line.series283 {
+    -fx-stroke: #E4D00A;
+    -fx-background-color: #E4D00A;
+}
+
+.chart-series-line.series292 {
+    -fx-stroke: #F0E130;
+    -fx-background-color: #F0E130;
+}
+
+.chart-series-line.series293 {
+    -fx-stroke: #FDEE00;
+    -fx-background-color: #FDEE00;
+}
+
+.chart-series-line.series302 {
+    -fx-stroke: #FFEF00;
+    -fx-background-color: #FFEF00;
+}
+
+.chart-series-line.series316 {
+    -fx-stroke: #FEF200;
+    -fx-background-color: #FEF200;
+}
+
+.chart-series-line.series319 {
+    -fx-stroke: #FFF600;
+    -fx-background-color: #FFF600;
+}
+
+.chart-series-line.series320 {
+    -fx-stroke: #E95C4B;
+    -fx-background-color: #E95C4B;
+}
+
+.chart-series-line.series321 {
+    -fx-stroke: #FFFF31;
+    -fx-background-color: #FFFF31;
+}
+
+.chart-series-line.series332 {
+    -fx-stroke: #FFFF33;
+    -fx-background-color: #FFFF33;
+}
+
+.chart-series-line.series333 {
+    -fx-stroke: #B0BF1A;
+    -fx-background-color: #B0BF1A;
+}
+
+.chart-series-line.series336 {
+    -fx-stroke: #CAE00D;
+    -fx-background-color: #CAE00D;
+}
+
+.chart-series-line.series337 {
+    -fx-stroke: #DFFF00;
+    -fx-background-color: #DFFF00;
+}
+
+.chart-series-line.series350 {
+    -fx-stroke: #D0FF14;
+    -fx-background-color: #D0FF14;
+}
+
+.chart-series-line.series351 {
+    -fx-stroke: #CCFF00;
+    -fx-background-color: #CCFF00;
+}
+
+.chart-series-line.series357 {
+    -fx-stroke: #BFFF00;
+    -fx-background-color: #BFFF00;
+}
+
+.chart-series-line.series369 {
+    -fx-stroke: #8BBE1B;
+    -fx-background-color: #8BBE1B;
+}
+
+.chart-series-line.series388 {
+    -fx-stroke: #84DE02;
+    -fx-background-color: #84DE02;
+}
+
+.chart-series-line.series395 {
+    -fx-stroke: #FF2800;
+    -fx-background-color: #FF2800;
+}
+
+.chart-series-line.series397 {
+    -fx-stroke: #7FFF00;
+    -fx-background-color: #7FFF00;
+}
+
+.chart-series-line.series477 {
+    -fx-stroke: #66FF00;
+    -fx-background-color: #66FF00;
+}

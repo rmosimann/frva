@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="contentVbox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER" maxHeight="60.0" minHeight="60.0" prefHeight="60.0">
+                    <children>
+                        <HBox alignment="CENTER" prefWidth="360.0">
+                            <children>
+                                <Button fx:id="buttonLibrary" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" styleClass="mainMenuButton" text="Library">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_photo_library_black_24dp/web/ic_photo_library_black_24dp_1x.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="buttonLiveView" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" styleClass="mainMenuButton" text="LiveView">
+                                    <graphic>
+                                        <ImageView>
+                                            <image>
+                                                <Image url="@../icons/ic_bluetooth_black_24dp/web/ic_bluetooth_black_24dp_1x.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+      <Button fx:id="settingsButton" mnemonicParsing="false" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <graphic>
+            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/ic_settings_applications_black_24dp/web/ic_settings_applications_black_24dp_2x.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+    </children>
+</AnchorPane>
