@@ -206,6 +206,8 @@ public class LiveViewController {
       e.printStackTrace();
     }
     stage.setResizable(false);
+    stage.setX(50);
+    stage.setY(50);
   }
 
 
