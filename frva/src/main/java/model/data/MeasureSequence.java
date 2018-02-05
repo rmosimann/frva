@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package model.data;
 
 import java.time.LocalDate;
@@ -9,19 +26,22 @@ import java.util.UUID;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
+/**
+ * The MeasurementSequence holds the effective raw data recorded.
+ * Reflectance and Radiance are calculated on this object.
+ * The MeasurementSeuence implements LazyLoading to handle the data from the stored files,
+ * to reduce the memory needed.
+ *   Metadata explained:
+ *    0 Counter
+ *    1 Date? YYMMDD
+ *    2 hhmmss (internal clock)
+ *    3 Mode (auto/manual/app)
+ *    4 Integration time microseconds IT WR
+ *    5 Integration time microsceconds IT VEG
+ *    6 Time for one measurement miliseconds
+ */
 public class MeasureSequence {
 
-  /*
-  Metadata explained:
-    0 Counter
-    1 Date? YYMMDD
-    2 hhmmss (internal clock)
-    3 Mode (auto/manual/app)
-    4 Integration time microseconds IT WR
-    5 Integration time microsceconds IT VEG
-    6 Time for one measurement miliseconds
-    More see https://docs.google.com/document/d/1kyKZe7tlKG4Wva3zGr00dLTMva1NG_ins3nsaOIfGDA/edit#
-  */
   private final String sequenceUuid;
   private String[] metadata;
   private DataFile dataFile;
@@ -194,8 +214,8 @@ public class MeasureSequence {
     /*
     Radiance L
       Data:
-        L(VEG) = ((DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03) IntegrationTimeVEG
-        L(WR) = ((DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03) IntegrationTimeWR
+        L(VEG) = ((DN(VEG) - DC(VEG)) * FLAMEradioVEG_2017-08-03) / IntegrationTimeVEG
+        L(WR) = ((DN(WR) - DC(WR)) * FLAMEradioWR_2017-08-03) / IntegrationTimeWR
       X-Axis: Wavelength[Nanometers]/Bands[dn]
       Y-Axis: W/( m²sr nm) which can also be written as W m-2 sr-1 nm-1
      */

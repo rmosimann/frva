@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package controller;
 
 import controller.util.LineChartZoom;
@@ -41,11 +58,15 @@ import javafx.util.Duration;
 import model.FrvaModel;
 import model.data.MeasureSequence;
 
-
+/**
+ * The TabController provides the core functionality to display the graphs of the selected
+ * measurements.
+ * This is the controller to the tabContent.fxml.
+ */
 public class TabController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
-  private final MainController mainController;
+  private final LibraryController libraryController;
   private final ObservableList<XYChart.Series<Double, Double>> lineChartData;
   private final ObservableList<MeasureSequence> listToWatch;
   private ToggleGroup togglGroupYaxis;
@@ -174,11 +195,11 @@ public class TabController {
    *
    * @param tab            tab linked to this controller.
    * @param model          The one and only Model.
-   * @param mainController The MainController containing this tab.
+   * @param libraryController The LibraryController containing this tab.
    */
-  public TabController(Tab tab, FrvaModel model, MainController mainController) {
+  public TabController(Tab tab, FrvaModel model, LibraryController libraryController) {
     this.model = model;
-    this.mainController = mainController;
+    this.libraryController = libraryController;
     lineChartData = FXCollections.observableArrayList();
     listToWatch = model.getObservableList(tab);
 
@@ -322,7 +343,7 @@ public class TabController {
       Button deselectAllButton = new Button();
       deselectAllButton.setText("Deselect all");
       deselectAllButton.setOnAction(event -> {
-        mainController.unselectTickedItems();
+        libraryController.unselectTickedItems();
       });
       messageBoxButtonHBox.getChildren().addAll(deselectAllButton, drawAnywayButton);
     }

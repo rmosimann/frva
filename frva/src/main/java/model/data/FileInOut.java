@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package model.data;
 
 import java.io.BufferedInputStream;
@@ -28,7 +45,8 @@ import javafx.scene.control.ButtonType;
 import model.FrvaModel;
 
 /**
- * Created by patrick.wigger on 07.12.17.
+ * FileInOut provides the toolbox to read, write and manage the data in the library.
+ * These tools are used for import, export and LazyLoading.
  */
 public class FileInOut {
   private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("FRVA");
@@ -38,22 +56,24 @@ public class FileInOut {
    * Creates a file with the metadatas of all measurements called db.csv
    *
    * @param sdCard of which the db.csv should be created.
+   * @param library path to the library.
+   *
    */
-  public static void writeDatabaseFile(SdCard sdCard) {
-    File file = new File(FrvaModel.LIBRARYPATH + File.separator + sdCard.getName()
+  public static void writeDatabaseFile(SdCard sdCard, String library) {
+    File dbFile = new File(library + File.separator + sdCard.getName()
         + File.separator + "db.csv");
-    if (file.getParentFile() != null) {
-      file.getParentFile().mkdirs();
+    if (dbFile.getParentFile() != null) {
+      dbFile.getParentFile().mkdirs();
     }
     try {
-      file.createNewFile();
+      dbFile.createNewFile();
     } catch (IOException e) {
       e.printStackTrace();
     }
     logger.info("writing " + sdCard.getMeasureSequences().size()
-        + " Measurements to db.csv");
+        + " Measurements to " + dbFile.getPath());
 
-    try (Writer writer = new FileWriter(file)) {
+    try (Writer writer = new FileWriter(dbFile)) {
       for (MeasureSequence ms : sdCard.getMeasureSequences()) {
         writer.write(sdCard.getSdCardFile().getPath() + File.separator
             + ms.getDataFile().getFolderName() + File.separator
@@ -80,14 +100,14 @@ public class FileInOut {
     String line;
     String currentFile = "";
     List<String[]> list = new ArrayList<>();
-
-    if (!new File(sdCardFile + File.separator + "db.csv").exists()) {
+    File dbFile = new File(sdCardFile + File.separator + "db.csv");
+    if (!dbFile.exists() || dbFile.length() == 0) {
       dataFiles = getDataFiles(sdCard);
       for (DataFile df : dataFiles) {
         sdCard.getDataFiles().add(df);
       }
       if (sdCard.isPathInLibrary()) {
-        FileInOut.writeDatabaseFile(sdCard);
+        FileInOut.writeDatabaseFile(sdCard, FrvaModel.LIBRARYPATH);
       }
     } else {
       try (BufferedReader reader = new BufferedReader(
@@ -124,7 +144,7 @@ public class FileInOut {
    * @param sdCard the List with all DataFiles.
    * @return List of DataFiles.
    */
-  public static List<DataFile> getDataFiles(SdCard sdCard) {
+  private static List<DataFile> getDataFiles(SdCard sdCard) {
     List<DataFile> returnList = new ArrayList<>();
     File[] listOfDirectories = sdCard.getSdCardFile().listFiles(File::isDirectory);
 
@@ -147,7 +167,9 @@ public class FileInOut {
   public static CalibrationFile readCalibrationFile(SdCard sdCard, String filter) {
 
     File folder = sdCard.getSdCardFile();
-    File[] listOfFiles = folder.listFiles((dir, name) -> name.equals(filter));
+    File[] listOfFiles = folder.listFiles((File dir, String name) -> {
+      return name.equals(filter);
+    });
     return new CalibrationFile(listOfFiles[0]);
   }
 
@@ -284,8 +306,8 @@ public class FileInOut {
   /**
    * Writes Data from SDCARDs to Files, in original format.
    *
-   * @param list       List of MeasurementSequences to save.
-   * @param exportPath the path where the SDCARDs are exported to.
+   * @param list              List of MeasurementSequences to save.
+   * @param exportPath        the path where the SDCARDs are exported to.
    * @param progressindicator float 0 - 1, displaying progress in GUI.
    * @return a list of the written SDCARDS.
    */
@@ -298,9 +320,11 @@ public class FileInOut {
     String dayFolderPath = null;
     List<File> sdCardFolderList = new ArrayList<>();
     for (MeasureSequence measureSequence : list) {
-      Platform.runLater(() -> {
-        progressindicator.set((float) list.indexOf(measureSequence) / (float) list.size());
-      });
+      if (progressindicator != null) {
+        Platform.runLater(() -> {
+          progressindicator.set((float) list.indexOf(measureSequence) / (float) list.size());
+        });
+      }
       try {
         if (!measureSequence.getContainingSdCard().equals(sdCard)) {
           sdCard = measureSequence.getContainingSdCard();
@@ -384,13 +408,12 @@ public class FileInOut {
    *
    * @param file The File to delete.
    */
-  public static void deleteFile(File file) {
+  private static void deleteFile(File file) {
     if (file.exists() && file.isDirectory() && file.listFiles().length != 0) {
       for (File f : file.listFiles()) {
         deleteFile(f);
       }
     }
-    file.delete();
     logger.info("Deleted File:" + file);
   }
 
@@ -485,9 +508,10 @@ public class FileInOut {
 
   /**
    * Tries to find empty folders and files in library and deletes them.
+   * @param library path to the library.
    */
-  public static void checkForEmptyFiles() {
-    File lib = new File(FrvaModel.LIBRARYPATH);
+  public static void checkForEmptyFiles(String library) {
+    File lib = new File(library);
     for (File sdCard : lib.listFiles()) {
 
       if (sdCard.isDirectory()) {
@@ -515,7 +539,6 @@ public class FileInOut {
               }
               dataFolder.delete();
             }
-
           }
         }
 
@@ -534,12 +557,7 @@ public class FileInOut {
           logger.info("delete Folder: " + sdCard.getPath());
           sdCard.delete();
         }
-
       }
-
-
     }
-
   }
-
 }
