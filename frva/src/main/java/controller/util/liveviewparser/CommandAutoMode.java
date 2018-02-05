@@ -42,7 +42,7 @@ public class CommandAutoMode extends AbstractCommand {
   public void receive(char read) {
     stringBuilder.append((char) read);
 
-    if (stringBuilder.toString().contains(System.lineSeparator())) {
+    if (stringBuilder.toString().contains("\n")) {
       handleLine(stringBuilder.toString());
       stringBuilder = new StringBuilder();
     }

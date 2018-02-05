@@ -42,7 +42,7 @@ public class CommandManualMode extends AbstractCommand {
 
     stringBuilder.append((char) read);
 
-    if (stringBuilder.toString().contains(System.lineSeparator())) {
+    if (stringBuilder.toString().contains("\n")) {
       handleLine(stringBuilder);
       stringBuilder = new StringBuilder();
     }
