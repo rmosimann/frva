@@ -22,16 +22,21 @@ dependencies {
 
     compile 'org.controlsfx:controlsfx:8.40.11'
 
-    switch(System.getProperty('os.name').toLowerCase().split()[0]) {
+    switch (System.getProperty('os.name').toLowerCase().split()[0]) {
         case 'windows':
             compile 'org.ow2.chameleon.commons.bluecove:bluecove:2.1.1-63'
             break
         case 'linux':
-            compile 'net.sf.bluecove:bluecove-gpl:2.1.0'
-            compile 'net.sf.bluecove:bluecove:2.1.0'
+            //compile 'net.sf.bluecove:bluecove-gpl:2.1.0'
+            //  compile 'net.sf.bluecove:bluecove:2.1.0'
+            compile fileTree(dir: 'libs', include: 'bluecove-2.1.1.jar')
+            compile fileTree(dir: 'libs', include: 'dbus-java-2.7.jar')
+            compile fileTree(dir: 'libs', include: 'libmatthew-java-0.8.jar')
+
             break
         case 'mac':
-            compile fileTree(dir: 'libs', include: '*.jar')
+
+            compile fileTree(dir: 'libs', include: 'bluecove-2.1.2.jar')
             break
         default:
             throw new Exception('Unknown OS')
