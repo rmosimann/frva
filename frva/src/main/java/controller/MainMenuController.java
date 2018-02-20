@@ -1,10 +1,24 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package controller;
 
-import controller.util.treeviewitems.FrvaTreeRootItem;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,15 +31,19 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import model.FrvaModel;
-import model.data.FileInOut;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
+/**
+ * The MainMenuController provides the core functionality to manage the library path and to switch
+ * between the views.
+ * This is the controller to the mainMenu.fxml.
+ */
 public class MainMenuController {
   private final FrvaModel model;
   private Node mainViewPane;
   private Node liveViewNode;
-  private MainController mainController;
+  private LibraryController libraryController;
   EventHandler<ActionEvent> mainMenuHandler;
 
   @FXML
@@ -52,9 +70,9 @@ public class MainMenuController {
     try {
       //Load MainView
       FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
-          .getResource("view/mainView.fxml"));
-      mainController = new MainController(model);
-      loader.setController(mainController);
+          .getResource("view/libraryView.fxml"));
+      libraryController = new LibraryController(model);
+      loader.setController(libraryController);
       mainViewPane = loader.load();
 
       loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
@@ -94,7 +112,7 @@ public class MainMenuController {
           MeasureSequence liveMs = model.getLiveSequences().get(0);
           if (liveMs instanceof LiveMeasureSequence
               && ((LiveMeasureSequence) liveMs).isComplete()) {
-            mainController.refreshTreeView();
+            libraryController.refreshTreeView();
           }
         }
 

@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package controller;
 
 import controller.util.ImportWizard;
@@ -45,8 +62,11 @@ import model.data.MeasureSequence;
 import model.data.SdCard;
 import org.controlsfx.control.CheckTreeView;
 
-
-public class MainController {
+/**
+ * The LibraryController provides the core functionality to handle the library and its Measurements.
+ * This is the controller to the libraryView.fxml.
+ */
+public class LibraryController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
   private int newTabId = 0;
@@ -54,20 +74,28 @@ public class MainController {
 
   @FXML
   private CheckTreeView treeView;
+
   @FXML
   private Button selectAllButton;
+
   @FXML
   private Button selectNoneButton;
+
   @FXML
   private Button collapseAllButton;
+
   @FXML
   private Button expandAllButton;
+
   @FXML
   private TabPane tabPane;
+
   @FXML
   private Button importSdCardButton;
+
   @FXML
   private Button deleteSelectedItemsButton;
+
   @FXML
   private Button exportButton;
 
@@ -97,9 +125,9 @@ public class MainController {
 
 
 
-  public MainController(FrvaModel model) {
+  public LibraryController(FrvaModel model) {
     this.model = model;
-    logger.info("Created MainController");
+    logger.info("Created LibraryController");
   }
 
 
@@ -109,8 +137,6 @@ public class MainController {
     loadTreeStructure();
     addEventHandlers();
   }
-
-
 
 
   private void addEventHandlers() {
@@ -158,7 +184,7 @@ public class MainController {
         List<SdCard> importedSdCards = FileInOut
             .createFiles(list, new File(FrvaModel.LIBRARYPATH).toPath(), progressindicator);
         for (SdCard sdCard : importedSdCards) {
-          FileInOut.writeDatabaseFile(sdCard);
+          FileInOut.writeDatabaseFile(sdCard, FrvaModel.LIBRARYPATH);
           model.getLibrary().add(sdCard);
         }
         ((FrvaTreeRootItem) treeView.getRoot()).createChildren(importedSdCards, false);
@@ -212,14 +238,6 @@ public class MainController {
       new Thread(task).start();
 
     }
-    //TODO get this working on Linux
-    //    if (Desktop.isDesktopSupported()) {
-    //      try {
-    //        Desktop.getDesktop().open(selectedFile);
-    //      } catch (IOException e) {
-    //        logger.info(e.getMessage());
-    //      }
-    //    }
   }
 
 
@@ -241,7 +259,7 @@ public class MainController {
 
       model.deleteMeasureSequences(measurements);
     }
-    FileInOut.checkForEmptyFiles();
+    FileInOut.checkForEmptyFiles(FrvaModel.LIBRARYPATH);
   }
 
   private boolean confirmDelete(long amount) {

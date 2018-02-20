@@ -1,9 +1,24 @@
-package controller.util.liveviewparser;
-
-/**
- * Created by patrick.wigger on 29.12.17.
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package controller;
+
+import controller.util.liveviewparser.CommandAny;
+import controller.util.liveviewparser.LiveDataParser;
 import java.util.Objects;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -17,30 +32,33 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 /**
- * Created by patrick.wigger on 29.12.17.
+ * The ConsoleController provides the core functionality to handle the console in the live view.
+ * This is the controller to the console.fxml.
  */
-public class Console {
+public class ConsoleController {
 
-  //private final HBox statusBar;
   private final LiveDataParser liveDataParser;
   private StringBuilder stringBuilder;
   private boolean isPaused;
 
   @FXML
   private TextField sendAnyCommandField;
+
   @FXML
   private Button sendAnyCommandButton;
+
   @FXML
   private Button pauseOutputButton;
+
   @FXML
   private TextArea consoleOutput;
 
 
   /**
-   * Creates a Console.
+   * Creates a ConsoleController.
    * @param liveDataParser the liveDataParser
    */
-  public Console(LiveDataParser liveDataParser) {
+  public ConsoleController(LiveDataParser liveDataParser) {
     stringBuilder = new StringBuilder();
     this.liveDataParser = liveDataParser;
   }
@@ -117,7 +135,7 @@ public class Console {
   }
 
   /**
-   * Make sure Console works from within FX-Threads and from non FX-Threads (Copied
+   * Make sure ConsoleController works from within FX-Threads and from non FX-Threads (Copied
    * from https://codereview.stackexchange.com/questions/52197/console-component-in-javafx)
    *
    * @param runnable to be run.

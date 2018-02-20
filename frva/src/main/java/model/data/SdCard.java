@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package model.data;
 
 import java.io.File;
@@ -7,6 +24,13 @@ import java.util.List;
 import java.util.logging.Logger;
 import model.FrvaModel;
 
+/**
+ * The SDCard is the uppermost level of data storage processed in this application.
+ * This class represents a real world SDCard, that contains:
+ *  - one CalibrationFile (calib.csv)
+ *  - one or more DataFiles
+ *
+ */
 public class SdCard {
   private final Logger logger = Logger.getLogger("FRVA");
   private List<DataFile> dataFiles = new ArrayList<>();
@@ -32,22 +56,14 @@ public class SdCard {
       this.name = name;
     }
     calibrationFile = FileInOut.readCalibrationFile(this, "cal.csv");
-    File dbFile = new File(sdCardFile + File.separator + "db.csv");
-
-    if (!dbFile.exists() || dbFile.length() == 0) {
-      dataFiles = FileInOut.getDataFiles(this);
-      if (isPathInLibrary()) {
-        FileInOut.writeDatabaseFile(this);
-      }
-    } else {
-      try {
-        dataFiles = FileInOut.readDatafilesLazy(this);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
+    try {
+      dataFiles = FileInOut.readDatafilesLazy(this);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
     }
 
     if (isPathInLibrary()) {
+      File dbFile = new File(sdCardFile + File.separator + "db.csv");
       pseudoCounter += FileInOut.getLineCount(dbFile);
     }
   }

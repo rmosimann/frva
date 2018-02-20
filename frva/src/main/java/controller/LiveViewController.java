@@ -1,3 +1,20 @@
+/*
+ *     This file is part of FRVA
+ *     Copyright (C) 2018 Andreas Hüni
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package controller;
 
 import controller.util.DeviceStatus;
@@ -6,7 +23,6 @@ import controller.util.bluetooth.ConnectionStateConnecting;
 import controller.util.bluetooth.ConnectionStateDisconnecting;
 import controller.util.bluetooth.ConnectionStateInit;
 import controller.util.bluetooth.ConnectionStateSearching;
-import controller.util.liveviewparser.CommandAny;
 import controller.util.liveviewparser.CommandAutoMode;
 import controller.util.liveviewparser.CommandGetConfiguration;
 import controller.util.liveviewparser.CommandManualMeasurement;
@@ -14,7 +30,6 @@ import controller.util.liveviewparser.CommandManualMode;
 import controller.util.liveviewparser.CommandSetInterval;
 import controller.util.liveviewparser.CommandSetItegrationTime;
 import controller.util.liveviewparser.CommandSetTime;
-import controller.util.liveviewparser.Console;
 import controller.util.liveviewparser.LiveDataParser;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -48,7 +63,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
@@ -60,7 +74,11 @@ import model.FrvaModel;
 import model.data.LiveMeasureSequence;
 import model.data.MeasureSequence;
 
-
+/**
+ * The LiveViewController provides the core functionality to handle the connection to a remote
+ * device, to steer it and to display the captured measurements.
+ * This is the controller to the liveView.fxml.
+ */
 public class LiveViewController {
   private final Logger logger = Logger.getLogger("FRVA");
   private final FrvaModel model;
@@ -84,7 +102,7 @@ public class LiveViewController {
   private LiveDataParser liveDataParser;
 
   private MeasureSequence selectedMeasurement;
-  private Console console;
+  private ConsoleController consoleController;
 
   @FXML
   private ListView<MeasureSequence> measurementListView;
@@ -212,8 +230,8 @@ public class LiveViewController {
   private void setupConsoleWindow() {
     FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemClassLoader()
         .getResource("view/console.fxml"));
-    console = new Console(liveDataParser);
-    loader.setController(console);
+    consoleController = new ConsoleController(liveDataParser);
+    loader.setController(consoleController);
     stage = new Stage();
     try {
       stage.setScene(new Scene(loader.load()));
@@ -645,10 +663,10 @@ public class LiveViewController {
   }
 
   public void printToConsole(char c) {
-    this.console.print(c);
+    this.consoleController.print(c);
   }
 
   public void printToConsole(String str) {
-    this.console.println(str);
+    this.consoleController.println(str);
   }
 }
